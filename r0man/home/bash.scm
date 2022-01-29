@@ -22,4 +22,5 @@
     (bash-logout
      (list (local-file "bash/.bash_logout" "bash_logout")))
     (environment-variables
-     '(("EDITOR" . "emacsclient"))))))
+     '(("EDITOR" . "emacsclient")
+       ("VISUAL" . "emacsclient"))))))
