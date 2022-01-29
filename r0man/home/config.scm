@@ -7,8 +7,10 @@
 (define-module (r0man home config)
   #:use-module (gnu home)
   #:use-module (r0man home bash)
+  #:use-module (r0man home mcron)
   #:use-module (r0man home packages))
 
 (home-environment
  (packages packages)
- (services (list home-bash-service)))
+ (services (list home-bash-service
+                 home-mcron-service)))
