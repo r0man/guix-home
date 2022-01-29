@@ -1,0 +1,5 @@
+* GUIX Config
+
+#+begin_src shell
+  guix home -L . reconfigure r0man/home/config.scm
+#+end_src

@@ -1,11 +1,8 @@
 # .BASH_PROFILE VS .BASHRC
 # http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
 
-GUIX_PROFILE="/home/roman/.guix-profile"
-. "$GUIX_PROFILE/etc/profile"
-
-# Configure GUIX home
-[[ -f ~/.profile ]] && . ~/.profile
+# # Configure GUIX home
+# [[ -f ~/.profile ]] && . ~/.profile
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
@@ -16,8 +13,6 @@ eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
 for i in $(ls -1 ~/.ssh/*.pub ); do
     ssh-add ${i/.pub/}
 done
-
-export EDITOR="emacsclient"
 
 # SOLARIZED
 

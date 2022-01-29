@@ -20,4 +20,6 @@
     (bash-profile
      (list (local-file "bash/.bash_profile" "bash_profile")))
     (bash-logout
-     (list (local-file "bash/.bash_logout" "bash_logout"))))))
+     (list (local-file "bash/.bash_logout" "bash_logout")))
+    (environment-variables
+     '(("EDITOR" . "emacsclient"))))))
