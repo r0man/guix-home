@@ -111,7 +111,6 @@
              "gnuplot"
              "guile"
              "guile-git"
-             "guix"
              "help2man"
              "inkscape"
              "isync"

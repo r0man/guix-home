@@ -1,9 +1,6 @@
 # .BASH_PROFILE VS .BASHRC
 # http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
 
-# # Configure GUIX home
-# [[ -f ~/.profile ]] && . ~/.profile
-
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 # Keychain
