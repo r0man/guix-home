@@ -98,6 +98,7 @@
         emacs-json-process-client
         emacs-kotlin-mode
         emacs-language-detection
+        emacs-lsp-dart
         emacs-lsp-docker
         emacs-lsp-metals
         emacs-lsp-mode
