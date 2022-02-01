@@ -1,8 +1,219 @@
 (define-module (r0man home packages)
   #:use-module (flat packages emacs)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages certs)
+  #:use-module (gnu packages cmake)
+  #:use-module (gnu packages commencement)
+  #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages fontutils)
+  #:use-module (gnu packages fontutils)
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages databases)
+  #:use-module (gnu packages geo)
+  #:use-module (gnu packages gimp)
+  #:use-module (gnu packages gnome)
+  #:use-module (gnu packages guile)
+  #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages libffi)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages lisp)
+  #:use-module (gnu packages lisp-xyz)
+  #:use-module (gnu packages mail)
+  #:use-module (gnu packages man)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages sqlite)
+  #:use-module (gnu packages terminals)
+  #:use-module (gnu packages uml)
+  #:use-module (gnu packages version-control)
+  #:use-module (gnu packages wm)
+  #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages)
   #:use-module (r0man packages emacs)
   #:export (packages))
+
+(define packages
+  (list apache-arrow
+        cl-stumpwm
+        cmake
+        emacs-aggressive-indent
+        emacs-aio
+        emacs-auto-dictionary-mode
+        emacs-avy
+        emacs-avy-menu
+        emacs-bluetooth
+        emacs-cask
+        emacs-cider
+        emacs-clj-refactor
+        emacs-clojure-mode-extra-font-locking
+        emacs-color-theme
+        emacs-company-box
+        emacs-company-lsp
+        emacs-company-quickhelp
+        emacs-consult
+        emacs-dap-mode
+        emacs-dart-mode
+        emacs-docker
+        emacs-docker-compose-mode
+        emacs-dockerfile-mode
+        emacs-edit-indirect
+        emacs-el-mock
+        emacs-elfeed
+        emacs-elisp-slime-nav
+        emacs-elpy
+        emacs-embark
+        emacs-emms
+        emacs-emojify
+        emacs-engine-mode
+        emacs-eval-expr
+        emacs-exec-path-from-shell
+        emacs-expand-region
+        emacs-find-file-in-project
+        emacs-flx
+        emacs-flycheck
+        emacs-flycheck-clj-kondo
+        emacs-flycheck-elsa
+        emacs-flycheck-flow
+        emacs-flymd
+        emacs-forge
+        emacs-geiser
+        emacs-geiser-guile
+        emacs-gif-screencast
+        emacs-github-browse-file
+        emacs-gnuplot
+        emacs-go-mode
+        emacs-graphql
+        emacs-graphql-mode
+        emacs-guess-language
+        emacs-guix
+        emacs-haskell-mode
+        emacs-htmlize
+        emacs-hy-mode
+        emacs-ido-vertical-mode
+        emacs-inflections
+        emacs-jiralib2
+        emacs-js2-refactor
+        emacs-json-process-client
+        emacs-kotlin-mode
+        emacs-language-detection
+        emacs-lsp-docker
+        emacs-lsp-metals
+        emacs-lsp-mode
+        emacs-lsp-treemacs
+        emacs-lsp-ui
+        emacs-macrostep
+        emacs-magit
+        emacs-marginalia
+        emacs-markdown-mode
+        emacs-markdown-preview-eww
+        emacs-markdown-preview-mode
+        emacs-multi-term
+        emacs-multiple-cursors
+        emacs-native-comp
+        emacs-orderless
+        emacs-org
+        emacs-org-contrib
+        emacs-org-gcal
+        emacs-org-jira
+        emacs-org-present
+        emacs-org-reveal
+        emacs-org-tree-slide
+        emacs-ox-jira
+        emacs-ox-pandoc
+        emacs-pandoc-mode
+        emacs-paredit
+        emacs-parsec
+        emacs-pass
+        emacs-plantuml-mode
+        emacs-popwin
+        emacs-posframe
+        emacs-projectile
+        emacs-rainbow-mode
+        emacs-redshank
+        emacs-refactor
+        emacs-request-deferred
+        emacs-sbt-mode
+        emacs-scala-mode
+        emacs-scss-mode
+        emacs-selectrum
+        emacs-slime
+        emacs-slime-company
+        emacs-smex
+        emacs-smooth-scrolling
+        emacs-stumpwm-mode
+        emacs-terraform-mode
+        emacs-timesheet
+        emacs-treemacs
+        emacs-undo-tree
+        emacs-use-package
+        emacs-vertico
+        emacs-virtualenvwrapper
+        emacs-vterm
+        emacs-web-mode
+        emacs-which-key
+        emacs-yaml-mode
+        emacs-yasnippet
+        emacs-yasnippet-snippets
+        font-dejavu
+        font-gnu-freefont
+        font-google-roboto
+        font-inconsolata
+        font-terminus
+        fontconfig
+        gcc-toolchain
+        gdal
+        gfortran-toolchain
+        gimp
+        git
+        git-crypt
+        glibc-locales
+        gnu-make
+        gnuplot
+        guile-3.0
+        guile-git
+        help2man
+        inkscape
+        isync
+        lapack
+        libatasmart
+        libffi
+        libvterm
+        mu
+        nss-certs
+        openblas
+        openblas-ilp64
+        plantuml
+        python
+        python-cython
+        python-lsp-server
+        python-numpy
+        python-pip
+        rofi
+        sbcl
+        sbcl-local-time
+        sbcl-slime-swank
+        sbcl-stumpwm-cpu
+        sbcl-stumpwm-disk
+        sbcl-stumpwm-globalwindows
+        sbcl-stumpwm-kbd-layouts
+        sbcl-stumpwm-mem
+        sbcl-stumpwm-net
+        sbcl-stumpwm-numpad-layouts
+        sbcl-stumpwm-pass
+        sbcl-stumpwm-screenshot
+        sbcl-stumpwm-stumptray
+        sbcl-stumpwm-swm-gaps
+        sbcl-stumpwm-ttf-fonts
+        sbcl-stumpwm-wifi
+        sbcl-stumpwm-winner-mode
+        shared-mime-info
+        sqitch
+        sqlite
+        strace
+        stumpish
+        stumpwm))
 
 ;; Emacs packages not yet available
 
@@ -19,187 +230,3 @@
 ;; soundklaus
 ;; tree-sitter
 ;; tree-sitter-langs
-
-(define packages
-  (cons* emacs-aio
-         emacs-avy-menu
-         emacs-cask
-         emacs-clj-refactor
-         emacs-clojure-mode-extra-font-locking
-         emacs-color-theme
-         emacs-eval-expr
-         emacs-flycheck-clj-kondo
-         emacs-flycheck-elsa
-         emacs-flymd
-         emacs-github-browse-file
-         emacs-guess-language
-         emacs-inflections
-         emacs-jiralib2
-         emacs-js2-refactor
-         emacs-json-process-client
-         emacs-language-detection
-         emacs-lsp-docker
-         emacs-lsp-metals
-         emacs-markdown-preview-eww
-         emacs-native-comp
-         emacs-org-gcal
-         emacs-ox-jira
-         emacs-popwin
-         emacs-request-deferred
-         emacs-scss-mode
-         emacs-smooth-scrolling
-         emacs-timesheet
-         emacs-virtualenvwrapper
-         (map (compose list specification->package+output)
-              (list "apache-arrow"
-                    "cl-stumpwm"
-                    "cmake"
-                    "emacs-aggressive-indent"
-                    "emacs-auto-dictionary-mode"
-                    "emacs-avy"
-                    "emacs-bluetooth"
-                    "emacs-cider"
-                    "emacs-company-box"
-                    "emacs-company-lsp"
-                    "emacs-company-quickhelp"
-                    "emacs-consult"
-                    "emacs-dap-mode"
-                    "emacs-dart-mode"
-                    "emacs-docker"
-                    "emacs-docker-compose-mode"
-                    "emacs-dockerfile-mode"
-                    "emacs-edit-indirect"
-                    "emacs-el-mock"
-                    "emacs-elfeed"
-                    "emacs-elisp-slime-nav"
-                    "emacs-elpy"
-                    "emacs-embark"
-                    "emacs-emms"
-                    "emacs-emojify"
-                    "emacs-engine-mode"
-                    "emacs-exec-path-from-shell"
-                    "emacs-expand-region"
-                    "emacs-find-file-in-project"
-                    "emacs-flx"
-                    "emacs-flycheck"
-                    "emacs-flycheck-flow"
-                    "emacs-forge"
-                    "emacs-geiser"
-                    "emacs-geiser-guile"
-                    "emacs-gif-screencast"
-                    "emacs-gnuplot"
-                    "emacs-go-mode"
-                    "emacs-graphql"
-                    "emacs-graphql-mode"
-                    "emacs-guix"
-                    "emacs-haskell-mode"
-                    "emacs-htmlize"
-                    "emacs-hy-mode"
-                    "emacs-ido-vertical-mode"
-                    "emacs-kotlin-mode"
-                    "emacs-lsp-mode"
-                    "emacs-lsp-treemacs"
-                    "emacs-lsp-ui"
-                    "emacs-macrostep"
-                    "emacs-magit"
-                    "emacs-marginalia"
-                    "emacs-markdown-mode"
-                    "emacs-markdown-preview-mode"
-                    "emacs-multi-term"
-                    "emacs-multiple-cursors"
-                    "emacs-orderless"
-                    "emacs-org"
-                    "emacs-org-contrib"
-                    "emacs-org-jira"
-                    "emacs-org-present"
-                    "emacs-org-reveal"
-                    "emacs-org-tree-slide"
-                    "emacs-ox-pandoc"
-                    "emacs-pandoc-mode"
-                    "emacs-paredit"
-                    "emacs-parsec"
-                    "emacs-pass"
-                    "emacs-plantuml-mode"
-                    "emacs-posframe"
-                    "emacs-projectile"
-                    "emacs-rainbow-mode"
-                    "emacs-redshank"
-                    "emacs-refactor"
-                    "emacs-sbt-mode"
-                    "emacs-scala-mode"
-                    "emacs-selectrum"
-                    "emacs-slime"
-                    "emacs-slime-company"
-                    "emacs-smex"
-                    "emacs-stumpwm-mode"
-                    "emacs-terraform-mode"
-                    "emacs-treemacs"
-                    "emacs-undo-tree"
-                    "emacs-use-package"
-                    "emacs-vertico"
-                    "emacs-vterm"
-                    "emacs-web-mode"
-                    "emacs-which-key"
-                    "emacs-yaml-mode"
-                    "emacs-yasnippet"
-                    "emacs-yasnippet-snippets"
-                    "font-dejavu"
-                    "font-gnu-freefont"
-                    "font-google-roboto"
-                    "font-inconsolata"
-                    "font-terminus"
-                    "fontconfig"
-                    "gcc-toolchain"
-                    "gdal"
-                    "gfortran-toolchain"
-                    "gimp"
-                    "git"
-                    "git-crypt"
-                    "glibc-locales"
-                    "gnuplot"
-                    "guile"
-                    "guile-git"
-                    "help2man"
-                    "inkscape"
-                    "isync"
-                    "lapack"
-                    "libatasmart"
-                    "libffi"
-                    "libvterm"
-                    "make"
-                    "mu"
-                    "nss-certs"
-                    "openblas"
-                    "openblas-ilp64"
-                    "plantuml"
-                    "python"
-                    "python-cython"
-                    "python-lsp-server"
-                    "python-numpy"
-                    "python-pip"
-                    "rofi"
-                    "sbcl"
-                    "sbcl-local-time"
-                    "sbcl-slime-swank"
-                    "sbcl-stumpwm-cpu"
-                    "sbcl-stumpwm-disk"
-                    "sbcl-stumpwm-globalwindows"
-                    "sbcl-stumpwm-kbd-layouts"
-                    "sbcl-stumpwm-mem"
-                    "sbcl-stumpwm-net"
-                    "sbcl-stumpwm-numpad-layouts"
-                    "sbcl-stumpwm-pass"
-                    "sbcl-stumpwm-screenshot"
-                    "sbcl-stumpwm-stumptray"
-                    "sbcl-stumpwm-swm-gaps"
-                    "sbcl-stumpwm-ttf-fonts"
-                    "sbcl-stumpwm-wifi"
-                    "sbcl-stumpwm-winner-mode"
-                    "shared-mime-info"
-                    "sqitch"
-                    "sqlite"
-                    "strace"
-                    "stumpish"
-                    "stumpwm"
-
-                    ))))
