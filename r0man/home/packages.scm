@@ -100,6 +100,7 @@
         emacs-language-detection
         emacs-lsp-dart
         emacs-lsp-docker
+        emacs-lsp-java
         emacs-lsp-metals
         emacs-lsp-mode
         emacs-lsp-treemacs
@@ -154,6 +155,7 @@
         emacs-vterm
         emacs-web-mode
         emacs-which-key
+        emacs-x509-mode
         emacs-yaml-mode
         emacs-yasnippet
         emacs-yasnippet-snippets
