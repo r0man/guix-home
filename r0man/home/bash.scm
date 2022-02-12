@@ -22,5 +22,6 @@
     (bash-logout
      (list (local-file "bash/.bash_logout" "bash_logout")))
     (environment-variables
-     '(("EDITOR" . "emacsclient")
-       ("VISUAL" . "emacsclient"))))))
+     '(("HISTCONTROL" . "ignoredups")
+       ("HISTFILESIZE" . "10000")
+       ("HISTSIZE" . "10000"))))))

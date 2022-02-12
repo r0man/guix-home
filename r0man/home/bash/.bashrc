@@ -16,10 +16,6 @@ PS1='[\u@\h \W]\$ '
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
 # BASH
-export HISTCONTROL="ignoredups"
-export HISTSIZE=10000
-export HISTFILESIZE=10000
-
 shopt -s histappend
 PROMPT_COMMAND="history -a"
 
