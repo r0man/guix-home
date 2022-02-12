@@ -6,10 +6,10 @@
   #:use-module (guix gexp)
   #:export (home-shepherd-service))
 
-(define emacs-daemon-service
+(define emacs-service
   (shepherd-service
-   (documentation "Emacs Daemon")
-   (provision '(emacs-daemon))
+   (documentation "Emacs")
+   (provision '(emacs))
    (start #~(make-forkexec-constructor
              (list #$(file-append emacs-native-comp "/bin/emacs")
                    "--fg-daemon")
@@ -24,4 +24,4 @@
   (service
    home-shepherd-service-type
    (home-shepherd-configuration
-    (services (list emacs-daemon-service)))))
+    (services (list emacs-service)))))
