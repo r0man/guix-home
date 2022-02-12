@@ -65,7 +65,6 @@
         emacs-elpy
         emacs-embark
         emacs-emms
-        emacs-emojify
         emacs-engine-mode
         emacs-eval-expr
         emacs-exec-path-from-shell
