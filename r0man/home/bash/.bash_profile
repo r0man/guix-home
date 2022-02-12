@@ -18,10 +18,6 @@ if [ -e ~/.dotfiles/dircolors.ansi-$SOLARIZED ]; then
     eval `dircolors ~/.dotfiles/dircolors.ansi-$SOLARIZED`
 fi
 
-# CASK
-
-export PATH="$HOME/.cask/bin:$PATH"
-
 # CONFLUENT PLATFORM
 
 export CONFLUENT_HOME="$HOME/local/confluent"
@@ -38,6 +34,16 @@ export PATH="$PATH:$HOME/local/flutter/bin"
 export GDK_SCALE=1.5
 export GDK_DPI_SCALE=1.5
 
+## NPM
+NPM_PACKAGES="${HOME}/.npm-packages"
+export PATH="$PATH:$NPM_PACKAGES/bin"
+
+## MAN
+
+# Preserve MANPATH if you already defined it somewhere in your config.
+# Otherwise, fall back to `manpath` so we can inherit from `/etc/manpath`.
+export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
+
 ## KAFKA
 
 KAFKA_HOME="$HOME/local/kafka"
@@ -50,10 +56,6 @@ fi
 
 # See: https://developers.google.com/identity/protocols/application-default-credentials
 #export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"
-
-# NODE
-
-export PATH="$HOME/.node_modules/bin:$PATH"
 
 ## NUBANK
 [ -r /home/roman/.nurc ] && source /home/roman/.nurc
@@ -83,8 +85,12 @@ export V8_HOME="/usr/bin"
 
 # PATH
 export PATH="$HOME/.cabal/bin:$PATH"
+export PATH="$HOME/.cask/bin:$PATH"
 export PATH="$HOME/.dotfiles/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.node_modules/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
+
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 
