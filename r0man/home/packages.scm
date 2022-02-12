@@ -113,6 +113,7 @@
         emacs-multi-term
         emacs-multiple-cursors
         emacs-native-comp
+        emacs-oauth2
         emacs-orderless
         emacs-org
         emacs-org-contrib
