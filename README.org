@@ -1,7 +1,7 @@
 * My Guix home
 
-[[https://github.com/r0man/guix-channel/actions/workflows/test.yml][https://github.com/r0man/guix-channel/actions/workflows/test.yml/badge.svg]]
-[[https://github.com/r0man/guix-channel/actions/workflows/build.yml][https://github.com/r0man/guix-channel/actions/workflows/build.yml/badge.svg]]
+[[https://github.com/r0man/guix-home/actions/workflows/test.yml][https://github.com/r0man/guix-home/actions/workflows/test.yml/badge.svg]]
+[[https://github.com/r0man/guix-home/actions/workflows/build.yml][https://github.com/r0man/guix-home/actions/workflows/build.yml/badge.svg]]
 
 #+begin_src shell
   guix home -L . reconfigure r0man/home/config.scm
