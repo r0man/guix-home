@@ -3,6 +3,8 @@
 [[https://github.com/r0man/guix-home/actions/workflows/test.yml][https://github.com/r0man/guix-home/actions/workflows/test.yml/badge.svg]]
 [[https://github.com/r0man/guix-home/actions/workflows/build.yml][https://github.com/r0man/guix-home/actions/workflows/build.yml/badge.svg]]
 
+[[https://guix.gnu.org/static/blog/img/test-pilot.png]]
+
 #+begin_src shell
   guix home -L . reconfigure r0man/home/config.scm
 #+end_src
