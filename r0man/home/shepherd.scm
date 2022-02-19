@@ -4,7 +4,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:export (home-shepherd-service))
+  #:export (home-shepherd-services))
 
 (define emacs-service
   (shepherd-service
@@ -20,8 +20,8 @@
 			 "/emacs.log")))
    (stop #~(make-kill-destructor))))
 
-(define home-shepherd-service
-  (service
-   home-shepherd-service-type
-   (home-shepherd-configuration
-    (services (list emacs-service)))))
+(define home-shepherd-services
+  (list (service
+         home-shepherd-service-type
+         (home-shepherd-configuration
+          (services (list emacs-service))))))

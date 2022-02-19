@@ -6,13 +6,16 @@
   #:use-module (r0man home environment)
   #:use-module (r0man home mcron)
   #:use-module (r0man home packages)
-  #:use-module (r0man home shepherd))
+  #:use-module (r0man home shepherd)
+  #:use-module (r0man home stumpwm))
 
 (define services
-  (list home-environment-variables-service
-        home-bash-service
-        home-mcron-service
-        home-shepherd-service))
+  (append
+   home-bash-services
+   home-environment-variables-services
+   home-mcron-services
+   home-shepherd-services
+   home-stumpwm-services))
 
 (home-environment
  (packages packages)
