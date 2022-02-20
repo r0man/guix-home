@@ -38,6 +38,7 @@
   (list apache-arrow
         cmake
         font-dejavu
+        font-fira-code
         font-gnu-freefont
         font-google-roboto
         font-inconsolata
