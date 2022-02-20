@@ -53,5 +53,7 @@ jobs:
       #     sudo guix archive --authorize < bordeaux.guix.gnu.org.pub
       #     sudo guix archive --authorize < ci.guix.gnu.org.pub
       #     sudo guix archive --authorize < substitutes.nonguix.org.pub
+      - name: Guix channels
+        run: cp channels.scm ~/.config/guix/channels.scm
       - name: Guix home reconfigure
         run: guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/home/config.scm
