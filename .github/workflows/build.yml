@@ -48,13 +48,6 @@ jobs:
                       (openpgp-fingerprint
                        "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
                    %default-channels)
-      # - name: Authorize substitute servers
-      #   run: |
-      #     sudo guix archive --authorize < bordeaux.guix.gnu.org.pub
-      #     sudo guix archive --authorize < ci.guix.gnu.org.pub
-      #     sudo guix archive --authorize < substitutes.nonguix.org.pub
-      - name: Guix show channels
-        run: cat ~/.config/guix/channels.scm
       - name: Guix channels
         run: cp channels.scm ~/.config/guix/channels.scm
       - name: Replace native Emacs
