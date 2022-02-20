@@ -39,7 +39,6 @@
 
 (define packages
   (list apache-arrow
-        cl-stumpwm
         cmake
         emacs-aggressive-indent
         emacs-aio
@@ -206,23 +205,6 @@
         python-numpy
         python-pip
         rofi
-        sbcl
-        sbcl-local-time
-        sbcl-slime-swank
-        sbcl-stumpwm-cpu
-        sbcl-stumpwm-disk
-        sbcl-stumpwm-globalwindows
-        sbcl-stumpwm-kbd-layouts
-        sbcl-stumpwm-mem
-        sbcl-stumpwm-net
-        sbcl-stumpwm-numpad-layouts
-        sbcl-stumpwm-pass
-        sbcl-stumpwm-screenshot
-        sbcl-stumpwm-stumptray
-        sbcl-stumpwm-swm-gaps
-        sbcl-stumpwm-ttf-fonts
-        sbcl-stumpwm-wifi
-        sbcl-stumpwm-winner-mode
         shared-mime-info
         sqitch
         sqlite
