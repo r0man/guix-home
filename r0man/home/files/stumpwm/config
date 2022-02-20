@@ -1,4 +1,14 @@
 ;; -*- lisp -*-
+(require :battery-portable)
+(require :cpu)
+(require :globalwindows)
+(require :mem)
+(require :net)
+(require :pass)
+(require :screenshot)
+(require :stumpwm)
+(require :wifi)
+
 (in-package :stumpwm)
 
 ;; Interesting StumpWM configs on the web:
@@ -10,18 +20,6 @@
 
 ;; Don't show startup message.
 (setf *startup-message* nil)
-
-;; Modules
-
-(set-module-dir (pathname-as-directory (concat (getenv "HOME") "/workspace/stumpwm-contrib")))
-
-(load-module "battery-portable")
-(load-module "cpu")
-(load-module "globalwindows")
-(load-module "mem")
-(load-module "pass")
-(load-module "screenshot")
-(load-module "wifi")
 
 ;; Colors
 
@@ -173,7 +171,7 @@
     (format nil "gselect ~d" group)))
 
 ;; Set background image. TODO: Used to work with .xprofile, but it stopped working :/
-(run-shell-command "feh --bg-scale ~/.dotfiles/wallpapers/stop-customizing-start-working.jpg")
+;; (run-shell-command "feh --bg-scale ~/.dotfiles/wallpapers/stop-customizing-start-working.jpg")
 
 ;; Start programs last
 
