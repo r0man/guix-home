@@ -50,8 +50,8 @@ jobs:
                    %default-channels)
       - name: Authorize substitute servers
         run: |
-          sudo guix archive --authorize < bordeaux.guix.gnu.org.pub
-          sudo guix archive --authorize < ci.guix.gnu.org.pub
-          sudo guix archive --authorize < substitutes.nonguix.org.pub
+          sudo guix archive --authorize < keys/bordeaux.guix.gnu.org.pub
+          sudo guix archive --authorize < keys/ci.guix.gnu.org.pub
+          sudo guix archive --authorize < keys/substitutes.nonguix.org.pub
       - name: Guix home reconfigure
         run: sudo guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/home/config.scm
