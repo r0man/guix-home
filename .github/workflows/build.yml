@@ -57,5 +57,7 @@ jobs:
         run: cat ~/.config/guix/channels.scm
       - name: Guix channels
         run: cp channels.scm ~/.config/guix/channels.scm
+      - name: Replace native Emacs
+        run: find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/emacs-native-comp/emacs/g'
       - name: Guix home reconfigure
         run: guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/home/config.scm
