@@ -116,7 +116,6 @@
         emacs-scala-mode
         emacs-scss-mode
         emacs-selectrum
-        emacs-slack
         emacs-slime
         emacs-slime-company
         emacs-smex
