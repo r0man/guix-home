@@ -96,6 +96,7 @@
         emacs-org-present
         emacs-org-reveal
         emacs-org-tree-slide
+        emacs-ox-gfm
         emacs-ox-jira
         emacs-ox-pandoc
         emacs-paimon
