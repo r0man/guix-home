@@ -20,6 +20,7 @@
         emacs-cider
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
+        emacs-closql
         emacs-color-theme
         emacs-company-box
         emacs-company-lsp
@@ -36,6 +37,8 @@
         emacs-elfeed
         emacs-elisp-slime-nav
         emacs-elpy
+        emacs-emacsql
+        emacs-emacsql-sqlite3
         emacs-embark
         emacs-emms
         emacs-engine-mode
