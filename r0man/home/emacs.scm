@@ -38,7 +38,8 @@
         emacs-elisp-slime-nav
         emacs-elpy
         emacs-emacsql
-        emacs-emacsql-sqlite3
+        emacs-emacsql-libsqlite3
+        emacs-emacsql-sqlite
         emacs-embark
         emacs-emms
         emacs-engine-mode
@@ -123,6 +124,7 @@
         emacs-slime-company
         emacs-smex
         emacs-smooth-scrolling
+        emacs-sqlite3-api
         emacs-stumpwm-mode
         emacs-terraform-mode
         emacs-timesheet
