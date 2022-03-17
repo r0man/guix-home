@@ -33,6 +33,7 @@
         emacs-dockerfile-mode
         emacs-docopt
         emacs-edit-indirect
+        emacs-eglot
         emacs-el-mock
         emacs-elfeed
         emacs-elisp-slime-nav
