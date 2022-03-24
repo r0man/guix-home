@@ -5,7 +5,7 @@
   #:export (home-mcron-services))
 
 (define guix-garbage-collect
-  #~(job "0 12 * * *" "guix gc --delete-generations=1m --free-space=10G"))
+  #~(job "0 12 * * *" "guix gc --delete-generations=1m"))
 
 (define home-mcron-services
   (list (service
