@@ -16,6 +16,7 @@
         emacs-avy
         emacs-avy-menu
         emacs-bluetooth
+        emacs-buttercup
         emacs-cask
         emacs-cider
         emacs-clj-refactor
