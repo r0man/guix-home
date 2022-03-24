@@ -4,13 +4,19 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (guix packages)
   #:use-module (r0man packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
+(define emacs-version
+  "28.0.50-169.c97716e")
+
 (define packages
-  (list emacs-aggressive-indent
+  (list (package (inherit emacs-native-comp) (version emacs-version))
+        emacs-aggressive-indent
         emacs-aio
         emacs-auto-dictionary-mode
         emacs-avy
@@ -82,7 +88,7 @@
         emacs-lsp-docker
         emacs-lsp-java
         emacs-lsp-metals
-        emacs-lsp-mode
+        ;; emacs-lsp-mode
         emacs-lsp-treemacs
         emacs-lsp-ui
         emacs-macrostep
@@ -93,7 +99,6 @@
         emacs-markdown-preview-mode
         emacs-multi-term
         emacs-multiple-cursors
-        emacs-native-comp
         emacs-oauth2
         emacs-orderless
         emacs-org
