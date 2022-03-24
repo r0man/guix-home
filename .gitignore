@@ -1,1 +1,3 @@
 *.fasl
+.lsp
+.clj-kondo

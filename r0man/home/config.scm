@@ -3,6 +3,7 @@
   #:use-module (gnu home)
   #:use-module (gnu services)
   #:use-module (r0man home bash)
+  #:use-module (r0man home clojure)
   #:use-module (r0man home emacs)
   #:use-module (r0man home environment)
   #:use-module (r0man home mcron)
@@ -13,6 +14,7 @@
 (define services
   (append
    home-bash-services
+   home-clojure-services
    home-emacs-services
    home-environment-variables-services
    home-mcron-services
