@@ -9,7 +9,8 @@
   #:use-module (r0man home mcron)
   #:use-module (r0man home packages)
   #:use-module (r0man home shepherd)
-  #:use-module (r0man home stumpwm))
+  #:use-module (r0man home stumpwm)
+  #:use-module (r0man home xdg))
 
 (define services
   (append
@@ -19,7 +20,8 @@
    home-environment-variables-services
    home-mcron-services
    home-shepherd-services
-   home-stumpwm-services))
+   home-stumpwm-services
+   home-xdg-services))
 
 (home-environment
  (packages packages)
