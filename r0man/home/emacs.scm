@@ -12,7 +12,7 @@
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define emacs-version
-  "28.0.50-169.c97716e")
+  "28.0.92-198.62e830c")
 
 (define packages
   (list (package (inherit emacs-native-comp) (version emacs-version))
