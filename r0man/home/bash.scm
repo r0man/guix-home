@@ -20,9 +20,4 @@
           (bash-profile
            (list (local-file "files/bash/.bash_profile" "bash_profile")))
           (bash-logout
-           (list (local-file "files/bash/.bash_logout" "bash_logout")))
-          (environment-variables
-           '(("HISTCONTROL" . "ignoredups")
-             ("HISTFILESIZE" . "10000")
-             ("HISTSIZE" . "10000")
-             ("PROMPT_COMMAND" . "'history -a'")))))))
+           (list (local-file "files/bash/.bash_logout" "bash_logout")))))))
