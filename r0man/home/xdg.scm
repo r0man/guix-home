@@ -4,23 +4,19 @@
   #:use-module (guix gexp)
   #:use-module (guix modules))
 
-(define desktop-entry-emacs-client
-  (xdg-desktop-entry
-   (file "emacs-client")
-   (name "Emacs Client")
-   (type 'application)
-   (config '((exec . "emacsclient --create-frame --alternate-editor=-emacs %u")))))
-
-(define desktop-entries
-  (list desktop-entry-emacs-client))
+;; See: https://hg.sr.ht/~yoctocell/guixrc/browse/yoctocell/home/xdg.scm?rev=tip
 
 (define xdg-mime-applications-service
   (service home-xdg-mime-applications-service-type
            (home-xdg-mime-applications-configuration
-            (default '((inode/directory . emacs-client)
-                       (text/plain . emacs-client)
-                       (x-scheme-handler/soundklaus emacs-client)))
-            (desktop-entries desktop-entries))))
+            (default '((application/pdf . org.gnome.Evince.desktop)
+                       (application/x-zoom . Zoom.desktop)
+                       (inode/directory . emacsclient.desktop)
+                       (text/plain . emacsclient.desktop)
+                       (x-scheme-handler/http . firefox.desktop)
+                       (x-scheme-handler/https . firefox.desktop)
+                       (x-scheme-handler/soundklaus emacsclient.desktop)
+                       (x-scheme-handler/zoommtg . Zoom.desktop))))))
 
 (define-public home-xdg-services
   (list xdg-mime-applications-service))
