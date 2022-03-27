@@ -93,6 +93,3 @@ export PATH="$HOME/bin:$PATH"
 
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
-
-# opam configuration
-test -r /home/roman/.opam/opam-init/init.sh && . /home/roman/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
