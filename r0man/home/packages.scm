@@ -79,6 +79,7 @@
         python-numpy
         python-pip
         rofi
+        sed
         shared-mime-info
         sqitch
         sqlite
