@@ -8,7 +8,6 @@
          'home-environment-variables-service
          home-environment-variables-service-type
          `(("EDITOR" . "emacsclient")
-           ("GUILE_LOAD_PATH" . "$HOME/.config/guix/current/share/guile/site/3.0:$GUILE_LOAD_PATH") ;; Fix: no code for module (guix i18n) in on-first-login :/
            ("HISTCONTROL" . "ignoredups")
            ("HISTFILESIZE" . "10000")
            ("HISTSIZE" . "10000")
