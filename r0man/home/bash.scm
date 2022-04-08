@@ -16,8 +16,8 @@
              ("la" . "ls -lha")
              ("ll" . "ls -lh")))
           (bashrc
-           (list (local-file "files/bash/.bashrc" "bashrc")))
+           (list (local-file "files/bashrc" "bashrc")))
           (bash-profile
-           (list (local-file "files/bash/.bash_profile" "bash_profile")))
+           (list (local-file "files/bash_profile" "bash_profile")))
           (bash-logout
-           (list (local-file "files/bash/.bash_logout" "bash_logout")))))))
+           (list (local-file "files/bash_logout" "bash_logout")))))))

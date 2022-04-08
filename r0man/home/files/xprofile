@@ -41,9 +41,6 @@ xsetroot -cursor_name left_ptr
 # Keyboard
 ~/.dotfiles/bin/setup-keyboard
 
-# Load xmodmap
-[ -f ~/.xmodmaprc ] && xmodmap ~/.xmodmaprc
-
 # Start Music Player Daemon.
 mpd &
 
@@ -60,4 +57,4 @@ xscreensaver -no-splash &
 xbindkeys
 
 # Set wallpaper
-feh --bg-scale ~/.dotfiles/wallpapers/stop-customizing-start-working.jpg
+feh --bg-scale ~/.local/share/wallpapers/stop-customizing-start-working.jpg
