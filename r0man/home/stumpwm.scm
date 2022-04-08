@@ -12,6 +12,7 @@
   `(("config/stumpwm/commands.lisp" ,(local-file "files/stumpwm/commands.lisp"))
     ("config/stumpwm/config" ,(local-file "files/stumpwm/config"))
     ("config/stumpwm/polybar.lisp" ,(local-file "files/stumpwm/polybar.lisp"))
+    ("config/stumpwm/start" ,(local-file "files/stumpwm/start"))
     ("config/stumpwm/time.lisp" ,(local-file "files/stumpwm/time.lisp"))))
 
 (define packages
