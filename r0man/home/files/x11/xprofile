@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# ~/.xprofile
+#
+
+# Load X Resources
+[ -f ~/.Xresources ] && xrdb -all -load ~/.Xresources
+
+# Load host specific X Resources
+XRESOURCES_HOST=~/.Xresources.$(hostname)
+[ -f $XRESOURCES_HOST ] && xrdb -merge $XRESOURCES_HOST
+
+# Optimus Manager
+/usr/bin/prime-offload
+
+# # Setup provider output source
+# xrandr --setprovideroutputsource modesetting NVIDIA-0
+# xrandr --auto
+
+# Setup external monitor.
+~/.dotfiles/bin/external-monitor
+
+# # Set color profile
+
+# export COLOR_PROFILE="$HOME/.color-profiles/color-lcd-46fa2088-5175-1712-04a4-8183272cf248.icc"
+
+# if [ -f $COLOR_PROFILE ]; then
+#     xcalib $COLOR_PROFILE
+#     echo "Loaded color profile."
+# fi
+
+# Start picom, a compositor for X11.
+picom &
+
+# Dunst
+killall dunst; dunst &
+
+# Use a better mouse pointer
+xsetroot -cursor_name left_ptr
+
+# Keyboard
+~/.dotfiles/bin/setup-keyboard
+
+# Load xmodmap
+[ -f ~/.xmodmaprc ] && xmodmap ~/.xmodmaprc
+
+# Start Music Player Daemon.
+mpd &
+
+# Start Redshift
+systemctl --user start redshift
+
+# Hide mouse cursor when idle.
+unclutter -idle 5 -noevents &
+
+# Start the screensaver
+xscreensaver -no-splash &
+
+# Start xbindkeys - a grabbing keys program for X.
+xbindkeys
+
+# Set wallpaper
+feh --bg-scale ~/.dotfiles/wallpapers/stop-customizing-start-working.jpg

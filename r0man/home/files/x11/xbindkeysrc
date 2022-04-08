@@ -1,0 +1,97 @@
+# Increase volume
+"pulseaudio-ctl up"
+    m:0x0 + c:123
+    XF86AudioRaiseVolume
+
+# Decrease volume
+"pulseaudio-ctl down"
+    m:0x0 + c:122
+    XF86AudioLowerVolume
+
+# Toggle mute
+"pulseaudio-ctl mute"
+    m:0x0 + c:121
+    XF86AudioMute
+
+# Increase backlight
+"light -A 10"
+   XF86MonBrightnessUp
+
+# Decrease backlight
+"light -U 10"
+   XF86MonBrightnessDown
+
+## MOUSE MOVEMENT // EMACS STYLE
+
+### Move mouse up (Super + p)
+"xdotool mousemove_relative --sync -- 0 -100"
+Mod2 + Mod4 + p
+
+"xdotool mousemove_relative --sync -- 0 -25"
+Mod2 + Mod4 + Shift + p
+
+### Move mouse down (Super + n)
+"xdotool mousemove_relative --sync -- 0 100"
+Mod2 + Mod4 + n
+
+"xdotool mousemove_relative --sync -- 0 25"
+Mod2 + Mod4 + Shift + n
+
+### Move mouse left (Super + b)
+"xdotool mousemove_relative --sync -- -100 0"
+Mod2 + Mod4 + b
+
+"xdotool mousemove_relative --sync -- -25 0"
+Mod2 + Mod4 + Shift + b
+
+### Move mouse right (Super + f)
+"xdotool mousemove_relative --sync -- 100 0"
+Mod2 + Mod4 + f
+
+"xdotool mousemove_relative --sync -- 25 0"
+Mod2 + Mod4 + Shift + f
+
+## MOUSE MOVEMENT // VIM STYLE
+
+### Move mouse up (Super + k)
+"xdotool mousemove_relative --sync -- 0 -100"
+Mod2 + Mod4 + k
+
+"xdotool mousemove_relative --sync -- 0 -25"
+Mod2 + Mod4 + Shift + k
+
+### Move mouse down (Super + j)
+"xdotool mousemove_relative --sync -- 0 100"
+Mod2 + Mod4 + j
+
+"xdotool mousemove_relative --sync -- 0 25"
+Mod2 + Mod4 + Shift + j
+
+### Move mouse left (Super + h)
+"xdotool mousemove_relative --sync -- -100 0"
+Mod2 + Mod4 + h
+
+"xdotool mousemove_relative --sync -- -25 0"
+Mod2 + Mod4 + Shift + h
+
+### Move mouse right (Super + l)
+"xdotool mousemove_relative --sync -- 100 0"
+Mod2 + Mod4 + l
+
+"xdotool mousemove_relative --sync -- 25 0"
+Mod2 + Mod4 + Shift + l
+
+## MOUSE CLICKS
+
+### Left click (Super + Return)
+"xdotool click 1"
+Mod2 + Mod4 + Return
+
+# TODO: Does not work with databricks CTRL-ENTER
+### Middle click (Super + Control + Return)
+# "xdotool click 2"
+# Mod2 + Control + Return
+
+### Right click (Super + Shift + Return)
+"xdotool click 3"
+Mod2 + Mod4 + Shift + Return
