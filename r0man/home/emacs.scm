@@ -11,12 +11,9 @@
   #:use-module (r0man packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
-(define emacs-version
-  "28.0.92-198.62e830c")
-
 (define packages
-  (list (package (inherit emacs-native-comp) (version emacs-version))
-        emacs-aggressive-indent
+  (list emacs-aggressive-indent
+        ;; emacs-lsp-mode
         emacs-aio
         emacs-auto-dictionary-mode
         emacs-avy
@@ -88,7 +85,6 @@
         emacs-lsp-docker
         emacs-lsp-java
         emacs-lsp-metals
-        ;; emacs-lsp-mode
         emacs-lsp-treemacs
         emacs-lsp-ui
         emacs-macrostep
@@ -99,6 +95,7 @@
         emacs-markdown-preview-mode
         emacs-multi-term
         emacs-multiple-cursors
+        emacs-native-comp
         emacs-oauth2
         emacs-orderless
         emacs-org
