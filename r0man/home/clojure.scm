@@ -14,7 +14,7 @@
 ;; Clojure LSP
 
 (define clojure-lsp-files
-  `(("config/clojure-lsp/config.edn" ,(local-file "files/clojure-lsp.edn"))))
+  `((".config/clojure-lsp/config.edn" ,(local-file "files/clojure-lsp.edn"))))
 
 (define home-clojure-lsp-service
   (simple-service 'clojure-lsp-service home-files-service-type clojure-lsp-files))
