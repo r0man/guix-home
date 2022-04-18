@@ -14,13 +14,13 @@
   #:export (home-x11-services))
 
 (define files
-  `(("Xresources" ,(local-file "files/Xresources"))
-    ("Xresources.bombaclaat" ,(local-file "files/Xresources.bombaclaat"))
-    ("config/dunst/dunstrc" ,(local-file "files/dunstrc"))
-    ("local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
-    ("xbindkeysrc" ,(local-file "files/xbindkeysrc"))
-    ("xinitrc" ,(local-file "files/xinitrc"))
-    ("xprofile" ,(local-file "files/xprofile"))))
+  `((".Xresources" ,(local-file "files/Xresources"))
+    (".Xresources.bombaclaat" ,(local-file "files/Xresources.bombaclaat"))
+    (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
+    (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
+    (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
+    (".xinitrc" ,(local-file "files/xinitrc"))
+    (".xprofile" ,(local-file "files/xprofile"))))
 
 (define packages
   (list dunst
