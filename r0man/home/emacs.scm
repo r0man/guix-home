@@ -30,6 +30,7 @@
         emacs-company-lsp
         emacs-company-quickhelp
         emacs-consult
+        emacs-corfu
         emacs-dap-mode
         emacs-dart-mode
         emacs-docker
