@@ -88,6 +88,7 @@
         emacs-lsp-metals
         emacs-lsp-treemacs
         emacs-lsp-ui
+        emacs-logview
         emacs-macrostep
         emacs-magit
         emacs-marginalia
