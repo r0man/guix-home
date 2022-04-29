@@ -106,6 +106,7 @@
         emacs-org-jira
         emacs-org-present
         emacs-org-reveal
+        emacs-org-roam
         emacs-org-tree-slide
         emacs-ox-gfm
         emacs-ox-jira
