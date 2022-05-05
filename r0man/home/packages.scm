@@ -4,6 +4,7 @@
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages fontutils)
