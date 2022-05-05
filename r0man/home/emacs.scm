@@ -42,6 +42,7 @@
         emacs-el-mock
         emacs-elfeed
         emacs-elisp-slime-nav
+        emacs-elixir-mode
         emacs-elpy
         emacs-emacsql
         emacs-emacsql-libsqlite3

@@ -49,6 +49,7 @@
         gfortran-toolchain
         gimp
         git
+        elixir
         git-crypt
         glibc-locales
         gnu-make
