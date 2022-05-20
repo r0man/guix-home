@@ -83,13 +83,13 @@
         emacs-kotlin-mode
         emacs-kubel
         emacs-language-detection
+        emacs-logview
         emacs-lsp-dart
         emacs-lsp-docker
         emacs-lsp-java
         emacs-lsp-metals
         emacs-lsp-treemacs
         emacs-lsp-ui
-        emacs-logview
         emacs-macrostep
         emacs-magit
         emacs-marginalia
@@ -97,6 +97,7 @@
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
         emacs-multi-term
+        emacs-multi-vterm
         emacs-multiple-cursors
         emacs-native-comp
         emacs-oauth2
