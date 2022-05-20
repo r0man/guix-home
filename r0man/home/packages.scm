@@ -92,5 +92,6 @@
         sqitch
         sqlite
         strace
+        xrandr
         xrdb
         xscreensaver))
