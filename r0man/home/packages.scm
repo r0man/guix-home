@@ -80,9 +80,12 @@
         python-lsp-server
         python-numpy
         python-pip
+        redshift
         rofi
         sed
         shared-mime-info
         sqitch
         sqlite
-        strace))
+        strace
+        xrdb
+        xscreensaver))
