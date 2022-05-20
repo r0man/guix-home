@@ -40,6 +40,7 @@
 
 (define packages
   (list apache-arrow
+        arandr
         cmake
         font-dejavu
         font-fira-code
