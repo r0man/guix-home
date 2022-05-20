@@ -6,11 +6,13 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages geo)
   #:use-module (gnu packages gimp)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages guile)
@@ -42,7 +44,10 @@
         font-dejavu
         font-fira-code
         font-gnu-freefont
+        dbus
+        elixir
         font-google-roboto
+        font-hack
         font-inconsolata
         font-terminus
         fontconfig
@@ -51,7 +56,6 @@
         gfortran-toolchain
         gimp
         git
-        elixir
         git-crypt
         glibc-locales
         gnu-make
