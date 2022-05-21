@@ -40,8 +40,7 @@
   #:export (packages))
 
 (define packages
-  (list apache-arrow
-        arandr
+  (list arandr
         cmake
         dbus
         elixir
