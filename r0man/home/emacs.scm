@@ -139,6 +139,7 @@
         emacs-terraform-mode
         emacs-timesheet
         emacs-treemacs
+        emacs-undercover
         emacs-undo-tree
         emacs-use-package
         emacs-vertico
