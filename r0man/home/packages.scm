@@ -17,6 +17,7 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages inkscape)
+  #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages lisp)
@@ -42,11 +43,11 @@
   (list apache-arrow
         arandr
         cmake
+        dbus
+        elixir
         font-dejavu
         font-fira-code
         font-gnu-freefont
-        dbus
-        elixir
         font-google-roboto
         font-hack
         font-inconsolata
@@ -79,6 +80,7 @@
         nss-certs
         openblas
         openblas-ilp64
+        openjdk11
         pkg-config
         plantuml
         python
