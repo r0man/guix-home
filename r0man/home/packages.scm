@@ -95,6 +95,7 @@
         sqitch
         sqlite
         strace
+        xdg-utils
         xrandr
         xrdb
         xscreensaver))
