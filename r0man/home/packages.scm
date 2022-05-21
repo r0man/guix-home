@@ -80,7 +80,6 @@
         nss-certs
         openblas
         openblas-ilp64
-        openjdk11
         pkg-config
         plantuml
         python
