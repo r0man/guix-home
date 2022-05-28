@@ -119,6 +119,7 @@
         emacs-parsec
         emacs-pass
         emacs-plantuml-mode
+        emacs-plz
         emacs-popwin
         emacs-posframe
         emacs-projectile
