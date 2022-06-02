@@ -65,6 +65,7 @@
         emacs-geiser
         emacs-geiser-guile
         emacs-gif-screencast
+        emacs-git-timemachine
         emacs-github-browse-file
         emacs-gnuplot
         emacs-go-mode
