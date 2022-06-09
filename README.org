@@ -5,6 +5,18 @@
 
 [[https://guix.gnu.org/static/blog/img/test-pilot.png]]
 
+** Installation
+
+Link the Guix channels.
+
+#+begin_src shell
+  ln -s ~/.config/guix/channels.scm r0man/home/channels.scm
+#+end_src
+
+** Usage
+
+Reconfigure the home environment.
+
 #+begin_src shell
   guix home -L . reconfigure r0man/home/config.scm
 #+end_src
