@@ -48,7 +48,5 @@ jobs:
                       (openpgp-fingerprint
                        "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
                    %default-channels)
-      - name: Replace native Emacs
-        run: find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/emacs-native-comp/emacs/g'
       - name: Guix home reconfigure
         run: guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/home/config.scm
