@@ -81,11 +81,6 @@
         openblas-ilp64
         pkg-config
         plantuml
-        python
-        python-cython
-        python-lsp-server
-        python-numpy
-        python-pip
         redshift
         rofi
         sed
