@@ -20,5 +20,5 @@
   (simple-service 'clojure-lsp-service home-files-service-type clojure-lsp-files))
 
 (define home-clojure-services
-  (list home-clojure-service
+  (list ;; home-clojure-service
         home-clojure-lsp-service))
