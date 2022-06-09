@@ -73,7 +73,7 @@
         emacs-graphql-mode
         emacs-guess-language
         emacs-guix
-        emacs-haskell-mode
+        ;; emacs-haskell-mode
         emacs-htmlize
         emacs-hy-mode
         emacs-ido-vertical-mode
