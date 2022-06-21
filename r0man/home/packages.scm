@@ -3,6 +3,7 @@
   #:use-module (gnu packages certs)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
@@ -13,6 +14,7 @@
   #:use-module (gnu packages geo)
   #:use-module (gnu packages gimp)
   #:use-module (gnu packages glib)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages guile)
@@ -62,6 +64,7 @@
         gnu-make
         gnuplot
         gnutls
+        graphviz
         guile-3.0
         guile-git
         guile-lzlib
@@ -91,4 +94,5 @@
         xdg-utils
         xrandr
         xrdb
-        xscreensaver))
+        xscreensaver
+        zip))
