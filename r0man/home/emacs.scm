@@ -33,6 +33,7 @@
         emacs-corfu
         emacs-dap-mode
         emacs-dart-mode
+        emacs-debbugs
         emacs-docker
         emacs-docker-compose-mode
         emacs-dockerfile-mode
