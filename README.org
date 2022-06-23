@@ -15,7 +15,7 @@ Reconfigure the home environment.
 
 ** Profiles
 
-Install the =emacs-native-comp= profile.
+Install or upgrade the =emacs-native-comp= profile.
 
 #+begin_src shell
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
