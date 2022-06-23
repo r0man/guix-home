@@ -25,6 +25,6 @@ Install profile according to the [[https://guix.gnu.org/cookbook/en/html_node/Ba
 
 #+begin_src shell
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-mkdir -p "$GUIX_EXTRA_PROFILES"/emacs
-guix package --manifest=$HOME/.config/guix/r0man/profile/emacs.scm --profile="$GUIX_EXTRA_PROFILES"/emacs/emacs
+mkdir -p "$GUIX_EXTRA_PROFILES"/r0man
+guix package --manifest=$HOME/.config/guix/r0man/profile/emacs.scm --profile="$GUIX_EXTRA_PROFILES"/r0man/emacs-native-comp
 #+end_src
