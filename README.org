@@ -13,7 +13,9 @@ Reconfigure the home environment.
   guix home -L . reconfigure r0man/home/config.scm
 #+end_src
 
-Install profile according to the [[https://guix.gnu.org/cookbook/en/html_node/Basic-setup-with-manifests.html][cookbook]].
+** Profiles
+
+Install the =emacs-native-comp= profile.
 
 #+begin_src shell
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
