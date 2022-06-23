@@ -5,7 +5,7 @@
 
 # Guix
 
-GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/emacs-native-comp"
+GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
 . "$GUIX_PROFILE/etc/profile"
 
 # Keychain

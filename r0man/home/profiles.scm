@@ -9,7 +9,7 @@
   #:export (home-profiles-services))
 
 (define files
-  `((".config/guix/r0man/profile/emacs.scm" ,(local-file "../profile/emacs.scm"))))
+  `((".config/guix/r0man/profiles/emacs-native-comp.scm" ,(local-file "../profiles/emacs-native-comp.scm"))))
 
 (define home-profiles-services
   (list (simple-service 'profiles-config home-files-service-type files)))

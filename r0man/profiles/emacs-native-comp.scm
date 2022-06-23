@@ -1,4 +1,4 @@
-(define-module (r0man profile emacs)
+(define-module (r0man profiles emacs-native-comp)
   #:use-module (flat packages emacs)
   #:use-module (gnu packages))
 
