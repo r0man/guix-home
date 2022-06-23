@@ -5,7 +5,4 @@
   #:export (home-shepherd-services))
 
 (define home-shepherd-services
-  (list (service
-         home-shepherd-service-type
-         (home-shepherd-configuration
-          (services (list emacs-shepherd-service))))))
+  (list))

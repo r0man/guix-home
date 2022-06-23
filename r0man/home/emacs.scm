@@ -155,19 +155,5 @@
         emacs-yasnippet
         emacs-yasnippet-snippets))
 
-(define emacs-shepherd-service
-  (shepherd-service
-   (documentation "Emacs")
-   (provision '(emacs))
-   (start #~(make-forkexec-constructor
-             (list #$(file-append emacs-native-comp "/bin/emacs")
-                   "--fg-daemon")
-             #:log-file (string-append
-			 (or (getenv "XDG_LOG_HOME")
-			     (format #f "~a/.local/var/log"
-				     (getenv "HOME")))
-			 "/emacs.log")))
-   (stop #~(make-kill-destructor))))
-
 (define home-emacs-services
   (list (simple-service 'emacs-packages home-profile-service-type packages)))
