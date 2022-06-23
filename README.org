@@ -7,10 +7,11 @@
 
 ** Installation
 
-Link the Guix channels.
+Configure the Guix channels.
 
 #+begin_src shell
-  ln -s ~/.config/guix/channels.scm r0man/home/channels.scm
+  mkdir -p ~/.config/guix/
+  ln -s r0man/home/channels.scm ~/.config/guix/channels.scm
 #+end_src
 
 ** Usage
@@ -23,7 +24,7 @@ Reconfigure the home environment.
 
 ** Profiles
 
-Install the =emacs-native-comp= profile.
+Install or upgrade the =emacs-native-comp= profile.
 
 #+begin_src shell
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
