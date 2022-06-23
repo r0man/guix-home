@@ -1,5 +1,4 @@
 (define-module (r0man home emacs)
-  #:use-module (flat packages emacs)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
@@ -101,7 +100,7 @@
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
-        emacs-native-comp
+        emacs
         emacs-oauth2
         emacs-orderless
         emacs-org
