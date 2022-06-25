@@ -18,6 +18,7 @@
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages guile)
+  #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
