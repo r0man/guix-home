@@ -67,6 +67,7 @@
         graphviz
         guile-3.0
         guile-git
+        guile-lib
         guile-lzlib
         guile-sqlite3
         guile-zlib
