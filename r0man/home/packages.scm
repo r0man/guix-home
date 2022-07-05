@@ -90,6 +90,7 @@
         plantuml
         redshift
         rofi
+        rxvt-unicode
         sed
         shared-mime-info
         sqitch
