@@ -66,6 +66,7 @@
         git-crypt
         glibc-locales
         gnu-make
+        gnupg
         gnuplot
         gnutls
         graphviz
