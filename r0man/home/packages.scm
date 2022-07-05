@@ -43,7 +43,8 @@
   #:export (packages))
 
 (define packages
-  (list arandr
+  (list (list openjdk11 "doc" "jdk")
+        arandr
         cmake
         dbus
         elixir
@@ -68,6 +69,7 @@
         graphviz
         guile-3.0
         guile-git
+        guile-json-1
         guile-lib
         guile-lzlib
         guile-sqlite3
