@@ -20,7 +20,8 @@
     (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
     (".xinitrc" ,(local-file "files/xinitrc"))
-    (".xprofile" ,(local-file "files/xprofile"))))
+    (".xprofile" ,(local-file "files/xprofile"))
+    (".xsession" ,(local-file "files/xsession"))))
 
 (define packages
   (list dunst
