@@ -14,9 +14,10 @@
   #:use-module (gnu packages geo)
   #:use-module (gnu packages gimp)
   #:use-module (gnu packages glib)
-  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages gnuzilla)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages inkscape)
@@ -28,6 +29,7 @@
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
@@ -75,6 +77,7 @@
         guile-sqlite3
         guile-zlib
         help2man
+        icecat
         inkscape
         isync
         lapack
@@ -87,6 +90,7 @@
         openblas
         openblas-ilp64
         pkg-config
+        password-store
         plantuml
         redshift
         rofi
