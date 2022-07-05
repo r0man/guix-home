@@ -43,7 +43,7 @@
   #:export (packages))
 
 (define packages
-  (list (list openjdk11 "doc" "jdk")
+  (list (list openjdk11 "jdk")
         arandr
         cmake
         dbus
