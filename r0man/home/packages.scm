@@ -34,6 +34,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages sqlite)
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages tls)
@@ -96,6 +97,7 @@
         password-store
         plantuml
         redshift
+        ripgrep
         rofi
         rxvt-unicode
         sed
