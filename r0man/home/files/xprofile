@@ -29,6 +29,15 @@ XRESOURCES_HOST=~/.Xresources.$(hostname)
 #     echo "Loaded color profile."
 # fi
 
+# Kill the X server with Ctrl+Alt+Backspace.
+setxkbmap -option "terminate:ctrl_alt_bksp"
+
+# Swap the left window and the left alt keys.
+setxkbmap -option altwin:swap_lalt_lwin
+
+# Make caps lock an additional control key.
+setxkbmap -option caps:ctrl_modifier
+
 # Start picom, a compositor for X11.
 picom &
 
