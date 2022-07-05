@@ -100,8 +100,8 @@
         emacs-markdown-preview-mode
         emacs-multi-term
         emacs-multi-vterm
-        emacs-multiple-cursors
         emacs
+        emacs-multiple-cursors
         emacs-oauth2
         emacs-orderless
         emacs-org
