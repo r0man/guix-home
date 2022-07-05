@@ -31,6 +31,7 @@
         unclutter
         xbindkeys
         xdotool
+        xdpyinfo
         xsetroot))
 
 (define home-x11-services
