@@ -29,6 +29,7 @@
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages package-management)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
@@ -50,6 +51,7 @@
         cmake
         dbus
         elixir
+        flatpak
         font-dejavu
         font-fira-code
         font-gnu-freefont
