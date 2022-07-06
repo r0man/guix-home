@@ -1,10 +1,13 @@
 (define-module (r0man home x11)
   #:use-module (gnu home services)
   #:use-module (gnu packages compton)
-  #:use-module (gnu packages linux)
   #:use-module (gnu packages dunst)
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages gnome)
   #:use-module (gnu packages image-viewers)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages mpd)
+  #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
@@ -16,6 +19,7 @@
 (define files
   `((".Xresources" ,(local-file "files/Xresources"))
     (".Xresources.bombaclaat" ,(local-file "files/Xresources.bombaclaat"))
+    (".Xresources.precision" ,(local-file "files/Xresources.precision"))
     (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
     (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
@@ -24,15 +28,22 @@
     (".xsession" ,(local-file "files/xsession"))))
 
 (define packages
-  (list dunst
+  (list arandr
+        autorandr
+        dunst
         feh
         light
         mpd
+        nautilus
         picom
         unclutter
         xbindkeys
+        xdg-utils
         xdotool
         xdpyinfo
+        xrandr
+        xrdb
+        xscreensaver
         xsetroot))
 
 (define home-x11-services
