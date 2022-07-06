@@ -67,3 +67,9 @@ xbindkeys
 
 # Set wallpaper
 feh --bg-scale ~/.local/share/wallpapers/stop-customizing-start-working.jpg
+
+# Start Emacs.
+emacs --fg-daemon &
+
+# Start web browser.
+icecat &
