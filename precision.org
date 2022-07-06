@@ -1,0 +1,83 @@
+* Dell Precision
+** Keyboard
+*** Console
+
+Keyboard configuration in =/etc/default/keyboard=.
+
+#+begin_example
+  # KEYBOARD CONFIGURATION FILE
+
+  # Consult the keyboard(5) manual page.
+
+  XKBMODEL="pc105"
+  XKBLAYOUT="us"
+  XKBVARIANT=""
+  XKBOPTIONS="altwin:swap_lalt_lwin,caps:ctrl_modifier,terminate:ctrl_alt_bksp"
+
+  BACKSPACE="guess"
+#+end_example
+
+#+begin_src shell
+  sudo apt-get install qiv
+#+end_src
+
+** Touchpad
+
+Configure touchpad in =/etc/X11/xorg.conf.d/30-touchpad.conf=.
+
+#+begin_example
+  Section "InputClass"
+    Identifier "touchpad"
+    Driver "libinput"
+    MatchIsTouchpad "on"
+    Option "Tapping" "on"
+    Option "ClickMethod" "clickfinger"
+  EndSection
+#+end_example
+
+** XDM
+*** Theming
+
+Install qiv.
+
+#+begin_src shell
+  sudo apt-get install qiv
+#+end_src
+
+Create a directory to put wallpapers in.
+
+#+begin_src shell
+  sudo mkdir /usr/local/share/backgrounds
+  sudo cp /home/roman/workspace/guix-home/r0man/home/files/wallpapers/guix-test-pilot.svg /usr/local/share/backgrounds
+#+end_src
+
+Configure background image in =/etc/X11/xdm/Xsetup=.
+
+#+begin_example
+qiv --random --root_s /usr/local/share/backgrounds/guix-test-pilot.svg
+#+end_example
+
+Font
+
+Edit /etc/X11/xdm/Xresources. Add/replace the following defines:
+
+xlogin*greetFont:  -adobe-helvetica-bold-o-normal--20------iso8859-1
+xlogin*font:       -adobe-helvetica-medium-r-normal--14------iso8859-1
+xlogin*promptFont: -adobe-helvetica-bold-r-normal--14------iso8859-1
+xlogin*failFont:   -adobe-helvetica-bold-r-normal--14------iso8859-1
+
+Login dialog positioning
+
+This configuration will move the login dialog to the bottom right of the screen.
+
+xlogin*frameWidth: 1
+xlogin*innerFramesWidth: 1
+xlogin*logoPadding: 0
+xlogin*geometry:    300x175-0-0
+
+Removing the logo
+
+Comment out the logo defines:
+
+#xlogin*logoFileName: /usr/share/xdm/pixmaps/xorg.xpm
+#xlogin*logoFileName: /usr/share/xdm/pixmaps/xorg-bw.xpm
