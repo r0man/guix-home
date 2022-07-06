@@ -42,6 +42,7 @@
         unclutter
         xbindkeys
         xclip
+        xdg-desktop-portal-gtk
         xdg-utils
         xdotool
         xdpyinfo
