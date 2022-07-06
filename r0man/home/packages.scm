@@ -35,6 +35,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages security-token)
   #:use-module (gnu packages sqlite)
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages tls)
@@ -97,6 +98,7 @@
         password-store
         pkg-config
         plantuml
+        python-yubikey-manager
         redshift
         ripgrep
         rofi
