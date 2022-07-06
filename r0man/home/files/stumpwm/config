@@ -118,7 +118,8 @@
 ;;   (0 t t :class "Emacs"))
 
 (define-frame-preference "Web"
-  (1 t t :class "Firefox"))
+  (1 t t :class "Firefox")
+  (1 t t :class "IceCat"))
 
 (define-frame-preference "Slack"
   (7 nil t :class "Slack"))
@@ -136,7 +137,7 @@
 ;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
-(define-key *root-map* (kbd "b") "firefox")
+(define-key *root-map* (kbd "b") "icecat")
 (define-key *root-map* (kbd "c") "terminal")
 (define-key *root-map* (kbd "e") "emacs-client")
 (define-key *root-map* (kbd "w") "rofi-window")
@@ -177,7 +178,7 @@
 
 (run-commands
  "gselect Web"
- "firefox"
+ "browser"
  "gselect Emacs"
  "htop"
  "gselect Logs"
@@ -246,7 +247,7 @@
            (stumpwm::float-window win (current-group)))))
 
 (define-remapped-keys
-    '(("(Firefox|Chromium)"
+    '(("(Firefox|IceCat|Chromium)"
        ("C-n"   . "Down")
        ("C-p"   . "Up")
        ;; ("C-f"   . "Right")

@@ -14,6 +14,14 @@
   "Run the firefox web browser."
   (run-shell-command "firefox"))
 
+(defcommand icecat () ()
+  "Run the Icecat web browser."
+  (run-shell-command "icecat"))
+
+(defcommand browser () ()
+  "Run the web browser."
+  (icecat))
+
 (defcommand htop () ()
   "Run htop."
   (run-or-raise "urxvt -name HTop -e htop" '(:instance "HTop")))
