@@ -41,6 +41,7 @@
         picom
         unclutter
         xbindkeys
+        xclip
         xdg-utils
         xdotool
         xdpyinfo
