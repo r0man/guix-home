@@ -7,6 +7,7 @@
   #:use-module (gnu packages image-viewers)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mpd)
+  #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
@@ -35,6 +36,8 @@
         light
         mpd
         nautilus
+        pamixer
+        pavucontrol
         picom
         unclutter
         xbindkeys

@@ -1,17 +1,21 @@
+## AUDIO VOLUME
+
 # Increase volume
-"pulseaudio-ctl up"
+"pamixer --increase 5"
     m:0x0 + c:123
     XF86AudioRaiseVolume
 
 # Decrease volume
-"pulseaudio-ctl down"
+"pamixer --decrease 5"
     m:0x0 + c:122
     XF86AudioLowerVolume
 
 # Toggle mute
-"pulseaudio-ctl mute"
+"pamixer --toggle-mute"
     m:0x0 + c:121
     XF86AudioMute
+
+## BACKLIGHT
 
 # Increase backlight
 "light -A 10"
