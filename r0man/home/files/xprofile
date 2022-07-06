@@ -29,14 +29,14 @@ XRESOURCES_HOST=~/.Xresources.$(hostname)
 #     echo "Loaded color profile."
 # fi
 
-# Kill the X server with Ctrl+Alt+Backspace.
-setxkbmap -option "terminate:ctrl_alt_bksp"
-
 # Swap the left window and the left alt keys.
-setxkbmap -option altwin:swap_lalt_lwin
+setxkbmap -option "altwin:swap_lalt_lwin"
 
 # Make caps lock an additional control key.
-setxkbmap -option caps:ctrl_modifier
+setxkbmap -option "caps:ctrl_modifier"
+
+# Kill the X server with Ctrl+Alt+Backspace.
+setxkbmap -option "terminate:ctrl_alt_bksp"
 
 # Start picom, a compositor for X11.
 picom &
@@ -46,9 +46,6 @@ killall dunst; dunst &
 
 # Use a better mouse pointer
 xsetroot -cursor_name left_ptr
-
-# Keyboard
-~/.dotfiles/bin/setup-keyboard
 
 # Start Music Player Daemon.
 mpd &
