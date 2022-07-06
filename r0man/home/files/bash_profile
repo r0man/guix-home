@@ -63,8 +63,9 @@ fi
 #export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"
 
 ## NUBANK
-[ -r /home/roman/.nurc ] && source /home/roman/.nurc
 export NU_COUNTRY="br"
+export NU_HOME="$HOME/workspace/nu"
+export NUCLI_HOME="$NU_HOME/nucli"
 
 ## NUCLI.PY
 export PATH="$NU_HOME/nucli.py/bin:$PATH"
