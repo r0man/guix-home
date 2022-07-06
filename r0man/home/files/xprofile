@@ -20,15 +20,6 @@ XRESOURCES_HOST=~/.Xresources.$(hostname)
 # Setup external monitor.
 ~/.dotfiles/bin/external-monitor
 
-# # Set color profile
-
-# export COLOR_PROFILE="$HOME/.color-profiles/color-lcd-46fa2088-5175-1712-04a4-8183272cf248.icc"
-
-# if [ -f $COLOR_PROFILE ]; then
-#     xcalib $COLOR_PROFILE
-#     echo "Loaded color profile."
-# fi
-
 # Swap the left window and the left alt keys.
 setxkbmap -option "altwin:swap_lalt_lwin"
 
