@@ -33,7 +33,6 @@
         sbcl-stumpwm-stumptray
         sbcl-stumpwm-swm-gaps
         sbcl-stumpwm-ttf-fonts
-        sbcl-stumpwm-ttf-fonts
         sbcl-stumpwm-wifi
         sbcl-stumpwm-winner-mode
         stumpish
