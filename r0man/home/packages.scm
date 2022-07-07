@@ -42,7 +42,6 @@
   #:use-module (gnu packages tls)
   #:use-module (gnu packages uml)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages vpn)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
@@ -96,7 +95,6 @@
         nss-certs
         openblas
         openblas-ilp64
-        openfortivpn
         password-store
         pkg-config
         plantuml
