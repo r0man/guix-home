@@ -29,6 +29,7 @@
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages node)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pkg-config)
@@ -91,6 +92,7 @@
         libgcrypt
         libvterm
         mu
+        node
         nss-certs
         openblas
         openblas-ilp64
@@ -98,6 +100,7 @@
         password-store
         pkg-config
         plantuml
+        python-virtualenv
         python-yubikey-manager
         redshift
         ripgrep
