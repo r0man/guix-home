@@ -23,10 +23,19 @@ shopt -s histappend
 GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
 . "$GUIX_PROFILE/etc/profile"
 
-## Keychain
-eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
+## GPG
 
-# Add ssh keys.
+GPG_TTY=$(tty)
+export GPG_TTY
+
+## Keychain
+#eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
+
+## SSH
+
+SSH_AGENT_PID=""
+SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+
 for i in $(ls -1 ~/.ssh/*.pub ); do
     ssh-add ${i/.pub/}
 done
