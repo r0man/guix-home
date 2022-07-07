@@ -4,6 +4,7 @@
   #:use-module (gnu packages dunst)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gnome)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu packages image-viewers)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mpd)
@@ -22,6 +23,7 @@
     (".Xresources.bombaclaat" ,(local-file "files/Xresources.bombaclaat"))
     (".Xresources.precision" ,(local-file "files/Xresources.precision"))
     (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
+    (".gnupg/gpg-agent.conf" ,(local-file "files/gpg/gpg-agent.conf"))
     (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
     (".xinitrc" ,(local-file "files/xinitrc"))
@@ -39,6 +41,7 @@
         pamixer
         pavucontrol
         picom
+        pinentry-gtk2
         unclutter
         xbindkeys
         xclip
