@@ -30,6 +30,8 @@ GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
 GPG_TTY=$(tty)
 export GPG_TTY
 
+gpg-connect-agent /bye
+
 ## Keychain
 #eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
 
