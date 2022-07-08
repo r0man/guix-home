@@ -1,6 +1,7 @@
 ! Howto calculate Xft.dpi
 ! See: https://winaero.com/blog/find-change-screen-dpi-linux/
-Xft.dpi: 137
+! Xft.dpi: 144
+Xft.dpi: 192
 URxvt.font: xft:Hack-15
 dzen2.font: Inconsolata-15
 emacs.font: Inconsolata-15
