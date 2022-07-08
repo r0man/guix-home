@@ -109,4 +109,5 @@
         sqitch
         sqlite
         strace
+        unzip
         zip))
