@@ -3,13 +3,16 @@
   #:use-module (gnu packages clojure)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (nongnu packages clojure)
   #:export (home-clojure-services))
 
 ;; Clojure
 
 (define home-clojure-service
   (simple-service 'clojure-service home-profile-service-type
-                  (list clojure clojure-tools)))
+                  (list ;; clojure
+                        ;; clojure-tools
+                        leiningen)))
 
 ;; Clojure LSP
 
@@ -20,5 +23,5 @@
   (simple-service 'clojure-lsp-service home-files-service-type clojure-lsp-files))
 
 (define home-clojure-services
-  (list ;; home-clojure-service
+  (list home-clojure-service
         home-clojure-lsp-service))
