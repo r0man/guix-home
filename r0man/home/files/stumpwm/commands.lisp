@@ -20,7 +20,7 @@
 
 (defcommand browser () ()
   "Run the web browser."
-  (icecat))
+  (firefox))
 
 (defcommand htop () ()
   "Run htop."
