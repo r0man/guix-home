@@ -1,2 +1,11 @@
 # -*- mode: sh -*-
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+
+## SSH
+
+SSH_AGENT_PID=""
+SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+
+for i in $(ls -1 ~/.ssh/*.pub ); do
+    ssh-add ${i/.pub/}
+done

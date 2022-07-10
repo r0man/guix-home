@@ -35,15 +35,6 @@ gpg-connect-agent /bye
 ## Keychain
 #eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
 
-## SSH
-
-SSH_AGENT_PID=""
-SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
-
-for i in $(ls -1 ~/.ssh/*.pub ); do
-    ssh-add ${i/.pub/}
-done
-
 ## SOLARIZED
 
 export SOLARIZED="dark"
