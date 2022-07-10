@@ -1,0 +1,3 @@
+Xft.dpi: 137
+URxvt.font: xft:Hack-15
+emacs.font: Inconsolata-14
