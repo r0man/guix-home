@@ -143,7 +143,7 @@
 ;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
-(define-key *root-map* (kbd "b") "icecat")
+(define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
 (define-key *root-map* (kbd "e") "emacs-client")
 (define-key *root-map* (kbd "w") "rofi-window")
