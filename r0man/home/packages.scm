@@ -51,7 +51,6 @@
 (define packages
   (list (list openjdk11 "jdk")
         cmake
-        dbus
         elixir
         flatpak
         font-dejavu
