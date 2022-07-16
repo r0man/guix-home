@@ -105,6 +105,7 @@
         rofi
         rxvt-unicode
         sed
+        sendgmail
         shared-mime-info
         sqitch
         sqlite
