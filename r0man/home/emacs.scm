@@ -58,6 +58,7 @@
         emacs-flx
         emacs-flycheck
         emacs-flycheck-clj-kondo
+        emacs
         emacs-flycheck-elsa
         emacs-flycheck-flow
         emacs-flymd
@@ -65,6 +66,7 @@
         emacs-geiser
         emacs-geiser-guile
         emacs-gif-screencast
+        emacs-git-email
         emacs-git-timemachine
         emacs-github-browse-file
         emacs-gnuplot
@@ -100,7 +102,6 @@
         emacs-markdown-preview-mode
         emacs-multi-term
         emacs-multi-vterm
-        emacs
         emacs-multiple-cursors
         emacs-oauth2
         emacs-orderless
