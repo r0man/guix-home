@@ -8,6 +8,12 @@
 
 PS1='[\u@\h \W]\$ '
 
+## GUIX
+
+GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
+. "$GUIX_PROFILE/etc/profile"
+
+
 # Load bash aliases.
 [ -r ~/.bash_aliases ] && . ~/.bash_aliases
 
@@ -18,12 +24,11 @@ PS1='[\u@\h \W]\$ '
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
 ## BASH
+
+# Preserve Bash History in Multiple Terminal Windows
+# https://www.baeldung.com/linux/preserve-history-multiple-windows
 shopt -s histappend
-
-## GUIX
-
-GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
-. "$GUIX_PROFILE/etc/profile"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
 ## GPG
 

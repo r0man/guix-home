@@ -12,6 +12,5 @@
            ("HISTCONTROL" . "ignoredups")
            ("HISTFILESIZE" . "10000")
            ("HISTSIZE" . "10000")
-           ("PROMPT_COMMAND" . "'history -a'")
            ("VISUAL" . "emacsclient")
            ("_JAVA_AWT_WM_NONREPARENTING" . #t)))))
