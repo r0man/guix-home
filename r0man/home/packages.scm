@@ -81,7 +81,6 @@
         guile-sqlite3
         guile-zlib
         help2man
-        icecat
         inkscape
         isync
         lapack
