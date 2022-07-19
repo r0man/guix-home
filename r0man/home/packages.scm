@@ -35,6 +35,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages readline)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages sqlite)
@@ -99,6 +100,7 @@
         python-virtualenv
         python-yubikey-manager
         redshift
+        rlwrap
         ripgrep
         rofi
         rxvt-unicode
