@@ -19,6 +19,9 @@
 (load "~/.config/stumpwm/commands.lisp")
 (load "~/.config/stumpwm/time.lisp")
 
+;; Use iwconfig from Guix.
+(setf wifi:*iwconfig-path* "iwconfig")
+
 ;; Don't show startup message.
 (setf *startup-message* nil)
 
