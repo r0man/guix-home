@@ -110,4 +110,5 @@
         sqlite
         strace
         unzip
+        wireless-tools
         zip))
