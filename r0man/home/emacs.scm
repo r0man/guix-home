@@ -14,6 +14,7 @@
   (list emacs-aggressive-indent
         ;; emacs-lsp-mode
         emacs-aio
+        emacs
         emacs-auto-dictionary-mode
         emacs-avy
         emacs-avy-menu
@@ -58,7 +59,6 @@
         emacs-flx
         emacs-flycheck
         emacs-flycheck-clj-kondo
-        emacs
         emacs-flycheck-elsa
         emacs-flycheck-flow
         emacs-flymd
@@ -126,6 +126,7 @@
         emacs-popwin
         emacs-posframe
         emacs-projectile
+        emacs-pulsar
         emacs-rainbow-mode
         emacs-redshank
         emacs-refactor
