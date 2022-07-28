@@ -30,7 +30,7 @@
          (url "https://github.com/r0man/guix-channel.git")
          (branch "main")
          (commit
-          "cf6ee96e399d967ac0eccad919746ddfe8d472cf")
+          "ca7529cdb82f51ada108b354bff52437ed72a683")
          (introduction
           (make-channel-introduction
            "8eb7a76af9b51b80f5c01f18639e6360833fc377"
