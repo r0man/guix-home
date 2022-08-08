@@ -41,6 +41,7 @@
         emacs-edit-indirect
         emacs-eglot
         emacs-el-mock
+        emacs-eldev
         emacs-elfeed
         emacs-elisp-slime-nav
         emacs-elixir-mode
