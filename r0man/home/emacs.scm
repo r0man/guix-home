@@ -101,6 +101,7 @@
         emacs-markdown-mode
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
+        emacs-mu4e-alert
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
