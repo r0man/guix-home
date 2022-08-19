@@ -8,7 +8,7 @@
   #~(job "0 12 * * *" "guix gc --delete-generations=1m"))
 
 (define mbsync
-  #~(job "* * * * *" "mbsync --all --verbose"))
+  #~(job "* * * * *" "mbsync --all"))
 
 (define jobs
   (list mbsync))
