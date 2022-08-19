@@ -148,6 +148,7 @@
         emacs-treemacs
         emacs-undercover
         emacs-undo-tree
+        emacs-unfill
         emacs-use-package
         emacs-vertico
         emacs-virtualenvwrapper
