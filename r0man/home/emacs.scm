@@ -13,6 +13,7 @@
 (define packages
   (list emacs-aggressive-indent
         ;; emacs-lsp-mode
+        ;; emacs-dap-mode
         emacs-aio
         emacs
         emacs-auto-dictionary-mode
@@ -31,7 +32,6 @@
         emacs-company-quickhelp
         emacs-consult
         emacs-corfu
-        emacs-dap-mode
         emacs-dart-mode
         emacs-debbugs
         emacs-docker
