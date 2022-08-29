@@ -19,7 +19,7 @@ Configure the Guix channels.
 Reconfigure the home environment.
 
 #+begin_src shell
-  guix home -L . reconfigure r0man/home/config.scm
+  guix home -L . reconfigure r0man/home/config.scm --substitute-urls="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
 #+end_src
 
 ** Profiles
