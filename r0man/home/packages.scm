@@ -50,7 +50,7 @@
   #:export (packages))
 
 (define packages
-  (list (list openjdk11 "jdk")
+  (list ;; (list openjdk11 "jdk")
         cmake
         elixir
         flatpak
