@@ -98,9 +98,6 @@ export PATH="$NU_HOME/nucli.py/bin:$PATH"
 export NUCLI_PY_FORMATTER_STYLE="bw"
 # export NUCLI_PY_FULL=1
 
-# SPARK
-export SPARK_HOME="$HOME/workspace/nu/spark/2.4.3"
-
 # V8
 export V8_HOME="/usr/bin"
 
