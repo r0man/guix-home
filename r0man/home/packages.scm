@@ -43,6 +43,7 @@
   #:use-module (gnu packages tls)
   #:use-module (gnu packages uml)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages video)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
@@ -92,6 +93,7 @@
         mu
         node
         nss-certs
+        mplayer
         openblas
         openblas-ilp64
         password-store
