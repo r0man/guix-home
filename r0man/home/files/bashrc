@@ -47,11 +47,6 @@ if [ -e ~/.dotfiles/dircolors.ansi-$SOLARIZED ]; then
     eval `dircolors ~/.dotfiles/dircolors.ansi-$SOLARIZED`
 fi
 
-## CONFLUENT PLATFORM
-
-export CONFLUENT_HOME="$HOME/local/confluent"
-export PATH="$CONFLUENT_HOME/bin:$PATH"
-
 ## COURSIER
 
 export PATH="$PATH:/home/roman/.local/share/coursier/bin"
