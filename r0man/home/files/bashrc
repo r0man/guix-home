@@ -37,9 +37,6 @@ export GPG_TTY
 
 gpg-connect-agent /bye
 
-## Keychain
-#eval $(keychain --eval --agents "gpg,ssh" --quiet id_rsa)
-
 ## SOLARIZED
 
 export SOLARIZED="dark"
