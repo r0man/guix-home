@@ -98,9 +98,6 @@ export PATH="$NU_HOME/nucli.py/bin:$PATH"
 export NUCLI_PY_FORMATTER_STYLE="bw"
 # export NUCLI_PY_FULL=1
 
-# V8
-export V8_HOME="/usr/bin"
-
 # PATH
 export PATH="$HOME/.cabal/bin:$PATH"
 export PATH="$HOME/.cask/bin:$PATH"
