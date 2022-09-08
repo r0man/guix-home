@@ -1,18 +1,9 @@
 # -*- mode: sh -*-
 
-# .BASH_PROFILE VS .BASHRC
-# http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
-
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
 PS1='[\u@\h \W]\$ '
-
-## GUIX
-
-GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
-. "$GUIX_PROFILE/etc/profile"
-
 
 # Load bash aliases.
 [ -r ~/.bash_aliases ] && . ~/.bash_aliases
@@ -29,82 +20,6 @@ GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
 # https://www.baeldung.com/linux/preserve-history-multiple-windows
 shopt -s histappend
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-
-## GPG
-
-GPG_TTY=$(tty)
-export GPG_TTY
-
-gpg-connect-agent /bye
-
-## SOLARIZED
-
-export SOLARIZED="dark"
-if [ -e ~/.dotfiles/dircolors.ansi-$SOLARIZED ]; then
-    eval `dircolors ~/.dotfiles/dircolors.ansi-$SOLARIZED`
-fi
-
-## COURSIER
-
-export PATH="$PATH:/home/roman/.local/share/coursier/bin"
-
-## FLUTTER
-
-export CHROME_EXECUTABLE="chromium"
-export PATH="$PATH:$HOME/local/flutter/bin"
-
-## HIGH DPI
-
-export GDK_SCALE=1.5
-export GDK_DPI_SCALE=1.5
-
-## NPM
-NPM_PACKAGES="${HOME}/.npm-packages"
-export PATH="$PATH:$NPM_PACKAGES/bin"
-
-## MAN
-
-# Preserve MANPATH if you already defined it somewhere in your config.
-# Otherwise, fall back to `manpath` so we can inherit from `/etc/manpath`.
-export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
-
-## KAFKA
-
-KAFKA_HOME="$HOME/local/kafka"
-if [ -d $KAFKA_HOME ]; then
-    export KAFKA_HOME
-    export PATH="$KAFKA_HOME/bin:$PATH"
-fi
-
-# GOOGLE
-
-# See: https://developers.google.com/identity/protocols/application-default-credentials
-#export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"
-
-## NUBANK
-
-export NU_COUNTRY="br"
-export NU_HOME="$HOME/workspace/nu"
-
-# NUCLI
-export NUCLI_HOME="$NU_HOME/nucli"
-export PATH="$NUCLI_HOME:$PATH"
-
-# NUCLI.PY
-export PATH="$NU_HOME/nucli.py/bin:$PATH"
-export NUCLI_PY_FORMATTER_STYLE="bw"
-# export NUCLI_PY_FULL=1
-
-# PATH
-export PATH="$HOME/.cabal/bin:$PATH"
-export PATH="$HOME/.cask/bin:$PATH"
-export PATH="$HOME/.dotfiles/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.node_modules/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-
-export PATH="$PATH:/usr/local/bin"
-export PATH="$PATH:/usr/local/sbin"
 
 ## FZF
 
@@ -140,4 +55,5 @@ fi
 vterm_prompt_end(){
     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 }
+
 PS1=$PS1'\[$(vterm_prompt_end)\]'

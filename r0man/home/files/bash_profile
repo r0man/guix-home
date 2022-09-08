@@ -1,6 +1,18 @@
 # -*- mode: sh -*-
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
+## GUIX
+
+GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
+. "$GUIX_PROFILE/etc/profile"
+
+## GPG
+
+GPG_TTY=$(tty)
+export GPG_TTY
+
+gpg-connect-agent /bye
+
 ## SSH
 
 SSH_AGENT_PID=""
@@ -9,3 +21,58 @@ SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
 for i in $(ls -1 ~/.ssh/*.pub ); do
     ssh-add ${i/.pub/}
 done
+
+## SOLARIZED
+
+export SOLARIZED="dark"
+if [ -e ~/.dotfiles/dircolors.ansi-$SOLARIZED ]; then
+    eval `dircolors ~/.dotfiles/dircolors.ansi-$SOLARIZED`
+fi
+
+## COURSIER
+
+export PATH="$PATH:/home/roman/.local/share/coursier/bin"
+
+## FLUTTER
+
+export CHROME_EXECUTABLE="chromium"
+export PATH="$PATH:$HOME/local/flutter/bin"
+
+## HIGH DPI
+
+export GDK_SCALE=1.5
+export GDK_DPI_SCALE=1.5
+
+## NPM
+NPM_PACKAGES="${HOME}/.npm-packages"
+export PATH="$PATH:$NPM_PACKAGES/bin"
+
+## KAFKA
+
+KAFKA_HOME="$HOME/local/kafka"
+if [ -d $KAFKA_HOME ]; then
+    export KAFKA_HOME
+    export PATH="$KAFKA_HOME/bin:$PATH"
+fi
+
+## NUBANK
+
+export NU_COUNTRY="br"
+export NU_HOME="$HOME/workspace/nu"
+
+# NUCLI
+export NUCLI_HOME="$NU_HOME/nucli"
+export PATH="$PATH:$NUCLI_HOME"
+
+# NUCLI.PY
+export PATH="$PATH:$NU_HOME/nucli.py/bin"
+export NUCLI_PY_FORMATTER_STYLE="bw"
+# export NUCLI_PY_FULL=1
+
+# PATH
+export PATH="$PATH:$HOME/.dotfiles/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.node_modules/bin"
+export PATH="$PATH:$HOME/bin:$PATH"
+export PATH="$PATH:/usr/local/bin"
+export PATH="$PATH:/usr/local/sbin"
