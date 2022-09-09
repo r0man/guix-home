@@ -3,6 +3,9 @@
 # ~/.xprofile
 #
 
+# Load Bash profile
+[ -f ~/.bash_profile ] && source ~/.bash_profile
+
 # Load X Resources
 [ -f ~/.Xresources ] && xrdb -all -load ~/.Xresources
 
