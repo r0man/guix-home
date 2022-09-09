@@ -139,6 +139,7 @@
         emacs-selectrum
         emacs-slime
         emacs-slime-company
+        emacs-sly
         emacs-smex
         emacs-smooth-scrolling
         emacs-sqlite3-api
