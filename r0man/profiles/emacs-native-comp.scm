@@ -3,4 +3,5 @@
   #:use-module (gnu packages))
 
 (specifications->manifest
- '("emacs-native-comp"))
+ '("emacs-native-comp"
+   "libgccjit@12"))
