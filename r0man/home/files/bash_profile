@@ -1,10 +1,19 @@
 # -*- mode: sh -*-
-[[ -f ~/.bashrc ]] && . ~/.bashrc
 
 ## GUIX
 
-GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
-. "$GUIX_PROFILE/etc/profile"
+# GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
+# . "$GUIX_PROFILE/etc/profile"
+GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+for i in $GUIX_EXTRA_PROFILES/*; do
+  profile=$i/$(basename "$i")
+  if [ -f "$profile"/etc/profile ]; then
+    GUIX_PROFILE="$profile"
+    . "$GUIX_PROFILE"/etc/profile
+    echo "Loaded Guix profile: $GUIX_PROFILE"
+  fi
+  unset profile
+done
 
 ## GPG
 

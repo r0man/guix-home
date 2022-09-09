@@ -27,7 +27,7 @@ Reconfigure the home environment.
 Install or upgrade the =emacs-native-comp= profile.
 
 #+begin_src shell
-GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-mkdir -p "$GUIX_EXTRA_PROFILES"/r0man/profiles
-guix package --manifest=$HOME/.config/guix/r0man/profiles/emacs-native-comp.scm --profile="$GUIX_EXTRA_PROFILES"/r0man/profiles/emacs-native-comp
+  GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+  mkdir -p "$GUIX_EXTRA_PROFILES"/emacs-native-comp
+  guix package --manifest=$HOME/.config/guix/r0man/profiles/emacs-native-comp.scm --profile="$GUIX_EXTRA_PROFILES"/emacs-native-comp/emacs-native-comp
 #+end_src
