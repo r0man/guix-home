@@ -20,6 +20,7 @@
         sbcl
         sbcl-local-time
         sbcl-slime-swank
+        sbcl-slynk
         sbcl-stumpwm-battery-portable
         sbcl-stumpwm-cpu
         sbcl-stumpwm-disk
