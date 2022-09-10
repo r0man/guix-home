@@ -48,11 +48,13 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
+  #:use-module (r0man packages container)
   #:export (packages))
 
 (define packages
   (list ;; (list openjdk11 "jdk")
         cmake
+        container-structure-test
         elixir
         flatpak
         font-dejavu
