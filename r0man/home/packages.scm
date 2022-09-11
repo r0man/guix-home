@@ -20,6 +20,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)
+  #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
@@ -98,6 +99,7 @@
         mplayer
         openblas
         openblas-ilp64
+        pandoc
         password-store
         pkg-config
         plantuml
