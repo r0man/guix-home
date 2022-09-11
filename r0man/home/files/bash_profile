@@ -2,17 +2,27 @@
 
 ## GUIX
 
+# XDG_DATA_DIRS often starts off empty, but an empty value is
+# interpreted as this value. Loading a profile can set it, though,
+# which effectively ignores the default value. We want it to instead
+# add to the default, so we set it here to the default value.
+if [ -z "$XDG_DATA_DIRS" ]; then
+    export XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
+else
+    export XDG_DATA_DIRS="$XDG_DATA_DIRS:/usr/local/share/:/usr/share/"
+fi
+
 # GUIX_PROFILE="$HOME/.guix-extra-profiles/r0man/profiles/emacs-native-comp"
 # . "$GUIX_PROFILE/etc/profile"
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
 for i in $GUIX_EXTRA_PROFILES/*; do
-  profile=$i/$(basename "$i")
-  if [ -f "$profile"/etc/profile ]; then
-    GUIX_PROFILE="$profile"
-    . "$GUIX_PROFILE"/etc/profile
-    echo "Loaded Guix profile: $GUIX_PROFILE"
-  fi
-  unset profile
+    profile=$i/$(basename "$i")
+    if [ -f "$profile"/etc/profile ]; then
+        GUIX_PROFILE="$profile"
+        . "$GUIX_PROFILE"/etc/profile
+        echo "Loaded Guix profile: $GUIX_PROFILE"
+    fi
+    unset profile
 done
 
 ## GPG
