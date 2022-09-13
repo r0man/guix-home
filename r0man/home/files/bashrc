@@ -21,6 +21,9 @@ PS1='[\u@\h \W]\$ '
 shopt -s histappend
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
+## GPG
+export GPG_TTY="$(tty)"
+
 ## FZF
 
 [ -r /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
