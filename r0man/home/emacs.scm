@@ -137,9 +137,10 @@
         emacs-scala-mode
         emacs-scss-mode
         emacs-selectrum
-        emacs-slime
-        emacs-slime-company
         emacs-sly
+        emacs-sly-asdf
+        emacs-sly-macrostep
+        emacs-sly-stepper
         emacs-smex
         emacs-smooth-scrolling
         emacs-sqlite3-api
