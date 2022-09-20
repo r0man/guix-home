@@ -5,6 +5,7 @@
 (require :globalwindows)
 (require :mem)
 (require :net)
+(require :pamixer)
 (require :pass)
 (require :screenshot)
 (require :stumpwm)
@@ -150,6 +151,11 @@
 (define-key *root-map* (kbd "c") "terminal")
 (define-key *root-map* (kbd "e") "emacs-client")
 (define-key *root-map* (kbd "w") "rofi-window")
+
+;; Volume Control
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "pamixer-volume-up")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "pamixer-volume-down")
+(define-key *top-map* (kbd "XF86AudioMute") "pamixer-toggle-mute")
 
 ;; (define-key *top-map* (kbd "C-s-RET") "terminal")
 

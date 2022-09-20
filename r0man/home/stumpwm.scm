@@ -29,6 +29,7 @@
         sbcl-stumpwm-mem
         sbcl-stumpwm-net
         sbcl-stumpwm-numpad-layouts
+        sbcl-stumpwm-pamixer
         sbcl-stumpwm-pass
         sbcl-stumpwm-screenshot
         sbcl-stumpwm-stumptray
