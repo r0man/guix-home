@@ -16,6 +16,7 @@
         ;; emacs-dap-mode
         emacs-aio
         emacs
+        emacs-adoc-mode
         emacs-auto-dictionary-mode
         emacs-avy
         emacs-avy-menu
