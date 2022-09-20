@@ -1,4 +1,5 @@
 (define-module (r0man home packages)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages certs)
   #:use-module (gnu packages cmake)
@@ -12,6 +13,7 @@
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages geo)
+  #:use-module (gnu packages gettext)
   #:use-module (gnu packages gimp)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
@@ -54,6 +56,8 @@
 (define packages
   (list
    ;; (list openjdk11 "jdk")
+   autoconf
+   automake
    cmake
    container-structure-test
    elixir
@@ -78,6 +82,7 @@
    gnuplot
    gnutls
    graphviz
+   guildhall
    guile-3.0
    guile-git
    guile-json-1
@@ -103,11 +108,12 @@
    password-store
    pkg-config
    plantuml
+   po4a
    python-virtualenv
    python-yubikey-manager
    redshift
-   rlwrap
    ripgrep
+   rlwrap
    rofi
    rxvt-unicode
    sed
