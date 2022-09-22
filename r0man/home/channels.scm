@@ -30,7 +30,7 @@
          (url "https://github.com/r0man/guix-channel.git")
          (branch "main")
          (commit
-          "f6dc054ca4e23a8ff9dcfbaf7c570025a0eabd46")
+          "43a0b83ad33a628e4c709babdf1fd86ee3f50e06")
          (introduction
           (make-channel-introduction
            "8eb7a76af9b51b80f5c01f18639e6360833fc377"
@@ -41,7 +41,7 @@
          (url "https://git.savannah.gnu.org/git/guix.git")
          (branch "master")
          (commit
-          "4248fe076e006eb493320b23b4ddb9ebca36adbd")
+          "da3bbcc9916b08324e7b85f5b9c528b4696c39d4")
          (introduction
           (make-channel-introduction
            "9edb3f66fd807b096b48283debdcddccfea34bad"
