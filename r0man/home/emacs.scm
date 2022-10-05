@@ -21,6 +21,7 @@
         emacs-avy
         emacs-avy-menu
         emacs-bluetooth
+        emacs-bnf-mode
         emacs-buttercup
         emacs-cask
         emacs-cider
