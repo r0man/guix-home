@@ -3,6 +3,7 @@
   #:use-module (gnu home)
   #:use-module (gnu services)
   #:use-module (r0man home bash)
+  #:use-module (r0man home channels)
   #:use-module (r0man home clojure)
   #:use-module (r0man home common-lisp)
   #:use-module (r0man home emacs)
@@ -17,6 +18,7 @@
 
 (define services
   (append home-bash-services
+          home-channels-services
           home-clojure-services
           home-common-lisp-services
           home-emacs-services
