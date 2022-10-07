@@ -14,9 +14,8 @@
   (list emacs-aggressive-indent
         ;; emacs-lsp-mode
         ;; emacs-dap-mode
-        emacs-aio
-        emacs
         emacs-adoc-mode
+        emacs-aio
         emacs-auto-dictionary-mode
         emacs-avy
         emacs-avy-menu
@@ -107,6 +106,7 @@
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
+        emacs-next
         emacs-oauth2
         emacs-orderless
         emacs-org
