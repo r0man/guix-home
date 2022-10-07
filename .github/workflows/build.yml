@@ -25,8 +25,6 @@ jobs:
                    (name 'flat)
                    (url "https://github.com/flatwhatson/guix-channel.git")
                    (branch "master")
-                   (commit
-                    "e57424b680e1724105e2598b68c30084b180cf58")
                    (introduction
                     (make-channel-introduction
                      "33f86a4b48205c0dc19d7c036c85393f0766f806"
@@ -36,8 +34,6 @@ jobs:
                    (name 'nonguix)
                    (url "https://gitlab.com/nonguix/nonguix")
                    (branch "master")
-                   (commit
-                    "5a76529aff40107fbc03f293a0a332c839059815")
                    (introduction
                     (make-channel-introduction
                      "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
@@ -47,8 +43,6 @@ jobs:
                    (name 'r0man)
                    (url "https://github.com/r0man/guix-channel.git")
                    (branch "main")
-                   (commit
-                    "d8806ea6f5b1be55bf32b984c195b92bee1b1957")
                    (introduction
                     (make-channel-introduction
                      "8eb7a76af9b51b80f5c01f18639e6360833fc377"
@@ -58,8 +52,6 @@ jobs:
                    (name 'guix)
                    (url "https://git.savannah.gnu.org/git/guix.git")
                    (branch "master")
-                   (commit
-                    "f64c80a53843006aa96bbdb3d5286f67c7dc8d8f")
                    (introduction
                     (make-channel-introduction
                      "9edb3f66fd807b096b48283debdcddccfea34bad"
