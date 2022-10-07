@@ -1,6 +1,8 @@
 (define-module (r0man home channels)
+  #:use-module (gnu home services guix)
+  #:use-module (gnu home services)
   #:use-module (guix channels)
-  #:export (channels))
+  #:export (channels home-channels-services))
 
 (define channels
   (list (channel
@@ -47,5 +49,8 @@
            "9edb3f66fd807b096b48283debdcddccfea34bad"
            (openpgp-fingerprint
             "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))))
+
+(define home-channels-services
+  (list (service home-channels-service-type channels)))
 
 channels
