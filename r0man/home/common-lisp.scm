@@ -13,7 +13,9 @@
 (define packages
   (list cl-annot
         cl-clack
+        cl-dexador
         cl-project
+        cl-rdkafka
         cl-rove))
 
 (define home-common-lisp-services
