@@ -7,6 +7,7 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (nongnu packages emacs)
   #:use-module (r0man packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
@@ -40,6 +41,7 @@
         emacs-dockerfile-mode
         emacs-docopt
         emacs-edit-indirect
+        emacs-ef-themes
         emacs-eglot
         emacs-el-mock
         emacs-eldev
@@ -48,7 +50,6 @@
         emacs-elixir-mode
         emacs-elpy
         emacs-emacsql
-        emacs-emacsql-libsqlite3
         emacs-emacsql-sqlite
         emacs-embark
         emacs-emms
@@ -83,6 +84,7 @@
         emacs-hy-mode
         emacs-ido-vertical-mode
         emacs-inflections
+        emacs-inspector
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
@@ -162,7 +164,8 @@
         emacs-x509-mode
         emacs-yaml-mode
         emacs-yasnippet
-        emacs-yasnippet-snippets))
+        emacs-yasnippet-snippets
+        clhs))
 
 (define home-emacs-services
   (list (simple-service 'emacs-packages home-profile-service-type packages)))
