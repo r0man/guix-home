@@ -113,6 +113,7 @@
    po4a
    python-virtualenv
    python-yubikey-manager
+   qgis
    redshift
    ripgrep
    rlwrap
