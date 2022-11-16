@@ -36,6 +36,7 @@
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages rust-apps)
@@ -59,6 +60,7 @@
    ;; (list openjdk11 "jdk")
    autoconf
    automake
+   awscli
    cmake
    container-structure-test
    elixir
