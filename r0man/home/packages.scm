@@ -110,9 +110,12 @@
    openblas-ilp64
    pandoc
    password-store
+   pgcli
    pkg-config
    plantuml
    po4a
+   postgis
+   postgresql
    python-virtualenv
    python-yubikey-manager
    qgis
