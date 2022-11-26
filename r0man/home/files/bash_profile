@@ -1,5 +1,17 @@
 # -*- mode: sh -*-
 
+## BURNING SWELL
+
+if [ -d "$HOME/workspace/burningswell" ]; then
+
+    export BURNINGSWELL_HOME="$HOME/workspace/burningswell"
+
+    if [ -e "$HOME/workspace/burningswell/deploy/burningswell/config/google/cloud/service-accounts/development.json" ]; then
+        export GOOGLE_APPLICATION_CREDENTIALS=$HOME/workspace/burningswell/deploy/burningswell/config/google/cloud/service-accounts/development.json
+    fi
+
+fi
+
 ## GUIX
 
 # XDG_DATA_DIRS often starts off empty, but an empty value is
