@@ -27,6 +27,7 @@
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages llvm)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
@@ -61,6 +62,7 @@
    autoconf
    automake
    awscli
+   clang
    cmake
    container-structure-test
    elixir
