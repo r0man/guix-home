@@ -131,6 +131,7 @@
    sqitch
    sqlite
    strace
+   texi2html
    texinfo
    unzip
    wireless-tools
