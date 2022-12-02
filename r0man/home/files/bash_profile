@@ -12,6 +12,13 @@ if [ -d "$HOME/workspace/burningswell" ]; then
 
 fi
 
+## CONFLUENT
+
+CONFLUENT_HOME="$HOME/local/confluent-7.3.0"
+if [ -d "$CONFLUENT_HOME" ]; then
+    export PATH="$PATH:$CONFLUENT_HOME/bin"
+fi
+
 ## GUIX
 
 # XDG_DATA_DIRS often starts off empty, but an empty value is
