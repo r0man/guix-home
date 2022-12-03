@@ -1,5 +1,12 @@
 (use-modules (ice-9 colorized)
-             (ice-9 readline))
+             (ice-9 pretty-print)
+             (ice-9 readline)
+             (system repl common))
 
 (activate-readline)
 (activate-colorized)
+
+(repl-default-option-set!
+ 'print
+ (lambda (repl obj)
+   (pretty-print obj) (newline)))
