@@ -8,6 +8,7 @@
   #:use-module (r0man home common-lisp)
   #:use-module (r0man home emacs)
   #:use-module (r0man home environment)
+  #:use-module (r0man home guile)
   #:use-module (r0man home mcron)
   #:use-module (r0man home packages)
   #:use-module (r0man home profiles)
@@ -23,6 +24,7 @@
           home-common-lisp-services
           home-emacs-services
           home-environment-variables-services
+          home-guile-services
           home-mcron-services
           home-profiles-services
           home-shepherd-services

@@ -20,8 +20,6 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages gnuzilla)
   #:use-module (gnu packages graphviz)
-  #:use-module (gnu packages guile)
-  #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
@@ -87,16 +85,6 @@
    gnuplot
    gnutls
    graphviz
-   guildhall
-   guile-3.0
-   guile-colorized
-   guile-git
-   guile-json-1
-   guile-lib
-   guile-lzlib
-   guile-readline
-   guile-sqlite3
-   guile-zlib
    help2man
    inkscape
    isync
