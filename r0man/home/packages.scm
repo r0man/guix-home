@@ -89,10 +89,12 @@
    graphviz
    guildhall
    guile-3.0
+   guile-colorized
    guile-git
    guile-json-1
    guile-lib
    guile-lzlib
+   guile-readline
    guile-sqlite3
    guile-zlib
    help2man
