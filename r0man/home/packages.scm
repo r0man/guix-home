@@ -74,7 +74,7 @@
    font-terminus
    fontconfig
    gcc-toolchain
-   gdal
+   ;; gdal
    gfortran-toolchain
    gimp
    git
