@@ -32,6 +32,10 @@ setxkbmap -option "caps:ctrl_modifier"
 # Kill the X server with Ctrl+Alt+Backspace.
 setxkbmap -option "terminate:ctrl_alt_bksp"
 
+# Remove Emoji hotkey, to make C-. work in Emacs.
+# https://superuser.com/questions/1687342/what-is-my-x11-doing-with-ctrl-period-and-how-can-i-disable-it
+gsettings set org.freedesktop.ibus.panel.emoji hotkey "@as []"
+
 # Start picom, a compositor for X11.
 picom &
 
