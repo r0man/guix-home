@@ -6,7 +6,7 @@
 (activate-readline)
 (activate-colorized)
 
-(repl-default-option-set!
- 'print
- (lambda (repl obj)
-   (pretty-print obj) (newline)))
+;; (repl-default-option-set!
+;;  'print
+;;  (lambda (repl obj)
+;;    (pretty-print obj) (newline)))
