@@ -39,6 +39,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages search)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages sqlite)
   #:use-module (gnu packages terminals)
@@ -105,6 +106,7 @@
    pgcli
    pkg-config
    plantuml
+   plocate
    po4a
    postgis
    postgresql
