@@ -11,7 +11,6 @@
   #:use-module (r0man home guile)
   #:use-module (r0man home mcron)
   #:use-module (r0man home packages)
-  #:use-module (r0man home profiles)
   #:use-module (r0man home shepherd)
   #:use-module (r0man home stumpwm)
   #:use-module (r0man home xdg)
@@ -26,7 +25,6 @@
           home-environment-variables-services
           home-guile-services
           home-mcron-services
-          home-profiles-services
           home-shepherd-services
           home-stumpwm-services
           home-xdg-services
