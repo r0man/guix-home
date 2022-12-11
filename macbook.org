@@ -1,0 +1,341 @@
+* ASAHI Linux
+** Disk Layout
+
+List disk partitions.
+
+#+begin_src sh :results verbatim
+  fdisk -l /dev/nvme0n1
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Disk /dev/nvme0n1: 1.82 TiB, 2001111162880 bytes, 488552530 sectors
+Disk model: APPLE SSD AP2048R
+Units: sectors of 1 * 4096 = 4096 bytes
+Sector size (logical/physical): 4096 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: gpt
+Disk identifier: A67A7E47-AE3F-436F-9BF7-9DCBCB1151C5
+
+Device             Start       End   Sectors  Size Type
+/dev/nvme0n1p1         6    128005    128000  500M Apple Silicon boot
+/dev/nvme0n1p2    128006   9848837   9720832 37.1G Apple APFS
+/dev/nvme0n1p3  15748102  16358405    610304  2.3G Apple APFS
+/dev/nvme0n1p4  16358406  16480517    122112  477M EFI System
+/dev/nvme0n1p5  16480518 487241733 470761216  1.8T Linux filesystem
+/dev/nvme0n1p6 487241816 488552524   1310709    5G Apple Silicon recovery
+#+end_example
+
+Show fstab.
+
+#+begin_src sh :results verbatim
+  cat /etc/fstab
+#+end_src
+
+#+RESULTS:
+: UUID=fc850802-4b87-468b-8002-cc6394c945c1 / ext4 rw,relatime,x-systemd.growfs 0 1
+: UUID=909A-DB68 /boot/efi vfat rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro    0 2
+
+List files in partition =/dev/nvme0n1p4= mounted on =/boot/efi=.
+
+#+begin_src sh :results verbatim
+  find /boot/efi
+#+end_src
+
+#+RESULTS:
+#+begin_example
+/boot/efi
+/boot/efi/.Spotlight-V100
+/boot/efi/.Spotlight-V100/Store-V2
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/psid.db
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/tmp.Lion
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/Lion.created
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/tmp.Cab
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/Cab.created
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/tmp.Star
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/indexState
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexHead
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexIds
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexBigDates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexGroups
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexPostings
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexTermIds
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexPositions
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexPositionTable
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexCompactDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexArrays
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.indexUpdates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.directoryStoreFile
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexHead
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexIds
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexBigDates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexGroups
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexPostings
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexTermIds
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexPositions
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexPositionTable
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexCompactDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexArrays
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.indexUpdates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.directoryStoreFile
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/store.db
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/.store.db
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-1.map.header
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-1.map.data
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-1.map.offsets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-1.map.buckets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-2.map.header
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-2.map.data
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-2.map.offsets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-2.map.buckets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-3.map.header
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-3.map.data
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-3.map.offsets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-3.map.buckets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-4.map.header
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-4.map.data
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-4.map.offsets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-4.map.buckets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-5.map.header
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-5.map.data
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-5.map.offsets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/dbStr-5.map.buckets
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/reverseDirectoryStore
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/tmp.spotlight.state
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/store_generation
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.corespotlight
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.live
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.live_system
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.live_user
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.live_priority
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.assisted_import_pre
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.assisted_import_post
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.health_check
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.migration
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.migration_secondchance
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journalExclusion
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/journals.scan
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/shutdown_time
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/reverseDirectoryStore.shadow
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.shadowIndexHead
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/store.updates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.directoryStoreFile.shadow
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/0.shadowIndexGroups
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexHead
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexTermIds
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexPositionTable
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexCompactDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexDirectory
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexArrays
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.directoryStoreFile.shadow
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/live.0.shadowIndexGroups
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/reverseStore.updates
+/boot/efi/.Spotlight-V100/Store-V2/3DB7728C-E538-466D-831C-4F112CAFF868/tmp.spotlight.loc
+/boot/efi/.Spotlight-V100/VolumeConfiguration.plist
+/boot/efi/.fseventsd
+/boot/efi/.fseventsd/fseventsd-uuid
+/boot/efi/.fseventsd/00000000004c51b7
+/boot/efi/.fseventsd/00000000004c51b8
+/boot/efi/.Trashes
+/boot/efi/.Trashes/501
+/boot/efi/.Trashes/._501
+/boot/efi/m1n1
+/boot/efi/m1n1/boot.bin.old
+/boot/efi/m1n1/boot.bin
+/boot/efi/EFI
+/boot/efi/EFI/BOOT
+/boot/efi/EFI/BOOT/BOOTAA64.EFI
+/boot/efi/vendorfw
+/boot/efi/vendorfw/firmware.tar
+/boot/efi/vendorfw/firmware.cpio
+/boot/efi/vendorfw/manifest.txt
+/boot/efi/asahi
+/boot/efi/asahi/BuildManifest.plist
+/boot/efi/asahi/RestoreVersion.plist
+/boot/efi/asahi/kernelcache.release.mac13j
+/boot/efi/asahi/AdminUserRecoveryInfo.plist
+/boot/efi/asahi/SystemVersion.plist
+/boot/efi/asahi/all_firmware.tar.gz
+/boot/efi/asahi/stub_info.json
+/boot/efi/asahi/installer.log
+#+end_example
+
+** USB Stick
+
+Configure ZSH on the Macbook to play well with Tramp.
+
+#+begin_src sh
+  [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+#+end_src
+
+Delete all partitions on USB stick.
+
+#+begin_src sh :results verbatim
+  sfdisk --delete /dev/sda
+#+end_src
+
+#+RESULTS:
+:
+: The partition table has been altered.
+: Calling ioctl() to re-read partition table.
+: Syncing disks.
+
+Create GPT disk label.
+
+#+begin_src sh :results silent
+  parted --script /dev/sda mklabel gpt
+#+end_src
+
+#+RESULTS:
+
+Create the ESP partition.
+
+#+begin_src sh :results silent
+  parted --script --align=optimal /dev/sda mkpart ESP fat32 1MiB 512MiB
+#+end_src
+
+#+RESULTS:
+
+Create the root partition.
+
+#+begin_src sh :results silent
+  parted --script --align=optimal /dev/sda mkpart FS ext4 513MiB 100%
+#+end_src
+
+#+RESULTS:
+
+Enable booting.
+
+#+begin_src sh :results silent
+  parted --script /dev/sda set 1 boot on
+#+end_src
+
+Format the ESP partition using vfat.
+
+#+begin_src sh :results verbatim
+  mkfs.vfat -n ASAHI /dev/sda1
+#+end_src
+
+#+RESULTS:
+: mkfs.fat 4.2 (2021-01-31)
+
+Format the root partition using ext4.
+
+#+begin_src sh :results verbatim
+  mkfs.ext4 /dev/sda2
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Creating filesystem with 7379456 4k blocks and 1847776 inodes
+Filesystem UUID: ef5fd195-f428-4574-ad0a-d5eb84eb0055
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+	4096000
+
+Allocating group tables:   0/226       done
+Writing inode tables:   0/226       done
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information:   0/226       done
+
+#+end_example
+
+List block devices.
+
+#+begin_src sh :results verbatim
+  blkid -o list
+#+end_src
+
+#+RESULTS:
+#+begin_example
+device     fs_type label    mount point    UUID
+
+/dev/nvme0n1p5
+           ext4    asahi-root /            fc850802-4b87-468b-8002-cc6394c945c1
+/dev/nvme0n1p3
+           apfs             (not mounted)  1e3a62b6-3ead-4477-8c93-036bf1ce211f
+/dev/nvme0n1p1
+           apfs             (not mounted)  743ec7b4-1da1-4d90-a575-1b2e149c999d
+/dev/nvme0n1p6
+           apfs             (not mounted)  50df1db6-e408-463a-a121-7ba8203da3c5
+/dev/nvme0n1p4
+           vfat    EFI - ASAHI /boot/efi   909A-DB68
+/dev/nvme0n1p2
+           apfs             (not mounted)  f7040a26-c920-451c-9f01-9850f32725c6
+/dev/sda2  ext4             (not mounted)  b93382f0-5efd-40e7-8748-e5b87413bf9c
+/dev/sda1  vfat    ASAHI    (not mounted)  D9A7-5129
+#+end_example
+
+Clone the ASAHI alarm builder repo.
+
+#+begin_src sh :results verbatim
+  git clone https://github.com/AsahiLinux/asahi-alarm-builder.git
+#+end_src
+
+Edit =EFI_UUID= and =ROOT_UUID= in build.sh and use the UUIDs from the
+USB stick. Comment out building the UEFI minimal and plasma images.
+
+#+begin_src sh :results verbatim
+  cd ~/asahi-alarm-builder && ./build.sh
+#+end_src
+
+Create the =mproot= directory in =~/asahi-alarm-builder/images/asahi-base=.
+
+#+begin_src sh :results verbatim
+  mkdir -p ~/asahi-alarm-builder/images/asahi-base/mproot
+#+end_src
+
+#+RESULTS:
+
+Mount ESP partition on =/mnt=.
+
+#+begin_src sh :results verbatim
+  mount /dev/sda1 /mnt
+#+end_src
+
+#+RESULTS:
+
+Copy EFI to the USB disk.
+
+#+begin_src sh :results verbatim
+  cp -r ~/asahi-alarm-builder/images/asahi-base/esp/EFI /mnt
+#+end_src
+
+#+RESULTS:
+
+Unmount EFI partiton and mount root partition.
+
+#+begin_src sh :results verbatim
+  umount /mnt/ && mount /dev/sda2 /mnt/
+#+end_src
+
+#+RESULTS:
+
+Mount the root image.
+
+#+begin_src sh :results verbatim
+  mount ~/asahi-alarm-builder/images/asahi-base/root.img ~/asahi-alarm-builder/images/asahi-base/mproot
+#+end_src
+
+Change root password.
+
+#+begin_src sh
+  chroot ~/asahi-alarm-builder/images/asahi-base/mproot
+#+end_src
+
+#+RESULTS:
+
+Copy root image to USB stick.
+
+#+begin_src sh :results verbatim
+  cp -r ~/asahi-alarm-builder/images/asahi-base/mproot/* /mnt
+#+end_src
+
+Unmount root partition.
+
+#+begin_src sh :results verbatim
+  umount /mnt
+#+end_src
