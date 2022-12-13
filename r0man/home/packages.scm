@@ -89,7 +89,7 @@
    graphviz
    help2man
    htop
-   inkscape
+   ;; inkscape
    isync
    lapack
    libatasmart
@@ -103,7 +103,7 @@
    mplayer
    openblas
    openblas-ilp64
-   pandoc
+   ;; pandoc
    password-store
    pgcli
    pkg-config
@@ -114,7 +114,7 @@
    postgresql
    python-virtualenv
    python-yubikey-manager
-   qgis
+   ;; qgis
    redshift
    ripgrep
    rlwrap
