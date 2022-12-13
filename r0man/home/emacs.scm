@@ -124,7 +124,7 @@
         emacs-org-tree-slide
         emacs-ox-gfm
         emacs-ox-jira
-        emacs-ox-pandoc
+        ;; emacs-ox-pandoc
         emacs-paimon
         emacs-pandoc-mode
         emacs-paredit
