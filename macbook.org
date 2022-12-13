@@ -163,6 +163,86 @@ List files in partition =/dev/nvme0n1p4= mounted on =/boot/efi=.
 /boot/efi/asahi/installer.log
 #+end_example
 
+Create new partition.
+
+#+begin_example
+Disk /dev/nvme0n1: 1.82 TiB, 2001111162880 bytes, 488552530 sectors
+Disk model: APPLE SSD AP2048R
+Units: sectors of 1 * 4096 = 4096 bytes
+Sector size (logical/physical): 4096 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: gpt
+Disk identifier: A67A7E47-AE3F-436F-9BF7-9DCBCB1151C5
+
+Device             Start       End   Sectors  Size Type
+/dev/nvme0n1p1         6    128005    128000  500M Apple Silicon boot
+/dev/nvme0n1p2    128006  24542067  24414062 93.1G Apple APFS
+/dev/nvme0n1p3  24542068  25152371    610304  2.3G Apple APFS
+/dev/nvme0n1p4  25152372  25274483    122112  477M EFI System
+/dev/nvme0n1p5 487241816 488552524   1310709    5G Apple Silicon recovery
+/dev/nvme0n1p6  25274624 487241815 461967192  1.7T Linux filesystem
+#+end_example
+
+Create the LUKS encrypted container at the "system" partition. Enter the chosen password twice.
+
+#+begin_src sh
+  cryptsetup luksFormat /dev/nvme0n1p6
+#+end_src
+
+Open the container:
+
+#+begin_src sh
+  cryptsetup open /dev/nvme0n1p6 cryptlvm
+#+end_src
+
+The decrypted container is now available at =/dev/mapper/cryptlvm=.
+
+#+begin_src sh
+  pvcreate /dev/mapper/cryptlvm
+#+end_src
+
+Create a volume group named =bombaclaat=.
+
+#+begin_src sh
+  vgcreate bombaclaat /dev/mapper/cryptlvm
+#+end_src
+
+Create volume groups for root, home and swap.
+
+#+begin_src
+ lvcreate -L 32G bombaclaat -n swap
+ lvcreate -L 100G bombaclaat -n arch-root
+ lvcreate -l 100%FREE bombaclaat -n home
+#+end_src
+
+Format the filesystems and swap.
+
+#+begin_src sh
+  mkfs.ext4 /dev/bombaclaat/arch-root
+  mkfs.ext4 /dev/bombaclaat/home
+  mkswap /dev/bombaclaat/swap
+#+end_src
+
+Mount the filesystems.
+
+#+begin_src sh
+  mount /dev/bombaclaat/arch-root /mnt
+  mount --mkdir /dev/bombaclaat/home /mnt/home
+  swapon /dev/bombaclaat/swap
+#+end_src
+
+Copy files.
+
+#+begin_src sh
+  cd / & cp -r !mnt /mnt
+#+end_src
+
+Configure boot options in =/etc/m1n1.conf=.
+
+#+begin_example
+chosen.bootargs=cryptdevice=UUID=/dev/nvme0n1p6:cryptlvm root=/dev/bombaclaat/arch--root earlycon debug rootwait rw quiet splash
+#+end_example
+
 ** USB Stick
 
 Configure ZSH on the Macbook to play well with Tramp.
