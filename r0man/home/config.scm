@@ -13,6 +13,7 @@
   #:use-module (r0man home packages)
   #:use-module (r0man home shepherd)
   #:use-module (r0man home stumpwm)
+  #:use-module (r0man home sway)
   #:use-module (r0man home xdg)
   #:use-module (r0man home x11))
 
@@ -27,6 +28,7 @@
           home-mcron-services
           home-shepherd-services
           home-stumpwm-services
+          home-sway-services
           home-xdg-services
           home-x11-services))
 
