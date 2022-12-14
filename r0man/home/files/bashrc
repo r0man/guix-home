@@ -60,3 +60,8 @@ vterm_prompt_end(){
 }
 
 PS1=$PS1'\[$(vterm_prompt_end)\]'
+
+# Reset custom shell prompt when logged in with Tramp.
+if [ "$TERM" == "dumb" ]; then
+    PS1="[\u@\h \w]$ "
+fi
