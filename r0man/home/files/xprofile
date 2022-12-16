@@ -23,14 +23,16 @@ XRESOURCES_HOST=~/.Xresources.$(hostname)
 # Setup external monitor.
 ~/.dotfiles/bin/external-monitor
 
-# Swap the left window and the left alt keys.
-setxkbmap -option "altwin:swap_lalt_lwin"
-
 # Make caps lock an additional control key.
 setxkbmap -option "caps:ctrl_modifier"
 
 # Kill the X server with Ctrl+Alt+Backspace.
 setxkbmap -option "terminate:ctrl_alt_bksp"
+
+# Swap the left window and the left alt keys (but not on Macbook).
+if [ $(uname --machine) != "aarch64" ]; then
+    setxkbmap -option "altwin:swap_lalt_lwin"
+fi
 
 # Remove Emoji hotkey, to make C-. work in Emacs.
 # https://superuser.com/questions/1687342/what-is-my-x11-doing-with-ctrl-period-and-how-can-i-disable-it
