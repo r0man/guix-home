@@ -12,11 +12,15 @@
 
 (define packages
   (list cl-annot
+        cl-autowrap
+        cl-cffi
+        cl-clack
         cl-clack
         cl-dexador
         cl-project
         cl-rdkafka
-        cl-rove))
+        cl-rove
+        sbcl))
 
 (define home-common-lisp-services
   (list (simple-service 'common-lisp-files home-files-service-type files)

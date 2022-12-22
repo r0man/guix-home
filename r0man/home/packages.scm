@@ -6,6 +6,7 @@
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
@@ -62,6 +63,7 @@
    autoconf
    automake
    awscli
+   c2ffi
    clang
    cmake
    container-structure-test
@@ -95,6 +97,7 @@
    libatasmart
    libffi
    libgcrypt
+   librdkafka
    librdkafka
    libvterm
    mu
