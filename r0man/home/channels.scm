@@ -11,7 +11,7 @@
          (branch "main")
          (introduction
           (make-channel-introduction
-           "d8f93a8a57be3e38f13916b4e5f3e1ad5ccee9de"
+           "df110e542a4048c9bd29324a2b382985755eba1e"
            (openpgp-fingerprint
             "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
 
@@ -19,7 +19,7 @@
          (name 'guix)
          (url "https://git.savannah.gnu.org/git/guix.git")
          (branch "master")
-         (commit "fd0e69984f25bdf2405cf33b15a8bbb2010a7b85")
+         (commit "bcd131dafbaf61ae823c0a3ba1b886f5b0c15ea9")
          (introduction
           (make-channel-introduction
            "9edb3f66fd807b096b48283debdcddccfea34bad"
@@ -30,7 +30,7 @@
          (name 'nonguix)
          (url "https://gitlab.com/nonguix/nonguix")
          (branch "master")
-         (commit "e662a42388490a2736276c2051aaf5cd3693a1cc")
+         (commit "06b180c556cfa0a15869ebd7a6b3c1670cc3f1f2")
          (introduction
           (make-channel-introduction
            "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
