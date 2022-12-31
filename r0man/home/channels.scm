@@ -8,7 +8,7 @@
   (list (channel
          (name 'asahi)
          (url "https://github.com/r0man/asahi-guix.git")
-         (branch "main")
+         (branch "firmware")
          (introduction
           (make-channel-introduction
            "df110e542a4048c9bd29324a2b382985755eba1e"
@@ -19,7 +19,7 @@
          (name 'guix)
          (url "https://git.savannah.gnu.org/git/guix.git")
          (branch "master")
-         (commit "bcd131dafbaf61ae823c0a3ba1b886f5b0c15ea9")
+         (commit "7833acab0da02335941974608510c02e2d1d8069")
          (introduction
           (make-channel-introduction
            "9edb3f66fd807b096b48283debdcddccfea34bad"
