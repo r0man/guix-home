@@ -24,7 +24,6 @@
     (".Xresources.precision" ,(local-file "files/Xresources.precision"))
     (".Xresources.thinkpad" ,(local-file "files/Xresources.thinkpad"))
     (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
-    (".gnupg/gpg-agent.conf" ,(local-file "files/gpg/gpg-agent.conf"))
     (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
     (".mbsyncrc" ,(local-file "files/mbsyncrc"))
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
@@ -43,7 +42,6 @@
         pamixer
         pavucontrol
         picom
-        pinentry-gtk2
         unclutter
         xbindkeys
         xclip
