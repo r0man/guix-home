@@ -74,6 +74,7 @@
         emacs-github-browse-file
         emacs-gnuplot
         emacs-go-mode
+        emacs-google-translate
         emacs-graphql
         emacs-graphql-mode
         emacs-guess-language
