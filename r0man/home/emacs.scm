@@ -84,6 +84,7 @@
         emacs-hy-mode
         emacs-ido-vertical-mode
         emacs-inflections
+        emacs-jarchive
         emacs-inspector
         emacs-jiralib2
         emacs-js2-refactor
