@@ -9,6 +9,7 @@
          (name 'asahi)
          (url "https://github.com/r0man/asahi-guix.git")
          (branch "firmware")
+         (commit "bd5204d0367e968c505b46c946d072a016a4ffdc")
          (introduction
           (make-channel-introduction
            "df110e542a4048c9bd29324a2b382985755eba1e"
