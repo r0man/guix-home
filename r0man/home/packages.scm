@@ -128,5 +128,6 @@
    texi2html
    texinfo
    unzip
+   util-linux
    wireless-tools
    zip))
