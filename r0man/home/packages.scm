@@ -26,6 +26,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
+  #:use-module (gnu packages libreoffice)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages mail)
@@ -100,6 +101,7 @@
    libgcrypt
    librdkafka
    librdkafka
+   libreoffice
    libvterm
    mu
    node
