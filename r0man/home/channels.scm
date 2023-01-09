@@ -8,6 +8,7 @@
   (list (channel
          (name 'asahi)
          (url "https://github.com/r0man/asahi-guix.git")
+         (branch "main")
          (introduction
           (make-channel-introduction
            "df110e542a4048c9bd29324a2b382985755eba1e"
