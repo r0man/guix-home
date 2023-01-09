@@ -75,6 +75,7 @@
    font-google-roboto
    font-hack
    font-inconsolata
+   font-montserrat
    font-terminus
    fontconfig
    gcc-toolchain
