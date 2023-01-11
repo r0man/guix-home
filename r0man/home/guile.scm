@@ -16,7 +16,7 @@
         guile-3.0
         guile-colorized
         guile-git
-        guile-json-1
+        guile-json-4
         guile-lib
         guile-lzlib
         guile-readline
