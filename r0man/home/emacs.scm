@@ -29,6 +29,7 @@
         emacs-clojure-mode-extra-font-locking
         emacs-closql
         emacs-color-theme
+        emacs-color-theme-solarized-r0man
         emacs-company-box
         emacs-company-lsp
         emacs-company-quickhelp
