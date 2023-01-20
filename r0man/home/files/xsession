@@ -12,4 +12,4 @@ if [ -r ~/.profile ]; then . ~/.profile; fi
 [[ -f ~/.xprofile ]] && . ~/.xprofile
 
 # Start StumpWM
-exec dbus-launch --sh-syntax --exit-with-session sbcl --load $HOME/.config/stumpwm/start
+exec sbcl --load $HOME/.config/stumpwm/start
