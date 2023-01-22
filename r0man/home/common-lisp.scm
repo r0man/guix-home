@@ -8,7 +8,7 @@
   #:export (home-common-lisp-services))
 
 (define files
-  `())
+  `((".sbclrc" ,(local-file "files/sbclrc"))))
 
 (define packages
   (list cl-annot
