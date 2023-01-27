@@ -1,5 +1,6 @@
 (define-module (r0man home packages)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages aspell)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages certs)
@@ -94,6 +95,7 @@
    help2man
    htop
    inkscape
+   ispell
    isync
    lapack
    libatasmart
