@@ -1,4 +1,4 @@
-(define-module (r0man home environment)
+(define-module (r0man guix home environment)
   #:use-module (gnu home services)
   #:use-module (gnu services)
   #:export (home-environment-variables-services))

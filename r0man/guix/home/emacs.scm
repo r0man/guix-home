@@ -1,4 +1,4 @@
-(define-module (r0man home emacs)
+(define-module (r0man guix home emacs)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
@@ -8,7 +8,7 @@
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (nongnu packages emacs)
-  #:use-module (r0man packages emacs)
+  #:use-module (r0man guix packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages
@@ -29,6 +29,7 @@
         emacs-clojure-mode-extra-font-locking
         emacs-closql
         emacs-color-theme
+        emacs-color-theme-solarized-r0man
         emacs-company-box
         emacs-company-lsp
         emacs-company-quickhelp
@@ -74,6 +75,7 @@
         emacs-github-browse-file
         emacs-gnuplot
         emacs-go-mode
+        emacs-google-translate
         emacs-graphql
         emacs-graphql-mode
         emacs-guess-language
@@ -85,6 +87,7 @@
         emacs-ido-vertical-mode
         emacs-inflections
         emacs-inspector
+        emacs-jarchive
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client

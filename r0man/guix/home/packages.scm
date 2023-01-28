@@ -1,11 +1,13 @@
-(define-module (r0man home packages)
+(define-module (r0man guix home packages)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages aspell)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages certs)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
@@ -25,6 +27,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
+  #:use-module (gnu packages libreoffice)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages mail)
@@ -53,7 +56,7 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
-  #:use-module (r0man packages container)
+  #:use-module (r0man guix packages container)
   #:export (packages))
 
 (define packages
@@ -62,6 +65,7 @@
    autoconf
    automake
    awscli
+   c2ffi
    clang
    cmake
    container-structure-test
@@ -73,10 +77,11 @@
    font-google-roboto
    font-hack
    font-inconsolata
+   font-montserrat
    font-terminus
    fontconfig
    gcc-toolchain
-   ;; gdal
+   gdal
    gfortran-toolchain
    gimp
    git
@@ -90,12 +95,15 @@
    help2man
    htop
    ;; inkscape
+   ispell
    isync
    lapack
    libatasmart
    libffi
    libgcrypt
    librdkafka
+   librdkafka
+   libreoffice
    libvterm
    mu
    node

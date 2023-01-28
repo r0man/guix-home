@@ -11,7 +11,7 @@ Configure the Guix channels.
 
 #+begin_src shell
   mkdir -p ~/.config/guix/
-  ln -s $(pwd)/r0man/home/channels.scm ~/.config/guix/channels.scm
+  ln -s $(pwd)/r0man/guix/home/channels.scm ~/.config/guix/channels.scm
 #+end_src
 
 ** Usage
@@ -19,5 +19,5 @@ Configure the Guix channels.
 Reconfigure the home environment.
 
 #+begin_src shell
-  guix home -L . reconfigure r0man/home/config.scm --substitute-urls="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org"
+  guix home -L . reconfigure r0man/guix/home/config.scm --substitute-urls="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org"
 #+end_src

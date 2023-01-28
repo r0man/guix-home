@@ -1,4 +1,4 @@
-(define-module (r0man home guile)
+(define-module (r0man guix home guile)
   #:use-module (gnu home services)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)

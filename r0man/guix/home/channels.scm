@@ -1,4 +1,4 @@
-(define-module (r0man home channels)
+(define-module (r0man guix home channels)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services)
   #:use-module (guix channels)
@@ -41,7 +41,6 @@
          (name 'r0man)
          (url "https://github.com/r0man/guix-channel.git")
          (branch "main")
-         (commit "96ff0118dd3aecc80bbf90d99797b4a0311dd1fb")
          (introduction
           (make-channel-introduction
            "8eb7a76af9b51b80f5c01f18639e6360833fc377"

@@ -1,4 +1,4 @@
-(define-module (r0man home xdg)
+(define-module (r0man guix home xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home services xdg)
   #:use-module (guix gexp)

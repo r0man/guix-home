@@ -21,4 +21,5 @@ fi
 #dbus-launch --sh-syntax --exit-with-session xmonad
 
 # Start StumpWM
-dbus-launch --sh-syntax --exit-with-session sbcl --load $HOME/.config/stumpwm/start
+#dbus-launch --sh-syntax --exit-with-session sbcl --load $HOME/.config/stumpwm/start
+exec sbcl --load $HOME/.config/stumpwm/start

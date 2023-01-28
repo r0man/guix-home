@@ -1,4 +1,4 @@
-(define-module (r0man home mcron)
+(define-module (r0man guix home mcron)
   #:use-module (gnu home services mcron)
   #:use-module (gnu services)
   #:use-module (guix gexp)
