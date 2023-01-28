@@ -1,4 +1,4 @@
-(define-module (r0man home packages)
+(define-module (r0man guix home packages)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages aspell)
   #:use-module (gnu packages autotools)
@@ -56,7 +56,7 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
-  #:use-module (r0man packages container)
+  #:use-module (r0man guix packages container)
   #:export (packages))
 
 (define packages

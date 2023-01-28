@@ -1,4 +1,4 @@
-(define-module (r0man home common-lisp)
+(define-module (r0man guix home common-lisp)
   #:use-module (gnu home services)
   #:use-module (gnu packages lisp)
   #:use-module (gnu packages lisp-check)

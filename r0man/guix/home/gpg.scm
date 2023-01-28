@@ -1,4 +1,4 @@
-(define-module (r0man home gpg)
+(define-module (r0man guix home gpg)
   #:use-module (gnu home services)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu services)

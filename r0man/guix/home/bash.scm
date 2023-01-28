@@ -1,4 +1,4 @@
-(define-module (r0man home bash)
+(define-module (r0man guix home bash)
   #:use-module (gnu home services shells)
   #:use-module (gnu home)
   #:use-module (gnu services)

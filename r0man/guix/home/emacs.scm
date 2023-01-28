@@ -1,4 +1,4 @@
-(define-module (r0man home emacs)
+(define-module (r0man guix home emacs)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
@@ -8,7 +8,7 @@
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (nongnu packages emacs)
-  #:use-module (r0man packages emacs)
+  #:use-module (r0man guix packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages

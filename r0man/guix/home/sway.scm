@@ -1,9 +1,9 @@
-(define-module (r0man home sway)
+(define-module (r0man guix home sway)
   #:use-module (gnu home services)
   #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:use-module (r0man packages lisp)
+  #:use-module (r0man guix packages lisp)
   #:export (home-sway-services))
 
 (define files

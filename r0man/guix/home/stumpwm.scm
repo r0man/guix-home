@@ -1,11 +1,11 @@
-(define-module (r0man home stumpwm)
+(define-module (r0man guix home stumpwm)
   #:use-module (gnu home services)
   #:use-module (gnu packages lisp)
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:use-module (r0man packages lisp)
+  #:use-module (r0man guix packages lisp)
   #:export (home-stumpwm-services))
 
 (define files

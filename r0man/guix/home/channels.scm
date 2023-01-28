@@ -1,4 +1,4 @@
-(define-module (r0man home channels)
+(define-module (r0man guix home channels)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services)
   #:use-module (guix channels)

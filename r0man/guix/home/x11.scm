@@ -1,4 +1,4 @@
-(define-module (r0man home x11)
+(define-module (r0man guix home x11)
   #:use-module (gnu home services)
   #:use-module (gnu packages compton)
   #:use-module (gnu packages dunst)
