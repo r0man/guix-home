@@ -2,6 +2,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home)
   #:use-module (gnu services)
+  #:use-module (r0man guix home audio)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home channels)
   #:use-module (r0man guix home clojure)
@@ -21,7 +22,8 @@
   #:use-module (r0man guix home x11))
 
 (define services
-  (append home-bash-services
+  (append home-audio-services
+          home-bash-services
           home-channels-services
           home-clojure-services
           home-common-lisp-services
