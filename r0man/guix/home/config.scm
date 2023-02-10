@@ -11,6 +11,7 @@
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
   #:use-module (r0man guix home mcron)
+  #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home shepherd)
   #:use-module (r0man guix home stumpwm)
@@ -28,6 +29,7 @@
           home-gpg-services
           home-guile-services
           home-mcron-services
+          home-nix-services
           home-shepherd-services
           home-stumpwm-services
           home-sway-services
