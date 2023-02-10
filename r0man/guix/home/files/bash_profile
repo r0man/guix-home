@@ -44,6 +44,13 @@ for i in $GUIX_EXTRA_PROFILES/*; do
     unset profile
 done
 
+## NIX
+
+NIX_PROFILE="/run/current-system/profile/etc/profile.d/nix.sh"
+if [ -e "$NIX_PROFILE" ]; then
+    source "$NIX_PROFILE"
+fi
+
 ## GOOGLE CLOUD SDK
 
 if [ -d "$HOME/local/google-cloud-sdk" ]; then
