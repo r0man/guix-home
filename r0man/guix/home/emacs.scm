@@ -113,6 +113,7 @@
         emacs-multiple-cursors
         emacs-next
         emacs-oauth2
+        emacs-openwith
         emacs-orderless
         emacs-org
         emacs-org-contrib
