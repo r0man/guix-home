@@ -151,7 +151,7 @@
         emacs-smex
         emacs-smooth-scrolling
         emacs-sql-indent
-        emacs-sqlite3-api
+        ;; emacs-sqlite3-api
         emacs-stumpwm-mode
         emacs-terraform-mode
         emacs-timesheet
