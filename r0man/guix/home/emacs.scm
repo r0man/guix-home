@@ -113,6 +113,7 @@
         emacs-multiple-cursors
         emacs-next
         emacs-oauth2
+        emacs-openwith
         emacs-orderless
         emacs-org
         emacs-org-contrib
@@ -151,7 +152,7 @@
         emacs-smex
         emacs-smooth-scrolling
         emacs-sql-indent
-        emacs-sqlite3-api
+        ;; emacs-sqlite3-api
         emacs-stumpwm-mode
         emacs-terraform-mode
         emacs-timesheet
