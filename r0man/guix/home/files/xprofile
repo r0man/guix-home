@@ -22,6 +22,10 @@ XRESOURCES_HOST=~/.Xresources.$(hostname)
 
 # Setup external monitor.
 ~/.dotfiles/bin/external-monitor
+# Automatically select a display configuration based on connected devices.
+if [ -x "$(command -v autorandr)" ]; then
+    autorandr common
+fi
 
 # Swap the left window and the left alt keys.
 setxkbmap -option "altwin:swap_lalt_lwin"
