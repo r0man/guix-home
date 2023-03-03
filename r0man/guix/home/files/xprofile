@@ -13,15 +13,10 @@
 XRESOURCES_HOST=~/.Xresources.$(hostname)
 [ -f $XRESOURCES_HOST ] && xrdb -merge $XRESOURCES_HOST
 
-# Optimus Manager
-[ -x /usr/bin/prime-offload ] && /usr/bin/prime-offload
-
-# # Setup provider output source
-# xrandr --setprovideroutputsource modesetting NVIDIA-0
-# xrandr --auto
-
-# Setup external monitor.
-~/.dotfiles/bin/external-monitor
+# Automatically select a display configuration based on connected devices.
+if [ -x "$(command -v autorandr)" ]; then
+    autorandr common
+fi
 
 # Make caps lock an additional control key.
 setxkbmap -option "caps:ctrl_modifier"
