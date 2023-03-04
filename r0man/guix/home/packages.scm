@@ -87,6 +87,7 @@
    gfortran-toolchain
    gimp
    git
+   (list git "send-email")
    git-crypt
    glibc-locales
    gnu-make
