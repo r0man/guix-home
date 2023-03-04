@@ -17,6 +17,7 @@
         cl-clack
         cl-clack
         cl-dexador
+        cl-plump
         cl-project
         cl-rdkafka
         cl-rove
