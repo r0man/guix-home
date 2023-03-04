@@ -51,7 +51,6 @@
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages uml)
-  #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
@@ -86,9 +85,6 @@
    gdal
    gfortran-toolchain
    gimp
-   git
-   (list git "send-email")
-   git-crypt
    glibc-locales
    gnu-make
    gnupg
