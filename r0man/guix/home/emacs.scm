@@ -28,6 +28,7 @@
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
         emacs-closql
+        emacs-codegpt
         emacs-color-theme
         emacs-color-theme-solarized-r0man
         emacs-company-box
