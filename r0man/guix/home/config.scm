@@ -8,6 +8,7 @@
   #:use-module (r0man guix home common-lisp)
   #:use-module (r0man guix home emacs)
   #:use-module (r0man guix home environment)
+  #:use-module (r0man guix home git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
   #:use-module (r0man guix home mcron)
@@ -26,6 +27,7 @@
           home-common-lisp-services
           home-emacs-services
           home-environment-variables-services
+          home-git-services
           home-gpg-services
           home-guile-services
           home-mcron-services
