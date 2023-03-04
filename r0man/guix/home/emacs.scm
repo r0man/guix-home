@@ -47,6 +47,7 @@
         emacs-eglot
         emacs-el-mock
         emacs-eldev
+        emacs-eldoc-box
         emacs-elfeed
         emacs-elisp-slime-nav
         emacs-elixir-mode
