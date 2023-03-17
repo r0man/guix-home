@@ -128,6 +128,7 @@
         emacs-ox-gfm
         emacs-ox-jira
         emacs-ox-pandoc
+        emacs-package-lint
         emacs-paimon
         emacs-pandoc-mode
         emacs-paredit
