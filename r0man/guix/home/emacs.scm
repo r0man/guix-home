@@ -24,6 +24,7 @@
         emacs-bnf-mode
         emacs-buttercup
         emacs-cask
+        emacs-chatgpt
         emacs-cider
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
