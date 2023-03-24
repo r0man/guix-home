@@ -1,9 +1,9 @@
-* My Guix home
+* My Guix Home
 
 [[https://github.com/r0man/guix-home/actions/workflows/test.yml][https://github.com/r0man/guix-home/actions/workflows/test.yml/badge.svg]]
 [[https://github.com/r0man/guix-home/actions/workflows/build.yml][https://github.com/r0man/guix-home/actions/workflows/build.yml/badge.svg]]
 
-[[https://guix.gnu.org/static/blog/img/test-pilot.png]]
+[[https://guix.gnu.org/static/blog/img/gnu-guix-a-frogs-dream.jpg]]
 
 ** Installation
 
