@@ -45,7 +45,8 @@ URxvt.skipBuiltinGlyphs: true
 URxvt.saveLines: 65535;
 
 ! Turn on/off pseudo-transparency by using the root pixmap as background.
-URxvt*.transparent: true
+URxvt*.transparent: false
+URxvt*background: #111820
 
 ! Darken (0 .. 99) or lighten (101 .. 200) the transparent background. A value of 100 means no shading.
 URxvt*.shading: 40
