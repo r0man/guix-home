@@ -3,6 +3,7 @@
   #:use-module (gnu packages compton)
   #:use-module (gnu packages dunst)
   #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages image-viewers)
@@ -34,6 +35,7 @@
 (define packages
   (list arandr
         autorandr
+        dbus
         dunst
         feh
         light
