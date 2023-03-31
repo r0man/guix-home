@@ -12,7 +12,7 @@
 ;; https://github.com/daviwil/dotfiles/blob/guix-home/daviwil/home-services/pipewire.scm
 
 (define (home-pipewire-profile-service config)
-  (list libcamera pipewire-0.3 wireplumber))
+  (list libcamera pipewire wireplumber))
 
 (define (home-pipewire-shepherd-service config)
   (list
@@ -22,7 +22,7 @@
     (provision '(pipewire))
     (stop  #~(make-kill-destructor))
     (start #~(make-forkexec-constructor
-              (list #$(file-append pipewire-0.3 "/bin/pipewire"))
+              (list #$(file-append pipewire "/bin/pipewire"))
               #:log-file (string-append
                           (or (getenv "XDG_LOG_HOME")
                               (format #f "~a/.local/var/log"
@@ -37,7 +37,7 @@
     (provision '(pipewire-pulse))
     (stop  #~(make-kill-destructor))
     (start #~(make-forkexec-constructor
-              (list #$(file-append pipewire-0.3 "/bin/pipewire-pulse"))
+              (list #$(file-append pipewire "/bin/pipewire-pulse"))
               #:log-file (string-append
                           (or (getenv "XDG_LOG_HOME")
                               (format #f "~a/.local/var/log"
@@ -69,18 +69,18 @@
     ;;        #~(string-append
     ;;           "<"
     ;; 	  #$(file-append
-    ;;              pipewire-0.3 "/share/alsa/alsa.conf.d/50-pipewire.conf")
+    ;;              pipewire "/share/alsa/alsa.conf.d/50-pipewire.conf")
     ;; 	  ">\n<"
     ;; 	  #$(file-append
-    ;;              pipewire-0.3 "/share/alsa/alsa.conf.d/99-pipewire-default.conf")
+    ;;              pipewire "/share/alsa/alsa.conf.d/99-pipewire-default.conf")
     ;;           ">\n"
     ;;           "
     ;; pcm_type.pipewire {
-    ;;   lib " #$(file-append pipewire-0.3 "/lib/alsa-lib/libasound_module_pcm_pipewire.so")
+    ;;   lib " #$(file-append pipewire "/lib/alsa-lib/libasound_module_pcm_pipewire.so")
     ;;   "
     ;; }
     ;; ctl_type.pipewire {
-    ;;   lib " #$(file-append pipewire-0.3 "/lib/alsa-lib/libasound_module_ctl_pipewire.so")
+    ;;   lib " #$(file-append pipewire "/lib/alsa-lib/libasound_module_ctl_pipewire.so")
     ;;   "
     ;; }
     ;; ")))
