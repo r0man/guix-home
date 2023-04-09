@@ -37,6 +37,7 @@
         emacs-company-quickhelp
         emacs-consult
         emacs-corfu
+        emacs-dall-e
         emacs-dart-mode
         emacs-debbugs
         emacs-docker
