@@ -6,16 +6,6 @@
 
 (define channels
   (list (channel
-         (name 'asahi)
-         (url "https://github.com/r0man/asahi-guix.git")
-         (branch "main")
-         (introduction
-          (make-channel-introduction
-           "c11f1c583d11b1ed55d34d7041b0c12d51d573e4"
-           (openpgp-fingerprint
-            "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
-
-        (channel
          (name 'guix)
          (url "https://git.savannah.gnu.org/git/guix.git")
          (branch "master")
