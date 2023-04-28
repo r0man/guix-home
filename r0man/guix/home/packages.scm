@@ -56,12 +56,21 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
+  #:use-module (guix utils)
   #:use-module (r0man guix packages container)
   #:export (packages))
 
-(define packages
+(define packages-aarch64
+  (list))
+
+(define packages-x86-64
+  (list inkscape
+        pandoc
+        qgis
+        ripgrep))
+
+(define packages-common
   (list
-   ;; (list openjdk11 "jdk")
    autoconf
    automake
    awscli
@@ -93,7 +102,6 @@
    graphviz
    help2man
    htop
-   ;; inkscape
    ispell
    isync
    lapack
@@ -110,7 +118,6 @@
    mplayer
    openblas
    openblas-ilp64
-   ;; pandoc
    password-store
    pgcli
    pkg-config
@@ -121,9 +128,7 @@
    postgresql
    python-virtualenv
    python-yubikey-manager
-   ;; qgis
    redshift
-   ripgrep
    rlwrap
    rofi
    rxvt-unicode
@@ -139,3 +144,10 @@
    util-linux
    wireless-tools
    zip))
+
+(define packages
+  (cond ((target-aarch64?)
+         (append packages-common packages-aarch64))
+        ((target-x86-64?)
+         (append packages-common packages-x86-64))
+        (else packages-common)))
