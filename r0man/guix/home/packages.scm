@@ -3,6 +3,7 @@
   #:use-module (gnu packages aspell)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages certs)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
@@ -74,6 +75,7 @@
    autoconf
    automake
    awscli
+   bash
    c2ffi
    clang
    cmake
