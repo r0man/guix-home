@@ -67,8 +67,8 @@
 (define packages-x86-64
   (list inkscape
         pandoc
-        qgis
-        ripgrep))
+        python-yubikey-manager
+        qgis))
 
 (define packages-common
   (list
@@ -129,8 +129,8 @@
    postgis
    postgresql
    python-virtualenv
-   python-yubikey-manager
    redshift
+   ripgrep
    rlwrap
    rofi
    rxvt-unicode
