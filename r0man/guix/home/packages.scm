@@ -65,8 +65,7 @@
   (list))
 
 (define packages-x86-64
-  (list inkscape
-        pandoc
+  (list pandoc
         python-yubikey-manager
         qgis))
 
@@ -104,6 +103,7 @@
    graphviz
    help2man
    htop
+   inkscape
    ispell
    isync
    lapack
