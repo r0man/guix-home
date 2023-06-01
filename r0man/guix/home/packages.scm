@@ -115,7 +115,7 @@
    libreoffice
    libvterm
    mu
-   node
+   node-lts
    nss-certs
    mplayer
    openblas
