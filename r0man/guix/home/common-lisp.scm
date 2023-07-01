@@ -5,6 +5,7 @@
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (r0man guix packages lisp)
   #:export (home-common-lisp-services))
 
 (define files
@@ -12,7 +13,7 @@
 
 (define packages
   (list cl-annot
-        cl-autowrap
+        cl-autowrap-next
         cl-cffi
         cl-clack
         cl-clack
