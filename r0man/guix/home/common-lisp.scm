@@ -16,6 +16,7 @@
         cl-cffi
         cl-clack
         cl-clack
+        cl-clog
         cl-dexador
         cl-plump
         cl-project
