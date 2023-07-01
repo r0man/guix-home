@@ -18,6 +18,7 @@
         cl-clack
         cl-clog
         cl-dexador
+        cl-fiveam
         cl-plump
         cl-project
         cl-rdkafka
