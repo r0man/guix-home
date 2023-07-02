@@ -24,6 +24,7 @@
         cl-project
         cl-rdkafka
         cl-rove
+        cl-simple-date-time
         sbcl))
 
 (define home-common-lisp-services
