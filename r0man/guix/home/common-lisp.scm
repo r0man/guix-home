@@ -22,6 +22,7 @@
         cl-fiveam
         cl-local-time
         cl-plump
+        cl-postgres+local-time
         cl-project
         cl-rdkafka
         cl-rove
