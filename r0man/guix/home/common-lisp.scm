@@ -21,6 +21,7 @@
         cl-dexador
         cl-fiveam
         cl-local-time
+        cl-lquery
         cl-plump
         cl-postgres+local-time
         cl-project
