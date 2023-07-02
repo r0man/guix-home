@@ -20,6 +20,7 @@
         cl-clog
         cl-dexador
         cl-fiveam
+        cl-local-time
         cl-plump
         cl-project
         cl-rdkafka
