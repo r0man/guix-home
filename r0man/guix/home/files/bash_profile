@@ -21,6 +21,11 @@ fi
 
 ## GUIX
 
+# Setup GUIX on a foreign distro
+if [ -f /etc/profile.d/guix.sh ]; then
+    /etc/profile.d/guix.sh
+fi
+
 # XDG_DATA_DIRS often starts off empty, but an empty value is
 # interpreted as this value. Loading a profile can set it, though,
 # which effectively ignores the default value. We want it to instead
