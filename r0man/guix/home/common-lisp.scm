@@ -13,6 +13,7 @@
 
 (define packages
   (list cl-annot
+        cl-atomics
         cl-autowrap-next
         cl-cffi
         cl-clack
@@ -20,8 +21,10 @@
         cl-clog
         cl-dexador
         cl-fiveam
+        cl-isaac
         cl-local-time
         cl-lquery
+        cl-pass
         cl-plump
         cl-postgres+local-time
         cl-project
