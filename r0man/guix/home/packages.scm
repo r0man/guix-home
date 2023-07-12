@@ -129,6 +129,7 @@
    postgis
    postgresql
    python-virtualenv
+   recoll
    redshift
    ripgrep
    rlwrap
