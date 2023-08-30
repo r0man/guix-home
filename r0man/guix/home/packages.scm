@@ -66,8 +66,9 @@
 
 (define packages-x86-64
   (list pandoc
-        ;; python-yubikey-manager
-        qgis))
+        python-yubikey-manager
+        ;; qgis
+        ))
 
 (define packages-common
   (list
