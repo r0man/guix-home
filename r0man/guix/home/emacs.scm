@@ -116,7 +116,7 @@
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
-        emacs-next
+        emacs-next-tree-sitter
         emacs-oauth2
         emacs-openwith
         emacs-orderless

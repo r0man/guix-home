@@ -51,6 +51,7 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages uml)
   #:use-module (gnu packages video)
   #:use-module (gnu packages wm)
@@ -74,7 +75,7 @@
   (list
    autoconf
    automake
-   awscli
+   ;; awscli
    bash
    c2ffi
    clang
@@ -144,6 +145,15 @@
    strace
    texi2html
    texinfo
+   tree-sitter-bash
+   tree-sitter-clojure
+   tree-sitter-dockerfile
+   tree-sitter-html
+   tree-sitter-json
+   tree-sitter-markdown
+   tree-sitter-markdown-gfm
+   tree-sitter-org
+   tree-sitter-scheme
    unzip
    util-linux
    wireless-tools
