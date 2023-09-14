@@ -145,6 +145,7 @@
    strace
    texi2html
    texinfo
+   tree-sitter
    tree-sitter-bash
    tree-sitter-clojure
    tree-sitter-dockerfile
