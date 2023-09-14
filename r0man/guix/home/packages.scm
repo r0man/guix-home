@@ -147,6 +147,7 @@
    texinfo
    tree-sitter
    tree-sitter-bash
+   tree-sitter-cli
    tree-sitter-clojure
    tree-sitter-dockerfile
    tree-sitter-html
