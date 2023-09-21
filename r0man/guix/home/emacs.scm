@@ -93,6 +93,7 @@
         emacs-inflections
         emacs-inspector
         emacs-jarchive
+        emacs-jinx
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
