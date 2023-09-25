@@ -54,7 +54,6 @@
         emacs-elfeed
         emacs-elisp-slime-nav
         emacs-elixir-mode
-        emacs-elpy
         emacs-emacsql
         emacs-emacsql-sqlite
         emacs-embark
