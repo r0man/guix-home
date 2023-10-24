@@ -81,6 +81,7 @@
    clang
    cmake
    container-structure-test
+   coreutils
    docker-compose
    elixir
    flatpak
