@@ -25,7 +25,6 @@
     (".Xresources.thinkpad" ,(local-file "files/Xresources.thinkpad"))
     (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
     (".local/share/wallpapers/stop-customizing-start-working.jpg" ,(local-file "files/wallpapers/stop-customizing-start-working.jpg"))
-    (".mbsyncrc" ,(local-file "files/mbsyncrc"))
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
     (".xinitrc" ,(local-file "files/xinitrc"))
     (".xprofile" ,(local-file "files/xprofile"))
