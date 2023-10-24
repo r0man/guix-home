@@ -1,14 +1,12 @@
 (define-module (r0man guix home mcron)
   #:use-module (gnu home services mcron)
+  #:use-module (gnu packages mail)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:export (home-mcron-services))
 
-(define guix-garbage-collect
-  #~(job "0 12 * * *" "guix gc --delete-generations=1m"))
-
 (define mbsync
-  #~(job "* * * * *" "mbsync --all"))
+  #~(job "* * * * *" (string-append #$isync "/bin/mbsync --all")))
 
 (define jobs
   (list mbsync))
