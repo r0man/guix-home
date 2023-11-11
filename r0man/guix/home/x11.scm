@@ -1,7 +1,6 @@
 (define-module (r0man guix home x11)
   #:use-module (gnu home services)
   #:use-module (gnu packages compton)
-  #:use-module (gnu packages dunst)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
