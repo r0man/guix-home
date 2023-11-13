@@ -18,11 +18,11 @@
 ## BACKLIGHT
 
 # Increase backlight
-"light -A 10"
+"brightnessctl s +20"
    XF86MonBrightnessUp
 
 # Decrease backlight
-"light -U 10"
+"brightnessctl s 20-"
    XF86MonBrightnessDown
 
 ## MOUSE MOVEMENT // EMACS STYLE
