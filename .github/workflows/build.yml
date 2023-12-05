@@ -58,4 +58,4 @@ jobs:
                      (openpgp-fingerprint
                       "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
       - name: Guix home reconfigure
-        run: guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/home/config.scm
+        run: guix home -L . --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org' reconfigure r0man/guix/home/config.scm
