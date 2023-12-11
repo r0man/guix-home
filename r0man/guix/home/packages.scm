@@ -10,6 +10,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages dns)
   #:use-module (gnu packages docker)
   #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
@@ -74,6 +75,7 @@
 
 (define packages-common
   (list
+   `(,isc-bind "utils")
    autoconf
    automake
    ;; awscli
