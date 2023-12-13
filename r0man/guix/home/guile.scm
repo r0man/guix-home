@@ -14,6 +14,7 @@
 (define packages
   (list guildhall
         guile-3.0
+        guile-ares-rs
         guile-colorized
         guile-git
         guile-json-4
