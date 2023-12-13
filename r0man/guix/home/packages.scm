@@ -68,8 +68,9 @@
   (list))
 
 (define packages-x86-64
-  (list pandoc
-        python-yubikey-manager
+  (list gimp
+        pandoc
+
         ;; qgis
         ))
 
@@ -100,7 +101,6 @@
    gcc-toolchain
    gdal
    gfortran-toolchain
-   gimp
    glibc-locales
    gnu-make
    gnupg
@@ -136,6 +136,7 @@
    postgresql
    pv
    python-virtualenv
+   python-yubikey-manager
    recoll
    redshift
    ripgrep
