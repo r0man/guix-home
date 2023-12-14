@@ -37,6 +37,7 @@
         emacs-company-lsp
         emacs-company-quickhelp
         emacs-consult
+        emacs-consult-gh
         emacs-copilot
         emacs-corfu
         emacs-dall-e
