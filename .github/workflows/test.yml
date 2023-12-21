@@ -48,6 +48,6 @@ jobs:
                      (openpgp-fingerprint
                       "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
       - name: List Guix config fir
-        run: ls -l $HOME/.config/guix
+        run: ls -l $HOME/.config
       - name: Guix home reconfigure
         run: guix home -L . --dry-run reconfigure r0man/guix/home/config.scm
