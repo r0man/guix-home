@@ -89,10 +89,7 @@ done
 
 ## SOLARIZED
 
-export SOLARIZED="dark"
-if [ -e ~/.dotfiles/dircolors.ansi-$SOLARIZED ]; then
-    eval `dircolors ~/.dotfiles/dircolors.ansi-$SOLARIZED`
-fi
+export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
 
 ## COURSIER
 
