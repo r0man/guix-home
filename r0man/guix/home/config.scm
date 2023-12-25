@@ -11,6 +11,7 @@
   #:use-module (r0man guix home git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
+  #:use-module (r0man guix home i3status)
   #:use-module (r0man guix home kitty)
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home nix)
@@ -31,6 +32,7 @@
           home-git-services
           home-gpg-services
           home-guile-services
+          home-i3status-services
           home-kitty-services
           home-mbsync-services
           home-nix-services
