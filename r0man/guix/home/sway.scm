@@ -291,6 +291,7 @@ exec --no-startup-id pactl stat
 
 (define packages
   (list brightnessctl
+        i3status
         kitty
         sway
         swaybg
