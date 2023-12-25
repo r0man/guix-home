@@ -261,8 +261,7 @@ bar {
 
 input * {
     xkb_layout \"us,no\"
-    #xkb_variant \"colemak,,typewriter\"
-    xkb_options \"grp:shift_caps_toggle\"
+    xkb_options \"xkb_options ctrl:nocaps\"
 }
 
 #input <identifier> xkb_model \"pc101\"
