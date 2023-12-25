@@ -47,7 +47,7 @@ ignore-empty-password"))
 ### Variables
 #
 # Logo key. Use Mod1 for Alt, Mod4 for \"Windows key\".
-set $mod Mod1
+set $mod Mod4
 # Home row direction keys, like vim
 set $left h
 set $down j
@@ -261,7 +261,7 @@ bar {
 
 input \"type:keyboard\" {
     xkb_layout \"us,no\"
-    xkb_options \"caps:ctrl_modifier\"
+    xkb_options \"caps:ctrl_modifier,altwin:swap_lalt_lwin\"
 }
 
 #input <identifier> xkb_model \"pc101\"
