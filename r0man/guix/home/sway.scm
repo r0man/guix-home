@@ -259,9 +259,9 @@ bar {
     }
 }
 
-input * {
+input \"type:keyboard\" {
     xkb_layout \"us,no\"
-    xkb_options \"xkb_options ctrl:nocaps\"
+    xkb_options \"caps:ctrl_modifier\"
 }
 
 #input <identifier> xkb_model \"pc101\"
