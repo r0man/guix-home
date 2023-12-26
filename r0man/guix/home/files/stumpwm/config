@@ -228,7 +228,7 @@
 (defcommand run-floating-htop () ()
   "Run floating htop"
   (with-open-window
-    "urxvt -name floating-htop -e htop"
+    "kitty --name floating-htop -e htop"
     '(:instance "floating-htop")
     (lambda (window)
       (let* ((head (current-head))

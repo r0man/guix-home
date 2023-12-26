@@ -27,7 +27,7 @@
 
         (channel
          (name 'r0man)
-         (url "https://github.com/r0man/guix-channel.git")
+         (url "https://github.com/r0man/guix-channel")
          (branch "main")
          (introduction
           (make-channel-introduction

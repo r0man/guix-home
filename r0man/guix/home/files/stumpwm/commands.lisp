@@ -24,7 +24,7 @@
 
 (defcommand htop () ()
   "Run htop."
-  (run-or-raise "urxvt -name HTop -e htop" '(:instance "HTop")))
+  (run-or-raise "kitty --name HTop htop" '(:instance "HTop")))
 
 (defcommand keyboard-backlight (on-or-off)
     ((:y-or-n " Turn Keyboard Backlight on? "))
@@ -33,7 +33,7 @@
 
 (defcommand logs () ()
   "Show the logs."
-  (run-or-raise "urxvt -name Logs -e sudo journalctl -f -a -n 100" '(:instance "Logs")))
+  (run-or-raise "kitty --name Logs -e sudo journalctl -f -a -n 100" '(:instance "Logs")))
 
 (defcommand polybar () ()
   "Run the polybar status bar."
@@ -44,14 +44,14 @@
   (run-or-raise "slack --startup" '(:instance "Slack")))
 
 (defcommand terminal () ()
-  "Run the urxvt terminal."
+  "Run the kitty terminal."
   ;; (hsplit)
   ;; (fnext)
-  (run-shell-command "urxvt"))
+  (run-shell-command "kitty"))
 
 (defcommand terminal-raise () ()
-  "Run or raise the urxvt terminal."
-  (run-or-raise "urxvt -name Terminal" '(:instance "Terminal")))
+  "Run or raise the kitty terminal."
+  (run-or-raise "kitty --name Terminal" '(:instance "Terminal")))
 
 ;; (defcommand (fprev tile-group) () ()
 ;;   "Cycle through the frame tree to the prev frame."

@@ -11,12 +11,15 @@
   #:use-module (r0man guix home git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
+  #:use-module (r0man guix home i3status)
+  #:use-module (r0man guix home kitty)
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home shepherd)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
+  #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home xdg)
   #:use-module (r0man guix home x11))
 
@@ -30,11 +33,14 @@
           home-git-services
           home-gpg-services
           home-guile-services
+          home-i3status-services
+          home-kitty-services
           home-mbsync-services
           home-nix-services
           home-shepherd-services
           home-stumpwm-services
           home-sway-services
+          home-wofi-services
           home-xdg-services
           home-x11-services))
 
