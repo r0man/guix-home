@@ -283,6 +283,10 @@ xwayland disable
 # Ensure Pulseaudio is started.
 exec --no-startup-id pactl stat
 
+# GTK+ applications take 20 seconds to start
+# See: https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
 # Lock the screen at login.
 #exec " swaylock-command))
 
