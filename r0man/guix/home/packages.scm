@@ -88,6 +88,7 @@
    coreutils
    docker-compose
    elixir
+   ffmpeg
    flatpak
    font-dejavu
    font-fira-code
