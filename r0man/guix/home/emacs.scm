@@ -12,10 +12,9 @@
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages
-  (list emacs-aggressive-indent
-        ;; emacs-lsp-mode
-        ;; emacs-dap-mode
+  (list emacs
         emacs-adoc-mode
+        emacs-aggressive-indent
         emacs-aio
         emacs-all-the-icons
         emacs-arei
@@ -50,6 +49,7 @@
         emacs-docopt
         emacs-edit-indirect
         emacs-ef-themes
+        emacs-eglot
         emacs-eglot
         emacs-eglot-java
         emacs-el-mock
@@ -121,7 +121,6 @@
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
-        emacs
         emacs-oauth2
         emacs-openwith
         emacs-orderless
@@ -135,8 +134,6 @@
         emacs-org-tree-slide
         emacs-ox-gfm
         emacs-ox-jira
-        ;; emacs-ox-pandoc
-        ;; emacs-paimon
         emacs-pandoc-mode
         emacs-paredit
         emacs-parsec
@@ -162,7 +159,6 @@
         emacs-smex
         emacs-smooth-scrolling
         emacs-sql-indent
-        ;; emacs-sqlite3-api
         emacs-stumpwm-mode
         emacs-terraform-mode
         emacs-timesheet
