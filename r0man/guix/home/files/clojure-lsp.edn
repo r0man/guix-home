@@ -1,4 +1,4 @@
-{:java {:jdk-source-uri "file:///usr/lib/jvm/java-11-openjdk/lib/src.zip"
-        :home-path "file:///usr/lib/jvm/java-11-openjdk"
+{:java {:jdk-source-uri "file:///usr/lib/jvm/java-17-openjdk-amd64/lib/src.zip"
+        :home-path "file:///usr/lib/jvm/java-17-openjdk-amd64"
         :download-jdk-source? false}
  :log-path "/tmp/clojure-lsp.out"}
