@@ -1,5 +1,6 @@
 (define-module (r0man guix home kitty)
   #:use-module (gnu home services)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages terminals)
   #:use-module (gnu services)
   #:use-module (guix gexp)
@@ -8,11 +9,12 @@
 
 (define kitty-config
   (mixed-text-file
-   "kitty-config"
-   "background_opacity 0.7
+   "kitty-config" "
+background_opacity 0.7
 font_family Hack
 font_size 14.0
 foreground #586e75
+shell " bash "/bin/bash --login
 "))
 
 (define home-kitty-services
