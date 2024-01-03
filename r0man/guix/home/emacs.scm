@@ -85,6 +85,7 @@
         emacs-gnuplot
         emacs-go-mode
         emacs-google-translate
+        emacs-gptel
         emacs-graphql
         emacs-graphql-mode
         emacs-guess-language
