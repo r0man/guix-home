@@ -140,7 +140,7 @@
         emacs-paredit
         emacs-parsec
         emacs-pass
-        emacs-plantuml-mode
+        ;; emacs-plantuml-mode
         emacs-plz
         emacs-popwin
         emacs-posframe
