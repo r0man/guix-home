@@ -33,12 +33,9 @@
         emacs-codegpt
         emacs-color-theme
         emacs-color-theme-solarized-r0man
-        emacs-company
-        emacs-company-box
-        emacs-company-lsp
-        emacs-company-quickhelp
         emacs-consult
         emacs-consult-gh
+        emacs-corfu
         emacs-copilot
         emacs-corfu
         emacs-dall-e
