@@ -24,6 +24,7 @@
         emacs-bluetooth
         emacs-bnf-mode
         emacs-buttercup
+        emacs-cape
         emacs-cask
         emacs-chatgpt
         emacs-cider
@@ -35,8 +36,8 @@
         emacs-color-theme-solarized-r0man
         emacs-consult
         emacs-consult-gh
-        emacs-corfu
         emacs-copilot
+        emacs-corfu
         emacs-corfu
         emacs-dall-e
         emacs-dart-mode
