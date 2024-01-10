@@ -143,6 +143,7 @@
    ripgrep
    rlwrap
    rofi
+   rxvt-unicode
    sed
    sendgmail
    shared-mime-info
