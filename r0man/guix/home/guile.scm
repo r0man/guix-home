@@ -2,6 +2,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)
+  #:use-module (gnu packages tls)
   #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (guix gexp)
@@ -17,6 +18,7 @@
         guile-ares-rs
         guile-colorized
         guile-git
+        guile-gnutls
         guile-json-4
         guile-lib
         guile-lzlib
