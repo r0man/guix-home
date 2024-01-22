@@ -24,6 +24,7 @@
         emacs-bluetooth
         emacs-bnf-mode
         emacs-buttercup
+        emacs-gptel
         emacs-cape
         emacs-cask
         emacs-chatgpt
