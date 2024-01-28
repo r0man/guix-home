@@ -14,6 +14,7 @@
                   (list babashka
                         ;; clojure
                         ;; clojure-tools
+                        clj-kondo
                         clojure-lsp
                         leiningen)))
 
