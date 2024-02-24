@@ -129,6 +129,7 @@
         emacs-org-contrib
         emacs-org-gcal
         emacs-org-jira
+        emacs-org-make-toc
         emacs-org-present
         emacs-org-reveal
         emacs-org-roam
