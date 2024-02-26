@@ -24,11 +24,11 @@
         emacs-bluetooth
         emacs-bnf-mode
         emacs-buttercup
-        ;; emacs-gptel
         emacs-cape
         emacs-cask
         emacs-chatgpt
         emacs-cider
+        emacs-gptel
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
         emacs-closql
