@@ -24,7 +24,7 @@
         emacs-bluetooth
         emacs-bnf-mode
         emacs-buttercup
-        emacs-gptel
+        ;; emacs-gptel
         emacs-cape
         emacs-cask
         emacs-chatgpt
@@ -57,6 +57,7 @@
         emacs-eldoc-box
         emacs-elfeed
         emacs-elisp-slime-nav
+        emacs-elisa
         emacs-elixir-mode
         emacs-ellama
         emacs-emacsql
