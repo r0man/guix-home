@@ -12,9 +12,6 @@
 (define home-clojure-service
   (simple-service 'clojure-service home-profile-service-type
                   (list babashka
-                        ;; clojure
-                        ;; clojure-tools
-                        clj-kondo
                         clojure-lsp
                         leiningen)))
 
