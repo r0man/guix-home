@@ -28,7 +28,6 @@
         emacs-cask
         emacs-chatgpt
         emacs-cider
-        emacs-gptel
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
         emacs-closql
@@ -56,8 +55,8 @@
         emacs-eldev
         emacs-eldoc-box
         emacs-elfeed
-        emacs-elisp-slime-nav
         emacs-elisa
+        emacs-elisp-slime-nav
         emacs-elixir-mode
         emacs-ellama
         emacs-emacsql
@@ -86,6 +85,7 @@
         emacs-gnuplot
         emacs-go-mode
         emacs-google-translate
+        emacs-gptel
         emacs-gptel
         emacs-graphql
         emacs-graphql-mode
@@ -142,7 +142,6 @@
         emacs-paredit
         emacs-parsec
         emacs-pass
-        ;; emacs-plantuml-mode
         emacs-plz
         emacs-popwin
         emacs-posframe
