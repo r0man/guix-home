@@ -43,6 +43,7 @@
         pavucontrol
         picom
         unclutter
+        xbacklight
         xbindkeys
         xclip
         xdg-utils
