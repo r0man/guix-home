@@ -12,12 +12,11 @@
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages
-  (list emacs
+  (list emacs-29.2
         emacs-adoc-mode
         emacs-aggressive-indent
         emacs-aio
         emacs-all-the-icons
-        emacs-arei
         emacs-auto-dictionary-mode
         emacs-avy
         emacs-avy-menu
