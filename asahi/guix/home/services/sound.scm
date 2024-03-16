@@ -1,4 +1,5 @@
 (define-module (asahi guix home services sound)
+  #:use-module (asahi guix packages crates-io)
   #:use-module (asahi guix packages linux)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services xdg)
@@ -22,6 +23,9 @@
 ;;;
 
 (define-configuration/no-serialization home-pipewire-configuration
+  (bankstown
+   (file-like rust-bankstown)
+   "The Bass enhancer package to use.")
   (lsp-plugins
    (file-like lsp-plugins)
    "The Lsp Plugins package to use.")
@@ -49,6 +53,9 @@ PulseAudio clients to use PipeWire transparently."))
              (list "DISABLE_RTKIT=1"
                    (string-append
                     "LV2_PATH="
+                    #$(home-pipewire-configuration-bankstown config)
+                    "/lib/lv2"
+                    ":"
                     #$(home-pipewire-configuration-lsp-plugins config)
                     "/lib/lv2")
                    (string-append
@@ -73,13 +80,16 @@ PulseAudio clients to use PipeWire transparently."))
              #:environment-variables
              (list "DISABLE_RTKIT=1"
                    (string-append
+                    "LV2_PATH="
+                    #$(home-pipewire-configuration-bankstown config)
+                    "/lib/lv2"
+                    ":"
+                    #$(home-pipewire-configuration-lsp-plugins config)
+                    "/lib/lv2")
+                   (string-append
                     "PIPEWIRE_MODULE_DIR="
                     #$(home-pipewire-configuration-pipewire config)
                     "/lib/pipewire-0.3")
-                   (string-append
-                    "LV2_PATH="
-                    #$(home-pipewire-configuration-lsp-plugins config)
-                    "/lib/lv2")
                    (string-append
                     "XDG_RUNTIME_DIR="
                     (or (getenv "XDG_RUNTIME_DIR")
@@ -99,6 +109,9 @@ PulseAudio clients to use PipeWire transparently."))
              (list "DISABLE_RTKIT=1"
                    (string-append
                     "LV2_PATH="
+                    #$(home-pipewire-configuration-bankstown config)
+                    "/lib/lv2"
+                    ":"
                     #$(home-pipewire-configuration-lsp-plugins config)
                     "/lib/lv2")
                    (string-append
@@ -146,11 +159,18 @@ PulseAudio clients to use PipeWire transparently."))
                 ,home-pipewire-disable-pulseaudio-auto-start))
              '())))
 
+(define (home-pipewire-profile-entries config)
+  (list (home-pipewire-configuration-lsp-plugins config)
+        (home-pipewire-configuration-pipewire config)
+        (home-pipewire-configuration-wireplumber config)))
+
 (define home-pipewire-service-type
   (service-type
    (name 'pipewire)
    (extensions
-    (list (service-extension home-shepherd-service-type
+    (list (service-extension home-profile-service-type
+                             home-pipewire-profile-entries)
+          (service-extension home-shepherd-service-type
                              home-pipewire-shepherd-services)
           (service-extension home-xdg-configuration-files-service-type
                              home-pipewire-xdg-configuration)))
