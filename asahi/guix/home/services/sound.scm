@@ -23,6 +23,9 @@
 ;;;
 
 (define-configuration/no-serialization home-pipewire-configuration
+  (alsa-ucm-conf
+   (file-like asahi-alsa-ucm-conf)
+   "The Alsa Use Case Manager to use.")
   (bankstown
    (file-like rust-bankstown)
    "The Bass enhancer package to use.")
@@ -52,6 +55,10 @@ PulseAudio clients to use PipeWire transparently."))
              #:environment-variables
              (list "DISABLE_RTKIT=1"
                    (string-append
+                    "ALSA_CONFIG_UCM2="
+                    #$(home-pipewire-configuration-alsa-ucm-conf config)
+                    "/share/alsa/ucm2")
+                   (string-append
                     "LV2_PATH="
                     #$(home-pipewire-configuration-bankstown config)
                     "/lib/lv2"
@@ -80,6 +87,10 @@ PulseAudio clients to use PipeWire transparently."))
              #:environment-variables
              (list "DISABLE_RTKIT=1"
                    (string-append
+                    "ALSA_CONFIG_UCM2="
+                    #$(home-pipewire-configuration-alsa-ucm-conf config)
+                    "/share/alsa/ucm2")
+                   (string-append
                     "LV2_PATH="
                     #$(home-pipewire-configuration-bankstown config)
                     "/lib/lv2"
@@ -107,6 +118,10 @@ PulseAudio clients to use PipeWire transparently."))
                       "/bin/wireplumber"))
              #:environment-variables
              (list "DISABLE_RTKIT=1"
+                   (string-append
+                    "ALSA_CONFIG_UCM2="
+                    #$(home-pipewire-configuration-alsa-ucm-conf config)
+                    "/share/alsa/ucm2")
                    (string-append
                     "LV2_PATH="
                     #$(home-pipewire-configuration-bankstown config)
