@@ -157,10 +157,12 @@ PulseAudio clients to use PipeWire transparently."))
      "}\n")))
 
 (define (home-pipewire-conf config)
-  (file-append (home-pipewire-configuration-pipewire config) "/share/pipewire/pipewire.conf"))
+  (file-append (home-pipewire-configuration-pipewire config)
+               "/share/pipewire/pipewire.conf"))
 
 (define (home-wireplumber-conf config)
-  (file-append (home-pipewire-configuration-wireplumber config) "/share/wireplumber/wireplumber.conf"))
+  (file-append (home-pipewire-configuration-wireplumber config)
+               "/share/wireplumber/wireplumber.conf"))
 
 (define home-pipewire-disable-pulseaudio-auto-start
   (plain-file "client.conf" "autospawn = no"))
