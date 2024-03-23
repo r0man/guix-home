@@ -164,6 +164,7 @@
    unzip
    util-linux
    wireless-tools
+   xdg-desktop-portal
    zip))
 
 (define packages
