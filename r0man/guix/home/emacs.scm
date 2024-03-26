@@ -76,6 +76,7 @@
         emacs-flycheck-flow
         emacs-flymd
         emacs-forge
+        emacs-fsm
         emacs-geiser
         emacs-geiser-guile
         emacs-gif-screencast
