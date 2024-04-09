@@ -30,7 +30,6 @@
         emacs-cider
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
-        emacs-clojure-ts-mode
         emacs-closql
         emacs-codegpt
         emacs-color-theme
