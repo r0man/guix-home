@@ -48,9 +48,8 @@
         emacs-docopt
         emacs-edit-indirect
         emacs-ef-themes
-        emacs-eglot
-        emacs-eglot
-        emacs-eglot-java
+        ;; emacs-eglot
+        ;; emacs-eglot-java
         emacs-el-mock
         emacs-eldev
         emacs-eldoc-box
