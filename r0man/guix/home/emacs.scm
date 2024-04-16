@@ -160,7 +160,6 @@
         emacs-sly-asdf
         emacs-sly-macrostep
         emacs-sly-stepper
-        emacs-smex
         emacs-sql-indent
         emacs-stumpwm-mode
         emacs-terraform-mode
