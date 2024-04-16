@@ -161,7 +161,6 @@
         emacs-sly-macrostep
         emacs-sly-stepper
         emacs-smex
-        emacs-smooth-scrolling
         emacs-sql-indent
         emacs-stumpwm-mode
         emacs-terraform-mode
