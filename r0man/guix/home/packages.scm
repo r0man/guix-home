@@ -70,9 +70,7 @@
 (define packages-x86-64
   (list gimp
         pandoc
-
-        ;; qgis
-        ))
+        python-yubikey-manager))
 
 (define packages-common
   (list
