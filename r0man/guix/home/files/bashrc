@@ -24,14 +24,6 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; h
 ## GPG
 export GPG_TTY="$(tty)"
 
-## FZF
-
-[ -r /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
-[ -r /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
-
-# Fix <RET> in Emacs, see: https://github.com/akermu/emacs-libvterm/issues/40
-export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept"
-
 ## LIBVTERM
 
 function vterm_printf(){

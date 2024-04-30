@@ -15,7 +15,10 @@
 
 (define %home-bash
   (home-bash-extension
-   (bashrc (list %bash-completions %bash-key-bindings))))
+   (bashrc
+    (list %bash-completions %bash-key-bindings))
+   (environment-variables
+    '(("FZF_DEFAULT_OPTS" . "--bind=ctrl-j:accept")))))
 
 (define %home-profile
   (list fzf))
