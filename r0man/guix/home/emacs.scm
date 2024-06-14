@@ -125,6 +125,7 @@
         emacs-multi-vterm
         emacs-multiple-cursors
         emacs-oauth2
+        emacs-ob-mermaid
         emacs-openwith
         emacs-orderless
         emacs-org
