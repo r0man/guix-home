@@ -12,7 +12,6 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages dns)
   #:use-module (gnu packages docker)
-  #:use-module (gnu packages elixir)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
@@ -85,7 +84,6 @@
    container-structure-test
    coreutils
    docker-compose
-   elixir
    ffmpeg
    flatpak
    font-dejavu
