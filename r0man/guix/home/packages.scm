@@ -82,10 +82,8 @@
    c2ffi
    clang
    cmake
-   container-structure-test
    coreutils
    docker-compose
-   ffmpeg
    flatpak
    font-dejavu
    font-fira-code
@@ -102,7 +100,6 @@
    glibc-locales
    gnu-make
    gnupg
-   gnuplot
    gnutls
    graphviz
    help2man
@@ -110,11 +107,9 @@
    inkscape
    ispell
    isync
-   lapack
    libatasmart
    libffi
    libgcrypt
-   librdkafka
    librdkafka
    libreoffice
    libvterm
@@ -122,12 +117,9 @@
    node-lts
    nss-certs
    mplayer
-   openblas
-   openblas-ilp64
    password-store
    pgcli
    pkg-config
-   plantuml
    plocate
    po4a
    postgis
