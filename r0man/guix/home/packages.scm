@@ -13,6 +13,7 @@
   #:use-module (gnu packages dns)
   #:use-module (gnu packages docker)
   #:use-module (gnu packages elixir)
+  #:use-module (gnu packages file)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
