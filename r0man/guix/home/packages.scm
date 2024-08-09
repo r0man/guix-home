@@ -84,6 +84,7 @@
    cmake
    coreutils
    docker-compose
+   file
    flatpak
    font-dejavu
    font-fira-code
