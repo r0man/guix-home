@@ -28,6 +28,7 @@
   #:use-module (gnu packages gnuzilla)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages haskell-xyz)
+  #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
@@ -106,6 +107,7 @@
    graphviz
    help2man
    htop
+   imagemagick
    inkscape
    ispell
    isync
