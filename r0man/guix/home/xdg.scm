@@ -6,7 +6,7 @@
 
 (define browser-mime-type
   (let ((hostname (gethostname)))
-    (cond ((equal? "bombaclaat" hostname)
+    (cond ((equal? "m1" hostname)
            'icecat.desktop)
           (else
            'firefox.desktop))))
