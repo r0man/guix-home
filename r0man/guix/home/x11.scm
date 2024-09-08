@@ -38,7 +38,6 @@
         feh
         light
         mpd
-        ;; nautilus
         pamixer
         pavucontrol
         picom
