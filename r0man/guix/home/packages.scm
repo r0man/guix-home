@@ -12,6 +12,8 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages dns)
   #:use-module (gnu packages docker)
+  #:use-module (gnu packages elixir)
+  #:use-module (gnu packages file)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages fontutils)
@@ -81,10 +83,9 @@
    c2ffi
    clang
    cmake
-   container-structure-test
    coreutils
    docker-compose
-   ffmpeg
+   file
    flatpak
    font-dejavu
    font-fira-code
@@ -101,7 +102,6 @@
    glibc-locales
    gnu-make
    gnupg
-   gnuplot
    gnutls
    graphviz
    help2man
@@ -109,11 +109,9 @@
    inkscape
    ispell
    isync
-   lapack
    libatasmart
    libffi
    libgcrypt
-   librdkafka
    librdkafka
    libreoffice
    libvterm
@@ -121,12 +119,9 @@
    node-lts
    nss-certs
    mplayer
-   openblas
-   openblas-ilp64
    password-store
    pgcli
    pkg-config
-   plantuml
    plocate
    po4a
    postgis
@@ -162,6 +157,7 @@
    unzip
    util-linux
    wireless-tools
+   xdg-desktop-portal
    zip))
 
 (define packages

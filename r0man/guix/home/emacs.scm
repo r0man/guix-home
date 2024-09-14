@@ -166,6 +166,7 @@
         emacs-stumpwm-mode
         emacs-terraform-mode
         emacs-timesheet
+        emacs-transient
         emacs-treemacs
         emacs-undercover
         emacs-undo-tree

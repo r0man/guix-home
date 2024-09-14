@@ -6,27 +6,25 @@
   #:export (channels home-channels-services))
 
 (define channels
-  (list ;; (channel-with-substitutes-available
-        ;;  (channel
-        ;;   (name 'guix)
-        ;;   (url "https://git.savannah.gnu.org/git/guix.git")
-        ;;   (branch "master")
-        ;;   (introduction
-        ;;    (make-channel-introduction
-        ;;     "9edb3f66fd807b096b48283debdcddccfea34bad"
-        ;;     (openpgp-fingerprint
-        ;;      "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))
-        ;;  "https://ci.guix.gnu.org")
+  (list (channel
+         (name 'asahi)
+         (branch "main")
+         (url "https://github.com/asahi-guix/channel")
+         (introduction
+          (make-channel-introduction
+           "3eeb493b037bea44f225c4314c5556aa25aff36c"
+           (openpgp-fingerprint
+            "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
 
         (channel
          (name 'guix)
-         (url "https://git.savannah.gnu.org/git/guix.git")
-         (branch "master")
+         (url "https://github.com/asahi-guix/guix")
+         (branch "main")
          (introduction
           (make-channel-introduction
-           "9edb3f66fd807b096b48283debdcddccfea34bad"
+           "59c86958338970cac132f45da37de3b00a26a8cc"
            (openpgp-fingerprint
-            "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))
+            "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199"))))
 
         (channel
          (name 'nonguix)

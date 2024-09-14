@@ -6,6 +6,7 @@
   #:use-module (r0man guix home channels)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home common-lisp)
+  #:use-module (r0man guix home desktop)
   #:use-module (r0man guix home emacs)
   #:use-module (r0man guix home environment)
   #:use-module (r0man guix home fzf)
@@ -18,6 +19,7 @@
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home shepherd)
+  #:use-module (r0man guix home sound)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
   #:use-module (r0man guix home wofi)
@@ -29,6 +31,7 @@
           home-channels-services
           home-clojure-services
           home-common-lisp-services
+          home-dbus-services
           home-emacs-services
           home-environment-variables-services
           home-fzf-services
@@ -39,6 +42,7 @@
           home-kitty-services
           home-mbsync-services
           home-nix-services
+          home-pipewire-services
           home-shepherd-services
           home-stumpwm-services
           home-sway-services
