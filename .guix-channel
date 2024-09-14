@@ -1,0 +1,5 @@
+;; -*- mode: scheme; -*-
+(channel
+ (version 0)
+ (directory "modules")
+ (url "https://github.com/r0man/guix-home"))
