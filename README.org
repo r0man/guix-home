@@ -11,13 +11,22 @@ Configure the Guix channels.
 
 #+begin_src shell
   mkdir -p ~/.config/guix/
-  ln -s "$(pwd)/r0man/guix/home/channels.scm" ~/.config/guix/channels.scm
+  ln -s "$(pwd)/modules/r0man/guix/home/channels.scm" ~/.config/guix/channels.scm
 #+end_src
 
 ** Usage
+*** M1
 
 Reconfigure the home environment.
 
 #+begin_src shell
-  guix home -L . reconfigure r0man/guix/home/config.scm --substitute-urls="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org https://substitutes.nonguix.org https://substitutes.asahi-guix.org"
+  guix home -L modules reconfigure modules/r0man/guix/home/systems/m1.scm
+#+end_src
+
+*** Precision
+
+Reconfigure the home environment.
+
+#+begin_src shell
+  guix home -L modules reconfigure modules/r0man/guix/home/systems/precision.scm
 #+end_src
