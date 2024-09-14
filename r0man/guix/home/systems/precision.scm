@@ -1,4 +1,4 @@
-(define-module (r0man guix home config)
+(define-module (r0man guix home systems precision)
   #:use-module (gnu home services)
   #:use-module (gnu home)
   #:use-module (gnu services)
@@ -42,7 +42,7 @@
           home-kitty-services
           home-mbsync-services
           home-nix-services
-          home-pipewire-services
+          home-pipewire-services-precision
           home-shepherd-services
           home-stumpwm-services
           home-sway-services
@@ -50,6 +50,9 @@
           home-xdg-services
           home-x11-services))
 
-(home-environment
- (packages packages)
- (services services))
+(define-public home-environment-precision
+  (home-environment
+   (packages packages)
+   (services services)))
+
+home-environment-precision
