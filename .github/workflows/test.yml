@@ -37,7 +37,16 @@ jobs:
                     (make-channel-introduction
                      "9edb3f66fd807b096b48283debdcddccfea34bad"
                      (openpgp-fingerprint
-                      "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
+                      "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))
+                  (channel
+                   (name 'r0man)
+                   (url "https://github.com/r0man/guix-channel")
+                   (branch "main")
+                   (introduction
+                    (make-channel-introduction
+                     "8eb7a76af9b51b80f5c01f18639e6360833fc377"
+                     (openpgp-fingerprint
+                      "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199")))))
       - name: Guix home reconfigure m1
         run: guix home -L modules --dry-run reconfigure modules/r0man/guix/home/systems/m1.scm
       - name: Guix home reconfigure precision
