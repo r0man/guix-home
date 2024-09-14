@@ -5,11 +5,7 @@
   #:use-module (guix modules))
 
 (define browser-mime-type
-  (let ((hostname (gethostname)))
-    (cond ((equal? "bombaclaat" hostname)
-           'icecat.desktop)
-          (else
-           'firefox.desktop))))
+  'librewolf.desktop)
 
 ;; See: https://hg.sr.ht/~yoctocell/guixrc/browse/yoctocell/home/xdg.scm?rev=tip
 
