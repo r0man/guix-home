@@ -11,8 +11,12 @@
   (run-shell-command "emacsclient --create-frame"))
 
 (defcommand firefox () ()
-  "Run the firefox web browser."
+  "Run the Firefox web browser."
   (run-shell-command "firefox"))
+
+(defcommand librewolf () ()
+  "Run the Librewolf web browser."
+  (run-shell-command "librewolf"))
 
 (defcommand icecat () ()
   "Run the Icecat web browser."
@@ -20,7 +24,7 @@
 
 (defcommand browser () ()
   "Run the web browser."
-  (firefox))
+  (librewolf))
 
 (defcommand htop () ()
   "Run htop."
