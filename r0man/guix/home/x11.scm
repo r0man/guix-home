@@ -20,7 +20,7 @@
 
 (define files
   `((".Xresources" ,(local-file "files/Xresources"))
-    (".Xresources.bombaclaat" ,(local-file "files/Xresources.bombaclaat"))
+    (".Xresources.m1" ,(local-file "files/Xresources.m1"))
     (".Xresources.precision" ,(local-file "files/Xresources.precision"))
     (".Xresources.thinkpad" ,(local-file "files/Xresources.thinkpad"))
     (".config/dunst/dunstrc" ,(local-file "files/dunstrc"))
@@ -38,7 +38,6 @@
         feh
         light
         mpd
-        nautilus
         pamixer
         pavucontrol
         picom
