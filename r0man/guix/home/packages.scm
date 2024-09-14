@@ -98,8 +98,6 @@
    font-terminus
    fontconfig
    gcc-toolchain
-   gdal
-   gfortran-toolchain
    glibc-locales
    gnu-make
    gnupg
