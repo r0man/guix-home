@@ -1,0 +1,124 @@
+* Burningswell
+** Disk Setup
+
+Partition the hard drives.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  for device in /dev/sda /dev/sdb ; do
+      parted $device --script -- mklabel gpt
+      parted $device --script -- mkpart primary 0MB 2MB
+      parted $device --script -- set 1 bios_grub
+      parted $device --script -- mkpart primary ext4 2MB -1
+      parted $device --script -- set 2 raid on
+      parted $device --script -- print
+  done
+#+end_src
+
+Create RAID 1 array.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  yes | mdadm --create --level=1 --metadata=1.2 --raid-devices=2 /dev/md0 /dev/sda2 /dev/sdb2
+  cat /proc/mdstat
+#+end_src
+
+** File systems
+
+Create filesystems.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  mkfs.ext4 -L root /dev/md0
+#+end_src
+
+Mount partitions.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  mount /dev/md0 /mnt
+#+end_src
+
+** Installation
+
+Install Guix on the rescue system.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  apt-get install guix
+#+end_src
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  git clone git@github.com:r0man/guix-system.git
+#+end_src
+
+Build the Guix system image.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~/guix-system :results verbatim
+  guix system build -L . r0man/guix/system/burningswell.scm
+#+end_src
+
+Initialize the Guix system at =/mnt=.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~/guix-system :results verbatim
+  guix system init --load-path=. r0man/guix/system/burningswell.scm /mnt
+#+end_src
+
+** System
+
+Build the system image in the =qcow2= format.
+
+#+begin_src sh :exports code :results verbatim
+  guix system image -L . -t qcow2 r0man/guix/system/burningswell.scm
+#+end_src
+
+Build the system image in the =qcow2= format.
+
+#+begin_src sh
+  qemu-system-x86_64 \
+      -snapshot \
+      -nic user,model=virtio-net-pci \
+      -enable-kvm -m 2048 \
+      -device virtio-blk,drive=myhd \
+      -drive if=none,file=burningswell.qcow2,id=myhd
+#+end_src
+
+Run with RAID-1 and =virtio= (WIP)
+
+#+begin_src sh
+  qemu-system-x86_64 \
+      -snapshot \
+      -nic user,model=virtio-net-pci \
+      -enable-kvm -m 2048 \
+      -device virtio-blk,drive=sda \
+      -device virtio-blk,drive=sdb \
+      -drive if=none,file=burningswell.qcow2,id=sda \
+      -drive if=none,file=burningswell.qcow2,id=sdb
+#+end_src
+
+Run with RAID-1 and =megasas= (WIP)
+
+#+begin_src sh
+  qemu-system-x86_64 \
+      -snapshot \
+      -enable-kvm -m 2048 \
+      -nic user,model=virtio-net-pci \
+      -hda burningswell.qcow2 -serial stdio \
+      -device megasas,id=scsi0 \
+      -device scsi-hd,drive=drive0,bus=scsi0.0,channel=0,scsi-id=0,lun=0 \
+      -drive file=burningswell.qcow2,if=none,id=drive0 \
+      -device scsi-hd,drive=drive1,bus=scsi0.0,channel=0,scsi-id=1,lun=0 \
+      -drive file=burningswell.qcow2,if=none,id=drive1
+#+end_src
+
+** Troubleshooting
+
+Stop already running RAID 1.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  mdadm --stop /dev/md0
+  cat /proc/mdstat
+#+end_src
+
+If the device is being reused or re-purposed from an existing array,
+erase any old RAID configuration information.
+
+#+begin_src sh :exports code :dir /ssh:root@burningswell.com:~ :results verbatim
+  mdadm --misc --zero-superblock /dev/sda2
+  mdadm --misc --zero-superblock /dev/sdb2
+#+end_src

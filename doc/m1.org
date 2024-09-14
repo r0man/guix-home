@@ -1,0 +1,213 @@
+* Boombaclaat
+** Disk Setup
+
+List disk partitions.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  fdisk -l /dev/nvme0n1
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Disk /dev/nvme0n1: 1.82 TiB, 2001111162880 bytes, 488552530 sectors
+Disk model: APPLE SSD AP2048R
+Units: sectors of 1 * 4096 = 4096 bytes
+Sector size (logical/physical): 4096 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: gpt
+Disk identifier: A67A7E47-AE3F-436F-9BF7-9DCBCB1151C5
+
+Device             Start       End   Sectors   Size Type
+/dev/nvme0n1p1         6    128005    128000   500M Apple Silicon boot
+/dev/nvme0n1p2    128006  24542067  24414062  93.1G Apple APFS
+/dev/nvme0n1p3  24542068  25152371    610304   2.3G Apple APFS
+/dev/nvme0n1p4  25152372  25274483    122112   477M EFI System
+/dev/nvme0n1p5  25274484 195440499 170166016 649.1G Linux filesystem
+/dev/nvme0n1p6 195440500 196050803    610304   2.3G Apple APFS
+/dev/nvme0n1p7 196050804 196172915    122112   477M EFI System
+/dev/nvme0n1p8 487241816 488552524   1310709     5G Apple Silicon recovery
+/dev/nvme0n1p9 196173056 418995455 222822400   850G Linux filesystem
+
+Partition table entries are not in disk order.
+#+end_example
+
+Create the LUKS encrypted container in partition =/dev/nvme0n1p9=.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  cryptsetup luksFormat --label cryptroot --type luks1 /dev/nvme0n1p9
+#+end_src
+
+Open the LUKS partition.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  cryptsetup luksOpen /dev/nvme0n1p9 cryptroot
+#+end_src
+
+Create a physical volume in the partition.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  pvcreate /dev/mapper/cryptroot
+#+end_src
+
+#+RESULTS:
+:   Physical volume "/dev/mapper/cryptroot" successfully created.
+
+Create a volume group in the physical volume, named =bombaclaat=.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  vgcreate bombaclaat /dev/mapper/cryptroot
+#+end_src
+
+#+RESULTS:
+:   Volume group "bombaclaat" successfully created
+
+Create a logical volume for the swap partition.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  lvcreate --size 34G bombaclaat --name swap
+#+end_src
+
+#+RESULTS:
+:   Logical volume "swap" created.
+
+Create a logical volume for the =root= partition.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  lvcreate -l 100%FREE bombaclaat --name root
+#+end_src
+
+#+RESULTS:
+:   Logical volume "root" created.
+
+Format the filesystem and swap partitions.
+
+#+begin_src sh :exports both :dir /sudo:: :results silent
+  mkfs.ext4 -L root /dev/bombaclaat/root
+  mkswap --label swap /dev/bombaclaat/swap
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Creating filesystem with 346029056 4k blocks and 86507520 inodes
+Filesystem UUID: 8842a70f-fdc3-40e0-aa81-66940ddb32c3
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+	4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
+	102400000, 214990848
+
+Allocating group tables:     0/10560           done
+Writing inode tables:     0/10560           done
+Creating journal (262144 blocks): done
+Writing superblocks and filesystem accounting information:     0/10560           done
+
+Creating filesystem with 52428800 4k blocks and 13107200 inodes
+Filesystem UUID: ecdf5cce-f306-4165-864c-49e2518c1619
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+	4096000, 7962624, 11239424, 20480000, 23887872
+
+Allocating group tables:    0/1600         done
+Writing inode tables:    0/1600         done
+Creating journal (262144 blocks): done
+Writing superblocks and filesystem accounting information:    0/1600         done
+
+Setting up swapspace version 1, size = 16 GiB (17179852800 bytes)
+LABEL=swap, UUID=cf679d9a-9498-42c9-84ea-c21f14601c25
+#+end_example
+
+** File systems
+
+Mount the filesystems.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  mount /dev/bombaclaat/root /mnt
+  mount --mkdir /dev/nvme0n1p7 /mnt/boot/efi
+  swapon /dev/bombaclaat/swap
+#+end_src
+
+#+RESULTS:
+
+Unmount the filesystems.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  swapoff /dev/bombaclaat/swap
+  umount /mnt/boot/efi
+  umount /mnt
+#+end_src
+
+** Guix Configuration
+
+List the UUIDs of the partitions.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  blkid
+#+end_src
+
+#+RESULTS:
+#+begin_example
+/dev/mapper/bombaclaat-swap: LABEL="swap" UUID="ce630ee0-04f0-4e37-9ec7-1efd08b14050" TYPE="swap"
+/dev/nvme0n1p9: UUID="56b68fba-21cb-49b5-ac44-84dc382f3426" TYPE="crypto_LUKS" PARTUUID="ba253f57-3e75-b142-9bf5-e5351ad18caa"
+/dev/nvme0n1p7: LABEL_FATBOOT="EFI - UEFI" LABEL="EFI - UEFI" UUID="9FBE-130E" BLOCK_SIZE="4096" TYPE="vfat" PARTUUID="376f4ff5-3a94-4151-baef-59466fb35801"
+/dev/nvme0n1p5: LABEL="asahi-root" UUID="5d3f0ec5-c6a3-41a2-a181-6fc49279239d" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="33fa19cc-7269-4916-8d66-f9bc55adef90"
+/dev/nvme0n1p3: UUID="f3b2124c-3c4d-49ef-9945-dca555185dbd" BLOCK_SIZE="4096" TYPE="apfs" PARTUUID="c8770a42-bbdd-4dd9-9312-d2df91d8dc10"
+/dev/nvme0n1p1: UUID="743ec7b4-1da1-4d90-a575-1b2e149c999d" BLOCK_SIZE="4096" TYPE="apfs" PARTLABEL="iBootSystemContainer" PARTUUID="5eb3f5e3-071e-4fac-be15-232d314b9c94"
+/dev/nvme0n1p8: UUID="50df1db6-e408-463a-a121-7ba8203da3c5" BLOCK_SIZE="4096" TYPE="apfs" PARTLABEL="RecoveryOSContainer" PARTUUID="c7f84b19-2d15-4e82-b23d-9bead07f7570"
+/dev/nvme0n1p6: UUID="96427d1c-ff6c-44d7-84bf-7082e3748c0a" BLOCK_SIZE="4096" TYPE="apfs" PARTUUID="30738918-6131-4967-8474-b94decdc238e"
+/dev/nvme0n1p4: LABEL_FATBOOT="EFI - ASAHI" LABEL="EFI - ASAHI" UUID="35B7-2F3A" BLOCK_SIZE="4096" TYPE="vfat" PARTUUID="5fd144d2-2e4c-46f4-8de5-c9c3020105dd"
+/dev/nvme0n1p2: UUID="f7040a26-c920-451c-9f01-9850f32725c6" BLOCK_SIZE="4096" TYPE="apfs" PARTLABEL="Container" PARTUUID="03752c1b-d126-4932-9be0-838f12ab4086"
+/dev/mapper/bombaclaat-root: LABEL="root" UUID="ee886222-468a-41d3-965d-add8f2c95003" BLOCK_SIZE="4096" TYPE="ext4"
+/dev/mapper/cryptroot: UUID="8X2AnN-OLVX-foTL-wAEs-0Lwe-GaI0-PK08Rx" TYPE="LVM2_member"
+/dev/sda2: LABEL="Guix_image" UUID="416bf41b-f6b1-2062-ba06-4196416bf41b" BLOCK_SIZE="4096" TYPE="ext4"
+/dev/sda1: SEC_TYPE="msdos" LABEL_FATBOOT="GNU-ESP" LABEL="GNU-ESP" UUID="72A9-2BFE" BLOCK_SIZE="512" TYPE="vfat"
+#+end_example
+
+Update UUIDs in =r0man/guix/system/m1.scm=.
+
+** Installation
+
+Build the Guix system image.
+
+#+begin_src sh :exports both :results verbatim
+  guix system image -L . --image-type=efi-raw --system=aarch64-linux r0man/guix/system/m1.scm
+#+end_src
+
+Or, build the image with the Guix time machine.
+
+#+begin_src sh :exports both :results verbatim
+  guix time-machine -C r0man/guix/system/channels.scm -- system image -L . --image-type=efi-raw --system=aarch64-linux r0man/guix/system/m1.scm
+#+end_src
+
+Write the image to the USB stick at =/dev/sda=.
+
+#+begin_src sh :results verbatim
+  sudo dd if=/gnu/store/65j2k2drs2pl6fngkpifwxffjsdsz0x6-disk-image of=/dev/sda bs=4M status=progress oflag=sync
+#+end_src
+
+** System
+
+Initialize the system using the mounted file systems in =/mnt=.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  guix system init -L . --system=aarch64-linux r0man/guix/system/m1.scm /mnt
+#+end_src
+
+Or, initialize the system with the Guix time machine.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  guix time-machine -C r0man/guix/system/channels.scm -- system init -L . --system=aarch64-linux r0man/guix/system/m1.scm /mnt
+#+end_src
+
+Copy the channels to =/mnt/etc/channels.scm=.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  mkdir -p /mnt/etc/guix
+  cp r0man/guix/system/channels.scm /mnt/etc/guix/channels.scm
+#+end_src
+
+#+RESULTS:
+
+Copy the system configuration to =/mnt/etc/config.scm=.
+
+#+begin_src sh :exports both :dir /sudo:: :results verbatim
+  cp r0man/guix/system/m1.scm /mnt/etc/config.scm
+#+end_src
