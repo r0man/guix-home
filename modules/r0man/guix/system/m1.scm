@@ -107,7 +107,7 @@
                           (service speakersafetyd-service-type)
                           (simple-service 'asahi-config etc-service-type
                                           (list `("modprobe.d/asahi.conf"
-                                                  ,(plain-file "asahi.conf" "options asahi debug_flags=0"))))
+                                                  ,(plain-file "asahi.conf" "options asahi debug_flags=1"))))
                           %sddm-service
                           %qemu-service-aarch64
                           %udev-backlight-service
