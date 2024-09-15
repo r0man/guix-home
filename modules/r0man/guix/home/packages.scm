@@ -33,7 +33,6 @@
   #:use-module (gnu packages java)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages libreoffice)
-  #:use-module (gnu packages librewolf)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages mail)
@@ -115,7 +114,6 @@
    libgcrypt
    librdkafka
    libreoffice
-   librewolf
    libvterm
    mu
    node-lts

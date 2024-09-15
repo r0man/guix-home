@@ -15,6 +15,7 @@
   #:use-module (r0man guix home guile)
   #:use-module (r0man guix home i3status)
   #:use-module (r0man guix home kitty)
+  #:use-module (r0man guix home librewolf)
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
@@ -40,6 +41,7 @@
           home-guile-services
           home-i3status-services
           home-kitty-services
+          home-librewolf-services
           home-mbsync-services
           home-nix-services
           home-pipewire-services-m1
