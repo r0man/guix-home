@@ -1,4 +1,4 @@
-(use-modules ;; (r0man guix system m1)
+(use-modules (r0man guix system m1)
              (gnu system)
              (gnu packages)
              (guix gexp)
