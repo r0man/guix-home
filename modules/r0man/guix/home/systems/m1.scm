@@ -50,9 +50,9 @@
           home-xdg-services
           home-x11-services))
 
-(define-public home-environment-m1
+(define-public m1-home-environment
   (home-environment
    (packages packages)
    (services services)))
 
-home-environment-m1
+m1-home-environment

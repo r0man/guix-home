@@ -50,9 +50,9 @@
           home-xdg-services
           home-x11-services))
 
-(define-public home-environment-precision
+(define-public precision-home-environment
   (home-environment
    (packages packages)
    (services services)))
 
-home-environment-precision
+precision-home-environment
