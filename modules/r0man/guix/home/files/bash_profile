@@ -19,6 +19,11 @@ if [ -d "$CONFLUENT_HOME" ]; then
     export PATH="$PATH:$CONFLUENT_HOME/bin"
 fi
 
+## Flatpak
+
+export XDG_DATA_DIRS="$HOME/.local/share/flatpak/exports/share:$XDG_DATA_DIRS"
+export XDG_DATA_DIRS="/var/lib/flatpak/exports/share:$XDG_DATA_DIRS"
+
 ## GUIX
 
 # Setup GUIX on a foreign distro
