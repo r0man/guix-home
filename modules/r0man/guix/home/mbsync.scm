@@ -15,8 +15,8 @@
    "Host imap.gmail.com\n"
    "User roman.scherer@burningswell.com\n"
    "PassCmd \"" (file-append password-store "/bin/pass") " Gmail/Burningswell\"\n"
-   "SSLType IMAPS\n"
-   "SSLVersions TLSv1.2\n"
+   "TLSType IMAPS\n"
+   "TLSVersions +1.3\n"
    "CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
    "\n"
 
@@ -46,8 +46,8 @@
    "Host imap.gmail.com\n"
    "User roman.scherer@nubank.com.br\n"
    "PassCmd \"" (file-append password-store "/bin/pass") " Gmail/Nubank\"\n"
-   "SSLType IMAPS\n"
-   "SSLVersions TLSv1.2\n"
+   "TLSType IMAPS\n"
+   "TLSVersions +1.3\n"
    "CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
    "\n"
 
