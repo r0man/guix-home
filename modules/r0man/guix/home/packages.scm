@@ -69,10 +69,13 @@
    flatpak
    fontconfig
    font-adobe-source-code-pro
+   font-adobe-source-code-pro
    font-dejavu
    font-fira-code
    font-ghostscript
    font-gnu-freefont
+   font-google-noto
+   font-google-noto-emoji
    font-google-roboto
    font-hack
    font-inconsolata
