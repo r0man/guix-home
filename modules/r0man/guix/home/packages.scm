@@ -15,6 +15,7 @@
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages geo)
+  #:use-module (gnu packages ghostscript)
   #:use-module (gnu packages gimp)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages graphviz)
@@ -66,15 +67,17 @@
    docker-compose
    file
    flatpak
+   fontconfig
+   font-adobe-source-code-pro
    font-dejavu
    font-fira-code
+   font-ghostscript
    font-gnu-freefont
    font-google-roboto
    font-hack
    font-inconsolata
    font-montserrat
    font-terminus
-   fontconfig
    gcc-toolchain
    glibc-locales
    gnu-make
