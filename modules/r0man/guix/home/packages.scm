@@ -131,6 +131,7 @@
    util-linux
    wireless-tools
    xdg-desktop-portal
+   xdg-desktop-portal-gtk
    zip))
 
 (define packages
