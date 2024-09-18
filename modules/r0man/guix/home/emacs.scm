@@ -158,6 +158,7 @@
         emacs-scala-mode
         emacs-scss-mode
         emacs-selectrum
+        emacs-show-font
         emacs-sly
         emacs-sly-asdf
         emacs-sly-macrostep
