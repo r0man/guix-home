@@ -19,7 +19,10 @@
              ("..." . "cd .. && cd..")
              ("e" . "emacsclient")
              ("la" . "ls -lha")
-             ("ll" . "ls -lh")))
+             ("ll" . "ls -lh")
+             ("firefox" . "flatpak run org.mozilla.firefox")
+             ("slack" . "flatpak run com.slack.Slack")
+             ("zoom" . "flatpak run us.zoom.Zoom")))
           (bashrc
            (list %bash-rc))
           (bash-profile

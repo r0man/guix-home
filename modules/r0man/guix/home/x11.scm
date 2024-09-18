@@ -1,4 +1,5 @@
 (define-module (r0man guix home x11)
+  #:use-module (gnu home services desktop)
   #:use-module (gnu home services)
   #:use-module (gnu packages compton)
   #:use-module (gnu packages freedesktop)
@@ -41,7 +42,6 @@
         pamixer
         pavucontrol
         picom
-        unclutter
         xbacklight
         xbindkeys
         xclip
@@ -55,4 +55,5 @@
 
 (define home-x11-services
   (list (simple-service 'x11-config home-files-service-type files)
-        (simple-service 'x11-packages home-profile-service-type packages)))
+        (simple-service 'x11-packages home-profile-service-type packages)
+        (service home-unclutter-service-type)))
