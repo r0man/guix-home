@@ -62,7 +62,7 @@
       (merge-pathnames "font-cache.sexp" (merge-pathnames ".fonts/" (user-homedir-pathname))))
 
 (xft:cache-fonts)
-(set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Regular" :size 16))
+(set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Regular" :size 17))
 
 ;; Debug
 
