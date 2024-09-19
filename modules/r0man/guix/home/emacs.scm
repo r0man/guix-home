@@ -141,6 +141,7 @@
         emacs-ox-gfm
         emacs-ox-jira
         emacs-ox-slack
+        emacs-paimon
         emacs-pandoc-mode
         emacs-paredit
         emacs-parsec
