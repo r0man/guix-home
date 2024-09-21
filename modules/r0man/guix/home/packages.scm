@@ -7,6 +7,7 @@
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages containers)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages dns)
   #:use-module (gnu packages docker)
@@ -104,6 +105,8 @@
    pgcli
    pkg-config
    plocate
+   podman
+   podman-compose
    postgis
    postgresql
    pv
