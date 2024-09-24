@@ -146,6 +146,7 @@
         emacs-paredit
         emacs-parsec
         emacs-pass
+        emacs-pgemacs
         emacs-plz
         emacs-popwin
         emacs-posframe
