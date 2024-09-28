@@ -31,19 +31,37 @@
 
 ;; Colors
 
-(setf *colors*
-      '("#111111"   ; 0 black
-        "#dc322f"   ; 1 red
-        "#859900"   ; 2 green
-        "#b58900"   ; 3 yellow
-        "#268bd2"   ; 4 blue
-        "#d33682"   ; 5 magenta
-        "#2aa198"   ; 6 cyan
-        "#fdf6e3")) ; 7 white
+(defvar r0man-nord0 "#2e3440")
+(defvar r0man-nord1 "#3b4252")
+(defvar r0man-nord2 "#434c5e")
+(defvar r0man-nord3 "#4c566a")
+(defvar r0man-nord4 "#d8dee9")
+(defvar r0man-nord5 "#e5e9f0")
+(defvar r0man-nord6 "#eceff4")
+(defvar r0man-nord7 "#8fbcbb")
+(defvar r0man-nord8 "#88c0d0")
+(defvar r0man-nord9 "#81a1c1")
+(defvar r0man-nord10 "#5e81ac")
+(defvar r0man-nord11 "#bf616a")
+(defvar r0man-nord12 "#d08770")
+(defvar r0man-nord13 "#ebcb8b")
+(defvar r0man-nord14 "#a3be8c")
+(defvar r0man-nord15 "#b48ead")
+
+(setq *colors*
+      `(,r0man-nord1   ;; 0 black
+        ,r0man-nord11  ;; 1 red
+        ,r0man-nord14  ;; 2 green
+        ,r0man-nord13  ;; 3 yellow
+        ,r0man-nord10  ;; 4 blue
+        ,r0man-nord14  ;; 5 magenta
+        ,r0man-nord8   ;; 6 cyan
+        ,r0man-nord5)) ;; 7 white
+
+(when *initializing*
+  (update-color-map (current-screen)))
 
 (set-float-focus-color "#54728e")
-
-(update-color-map (current-screen))
 
 ;;; Gaps
 
