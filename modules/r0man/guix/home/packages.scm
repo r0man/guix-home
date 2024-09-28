@@ -21,6 +21,7 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages haskell-xyz)
+  #:use-module (gnu packages image)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages libreoffice)
@@ -68,6 +69,7 @@
    docker-compose
    file
    flatpak
+   flameshot
    fontconfig
    font-adobe-source-code-pro
    font-dejavu
