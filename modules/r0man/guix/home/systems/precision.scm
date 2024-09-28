@@ -19,6 +19,7 @@
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
+  #:use-module (r0man guix home rofi)
   #:use-module (r0man guix home shepherd)
   #:use-module (r0man guix home sound)
   #:use-module (r0man guix home stumpwm)
@@ -45,6 +46,7 @@
           home-mbsync-services
           home-nix-services
           home-pipewire-services-precision
+          home-rofi-services
           home-shepherd-services
           home-stumpwm-services
           home-sway-services

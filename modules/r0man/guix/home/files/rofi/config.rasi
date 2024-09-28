@@ -1,0 +1,21 @@
+configuration {
+  display-combi: "";
+  display-drun: "";
+  display-run: "";
+  display-ssh: "";
+  display-window: "";
+  font: "Inconsolata 18";
+  line-margin: 10;
+  show-icons: true;
+}
+
+@theme "~/.config/rofi/nord.rasi"
+
+listview {
+  columns: 2;
+  lines: 6;
+}
+
+window {
+  width: 30%;
+}
