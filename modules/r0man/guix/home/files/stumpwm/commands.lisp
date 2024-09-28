@@ -2,6 +2,11 @@
 
 ;;; COMMANDS
 
+(defcommand delete-window-and-frame () ()
+  "Delete the current frame with its window."
+  (delete-window)
+  (remove-split))
+
 (defcommand chromium () ()
   "Run the chromium web browser."
   (run-shell-command "chromium"))

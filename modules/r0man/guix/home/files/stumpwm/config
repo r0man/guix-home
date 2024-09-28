@@ -209,6 +209,7 @@
 (define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
 (define-key *root-map* (kbd "e") "emacs-client")
+(define-key *root-map* (kbd "k") "delete-window-and-frame")
 (define-key *root-map* (kbd "w") "rofi-window")
 
 ;; Volume Control
