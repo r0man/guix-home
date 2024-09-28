@@ -206,8 +206,14 @@
   (let ((m (make-sparse-keymap)))
     (define-key m (kbd "b") "browser")
     (define-key m (kbd "e") "exec emacsclient -c")
+    (define-key m (kbd "h") '*herd-keymap*)
     (define-key m (kbd "r") '*rofi-keymap*)
     (define-key m (kbd "s") '*screenshot-keymap*)
+    m))
+
+(defvar *herd-keymap*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "s") "herd-status")
     m))
 
 (defvar *rofi-keymap*

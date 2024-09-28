@@ -15,6 +15,10 @@
   "Run the emacs client."
   (run-shell-command "emacsclient --create-frame"))
 
+(defcommand herd-status () ()
+  "Run herd status and show the result."
+  (message "~a" (run-shell-command "herd status" t)))
+
 (defcommand firefox () ()
   "Run the Firefox web browser."
   (run-shell-command "firefox"))
