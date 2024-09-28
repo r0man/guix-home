@@ -59,6 +59,8 @@
                      ,r0man-nord8   ;; 6 cyan
                      ,r0man-nord5)) ;; 7 white
 
+(setf *key-seq-color* "^2")
+
 (when *initializing*
   (update-color-map (current-screen)))
 
@@ -230,6 +232,7 @@
     (define-key m (kbd "S") "exec flameshot gui")
     m))
 
+(setf *which-key-format* (concat *key-seq-color* "*~5a^n ~a"))
 (which-key-mode)
 
 ;; (set-prefix-key (kbd "C-t"))
