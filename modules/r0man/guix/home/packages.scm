@@ -70,7 +70,6 @@
    flatpak
    fontconfig
    font-adobe-source-code-pro
-   font-adobe-source-code-pro
    font-dejavu
    font-fira-code
    font-ghostscript
@@ -80,6 +79,7 @@
    font-google-roboto
    font-hack
    font-inconsolata
+   font-microsoft-cascadia
    font-montserrat
    font-terminus
    gcc-toolchain
