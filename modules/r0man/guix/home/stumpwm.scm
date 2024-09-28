@@ -21,6 +21,7 @@
         sbcl-local-time
         sbcl-slime-swank
         sbcl-slynk
+        sbcl-stumpwm-binwarp
         sbcl-stumpwm-battery-portable
         sbcl-stumpwm-cpu
         sbcl-stumpwm-disk
