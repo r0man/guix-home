@@ -137,7 +137,8 @@
                 " | " '(:eval (current-time-berlin))
                 " | " '(:eval (current-date)))))
 
-(run-commands "mode-line")
+(when *initializing*
+  (mode-line))
 
 ;; Use thin window border.
 (setf *window-border-style* :thin)
