@@ -9,12 +9,14 @@
 (require :pass)
 (require :screenshot)
 (require :stumpwm)
+(require :swm-gaps)
 (require :ttf-fonts)
 (require :wifi)
 
 (in-package :stumpwm)
 
 ;; Interesting StumpWM configs on the web:
+;; - https://config.phundrak.com/stumpwm
 ;; - https://github.com/lepisma/cfg/blob/master/stumpwm/.stumpwmrc
 ;; - https://github.com/herbertjones/my-stumpwm-config
 
@@ -42,6 +44,21 @@
 (set-float-focus-color "#54728e")
 
 (update-color-map (current-screen))
+
+;;; Gaps
+
+;; Head gaps run along the 4 borders of the monitor(s).
+(setf swm-gaps:*head-gaps-size* 0)
+
+;; Inner gaps run along all the 4 borders of a window.
+(setf swm-gaps:*inner-gaps-size* 6)
+
+;; Outer gaps add more padding to the outermost borders of a window
+;; (touching the screen border).
+(setf swm-gaps:*outer-gaps-size* 6)
+
+(when *initializing*
+  (swm-gaps:toggle-gaps-on))
 
 ;; Fonts
 
