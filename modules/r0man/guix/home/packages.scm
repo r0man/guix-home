@@ -79,7 +79,6 @@
    font-google-roboto
    font-hack
    font-inconsolata
-   font-microsoft-cascadia
    font-montserrat
    font-terminus
    gcc-toolchain
