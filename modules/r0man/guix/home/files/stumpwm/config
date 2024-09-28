@@ -128,7 +128,7 @@
 
 (set-resize-increment 30)
 
-;; Mode Line
+;;; Mode Line
 
 (setf *mode-line-background-color* "black")
 (setf *mode-line-foreground-color* "white")
@@ -165,18 +165,18 @@
 (setf *mouse-focus-policy* :click)
 ;; (setf *mouse-focus-policy* :sloppy) ??
 
-;; GROUPS
+;;; Groups
 
-(run-commands
- "grename Emacs"
- "gnewbg Web"
- "gnewbg 3"
- "gnewbg 4"
- "gnewbg 5"
- "gnewbg 6"
- "gnewbg Slack"
- "gnewbg Logs"
- "gnewbg Top")
+(when *initializing*
+  (grename "Emacs")
+  (gnewbg "Web")
+  (gnewbg "3")
+  (gnewbg "4")
+  (gnewbg "5")
+  (gnewbg "6")
+  (gnewbg "Slack")
+  (gnewbg "Logs")
+  (gnewbg "Top"))
 
 ;; Rule Based Window Placement
 
