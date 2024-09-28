@@ -51,7 +51,7 @@
 (setq *colors*
       `(,r0man-nord1   ;; 0 black
         ,r0man-nord11  ;; 1 red
-        ,r0man-nord14  ;; 2 green
+        ,r0man-nord10  ;; 2 blue
         ,r0man-nord13  ;; 3 yellow
         ,r0man-nord10  ;; 4 blue
         ,r0man-nord14  ;; 5 magenta
@@ -230,6 +230,7 @@
 (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
+(define-key *root-map* (kbd "E") "exec emacs")
 (define-key *root-map* (kbd "a") '*applications-keymap*)
 (define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
