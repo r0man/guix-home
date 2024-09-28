@@ -180,6 +180,8 @@
 
 ;; Rule Based Window Placement
 
+(clear-window-placement-rules)
+
 ;; (define-frame-preference "Emacs"
 ;;   (0 t t :class "Emacs"))
 
