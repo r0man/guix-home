@@ -19,6 +19,9 @@
   "Run herd status and show the result."
   (message "~a" (run-shell-command "herd status" t)))
 
+(defcommand disk-free () ()
+  (message "~a" (run-shell-command "df --human-readable" t)))
+
 (defcommand firefox () ()
   "Run the Firefox web browser."
   (run-shell-command "firefox"))
