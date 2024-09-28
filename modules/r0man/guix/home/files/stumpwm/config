@@ -1,6 +1,7 @@
 ;; -*- lisp -*-
 (require :alexandria)
 (require :battery-portable)
+(require :binwarp)
 (require :cpu)
 (require :globalwindows)
 (require :mem)
@@ -50,13 +51,13 @@
 
 (setq *colors*
       `(,r0man-nord1   ;; 0 black
-        ,r0man-nord11  ;; 1 red
-        ,r0man-nord10  ;; 2 blue
-        ,r0man-nord13  ;; 3 yellow
-        ,r0man-nord10  ;; 4 blue
-        ,r0man-nord14  ;; 5 magenta
-        ,r0man-nord8   ;; 6 cyan
-        ,r0man-nord5)) ;; 7 white
+                     ,r0man-nord11  ;; 1 red
+                     ,r0man-nord10  ;; 2 blue
+                     ,r0man-nord13  ;; 3 yellow
+                     ,r0man-nord10  ;; 4 blue
+                     ,r0man-nord14  ;; 5 magenta
+                     ,r0man-nord8   ;; 6 cyan
+                     ,r0man-nord5)) ;; 7 white
 
 (when *initializing*
   (update-color-map (current-screen)))
@@ -366,3 +367,7 @@
        ;; ("C-M-f" . "M-Right")
        ;; ("C-k"   . ("C-S-End" "C-x"))
        )))
+
+(binwarp:define-binwarp-mode binwarp-mode "s-m" (:map *top-map*)
+  ((kbd "RET") "ratclick 1")
+  ((kbd "SPC") "ratclick 3"))
