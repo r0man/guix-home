@@ -120,6 +120,7 @@
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
         emacs-mermaid-mode
+        emacs-nord-theme
         emacs-mu4e-alert
         emacs-multi-term
         emacs-multi-vterm
