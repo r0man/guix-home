@@ -201,16 +201,43 @@
 
 ;; Key Bindings
 
+(defvar *applications-keymap*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "b") "browser")
+    (define-key m (kbd "e") "exec emacsclient -c")
+    (define-key m (kbd "r") '*rofi-keymap*)
+    (define-key m (kbd "s") '*screenshot-keymap*)
+    m))
+
+(defvar *rofi-keymap*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "a") "exec awiki")
+    (define-key m (kbd "r") "exec rofi -combi-modi drun,window -show combi")
+    (define-key m (kbd "s") "exec rofi -show ssh")
+    m))
+
+(defvar *screenshot-keymap*
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "d") "exec flameshot gui -d 3000")
+    (define-key m (kbd "s") "exec flameshot full")
+    (define-key m (kbd "S") "exec flameshot gui")
+    m))
+
+(which-key-mode)
+
 ;; (set-prefix-key (kbd "C-t"))
 (set-prefix-key (kbd "s-t"))
 ;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
+(define-key *root-map* (kbd "a") '*applications-keymap*)
 (define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
 (define-key *root-map* (kbd "e") "emacs-client")
 (define-key *root-map* (kbd "k") "delete-window-and-frame")
 (define-key *root-map* (kbd "w") "rofi-window")
+
+;; (define-key *top-map* (kbd "s-RET") "terminal")
 
 ;; Volume Control
 ;; (define-key *top-map* (kbd "XF86AudioRaiseVolume") "pamixer-volume-up")
