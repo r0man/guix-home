@@ -72,6 +72,9 @@ output * bg " background " fill
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
+# output eDP-1 resolution 1920x1080 position 1920,0
+output eDP-1 resolution 3456x2160 position 3456,0 scale 1
+
 ### Idle configuration
 #
 # Example configuration:
