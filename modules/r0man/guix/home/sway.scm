@@ -286,10 +286,23 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 
 gaps inner 10
 
-default_border pixel 10
-default_floating_border none
-titlebar_border_thickness 2
+# Set default border style for new tiled windows. Config reload won't
+# affect existing windows, only newly created ones after the reload.
+default_border pixel 1
+
+# Set default border style for new floating windows. This only applies
+# to windows that are spawned in floating mode, not windows that become
+# floating afterwards.
+default_floating_border pixel 1
+
+# Thickness of the titlebar border in pixels
+titlebar_border_thickness 1
+
+# Padding of the text in the titlebar.
 titlebar_padding 4
+
+client.focused #ffffff #ffffff #ffffff #ffffff #ffffff
+client.unfocused #000000 #000000 #000000 #000000 #000000
 
 # Lock the screen at login.
 #exec " swaylock-command))
