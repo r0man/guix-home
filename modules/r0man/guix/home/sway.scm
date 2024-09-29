@@ -252,18 +252,7 @@ bindsym $mod+r mode \"resize\"
 #
 # Read `man 5 sway-bar` for more information about this section.
 bar {
-    position top
-
-    # When the status_command prints a new line to stdout, swaybar updates.
-    # The default just shows the current date and time.
-    #status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
-    status_command i3status
-
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
+    swaybar_command waybar
 }
 
 input \"type:keyboard\" {
@@ -295,6 +284,13 @@ exec --no-startup-id pactl stat
 # See: https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
+gaps inner 10
+
+default_border pixel 10
+default_floating_border none
+titlebar_border_thickness 2
+titlebar_padding 4
+
 # Lock the screen at login.
 #exec " swaylock-command))
 
@@ -307,8 +303,7 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
         (if (target-aarch64?) asahi-sway sway)
         swaybg
         swayidle
-        swaylock
-        waybar))
+        swaylock))
 
 (define home-sway-services
   (list (simple-service 'sway-files home-files-service-type files)

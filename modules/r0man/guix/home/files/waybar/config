@@ -1,0 +1,65 @@
+// -*- json -*-
+  {
+    "layer": "bottom",
+    "position": "top",
+    "height": 24,
+    "spacing": 5,
+    "modules-left": ["sway/workspaces","sway/mode"],
+    "modules-center": ["sway/window"],
+    "modules-right": ["idle_inhibitor","cpu","memory","battery","pulseaudio","clock","tray"],
+    "sway/mode": {
+      "format": "{}"
+    },
+    "sway/window": {
+      "format": "{title}"
+    },
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "\uf06e",
+        "deactivated": "\uf070"
+      }
+    },
+    "cpu": {
+      "interval": 10,
+      "format": "CPU: {usage}%"
+    },
+    "memory": {
+      "interval": 30,
+      "format": "RAM: {used:0.1f}GiB/{total:0.1f}GiB ({percentage}%) SWAP: {swapUsed:0.1f}GiB/{swapTotal:0.1f}GiB ({swapPercentage}%)"
+    },
+    "battery": {
+      "bat": "BAT0",
+      "states": {
+        "good": 95,
+        "warning": 30,
+        "critical": 5
+      },
+      "format": "BAT0: {capacity}%",
+      "format-charging": "BAT0: {capacity}% (charging)",
+      "format-plugged": "BAT0: {capacity}% (plugged)",
+    },
+    "clock": {
+      "format": "{:%Y/%m/%d %H:%M}",
+      "tooltip-format": "<tt><small>{calendar}</small></tt>",
+      "calendar": {
+        "format": {
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b>{}</b></span>"
+        }
+      }
+    },
+    "pulseaudio": {
+      "format": "{icon} {volume}%",
+      "format-icons": {
+        "default": ["\uf026", "\uf027", "\uf028"]
+      },
+      "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+      "on-click-right": "pavucontrol",
+      "format-muted": "\uf00d {volume}%"
+    },
+    "tray": {
+      "icon-size": 20,
+      "spacing": 10
+    },
+  }
