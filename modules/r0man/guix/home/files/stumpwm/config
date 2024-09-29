@@ -236,8 +236,9 @@
 (which-key-mode)
 
 ;; (set-prefix-key (kbd "C-t"))
-;; (set-prefix-key (kbd "s-t"))
-(set-prefix-key (kbd "s-SPC"))
+(set-prefix-key (kbd "s-t"))
+;; (set-prefix-key (kbd "F20"))
+;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
 (define-key *root-map* (kbd "E") "exec emacs")
