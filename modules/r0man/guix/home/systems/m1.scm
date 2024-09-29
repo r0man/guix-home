@@ -24,6 +24,7 @@
   #:use-module (r0man guix home sound)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
+  #:use-module (r0man guix home waybar)
   #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home xdg)
   #:use-module (r0man guix home x11))
@@ -50,6 +51,7 @@
           home-shepherd-services
           home-stumpwm-services
           home-sway-services
+          home-waybar-services
           home-wofi-services
           home-xdg-services
           home-x11-services))
