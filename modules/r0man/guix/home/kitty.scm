@@ -11,8 +11,8 @@
   (mixed-text-file
    "kitty-config" "
 background_opacity 0.7
-font_family Hack
-font_size 14.0
+font_family Inconsolata
+font_size 22.0
 foreground #586e75
 shell " bash "/bin/bash --login
 "))
