@@ -1,16 +1,18 @@
 (define-module (r0man guix home sway)
+  #:use-module (asahi guix packages wm)
   #:use-module (gnu home services)
-  #:use-module (guix packages)
-  #:use-module (guix git-download)
-  #:use-module (guix gexp)
-  #:use-module (gnu services)
-  #:use-module (gnu system pam)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu services)
+  #:use-module (gnu system pam)
+  #:use-module (guix gexp)
+  #:use-module (guix git-download)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
   #:export (home-sway-services))
 
 ;; emacsclient --create-frame --no-wait --eval '(multi-term)'
@@ -60,6 +62,8 @@ set $term " kitty "/bin/kitty
 # on the original workspace that the command was run on.
 #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu " wofi "/bin/wofi --show run
+
+font pango:Inconsolata Regular 18
 
 ### Output configuration
 #
@@ -264,7 +268,8 @@ bar {
 
 input \"type:keyboard\" {
     xkb_layout \"us,no\"
-    xkb_options \"caps:ctrl_modifier,altwin:swap_lalt_lwin\"
+    # xkb_options \"caps:ctrl_modifier,altwin:swap_lalt_lwin\"
+    xkb_options \"caps:ctrl_modifier\"
 }
 
 #input <identifier> xkb_model \"pc101\"
@@ -277,8 +282,8 @@ bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5
 bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
-bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+# bindsym XF86MonBrightframe-resize-pixelwisenessDown exec brightnessctl set 5%-
+# bindsym XF86MonBrightnessUp exec brightnessctl set +5%
 
 # No X11 here.
 xwayland disable
@@ -298,13 +303,12 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 
 (define packages
   (list brightnessctl
-        i3status
         kitty
-        sway
+        (if (target-aarch64?) asahi-sway sway)
         swaybg
         swayidle
         swaylock
-        wofi))
+        waybar))
 
 (define home-sway-services
   (list (simple-service 'sway-files home-files-service-type files)
