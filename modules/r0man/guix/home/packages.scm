@@ -72,6 +72,7 @@
    flameshot
    fontconfig
    font-adobe-source-code-pro
+   font-awesome
    font-dejavu
    font-fira-code
    font-ghostscript
