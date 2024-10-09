@@ -13,6 +13,7 @@
 
 (define packages
   (list emacs
+        emacs-aider
         emacs-adoc-mode
         emacs-aggressive-indent
         emacs-aio
