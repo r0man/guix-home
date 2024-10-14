@@ -56,4 +56,5 @@
 (define home-x11-services
   (list (simple-service 'x11-config home-files-service-type files)
         (simple-service 'x11-packages home-profile-service-type packages)
+        (service home-x11-service-type)
         (service home-unclutter-service-type)))
