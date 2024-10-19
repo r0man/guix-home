@@ -22,20 +22,8 @@
      (openpgp-fingerprint
       "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
 
-(define-public system-channel
-  (channel
-   (name 'r0man-system)
-   (url "https://github.com/r0man/guix-system")
-   (branch "asahi")
-   (introduction
-    (make-channel-introduction
-     "754146ab5979be91a3ed69c99b9dbccb4d06b6bd"
-     (openpgp-fingerprint
-      "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199")))))
-
 (define-public channels
   (list asahi-channel
-        guix-channel
-        system-channel))
+        guix-channel))
 
 channels
