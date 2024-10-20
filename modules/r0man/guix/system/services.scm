@@ -20,7 +20,6 @@
   #:use-module (gnu services ssh)
   #:use-module (gnu services virtualization)
   #:use-module (gnu services web)
-  #:use-module (gnu services web)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (guix gexp)

@@ -174,7 +174,7 @@ Build the Guix system image.
 Or, build the image with the Guix time machine.
 
 #+begin_src sh :exports both :results verbatim
-  guix time-machine -C r0man/guix/system/channels.scm -- system image -L . --image-type=efi-raw --system=aarch64-linux r0man/guix/system/m1.scm
+  guix time-machine -C r0man/guix/channels.scm -- system image -L . --image-type=efi-raw --system=aarch64-linux r0man/guix/system/m1.scm
 #+end_src
 
 Write the image to the USB stick at =/dev/sda=.
@@ -194,14 +194,14 @@ Initialize the system using the mounted file systems in =/mnt=.
 Or, initialize the system with the Guix time machine.
 
 #+begin_src sh :exports both :dir /sudo:: :results verbatim
-  guix time-machine -C r0man/guix/system/channels.scm -- system init -L . --system=aarch64-linux r0man/guix/system/m1.scm /mnt
+  guix time-machine -C r0man/guix/channels.scm -- system init -L . --system=aarch64-linux r0man/guix/system/m1.scm /mnt
 #+end_src
 
 Copy the channels to =/mnt/etc/channels.scm=.
 
 #+begin_src sh :exports both :dir /sudo:: :results verbatim
   mkdir -p /mnt/etc/guix
-  cp r0man/guix/system/channels.scm /mnt/etc/guix/channels.scm
+  cp r0man/guix/channels.scm /mnt/etc/guix/channels.scm
 #+end_src
 
 #+RESULTS:

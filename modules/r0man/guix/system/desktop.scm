@@ -82,8 +82,7 @@
               ;; (delete alsa-service-type)
               ;; (delete pulseaudio-service-type)
               (delete (if (string-prefix? "x86_64" system) gdm-service-type sddm-service-type))
-              (console-font-service-type config => (console-font-service-config config))
-              (guix-service-type config => (guix-service-type-config config))))))
+              (console-font-service-type config => (console-font-service-config config))))))
 
 (define-public desktop-operating-system
   (operating-system
