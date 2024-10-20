@@ -100,14 +100,17 @@
             (themes-directory (file-append guix-sugar-light-sddm-theme "/share/sddm/themes"))
             (xorg-configuration %xorg-configuration))))
 
+(define %asahi-kernel-module-config
+  (simple-service 'asahi-config etc-service-type
+                  (list `("modprobe.d/asahi.conf"
+                          ,(plain-file "asahi.conf" "options asahi debug_flags=1")))))
+
 (define %services
   (modify-services (cons* (service alsa-service-type)
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
                           (service speakersafetyd-service-type)
-                          (simple-service 'asahi-config etc-service-type
-                                          (list `("modprobe.d/asahi.conf"
-                                                  ,(plain-file "asahi.conf" "options asahi debug_flags=1"))))
+                          %asahi-kernel-module-config
                           %sddm-service
                           %qemu-service-aarch64
                           %udev-backlight-service
