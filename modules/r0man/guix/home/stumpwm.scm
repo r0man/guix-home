@@ -16,8 +16,7 @@
     (".config/stumpwm/time.lisp" ,(local-file "files/stumpwm/time.lisp"))))
 
 (define packages
-  (list cl-stumpwm
-        sbcl
+  (list sbcl
         sbcl-local-time
         sbcl-slime-swank
         sbcl-slynk
