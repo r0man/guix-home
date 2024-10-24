@@ -3,6 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (guix gexp)
@@ -163,6 +164,7 @@
         emacs-scss-mode
         emacs-selectrum
         emacs-show-font
+        emacs-slite
         emacs-sly
         emacs-sly-asdf
         emacs-sly-macrostep
