@@ -20,6 +20,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
+  #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
@@ -31,7 +32,9 @@
   #:use-module (gnu system)
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix packages)
   #:use-module (r0man guix channels)
+  #:use-module (r0man guix home systems m1)
   #:use-module (r0man guix packages display-managers)
   #:use-module (r0man guix system desktop)
   #:use-module (r0man guix system keyboard)
@@ -48,9 +51,11 @@
 (define %channels
   (list asahi-channel
         guix-channel
-        ;; nonguix-channel
-        ;; r0man-guix-channel
-        ))
+        nonguix-channel
+        r0man-guix-channel))
+
+(define %home-service
+  (service guix-home-service-type `(("roman" ,m1-home-environment))))
 
 (define %packages
   (cons* asahi-alsa-utils
@@ -121,6 +126,7 @@
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
                           (service speakersafetyd-service-type)
                           %asahi-kernel-module-config
+                          %home-service
                           %sddm-service
                           %qemu-service-aarch64
                           %udev-backlight-service
