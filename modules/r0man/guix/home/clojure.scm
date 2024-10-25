@@ -1,4 +1,5 @@
 (define-module (r0man guix home clojure)
+  #:use-module ((r0man guix packages clojure) #:prefix r0man:)
   #:use-module (gnu home services)
   #:use-module (gnu packages clojure)
   #:use-module (gnu services)
@@ -10,9 +11,7 @@
 
 (define home-clojure-service
   (simple-service 'clojure-service home-profile-service-type
-                  (list babashka
-                        clojure-lsp
-                        leiningen)))
+                  (list r0man:clojure-lsp leiningen)))
 
 ;; Clojure LSP
 
