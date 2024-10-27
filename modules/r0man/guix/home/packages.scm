@@ -28,6 +28,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
+  #:use-module (gnu packages ncurses)
   #:use-module (gnu packages node)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages password-utils)
@@ -100,9 +101,10 @@
    libreoffice
    libvterm
    mu
+   mplayer
+   ncurses
    node-lts
    nss-certs
-   mplayer
    password-store
    pgcli
    pkg-config
