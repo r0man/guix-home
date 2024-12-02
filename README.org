@@ -11,6 +11,7 @@ Configure the Guix channels.
 
 #+begin_src shell
   mkdir -p ~/.config/guix/
+  rm -f ~/.config/guix/channels.scm
   ln -s "$(pwd)/modules/r0man/guix/channels.scm" ~/.config/guix/channels.scm
 #+end_src
 
