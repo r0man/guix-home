@@ -98,6 +98,7 @@
    inkscape
    ispell
    isync
+   lapack
    libatasmart
    libreoffice
    libvterm
