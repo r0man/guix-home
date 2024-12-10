@@ -147,7 +147,7 @@
               %default-authorized-guix-keys))
       (channels %channels)
       ;; TODO: Is this causing a pull on guix system commands?
-      (guix (guix-for-channels %channels))
+      ;; (guix (guix-for-channels %channels))
       (substitute-urls
        (cons* "https://substitutes.asahi-guix.org"
               "https://substitutes.nonguix.org"
