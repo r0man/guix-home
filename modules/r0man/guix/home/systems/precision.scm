@@ -13,6 +13,7 @@
   #:use-module (r0man guix home git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
+  #:use-module (r0man guix home hyprland)
   #:use-module (r0man guix home i3status)
   #:use-module (r0man guix home kitty)
   #:use-module (r0man guix home librewolf)
@@ -41,6 +42,7 @@
           home-git-services
           home-gpg-services
           home-guile-services
+          home-hyprland-services
           home-i3status-services
           home-kitty-services
           home-librewolf-services

@@ -63,6 +63,7 @@
          asahi-sway
          asahi-scripts
          network-manager
+         hyprland
          (remove (lambda (package)
                    (equal? "network-manager" (package-name package)))
                  (map replace-mesa
