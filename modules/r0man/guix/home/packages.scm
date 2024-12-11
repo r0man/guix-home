@@ -17,6 +17,7 @@
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages geo)
   #:use-module (gnu packages ghostscript)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gimp)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages graphviz)
@@ -88,6 +89,7 @@
    font-terminus
    gcc-toolchain
    glibc-locales
+   `(,glib "bin")
    gnu-make
    gnupg
    gnutls
