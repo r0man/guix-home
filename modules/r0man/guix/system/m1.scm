@@ -63,11 +63,11 @@
          asahi-sway
          asahi-scripts
          network-manager
-         hyprland
          (remove (lambda (package)
                    (equal? "network-manager" (package-name package)))
                  (map replace-mesa
-                      (cons* stumpwm
+                      (cons* hyprland
+                             stumpwm
                              (operating-system-packages desktop-operating-system))))))
 
 (define %mapped-devices
