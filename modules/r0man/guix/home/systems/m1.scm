@@ -3,6 +3,7 @@
   #:use-module (gnu home)
   #:use-module (gnu services)
   #:use-module (r0man guix home bash)
+  #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home common-lisp)
@@ -33,6 +34,7 @@
 
 (define services
   (append home-bash-services
+          home-btop-services
           home-channels-services
           home-clojure-services
           home-common-lisp-services
