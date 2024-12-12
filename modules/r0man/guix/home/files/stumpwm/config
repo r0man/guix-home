@@ -136,7 +136,7 @@
 (setf *mode-line-background-color* "black")
 (setf *mode-line-foreground-color* "white")
 (setf *mode-line-border-color* "black")
-(setf *mode-line-timeout* 1)
+(setf *mode-line-timeout* 5)
 
 (defvar modeline-fg-grey
   "^(:fg \"#aaaaaa\")")
