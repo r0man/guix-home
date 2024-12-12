@@ -64,18 +64,20 @@
       \"clock#utc\": {
         \"format\": \"UTC: {:%H:%M:%S}\",
         \"interval\": 1,
-        \"timezone\": \"UTC\"
+        \"timezone\": \"UTC\",
+        \"tooltip\": false
       },
       \"clock#berlin\": {
         \"format\": \"BERLIN: {:%H:%M:%S}\",
         \"interval\": 1,
-        \"timezone\": \"Europe/Berlin\"
+        \"timezone\": \"Europe/Berlin\",
+        \"tooltip\": false
       },
       \"clock#date\": {
         \"format\": \"{:%a, %d %b}\",
-        \"timezone\": \"Europe/Berlin\"
-      },
-    }"))
+        \"timezone\": \"Europe/Berlin\",
+        \"tooltip\": false
+      },}"))
 
 (define style
   (mixed-text-file
@@ -87,6 +89,7 @@
 @define-color foreground #f8f8f2;
 @define-color comment #6272a4;
 @define-color cyan #8be9fd;
+@define-color grey #888888;
 @define-color green #50fa7b;
 @define-color orange #ffb86c;
 @define-color pink #ff79c6;
@@ -136,6 +139,10 @@ window#waybar {
     margin: 0 0.4em;
     color: @foreground;
     border-top: 0.1em solid @background;
+}
+
+#clock.saopaulo, #clock.utc {
+  color: @grey;
 }
 
 #custom-drive.on { color: @green; }
