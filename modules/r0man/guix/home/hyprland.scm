@@ -48,6 +48,7 @@ $menu = wofi --show drun
 # exec-once = nm-applet &
 # exec-once = waybar & hyprpaper & firefox
 
+exec-once = swaybg -i ~/.local/share/wallpapers/stop-customizing-start-working.jpg
 exec-once = waybar &
 exec-once = librewolf &
 exec-once = emacs --bg-daemon &
