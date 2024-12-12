@@ -11,177 +11,78 @@
 (define config
   (mixed-text-file
    "waybar-config.jsonc"
-   "
-{
-  \"layer\": \"top\",
-  \"position\": \"top\",
-  \"height\": 32,
-  \"spacing\": 6,
-  \"modules-left\": [
-    \"hyprland/workspaces\",
-    \"custom/space\",
-    \"custom/space\",
-    \"custom/space\",
-    \"custom/github\",
-    \"custom/vpn\",
-    \"custom/drive\",
-  ],
-  \"modules-center\": [
-    \"clock\",
-  ],
-  \"modules-right\": [
-    \"custom/space\",
-    \"cpu\",
-    \"memory\",
-    \"custom/space\",
-    \"bluetooth\",
-    \"pulseaudio\",
-    \"backlight\",
-    \"network\",
-    \"battery\",
-    \"custom/system\",
-  ],
-  \"hyprland/workspaces\": {
-    \"format\": \"{icon}\",
-    \"format-icons\": {
-        \"1\": \"󰞷\",
-        \"2\": \"󰗀\",
-        \"3\": \"󰊯\",
-        \"4\": \"󰭻\",
-        \"5\": \"\",
-        \"6\": \"󰋩\",
-    },
-    \"all-outputs\": false,
-    \"persistent-workspaces\": {
-      \"*\": 6
-    }
-  },
-  \"wlr/workspaces\": {
-    \"on-click\": \"activate\",
-    \"on-scroll-up\": \"hyprctl dispatch workspace e-1\",
-    \"on-scroll-down\": \"hyprctl dispatch workspace e+1\"
-  },
-  \"hyprland/window\": {
-    \"max-length\": 128
-  },
-  \"clock\": {
-    \"format\": \"{:%c}\",
-    \"tooltip-format\": \"<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>\"
-  },
-  \"tray\": {
-    \"spacing\": 4
-  },
-  \"custom/weather\": {
-    \"exec\": \"~/.config/waybar/wittr.sh\",
-    \"return-type\": \"json\",
-    \"format\": \"{}\",
-    \"tooltip\": true,
-    \"interval\": 900
-  },
-  \"hyprland/language\": {
-    \"format-pl\": \"[pl]\",
-    \"format-en\": \"[us]\",
-    \"on-click\": \"hyprctl switchxkblayout at-translated-set-2-keyboard next\"
-  },
-  \"custom/space\": {
-    \"format\": \"    \"
-  },
-  \"custom/github\": {
-    \"format\": \" {}\",
-    \"interval\": 30,
-    \"exec\": \"gh api notifications | jq -r '. | length'\",
-  },
-  \"custom/vpn\": {
-    \"format\": \"󰯄\",
-    \"return-type\": \"json\",
-    \"interval\": 3,
-    \"exec\": \"~/.config/waybar/vpn.sh\",
-    \"on-click\": \"exec ~/.config/waybar/vpn.sh toggle\",
-  },
-  \"custom/drive\": {
-    \"format\": \"󰊶\",
-    \"return-type\": \"json\",
-    \"interval\": 5,
-    \"exec\": \"~/.config/waybar/drive.sh\",
-    \"on-click\": \"exec ~/.config/waybar/drive.sh toggle\",
-  },
-  \"clock\": {
-    \"format\": \"{:%H:%M}\",
-    \"tooltip-format\": \"<big>{:%d/%m - %H:%M}</big>\n<tt><small>{calendar}</small></tt>\"
-  },
-  \"cpu\": {
-    \"interval\": 3,
-    \"format\": \"{icon} {usage}\",
-    \"format-icons\": [\"󰻠\"],
-  },
-  \"memory\": {
-    \"interval\": 3,
-    \"format\": \"{icon} {percentage}\",
-    \"format-icons\": [\"󰘚\"]
-  },
-  \"bluetooth\": {
-    \"format\": \"󰂯\",
-    \"format-disabled\": \"󰂲\",
-    \"format-off\": \"󰂲\",
-    \"format-connected\": \"󰂯 {num_connections}\",
-    \"on-click\": \"blueman-manager\",
-    \"on-click-right\": \"exec ~/.config/waybar/toggle-bluetooth.sh\",
-  },
-  \"pulseaudio\": {
-    \"format\": \"{icon} {volume}\",
-    \"format-muted\": \"󰝟 {volume}\",
-    \"format-icons\": {
-      \"headphone\": \"\",
-      \"headset\": \"\",
-      \"phone\": \"\",
-      \"phone-muted\": \"\",
-      \"portable\": \"\",
-      \"car\": \"\",
-      \"default\": [ \"󰕿\", \"󰖀\", \"󰕾\" ],
-    },
-    \"max-volume\": 150,
-    \"scroll-step\": 0.5,
-    \"on-click\": \"pactl set-sink-mute @DEFAULT_SINK@ toggle\",
-    \"on-click-right\": \"pavucontrol\",
-  },
-  \"backlight\": {
-    \"format\": \"󰛨 {percent}\",
-    \"scroll-step\": 10,
-  },
-  \"network\": {
-    \"interval\": 3,
-    \"format-wifi\": \"{icon} {signalStrength}\",
-    \"format-ethernet\": \"󰙅 {ifname}\",
-    \"format-disconnected\": \"󰤣 {signalStrength}\",
-    \"format-disabled\": \"󰤮 --\",
-    \"format-icons\": {
-      \"wifi\": [ \"󰤟\", \"󰤢\", \"󰤥\", \"󰤨\", ],
-    },
-    \"on-click\": \"networkmanager_dmenu\",
-  },
-  \"battery\": {
-    \"interval\": 3,
-    \"format\": \"{icon} {capacity}%\",
-    \"format-charging\": \"󰂄 {capacity}%\",
-    \"states\": {
-        \"warning\": 20,
-        \"critical\": 10,
-    },
-    \"format-icons\": [\"󰂎\", \"󰁺\", \"󰁻\", \"󰁼\", \"󰁽\", \"󰁾\", \"󰁿\", \"󰂀\", \"󰂁\", \"󰂂\", \"󰁹\"]
-  },
-  \"custom/system\": {
-    \"format\": \"󰐦\",
-    \"on-click\": \"systemctl hibernate\",
-  }
-}"
-   ))
+   "{
+      \"layer\": \"top\",
+      \"position\": \"top\",
+      \"height\": 14,
+      \"spacing\": 6,
+      \"modules-left\": [
+        \"hyprland/workspaces\",
+        \"hyprland/window\",
+      ],
+      \"modules-right\": [
+        \"custom/space\",
+        \"cpu\",
+        \"memory\",
+        \"custom/space\",
+        \"bluetooth\",
+        \"pulseaudio\",
+        \"backlight\",
+        \"network\",
+        \"battery\",
+        \"custom/system\",
+        \"clock#saopaulo\",
+        \"custom/separator\",
+        \"clock#utc\",
+        \"custom/separator\",
+        \"clock#berlin\",
+        \"custom/separator\",
+        \"clock#date\",
+      ],
+      \"hyprland/workspaces\": {
+        \"format\": \"{icon}\",
+        \"format-icons\": {
+            \"1\": \"Emacs\",
+            \"2\": \"Web\"
+        },
+        \"all-outputs\": false,
+        \"persistent-workspaces\": {
+          \"*\": 6
+        }
+      },
+      \"hyprland/window\": {
+        \"max-length\": 128
+      },
+      \"custom/separator\": {
+        \"format\": \"|\"
+      },
+      \"clock#saopaulo\": {
+        \"format\": \"SÃO PAULO: {:%H:%M:%S}\",
+        \"interval\": 1,
+        \"timezone\": \"Brazil/East\"
+      },
+      \"clock#utc\": {
+        \"format\": \"UTC: {:%H:%M:%S}\",
+        \"interval\": 1,
+        \"timezone\": \"UTC\"
+      },
+      \"clock#berlin\": {
+        \"format\": \"BERLIN: {:%H:%M:%S}\",
+        \"interval\": 1,
+        \"timezone\": \"Europe/Berlin\"
+      },
+      \"clock#date\": {
+        \"format\": \"{:%a, %d %b}\",
+        \"timezone\": \"Europe/Berlin\"
+      },
+    }"))
 
 (define style
   (mixed-text-file
    "waybar-style.css"
    "
 @define-color background-darker rgba(30, 31, 41, 230);
-@define-color background #282a36;
+@define-color background #000000;
 @define-color selection #44475a;
 @define-color foreground #f8f8f2;
 @define-color comment #6272a4;
