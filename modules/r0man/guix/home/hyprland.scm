@@ -51,6 +51,7 @@ $menu = wofi --show drun
 exec-once = swaybg -i ~/.local/share/wallpapers/stop-customizing-start-working.jpg
 exec-once = waybar &
 exec-once = librewolf &
+exec-once = kitty --class btop btop
 exec-once = emacs --bg-daemon &
 exec-once = gsettings set org.gnome.desktop.interface gtk-theme \"Nordic\" &
 exec-once = gsettings set org.gnome.desktop.wm.preferences theme \"Nordic\" &
@@ -298,6 +299,8 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 
 # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 # See https://wiki.hyprland.org/Configuring/Workspace-Rules/ for workspace rules
+
+windowrulev2 = workspace 9 silent, class:^(btop)$
 
 # Example windowrule v1
 # windowrule = float, ^(kitty)$
