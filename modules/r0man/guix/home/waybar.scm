@@ -42,8 +42,11 @@
       \"hyprland/workspaces\": {
         \"format\": \"{icon}\",
         \"format-icons\": {
-            \"1\": \"Emacs\",
-            \"2\": \"Web\"
+            \"1\": \" 1:Emacs\",
+            \"2\": \" 2:Web\",
+            \"3\": \" 3:Terminal\",
+            \"8\": \" 8:Logs\",
+            \"9\": \" 9:Monitor\",
         },
         \"all-outputs\": false,
         \"persistent-workspaces\": {
