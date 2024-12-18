@@ -38,11 +38,15 @@
       \"hyprland/workspaces\": {
         \"format\": \"{icon}\",
         \"format-icons\": {
-            \"1\": \"\",
-            \"2\": \"\",
-            \"3\": \"\",
-            \"8\": \"\",
-            \"9\": \"\",
+            \"1\": \" 1:Emacs\",
+            \"2\": \" 2:Web\",
+            \"3\": \" 3:Term\",
+            \"4\": \"4\",
+            \"5\": \"5\",
+            \"6\": \"6\",
+            \"7\": \"7\",
+            \"8\": \" 8:Log\",
+            \"9\": \" 9:Top\"
         }
       },
       \"hyprland/window\": {
@@ -140,7 +144,7 @@
     border: none;
     border-radius: 0;
     font-family: Hack;
-    font-size: 14pt;
+    font-size: 11pt;
     min-height: 0;
 }
 window#waybar {
@@ -173,7 +177,7 @@ window#waybar {
 
 .module {
     padding: 0 0em;
-    margin: 0 0.4em;
+    margin: 1 0.4em;
     color: @foreground;
 }
 
