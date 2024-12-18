@@ -208,6 +208,23 @@ device {
     sensitivity = -0.5
 }
 
+# Dell Precision Keyboard
+device {
+    name = at-translated-set-2-keyboard
+    kb_layout = us
+    kb_variant =
+    kb_model =
+    kb_options = caps:ctrl_modifier, altwin:swap_lalt_lwin
+}
+
+# Vortex External Keyboard
+device {
+    name = usb-hid-keyboard
+    kb_layout = us
+    kb_variant =
+    kb_model =
+    kb_options = caps:ctrl_modifier, altwin:swap_lalt_lwin
+}
 
 ###################
 ### KEYBINDINGS ###
