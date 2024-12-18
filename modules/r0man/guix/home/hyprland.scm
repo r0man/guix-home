@@ -328,6 +328,7 @@ bind = $mainMod SHIFT, Tab, focusmonitor, -1
 # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 # See https://wiki.hyprland.org/Configuring/Workspace-Rules/ for workspace rules
 
+windowrulev2 = workspace 8 silent, class:^(journalctl)$
 windowrulev2 = workspace 9 silent, class:^(btop)$
 
 # Example windowrule v1
