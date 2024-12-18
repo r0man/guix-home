@@ -2,6 +2,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (guix gexp)
@@ -38,22 +39,32 @@
       \"hyprland/workspaces\": {
         \"format\": \"{icon}\",
         \"format-icons\": {
-            \"1\": \" 1:Emacs\",
-            \"2\": \" 2:Web\",
-            \"3\": \" 3:Terminal\",
-            \"8\": \" 8:Logs\",
-            \"9\": \" 9:Monitor\",
-        },
-        \"all-outputs\": false,
-        \"persistent-workspaces\": {
-          \"*\": 6
+            \"1\": \"\",
+            \"2\": \"\",
+            \"3\": \"\",
+            \"8\": \"\",
+            \"9\": \"\",
         }
       },
       \"hyprland/window\": {
         \"max-length\": 128
       },
+      \"battery\": {
+          \"states\": {
+              \"warning\": 30,
+              \"critical\": 15
+          },
+          \"format\": \"{icon} {capacity}%\",
+          \"format-charging\": \"{capacity}% 🗲\",
+          \"format-plugged\": \"{capacity}% \",
+          \"format-alt\": \"{time} {icon}\",
+          \"format-icons\": [\"\", \"\", \"\", \"\", \"\"]
+      },
       \"custom/separator\": {
         \"format\": \"|\"
+      },
+      \"custom/clock-icon\": {
+        \"format\": \"\"
       },
       \"cpu\": {
           \"format\": \" {usage}%\",
@@ -143,7 +154,7 @@ window#waybar {
 }
 #workspaces button {
     padding: 0 0.8em;
-    color: @foreground;
+    color: @grey;
 }
 
 #workspaces button:hover {
@@ -152,7 +163,7 @@ window#waybar {
     background-image: linear-gradient(0deg, @selection, @background);
 }
 #workspaces button.active {
-    color: @green;
+    color: @white;
 }
 #workspaces button.urgent {
     color: @red;
