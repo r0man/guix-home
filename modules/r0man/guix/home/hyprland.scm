@@ -348,6 +348,7 @@ windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinn
   (list (if (target-aarch64?) (replace-mesa hyprland) hyprland)
         nordic-theme
         waybar
+        wireplumber
         xdg-desktop-portal-hyprland))
 
 (define home-hyprland-services
