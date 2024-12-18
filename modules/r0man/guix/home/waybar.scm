@@ -14,8 +14,7 @@
    "{
       \"layer\": \"top\",
       \"position\": \"top\",
-      \"height\": 14,
-      \"spacing\": 6,
+      \"spacing\": 0,
       \"modules-left\": [
         \"hyprland/workspaces\",
         \"hyprland/window\",
