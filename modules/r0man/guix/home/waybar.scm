@@ -58,6 +58,13 @@
       \"custom/separator\": {
         \"format\": \"|\"
       },
+      \"cpu\": {
+          \"format\": \" {usage}%\",
+          \"tooltip\": false
+      },
+      \"memory\": {
+          \"format\": \" {}%\"
+      },
       \"clock#saopaulo\": {
         \"format\": \"SÃO PAULO: {:%H:%M:%S}\",
         \"interval\": 1,
@@ -79,7 +86,33 @@
         \"format\": \"{:%a, %d %b}\",
         \"timezone\": \"Europe/Berlin\",
         \"tooltip\": false
-      },}"))
+      },
+      \"network\": {
+          \"format-wifi\": \" {essid}\",
+          \"format-ethernet\": \"{ipaddr}/{cidr}\",
+          \"tooltip-format\": \"{ifname} via {gwaddr}\",
+          \"format-linked\": \"{ifname} (No IP)\",
+          \"format-disconnected\": \"Disconnected ⚠\",
+          \"format-alt\": \"{ifname}: {ipaddr}/{cidr}\"
+      },
+      \"pulseaudio\": {
+          \"format\": \"%{icon} {volume} {format_source}\",
+          \"format-bluetooth\": \"{icon} {volume}% {format_source}\",
+          \"format-bluetooth-muted\": \"{icon} {format_source}\",
+          \"format-muted\": \" {format_source}\",
+          \"format-source\": \" {volume}%\",
+          \"format-source-muted\": \"\",
+          \"format-icons\": {
+              \"headphone\": \"\",
+              \"hands-free\": \"\",
+              \"headset\": \"\",
+              \"phone\": \"\",
+              \"portable\": \"\",
+              \"car\": \"\",
+              \"default\": [\"\", \"\", \"\"]
+          },
+          \"on-click\": \"pavucontrol\"
+      }}"))
 
 (define style
   (mixed-text-file
@@ -114,7 +147,6 @@ window#waybar {
 #workspaces button {
     padding: 0 0.8em;
     color: @foreground;
-    border-top: 0.1em solid @background;
 }
 
 #workspaces button:hover {
@@ -124,7 +156,6 @@ window#waybar {
 }
 #workspaces button.active {
     color: @green;
-    border-top-color: @green;
 }
 #workspaces button.urgent {
     color: @red;
@@ -140,7 +171,6 @@ window#waybar {
     padding: 0 0em;
     margin: 0 0.4em;
     color: @foreground;
-    border-top: 0.1em solid @background;
 }
 
 #clock.saopaulo, #clock.utc {
@@ -152,18 +182,8 @@ window#waybar {
 #custom-vpn.off { color: @white; }
 #custom-vpn.on { color: @pink; }
 
-#cpu { border-top-color: @white; }
-#memory { border-top-color: @white; }
-#network { border-top-color: @yellow; }
-#network.disconnected { border-top-color: @yellow; }
-#network.disabled { border-top-color: @red; }
-#backlight { border-top-color: @green; }
-#pulseaudio { border-top-color: @purple; }
-#pulseaudio.muted { border-top-color: @red; }
 #pulseaudio.bluetooth { color: @purple; }
-#bluetooth { border-top-color: @cyan; }
 #bluetooth.connected { color: @cyan; }
-#battery { border-top-color: @red; }
 #battery.warning { color: @yellow; }
 #battery.critical { color: @red; }
 #custom-system { margin: 0 1em; }"
@@ -174,7 +194,7 @@ window#waybar {
     (".config/waybar/style.css" ,style)))
 
 (define packages
-  (list font-awesome waybar))
+  (list font-awesome pavucontrol waybar))
 
 (define home-waybar-services
   (list (simple-service 'waybar-config home-files-service-type files)
