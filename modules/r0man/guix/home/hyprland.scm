@@ -316,6 +316,10 @@ bindl = , XF86AudioPause, exec, playerctl play-pause
 bindl = , XF86AudioPlay, exec, playerctl play-pause
 bindl = , XF86AudioPrev, exec, playerctl previous
 
+# Monitors
+bind = $mainMod, Tab, focusmonitor, +1
+bind = $mainMod SHIFT, Tab, focusmonitor, -1
+
 ##############################
 ### WINDOWS AND WORKSPACES ###
 ##############################
