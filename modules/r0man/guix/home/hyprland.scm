@@ -52,6 +52,7 @@ exec-once = swaybg -i ~/.local/share/wallpapers/stop-customizing-start-working.j
 exec-once = waybar &
 exec-once = librewolf &
 exec-once = kitty --class btop btop
+exec-once = kitty --class journalctl journalctl --all --follow
 exec-once = emacs --bg-daemon &
 exec-once = gsettings set org.gnome.desktop.interface gtk-theme \"Nordic\" &
 exec-once = gsettings set org.gnome.desktop.wm.preferences theme \"Nordic\" &
