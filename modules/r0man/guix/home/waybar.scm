@@ -23,10 +23,10 @@
       \"modules-right\": [
         \"cpu\",
         \"memory\",
+        \"battery\",
         \"bluetooth\",
         \"pulseaudio\",
         \"network\",
-        \"battery\",
         \"clock#saopaulo\",
         \"custom/separator\",
         \"clock#utc\",
