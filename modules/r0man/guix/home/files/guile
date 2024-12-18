@@ -4,7 +4,7 @@
              (system repl common))
 
 (activate-readline)
-(activate-colorized)
+;; (activate-colorized)
 
 ;; (repl-default-option-set!
 ;;  'print
