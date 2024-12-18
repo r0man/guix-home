@@ -27,7 +27,6 @@
         \"pulseaudio\",
         \"network\",
         \"battery\",
-        \"custom/clock-icon\",
         \"clock#saopaulo\",
         \"custom/separator\",
         \"clock#utc\",
@@ -62,9 +61,6 @@
       },
       \"custom/separator\": {
         \"format\": \"|\"
-      },
-      \"custom/clock-icon\": {
-        \"format\": \"\"
       },
       \"cpu\": {
           \"format\": \" {usage}%\",
