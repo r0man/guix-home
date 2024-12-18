@@ -2,6 +2,7 @@
   #:use-module (asahi guix packages gl)
   #:use-module (gnu home services)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages wm)
