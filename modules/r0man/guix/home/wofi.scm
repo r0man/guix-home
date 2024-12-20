@@ -16,7 +16,10 @@
     }
 
     window {
-      background-color: #3B4252;
+      background-color: #4c566a;
+      border-color: #3B4252;
+      border-radius: 0px;
+      border: 1em;
     }
 
     #input {
