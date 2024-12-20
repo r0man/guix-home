@@ -5,48 +5,58 @@
   #:use-module (guix gexp)
   #:export (home-wofi-services))
 
+;; https://github.com/alxndr13/wofi-nord-theme/blob/master/style.css
+
 (define %wofi-theme
   (mixed-text-file
    "wofi-theme" "
-window {
-  margin: 0px;
-  border: 1px solid #928374;
-  background-color: #002b36;
-}
 
-#input {
-  margin: 5px;
-  border: none;
-  color: #839496;
-  background-color: #073642;
-}
+    * {
+      font-family: \"Hack\", monospace;
+    }
 
-#inner-box {
-  margin: 5px;
-  border: none;
-  background-color: #002b36;
-}
+    window {
+      background-color: #3B4252;
+    }
 
-#outer-box {
-  margin: 5px;
-  border: none;
-  background-color: #002b36;
-}
+    #input {
+      margin: 5px;
+      border-radius: 0px;
+      border: none;
+      background-color: #3B4252;
+      color: white;
+    }
 
-#scroll {
-  margin: 0px;
-  border: none;
-}
+    #inner-box {
+      background-color: #383C4A;
+    }
 
-#text {
-  margin: 5px;
-  border: none;
-  color: #839496;
-}
+    #outer-box {
+      margin: 2px;
+      padding: 10px;
+      background-color: #383C4A;
+    }
 
-#entry:selected {
-  background-color: #073642;
-}"))
+    #scroll {
+      margin: 5px;
+    }
+
+    #text {
+      padding: 4px;
+      color: white;
+    }
+
+    #entry:nth-child(even){
+      background-color: #404552;
+    }
+
+    #entry:selected {
+      background-color: #4C566A;
+    }
+
+    #text:selected {
+      background: transparent;
+    }"))
 
 (define files
   `((".config/wofi/style.css" ,%wofi-theme)))
