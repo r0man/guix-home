@@ -341,6 +341,7 @@ workspace = 9, monitor:eDP-1
 
 # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 
+windowrulev2 = workspace 2 silent, class:^(LibreWolf)$
 windowrulev2 = workspace 8 silent, class:^(journalctl)$
 windowrulev2 = workspace 9 silent, class:^(btop)$
 
