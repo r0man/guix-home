@@ -249,7 +249,7 @@ bind = $mainMod, J, togglesplit, # dwindle
 bind = $mainMod, K, killactive,
 bind = $mainMod, M, exit,
 bind = $mainMod, P, pseudo, # dwindle
-bind = $mainMod, T, exec, $terminal
+bind = $mainMod, return, exec, $terminal
 bind = $mainMod, V, togglefloating,
 bind = $mainMod, space, exec, $menu
 
