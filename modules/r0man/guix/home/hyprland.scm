@@ -21,8 +21,8 @@
 
     # See https://wiki.hyprland.org/Configuring/Monitors/
 
-    monitor=DP-2,highres,auto,2.0
-    monitor=eDP-1,highres,auto,2.0
+    monitor=DP-2,highres,auto,1.6
+    monitor=eDP-1,highres,auto,1.6
     monitor=,preferred,auto,auto
 
     ###################
@@ -304,6 +304,7 @@
     bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
     bindel = ,XF86MonBrightnessUp, exec, brightnessctl s 10%+
     bindel = ,XF86MonBrightnessDown, exec, brightnessctl s 10%-
+
     # Laptop multimedia keys for volume and LCD brightness
     bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
     bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
