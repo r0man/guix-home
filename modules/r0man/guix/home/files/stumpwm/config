@@ -93,14 +93,15 @@
 
 ;; TTF Fonts
 
-(xft:cache-fonts)
-(clx-truetype:cache-fonts)
 
 (setf xft:*font-dirs*
       (list (namestring (merge-pathnames ".guix-home/profile/share/fonts" (user-homedir-pathname)))))
 
 (setf xft:+font-cache-filename+
       (merge-pathnames "font-cache.sexp" (merge-pathnames ".fonts/" (user-homedir-pathname))))
+
+(xft:cache-fonts)
+(clx-truetype:cache-fonts)
 
 (set-font (make-instance 'xft:font :family "Fira Code" :subfamily "Regular" :size 17))
 
