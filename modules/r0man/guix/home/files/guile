@@ -1,9 +1,9 @@
-(use-modules (ice-9 colorized)
-             (ice-9 pretty-print)
-             (ice-9 readline)
-             (system repl common))
+;; (use-modules ; (ice-9 colorized)
+;;              (ice-9 pretty-print)
+;;              (ice-9 readline)
+;;              (system repl common))
 
-(activate-readline)
+;; (activate-readline)
 ;; (activate-colorized)
 
 ;; (repl-default-option-set!
