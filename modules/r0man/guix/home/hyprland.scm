@@ -53,9 +53,9 @@
     exec-once = gsettings set org.gnome.desktop.interface gtk-theme \"Nordic\" &
     exec-once = gsettings set org.gnome.desktop.wm.preferences theme \"Nordic\" &
 
-    exec-once = [workspace 2 silent] librewolf
-    exec-once = [workspace 9 silent] kitty --class btop btop
-    exec-once = [workspace 8 silent] kitty --class journalctl journalctl --all --follow
+    exec-once = [workspace 2 silent] librewolf &
+    exec-once = [workspace 9 silent] kitty --class btop btop &
+    exec-once = [workspace 8 silent] kitty --class journalctl journalctl --all --follow &
 
     #############################
     ### ENVIRONMENT VARIABLES ###
