@@ -1,0 +1,20 @@
+* VM
+
+#+begin_src sh
+  guix system image -L modules --image-type=qcow2 modules/r0man/guix/system/vm.scm
+#+end_src
+
+#+begin_src sh
+  image=$(guix system image --image-type=qcow2 -L modules modules/r0man/guix/system/vm.scm)
+  cp $image /tmp/vm.qcow2
+  chmod +w /tmp/vm.qcow2
+#+end_src
+
+#+begin_src sh
+  qemu-system-x86_64 \
+      -nic user,model=virtio-net-pci \
+      -enable-kvm -m 16G \
+      -smp 8 \
+      -device virtio-blk,drive=myhd \
+      -drive if=none,file=/tmp/vm.qcow2,id=myhd
+#+end_src
