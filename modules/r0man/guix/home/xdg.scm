@@ -1,6 +1,7 @@
 (define-module (r0man guix home xdg)
-  #:use-module (gnu home services)
   #:use-module (gnu home services xdg)
+  #:use-module (gnu home services)
+  #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix modules))
 
@@ -22,5 +23,17 @@
                        (x-scheme-handler/soundklaus emacsclient.desktop)
                        (x-scheme-handler/zoommtg . Zoom.desktop))))))
 
+(define %xdg-desktop-portals-config
+  (mixed-text-file
+   "portals.conf"
+   "
+[preferred]
+default=wlr;gtk
+"))
+
+(define xdg-files-service
+  (simple-service 'xdg-files home-xdg-configuration-files-service-type
+                  `(("xdg-desktop-portal/portals.conf" ,%xdg-desktop-portals-config))))
+
 (define-public home-xdg-services
-  (list xdg-mime-applications-service))
+  (list xdg-mime-applications-service xdg-files-service))
