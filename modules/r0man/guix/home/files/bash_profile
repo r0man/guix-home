@@ -95,9 +95,9 @@ fi
 
 ## SSH
 
-# for i in $(ls -1 ~/.ssh/*.pub ); do
-#     ssh-add ${i/.pub/}
-# done
+for i in $(ls -1 ~/.ssh/*.pub ); do
+    ssh-add ${i/.pub/}
+done
 
 ## SOLARIZED
 
