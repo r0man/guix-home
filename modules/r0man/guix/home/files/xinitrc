@@ -14,12 +14,5 @@ fi
 # Load ~/.xprofile
 [[ -f ~/.xprofile ]] && . ~/.xprofile
 
-# Start Gnome
-#exec gnome-session
-
-# Start XMonad
-#dbus-launch --sh-syntax --exit-with-session xmonad
-
 # Start StumpWM
-#dbus-launch --sh-syntax --exit-with-session sbcl --load $HOME/.config/stumpwm/start
 exec sbcl --load $HOME/.config/stumpwm/start
