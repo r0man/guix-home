@@ -21,8 +21,8 @@
 
     # See https://wiki.hyprland.org/Configuring/Monitors/
 
-    monitor=DP-2,highres,auto,1.6
-    monitor=eDP-1,highres,auto,1.6
+    monitor=DP-2,highres,auto,1.5
+    monitor=eDP-1,highres,auto,1.5
     monitor=,preferred,auto,auto
 
     ###################
