@@ -56,3 +56,5 @@ feh --bg-scale ~/.local/share/wallpapers/stop-customizing-start-working.jpg
 
 # Start Emacs.
 emacs --bg-daemon &
+
+exit 0
