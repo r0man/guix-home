@@ -45,9 +45,6 @@ xsetroot -cursor_name left_ptr
 # Start Music Player Daemon.
 mpd &
 
-# Start Redshift
-systemctl --user start redshift
-
 # Start the screensaver
 xscreensaver -no-splash &
 
