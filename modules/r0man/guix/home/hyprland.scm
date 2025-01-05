@@ -63,11 +63,16 @@
 
     # See https://wiki.hyprland.org/Configuring/Environment-variables/
 
-    env = XCURSOR_SIZE,24
+    env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+    env = LIBVA_DRIVER_NAME,nvidia
+
     env = HYPRCURSOR_SIZE,24
 
-    env = LIBVA_DRIVER_NAME,nvidia
-    env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+    env = XCURSOR_SIZE,24
+
+    env = XDG_CURRENT_DESKTOP,Hyprland
+    env = XDG_SESSION_DESKTOP,Hyprland
+    env = XDG_SESSION_TYPE,wayland
 
     #####################
     ### LOOK AND FEEL ###
