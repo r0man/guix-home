@@ -237,6 +237,10 @@
         kb_options = caps:ctrl_modifier, altwin:swap_lalt_lwin
     }
 
+    xwayland {
+      force_zero_scaling = true
+    }
+
     ###################
     ### KEYBINDINGS ###
     ###################
