@@ -48,8 +48,10 @@ Create a directory to put wallpapers in.
 
 #+begin_src shell
   sudo mkdir /usr/local/share/backgrounds
-  sudo cp /home/roman/workspace/guix-home/r0man/home/files/wallpapers/guix-test-pilot.svg /usr/local/share/backgrounds
+  sudo cp /home/roman/workspace/guix-home/modules/r0man/guix/home/files/wallpapers/guix-test-pilot.svg /usr/local/share/backgrounds
 #+end_src
+
+#+RESULTS:
 
 Configure background image in =/etc/X11/xdm/Xsetup=.
 
