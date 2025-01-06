@@ -69,7 +69,7 @@
    ;; awscli
    cmake
    coreutils
-   docker-compose
+   ;; docker-compose
    file
    flatpak
    flameshot
