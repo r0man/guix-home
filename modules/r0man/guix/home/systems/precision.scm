@@ -25,7 +25,6 @@
   #:use-module (r0man guix home rofi)
   #:use-module (r0man guix home shepherd)
   #:use-module (r0man guix home sound)
-  #:use-module (r0man guix home ssh)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
   #:use-module (r0man guix home waybar)
@@ -56,7 +55,6 @@
           home-pm-services
           home-rofi-services
           home-shepherd-services
-          home-ssh-services
           home-stumpwm-services
           home-sway-services
           home-waybar-services
