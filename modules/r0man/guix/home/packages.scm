@@ -72,6 +72,7 @@
    ;; docker-compose
    file
    flatpak
+   flameshot
    fontconfig
    font-adobe-source-code-pro
    font-awesome
