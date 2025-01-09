@@ -108,7 +108,6 @@
    ncurses
    node-lts
    nss-certs
-   openblas
    password-store
    pgcli
    pkg-config
