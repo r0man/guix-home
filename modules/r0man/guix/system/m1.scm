@@ -20,11 +20,14 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
+  #:use-module (gnu services containers)
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
+  #:use-module (gnu services networking)
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
+  #:use-module (gnu system accounts)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system mapped-devices)
   #:use-module (gnu system nss)
@@ -116,6 +119,14 @@
             (themes-directory (file-append guix-sugar-light-sddm-theme "/share/sddm/themes"))
             (xorg-configuration %xorg-configuration))))
 
+(define %rootless-podman-service
+  (service rootless-podman-service-type
+           (rootless-podman-configuration
+            (subgids
+             (list (subid-range (name "roman"))))
+            (subuids
+             (list (subid-range (name "roman")))))))
+
 (define %asahi-kernel-module-config
   (simple-service 'asahi-config etc-service-type
                   (list `("modprobe.d/asahi.conf"
@@ -126,10 +137,12 @@
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
                           (service speakersafetyd-service-type)
+                          (service iptables-service-type)
                           %asahi-kernel-module-config
                           %home-service
-                          %sddm-service
                           %qemu-service-aarch64
+                          %rootless-podman-service
+                          %sddm-service
                           %udev-backlight-service
                           %udev-kbd-backlight-service
                           (operating-system-user-services desktop-operating-system))

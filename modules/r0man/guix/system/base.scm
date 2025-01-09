@@ -16,19 +16,16 @@
          "net-tools"
          "network-manager")))
 
+(define %supplementary-groups
+  '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
+
 (define %users
   (list (user-account
-         (name "r0man")
-         (comment "r0man")
-         (group "users")
-         (home-directory "/home/r0man")
-         (supplementary-groups '("audio" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel")))
-        (user-account
          (name "roman")
-         (comment "Roman Scherer")
+         (comment "Roman")
          (group "users")
          (home-directory "/home/roman")
-         (supplementary-groups '("audio" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel")))))
+         (supplementary-groups %supplementary-groups))))
 
 (define %services
   (modify-services (cons* %libvirt-service
