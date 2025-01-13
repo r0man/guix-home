@@ -93,12 +93,6 @@ fi
 # gpgconf --launch gpg-agent
 # eval $(gpg-agent --daemon)
 
-## SSH
-
-for i in $(ls -1 ~/.ssh/*.pub ); do
-    ssh-add ${i/.pub/}
-done
-
 ## SOLARIZED
 
 export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
