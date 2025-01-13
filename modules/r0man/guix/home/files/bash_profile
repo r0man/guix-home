@@ -85,14 +85,6 @@ if [ -d "$HOME/local/google-cloud-sdk" ]; then
     if [ -f '~/local/google-cloud-sdk/completion.bash.inc' ]; then . '~/local/google-cloud-sdk/completion.bash.inc'; fi
 fi
 
-## GPG
-
-# # export GPG_TTY="$(tty)"
-# gpgconf --launch gpg-agent
-# export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-# gpgconf --launch gpg-agent
-# eval $(gpg-agent --daemon)
-
 ## SOLARIZED
 
 export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
