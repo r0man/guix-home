@@ -12,8 +12,7 @@
             (default-cache-ttl-ssh 86400)
             (max-cache-ttl 86400)
             (max-cache-ttl-ssh 86400)
-            (pinentry-program (file-append pinentry-gtk2 "/bin/pinentry-gtk-2"))
-            (ssh-support? #t))))
+            (pinentry-program (file-append pinentry-gtk2 "/bin/pinentry-gtk-2")))))
 
 (define home-gpg-services
   (list %home-gpg-agent-service))
