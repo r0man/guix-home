@@ -19,6 +19,7 @@
   #:use-module (r0man guix home kitty)
   #:use-module (r0man guix home librewolf)
   #:use-module (r0man guix home mbsync)
+  #:use-module (r0man guix home msmtp)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
@@ -51,6 +52,7 @@
           home-kitty-services
           home-librewolf-services
           home-mbsync-services
+          home-msmtp-services
           home-nix-services
           home-pipewire-services-m1
           home-pm-services
