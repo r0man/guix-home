@@ -12,9 +12,10 @@
   #:use-module (asahi guix services sound)
   #:use-module (asahi guix services speakersafetyd)
   #:use-module (asahi guix services udev)
-  #:use-module (gnu  bootloader m1n1)
+  #:use-module (gnu bootloader m1n1)
   #:use-module (gnu bootloader)
   #:use-module (gnu packages display-managers)
+  #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages wm)
@@ -24,7 +25,6 @@
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
-  #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (gnu system accounts)
@@ -110,13 +110,14 @@
                        %xorg-modeset-config))
    (server asahi-xorg-server)))
 
-(define %sddm-service
-  (service sddm-service-type
-           (sddm-configuration
-            (auto-login-user "roman")
-            (sddm (replace-mesa sddm-qt5))
-            (theme "guix-sugar-light")
-            (themes-directory (file-append guix-sugar-light-sddm-theme "/share/sddm/themes"))
+(define %gdm-service
+  (service gdm-service-type
+           (gdm-configuration
+            (auto-login? #t)
+            (debug? #t)
+            (default-user "roman")
+            (gdm (replace-mesa gdm))
+            (wayland? #t)
             (xorg-configuration %xorg-configuration))))
 
 (define %rootless-podman-service
@@ -139,10 +140,10 @@
                           (service speakersafetyd-service-type)
                           (service iptables-service-type)
                           %asahi-kernel-module-config
+                          %gdm-service
                           %home-service
                           %qemu-service-aarch64
                           %rootless-podman-service
-                          %sddm-service
                           %udev-backlight-service
                           %udev-kbd-backlight-service
                           (operating-system-user-services desktop-operating-system))
