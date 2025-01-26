@@ -13,8 +13,8 @@
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages
-  (list ;; emacs-pgtk
-        emacs
+  (list emacs-pgtk
+        ;; emacs
         emacs-aider
         emacs-adoc-mode
         emacs-aggressive-indent
