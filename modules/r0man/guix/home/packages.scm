@@ -70,10 +70,10 @@
    cmake
    coreutils
    ;; docker-compose
+   ffmpeg
    file
-   flatpak
    flameshot
-   fontconfig
+   flatpak
    font-adobe-source-code-pro
    font-awesome
    font-dejavu
@@ -87,6 +87,7 @@
    font-inconsolata
    font-montserrat
    font-terminus
+   fontconfig
    gcc-toolchain
    glibc-locales
    `(,glib "bin")
