@@ -3,6 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages erlang)
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages)
   #:use-module (gnu services)
@@ -67,6 +68,7 @@
         emacs-embark
         emacs-emms
         emacs-engine-mode
+        emacs-erlang
         emacs-eval-expr
         emacs-evil
         emacs-exec-path-from-shell
