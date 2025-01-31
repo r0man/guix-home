@@ -290,7 +290,7 @@
     (format nil "gselect ~d" group)))
 
 ;; Set background image. TODO: Used to work with .xprofile, but it stopped working :/
-;; (run-shell-command "feh --bg-scale ~/.dotfiles/wallpapers/stop-customizing-start-working.jpg")
+(run-shell-command "feh --bg-scale ~/.local/share/wallpapers/stop-customizing-start-working.jpg")
 
 ;; Start programs last
 
