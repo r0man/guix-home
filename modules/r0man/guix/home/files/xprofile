@@ -34,7 +34,7 @@ fi
 gsettings set org.freedesktop.ibus.panel.emoji hotkey "@as []"
 
 # Start picom, a compositor for X11.
-picom &
+picom --backend xrender &
 
 # Dunst
 killall dunst; dunst &
