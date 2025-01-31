@@ -42,6 +42,7 @@
         pamixer
         pavucontrol
         picom
+        setxkbmap
         xbacklight
         xbindkeys
         xclip
