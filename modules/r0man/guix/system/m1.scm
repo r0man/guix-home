@@ -104,7 +104,6 @@
                  (list xf86-video-fbdev
                        xf86-input-libinput
                        xf86-input-evdev
-                       xf86-input-keyboard
                        xf86-input-mouse)))
    (extra-config (list %xorg-libinput-config
                        %xorg-modeset-config))
