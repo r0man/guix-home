@@ -17,8 +17,8 @@
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages geo)
   #:use-module (gnu packages ghostscript)
-  #:use-module (gnu packages glib)
   #:use-module (gnu packages gimp)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages haskell-xyz)
@@ -45,6 +45,7 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages tor)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages video)
   #:use-module (gnu packages xdisorg)
@@ -144,6 +145,7 @@
    tree-sitter-markdown-gfm
    tree-sitter-org
    tree-sitter-scheme
+   tor
    unzip
    util-linux
    wireless-tools
