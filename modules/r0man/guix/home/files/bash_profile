@@ -31,11 +31,11 @@ export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
 #     . /etc/profile.d/guix.sh
 # fi
 
-# GUIX_PROFILE="~/.guix-profile/etc/profile"
-# if [ -f $GUIX_PROFILE ]; then
-#     . $GUIX_PROFILE
-#     echo "Loaded Guix profile: $GUIX_PROFILE"
-# fi
+GUIX_PROFILE="~/.guix-profile/etc/profile"
+if [ -f $GUIX_PROFILE ]; then
+    . $GUIX_PROFILE
+    echo "Loaded Guix profile: $GUIX_PROFILE"
+fi
 
 # GUIX_PROFILE="$HOME/.guix-profile"
 # if [ -d $GUIX_PROFILE ]; then
