@@ -110,6 +110,7 @@
    ncurses
    node-lts
    nss-certs
+   openssl
    password-store
    pgcli
    pkg-config
