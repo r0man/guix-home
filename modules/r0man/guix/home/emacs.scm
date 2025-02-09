@@ -39,6 +39,7 @@
         emacs-codegpt
         emacs-color-theme
         emacs-color-theme-solarized-r0man
+        emacs-combobulate
         emacs-consult
         emacs-consult-gh
         emacs-copilot
