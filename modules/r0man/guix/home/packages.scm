@@ -48,6 +48,7 @@
   #:use-module (gnu packages tor)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages video)
+  #:use-module (gnu packages web)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages)
   #:use-module (guix utils)
@@ -102,6 +103,7 @@
    inkscape
    ispell
    isync
+   jq
    libatasmart
    libreoffice
    libvterm
