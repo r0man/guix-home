@@ -5,7 +5,7 @@
   (channel
    (name 'asahi)
    (branch "main")
-   (url "https://github.com/asahi-guix/channel")
+   (url "https://codeberg.org/asahi-guix/channel")
    (introduction
     (make-channel-introduction
      "3eeb493b037bea44f225c4314c5556aa25aff36c"
