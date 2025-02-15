@@ -10,7 +10,6 @@
   #:use-module (asahi guix packages xorg)
   #:use-module (asahi guix services firmware)
   #:use-module (asahi guix services sound)
-  #:use-module (asahi guix services speakersafetyd)
   #:use-module (asahi guix services udev)
   #:use-module (gnu  bootloader m1n1)
   #:use-module (gnu bootloader)
@@ -135,7 +134,7 @@
   (modify-services (cons* (service alsa-service-type)
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
-                          (service speakersafetyd-service-type)
+                          (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
                           %asahi-kernel-module-config
                           %home-service
