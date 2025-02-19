@@ -13,14 +13,14 @@
   (service home-xdg-mime-applications-service-type
            (home-xdg-mime-applications-configuration
             (default `((application/pdf . org.gnome.Evince.desktop)
-                       (application/x-zoom . Zoom.desktop)
                        (inode/directory . emacsclient.desktop)
                        (text/html . ,browser-mime-type)
                        (text/plain . emacsclient.desktop)
                        (x-scheme-handler/http . ,browser-mime-type)
                        (x-scheme-handler/https . ,browser-mime-type)
-                       (x-scheme-handler/soundklaus emacsclient.desktop)
-                       (x-scheme-handler/zoommtg . Zoom.desktop))))))
+                       (x-scheme-handler/slack . com.slack.Slack.desktop)
+                       (x-scheme-handler/soundklaus . emacsclient.desktop)
+                       (x-scheme-handler/zoommtg . us.zoom.Zoom.desktop))))))
 
 (define-public home-xdg-services
   (list xdg-mime-applications-service))
