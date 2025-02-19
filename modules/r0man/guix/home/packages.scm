@@ -76,7 +76,6 @@
    file
    flameshot
    flatpak
-   flatpak-xdg-utils
    font-adobe-source-code-pro
    font-awesome
    font-dejavu
