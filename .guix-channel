@@ -6,7 +6,7 @@
  (dependencies
   (channel
    (name asahi)
-   (url "https://github.com/asahi-guix/channel")
+   (url "https://codeberg.org/asahi-guix/channel")
    (branch "main")
    (introduction
     (channel-introduction
