@@ -8,14 +8,14 @@
   #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (nongnu packages emacs)
   #:use-module (r0man guix packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
 (define packages
-  (list emacs-pgtk
-        ;; emacs
+  (list (if (target-aarch64?) emacs-pgtk emacs)
         emacs-aider
         emacs-adoc-mode
         emacs-aggressive-indent
