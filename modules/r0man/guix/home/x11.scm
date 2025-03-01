@@ -14,10 +14,14 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)
+  #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix packages)
-  #:export (home-x11-services))
+  #:use-module (r0man guix system keyboard)
+  #:use-module (r0man guix system xorg)
+  #:export (home-x11-services
+            home-startx-services-precision))
 
 (define files
   `((".Xresources" ,(local-file "files/Xresources"))
@@ -59,3 +63,9 @@
         (simple-service 'x11-packages home-profile-service-type packages)
         (service home-x11-service-type)
         (service home-unclutter-service-type)))
+
+(define home-startx-services-precision
+  (list (service home-startx-command-service-type
+                 (xorg-configuration
+                  (keyboard-layout %keyboard-layout)
+                  (extra-config (list %xorg-libinput-config))))))

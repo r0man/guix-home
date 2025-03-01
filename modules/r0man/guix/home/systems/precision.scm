@@ -64,7 +64,8 @@
           home-waybar-services
           home-wofi-services
           home-xdg-services
-          home-x11-services))
+          home-x11-services
+          home-startx-services-precision))
 
 (define-public precision-home-environment
   (home-environment
