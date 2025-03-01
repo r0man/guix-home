@@ -43,6 +43,7 @@
         emacs-consult
         emacs-consult-gh
         emacs-copilot
+        emacs-copilot-chat
         emacs-corfu
         emacs-corfu
         emacs-dall-e
