@@ -22,6 +22,7 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages gtk)
+  #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages image)
   #:use-module (gnu packages imagemagick)
@@ -99,6 +100,7 @@
    gnutls
    graphviz
    gtk+ ;; Provide org.gtk.Settings.FileChooser
+   guile-goblins
    help2man
    htop
    imagemagick
