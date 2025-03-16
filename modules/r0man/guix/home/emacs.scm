@@ -53,6 +53,7 @@
         emacs-docker-compose-mode
         emacs-dockerfile-mode
         emacs-docopt
+        emacs-eat
         emacs-edit-indirect
         emacs-ef-themes
         ;; emacs-eglot
