@@ -111,6 +111,7 @@
    libreoffice
    libvterm
    mu
+   mumi
    mplayer
    ncurses
    node-lts
