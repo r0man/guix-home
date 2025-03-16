@@ -100,7 +100,6 @@
    gnutls
    graphviz
    gtk+ ;; Provide org.gtk.Settings.FileChooser
-   guile-goblins
    help2man
    htop
    imagemagick
