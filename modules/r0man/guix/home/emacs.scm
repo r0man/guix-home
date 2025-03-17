@@ -96,7 +96,6 @@
         emacs-go-mode
         emacs-google-translate
         emacs-gptel
-        emacs-gptel
         emacs-graphql
         emacs-graphql-mode
         emacs-guess-language
@@ -130,11 +129,11 @@
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
         emacs-mermaid-mode
-        emacs-nord-theme
         emacs-mu4e-alert
         emacs-multi-term
         emacs-multi-vterm
         emacs-multiple-cursors
+        emacs-nord-theme
         emacs-oauth2
         emacs-ob-mermaid
         emacs-openwith
@@ -149,6 +148,7 @@
         emacs-org-roam
         emacs-org-tree-slide
         emacs-osm
+        emacs-ox-gfm
         emacs-ox-gfm
         emacs-ox-jira
         emacs-ox-slack
