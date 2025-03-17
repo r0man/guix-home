@@ -11,7 +11,9 @@
 
 (define home-clojure-service
   (simple-service 'clojure-service home-profile-service-type
-                  (list r0man:clojure-lsp leiningen)))
+                  (list r0man:babashka
+                        r0man:clojure-lsp
+                        leiningen)))
 
 ;; Clojure LSP
 
