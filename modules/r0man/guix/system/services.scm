@@ -89,6 +89,7 @@
 (define %libvirt-service
   (service libvirt-service-type
            (libvirt-configuration
+            (firmwares (list))
             (unix-sock-group "libvirt")
             (tls-port "16555"))))
 
