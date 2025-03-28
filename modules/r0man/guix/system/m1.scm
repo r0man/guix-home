@@ -156,6 +156,17 @@
               (local-file "./keys/nonguix.pub")
               (local-file "./keys/precision.pub")
               %default-authorized-guix-keys))
+      (build-machines
+       (list #~(build-machine
+                (name "www.asahi-guix.org")
+                (systems (list "aarch64-linux"))
+                (user "root")
+                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZPlAeMk4hiHKHDCoDd1bT/ddMaZZR0iMWHE/mCGDFX"))
+             #~(build-machine
+                (name "precision.local")
+                (systems (list "x86_64-linux"))
+                (user "root")
+                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPgG2A1s40fYCkbqYW4K3Hs+Ap/iFDysLiw/8OXZLFRZ"))))
       (channels %channels)
       ;; TODO: Is this causing a pull on guix system commands?
       ;; (guix (guix-for-channels %channels))
