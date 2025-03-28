@@ -109,6 +109,7 @@
         emacs-inspector
         emacs-jarchive
         emacs-jinx
+        emacs-jira
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
