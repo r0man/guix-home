@@ -17,6 +17,7 @@
 (define packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
         emacs-aider
+        emacs-aidermacs
         emacs-adoc-mode
         emacs-aggressive-indent
         emacs-aio
