@@ -14,6 +14,13 @@ PS1='[\u@\h \W]\$ '
 # Use bash-completion, if available
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
+#GUIX
+
+GUIX_PROFILE="$HOME/.guix-profile"
+if [ -d $GUIX_PROFILE ]; then
+    . "$GUIX_PROFILE/etc/profile"
+fi
+
 ## BASH
 
 # Preserve Bash History in Multiple Terminal Windows

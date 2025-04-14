@@ -31,12 +31,6 @@ export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
 #     . /etc/profile.d/guix.sh
 # fi
 
-GUIX_PROFILE="$HOME/.guix-profile"
-if [ -d $GUIX_PROFILE ]; then
-    . "$GUIX_PROFILE/etc/profile"
-    echo "Loaded Guix profile: $GUIX_PROFILE"
-fi
-
 # # XDG_DATA_DIRS often starts off empty, but an empty value is
 # # interpreted as this value. Loading a profile can set it, though,
 # # which effectively ignores the default value. We want it to instead
