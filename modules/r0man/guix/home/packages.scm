@@ -128,7 +128,6 @@
    pv
    python-virtualenv
    python-yubikey-manager
-   recoll
    redshift
    ripgrep
    rlwrap
