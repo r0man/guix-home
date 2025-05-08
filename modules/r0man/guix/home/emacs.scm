@@ -173,6 +173,7 @@
         emacs-scala-mode
         emacs-scss-mode
         emacs-selectrum
+        emacs-semext
         emacs-show-font
         emacs-slite
         emacs-sly
