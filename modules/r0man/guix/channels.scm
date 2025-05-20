@@ -15,7 +15,7 @@
 (define-public guix-channel
   (channel
    (name 'guix)
-   (url "https://git.savannah.gnu.org/git/guix.git")
+   (url "https://codeberg.org/guix/guix-mirror")
    (introduction
     (make-channel-introduction
      "9edb3f66fd807b096b48283debdcddccfea34bad"
