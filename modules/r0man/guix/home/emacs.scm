@@ -130,6 +130,7 @@
         emacs-markdown-mode
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
+        emacs-mcp
         emacs-mermaid-mode
         emacs-mu4e-alert
         emacs-multi-term
