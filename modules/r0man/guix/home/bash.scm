@@ -20,6 +20,7 @@
              ("e" . "emacsclient")
              ("la" . "ls -lha")
              ("ll" . "ls -lh")
+             ("chromium" . "flatpak run org.chromium.Chromium")
              ("firefox" . "flatpak run org.mozilla.firefox")
              ("slack" . "flatpak run com.slack.Slack")
              ("zoom" . "flatpak run us.zoom.Zoom")))
