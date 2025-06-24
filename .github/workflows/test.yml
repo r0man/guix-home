@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Guix cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/guix
           key: guix-cache-${{ github.sha }}
@@ -21,7 +21,7 @@ jobs:
         with:
           channels: |-
             (list (channel
-                    (name 'asahi)
+                    (name 'asahi
                     (url "https://github.com/asahi-guix/channel")
                     (branch "main")
                     (introduction
