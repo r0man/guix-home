@@ -57,6 +57,7 @@
         emacs-docopt
         emacs-eat
         emacs-edit-indirect
+        emacs-editor-code-assistant
         emacs-ef-themes
         ;; emacs-eglot
         ;; emacs-eglot-java
