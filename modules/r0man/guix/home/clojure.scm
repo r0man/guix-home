@@ -13,6 +13,7 @@
   (simple-service 'clojure-service home-profile-service-type
                   (list r0man:babashka
                         r0man:clojure-lsp
+                        r0man:editor-code-assistant
                         leiningen)))
 
 ;; Clojure LSP
