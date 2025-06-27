@@ -35,6 +35,7 @@
         emacs-chatgpt
         emacs-cider
         emacs-claude-code
+        emacs-claude-code-ide
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
         emacs-clojure-ts-mode
