@@ -34,6 +34,7 @@
         emacs-cask
         emacs-chatgpt
         emacs-cider
+        emacs-claude-code
         emacs-clj-refactor
         emacs-clojure-mode-extra-font-locking
         emacs-clojure-ts-mode
