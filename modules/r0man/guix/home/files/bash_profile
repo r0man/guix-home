@@ -92,8 +92,8 @@ export PATH="$PATH:$HOME/local/flutter/bin"
 export NODE_OPTIONS="--openssl-legacy-provider"
 
 ## NPM
-NPM_PACKAGES="${HOME}/.npm-packages"
-export PATH="$PATH:$NPM_PACKAGES/bin"
+export NPM_CONFIG_PREFIX="${HOME}/.npm/node_modules"
+export PATH="$PATH:$NPM_CONFIG_PREFIX/bin"
 
 ## KAFKA
 
