@@ -13,6 +13,7 @@
   (service home-xdg-mime-applications-service-type
            (home-xdg-mime-applications-configuration
             (default `((application/pdf . org.gnome.Evince.desktop)
+                       (application/x-zstray . ZSTray.desktop)
                        (inode/directory . emacsclient.desktop)
                        (text/html . ,browser-mime-type)
                        (text/plain . emacsclient.desktop)
@@ -37,7 +38,7 @@
                     (name "ZScaler Client Connector")
                     (type 'application)
                     (config
-                     '((exec . "/opt/zscaler/scripts/zstray_desktop.sh %U")
+                     '((exec . "/opt/zscaler/scripts/zstray_desktop.sh %u")
                        (MimeType . "x-scheme-handler/zsa;application/x-zstray;")
                        (Terminal . "false")))))))))
 
