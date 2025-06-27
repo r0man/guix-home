@@ -1,22 +1,15 @@
 (define-module (r0man guix home fzf)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services)
-  #:use-module (gnu home)
   #:use-module (gnu packages terminals)
-  #:use-module (gnu services)
   #:use-module (guix gexp)
   #:export (home-fzf-services))
-
-(define %bash-completions
-  (mixed-text-file "fzf-bash-completions.sh" "source " (file-append fzf "/etc/bash_completion.d/fzf")))
-
-(define %bash-key-bindings
-  (local-file "files/fzf/shell/key-bindings.bash" "fzf-bash-key-bindings.sh"))
 
 (define %home-bash
   (home-bash-extension
    (bashrc
-    (list %bash-completions %bash-key-bindings))
+    (list (file-append fzf "/etc/bashrc.d/fzf-bindings.bash")
+          (file-append fzf "/etc/bashrc.d/fzf-completion.bash")))
    (environment-variables
     '(("FZF_DEFAULT_OPTS" . "--bind=ctrl-j:accept")))))
 
