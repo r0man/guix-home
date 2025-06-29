@@ -135,6 +135,8 @@
         emacs-markdown-preview-eww
         emacs-markdown-preview-mode
         emacs-mcp
+        emacs-mcp-client
+        emacs-mcp-server-lib
         emacs-mermaid-mode
         emacs-mu4e-alert
         emacs-multi-term
