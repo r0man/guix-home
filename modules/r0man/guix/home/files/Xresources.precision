@@ -4,4 +4,4 @@
 Xft.dpi: 160
 URxvt.font: xft:Hack-14
 dzen2.font: Inconsolata-14
-emacs.font: Inconsolata-12
+emacs.font: Inconsolata-14
