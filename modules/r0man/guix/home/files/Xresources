@@ -12,7 +12,7 @@ dzen2.foreground: white
 dzen2.background: black
 
 ! Emacs
-Emacs.font: Inconsolata-16
+Emacs.font: Inconsolata-14
 
 ! URXVT
 ! URxvt.font: xft:Inconsolata-14
