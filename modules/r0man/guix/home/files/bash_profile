@@ -86,11 +86,6 @@ export PATH="$PATH:/home/roman/.local/share/coursier/bin"
 export CHROME_EXECUTABLE="chromium"
 export PATH="$PATH:$HOME/local/flutter/bin"
 
-## NODE
-
-# https://stackoverflow.com/questions/69962209/what-is-openssl-legacy-provider-in-node-js-v17
-export NODE_OPTIONS="--openssl-legacy-provider"
-
 ## NPM
 export NPM_CONFIG_PREFIX="${HOME}/.npm/node_modules"
 export PATH="$PATH:$NPM_CONFIG_PREFIX/bin"
