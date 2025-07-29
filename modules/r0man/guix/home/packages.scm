@@ -125,7 +125,6 @@
    plocate
    podman
    podman-compose
-   postgis
    postgresql
    pv
    python-virtualenv
