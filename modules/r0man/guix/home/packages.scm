@@ -29,6 +29,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages libreoffice)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages maths)
@@ -114,6 +115,7 @@
    mumi
    mplayer
    ncurses
+   nerd-dictation-xdotool
    node-lts
    nss-certs
    openssl
