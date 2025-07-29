@@ -115,7 +115,7 @@
    mumi
    mplayer
    ncurses
-   nerd-dictation-xdotool
+   nerd-dictation/xdotool
    node-lts
    nss-certs
    openssl
