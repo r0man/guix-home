@@ -29,7 +29,8 @@
     (".xbindkeysrc" ,(local-file "files/xbindkeysrc"))
     (".xinitrc" ,(local-file "files/xinitrc"))
     (".xprofile" ,(local-file "files/xprofile"))
-    (".xsession" ,(local-file "files/xsession" #:recursive? #t))))
+    (".xsession" ,(local-file "files/xsession" #:recursive? #t))
+    ("bin/nerd-dictation-toggle" ,(local-file "files/bin/nerd-dictation-toggle" #:recursive? #t))))
 
 (define packages
   (list arandr
