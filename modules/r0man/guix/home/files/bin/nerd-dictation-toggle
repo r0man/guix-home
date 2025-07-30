@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+pgrep nerd-dictation
+
+if [[ $? -ne 0 ]] ; then
+    nerd-dictation begin --numbers-as-digits --output SIMULATE_INPUT
+else
+    nerd-dictation end
+fi
