@@ -99,3 +99,9 @@ Mod2 + Mod4 + Return
 ### Right click (Super + Shift + Return)
 "xdotool click 3"
 Mod2 + Mod4 + Shift + Return
+
+## NERD DICTATION
+
+# Toggle nerd-dictation on/off (Super + r)
+"nerd-dictation-toggle"
+Mod2 + Mod4 + r
