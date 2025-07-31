@@ -146,6 +146,7 @@
    tree-sitter-cli
    tree-sitter-clojure
    tree-sitter-dockerfile
+   tree-sitter-go
    tree-sitter-html
    tree-sitter-json
    tree-sitter-markdown
