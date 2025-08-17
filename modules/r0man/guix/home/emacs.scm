@@ -191,6 +191,7 @@
         emacs-sly-stepper
         emacs-sql-indent
         emacs-stumpwm-mode
+        emacs-svg-lib
         emacs-terraform-mode
         emacs-timesheet
         emacs-transient
