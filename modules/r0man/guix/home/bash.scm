@@ -18,6 +18,7 @@
            '((".." . "cd ..")
              ("..." . "cd .. && cd..")
              ("e" . "emacsclient")
+             ("ls" . "ls --color=auto")
              ("la" . "ls -lha")
              ("ll" . "ls -lh")
              ("chromium" . "flatpak run org.chromium.Chromium")
