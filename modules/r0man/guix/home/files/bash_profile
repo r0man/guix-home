@@ -75,7 +75,7 @@ fi
 
 ## SOLARIZED
 
-export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
+export LS_COLORS="$(vivid -m 8-bit generate nord)"
 
 ## COURSIER
 
