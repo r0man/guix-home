@@ -141,6 +141,7 @@
    strace
    texi2html
    texinfo
+   tor
    tree-sitter
    tree-sitter-bash
    tree-sitter-cli
@@ -153,9 +154,9 @@
    tree-sitter-markdown-gfm
    tree-sitter-org
    tree-sitter-scheme
-   tor
    unzip
    util-linux
+   whisper-cpp
    wireless-tools
    xdg-desktop-portal
    xdg-desktop-portal-gtk
