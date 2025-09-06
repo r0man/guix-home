@@ -89,6 +89,7 @@
    font-google-noto
    font-google-noto-emoji
    font-google-roboto
+   font-google-roboto-mono
    font-hack
    font-inconsolata
    font-montserrat
