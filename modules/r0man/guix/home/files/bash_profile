@@ -19,6 +19,9 @@ if [ -d "$CONFLUENT_HOME" ]; then
     export PATH="$PATH:$CONFLUENT_HOME/bin"
 fi
 
+## Leiningen
+export LEIN_JVM_OPTS="-Daether.dependencyCollector.impl=bf"
+
 ## Flatpak
 
 export XDG_DATA_DIRS="$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share"
