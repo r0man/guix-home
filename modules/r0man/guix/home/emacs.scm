@@ -17,9 +17,10 @@
 
 (define packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
+        emacs-adoc-mode
+        emacs-agent-shell
         emacs-aider
         emacs-aidermacs
-        emacs-adoc-mode
         emacs-aggressive-indent
         emacs-aio
         emacs-all-the-icons
