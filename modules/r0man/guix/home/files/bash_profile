@@ -116,9 +116,9 @@ export NUCLI_PY_FORMATTER_STYLE="bw"
 # export NUCLI_PY_FULL=1
 
 # PATH
-export PATH="$PATH:$HOME/.dotfiles/bin"
-export PATH="$PATH:$HOME/.local/bin"
-export PATH="$PATH:$HOME/.node_modules/bin"
-export PATH="$PATH:$HOME/bin:$PATH"
-export PATH="$PATH:/usr/local/bin"
-export PATH="$PATH:/usr/local/sbin"
+export PATH="$HOME/.dotfiles/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.node_modules/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
