@@ -57,7 +57,9 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
-  #:export (packages))
+  #:export (packages
+            packages-base
+            packages-desktop))
 
 (define packages-aarch64
   (list))
@@ -67,7 +69,7 @@
         pandoc
         python-yubikey-manager))
 
-(define packages-common
+(define packages-base
   (list
    `(,isc-bind "utils")
    autoconf
@@ -78,7 +80,6 @@
    ;; docker-compose
    ffmpeg
    file
-   flameshot
    flatpak
    font-adobe-source-code-pro
    font-awesome
@@ -102,22 +103,17 @@
    gnupg
    gnutls
    graphviz
-   gtk+ ;; Provide org.gtk.Settings.FileChooser
    help2man
    htop
    imagemagick
-   inkscape
    ispell
    isync
    jq
    libatasmart
-   libreoffice
    libvterm
    mu
    mumi
-   mplayer
    ncurses
-   nerd-dictation/xdotool
    node-lts
    nss-certs
    openssl
@@ -131,10 +127,8 @@
    pv
    python-virtualenv
    python-yubikey-manager
-   redshift
    ripgrep
    rlwrap
-   rofi
    sed
    sendgmail
    shared-mime-info
@@ -160,13 +154,30 @@
    util-linux
    whisper-cpp
    wireless-tools
-   xdg-desktop-portal
-   xdg-desktop-portal-gtk
    zip))
+
+(define packages-desktop
+  (list
+   flameshot
+   gtk+ ;; Provide org.gtk.Settings.FileChooser
+   inkscape
+   libreoffice
+   mplayer
+   nerd-dictation/xdotool
+   redshift
+   rofi
+   xdg-desktop-portal
+   xdg-desktop-portal-gtk))
 
 (define packages
   (cond ((target-aarch64?)
-         (append packages-common packages-aarch64))
+         (append packages-base
+                 packages-desktop
+                 packages-aarch64))
         ((target-x86-64?)
-         (append packages-common packages-x86-64))
-        (else packages-common)))
+         (append packages-base
+                 packages-desktop
+                 packages-x86-64))
+        (else
+         (append packages-base
+                 packages-desktop))))

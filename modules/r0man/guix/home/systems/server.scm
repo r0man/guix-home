@@ -45,7 +45,7 @@
 
 (define-public server-home-environment
   (home-environment
-   (packages packages)
+   (packages packages-base)
    (services services)))
 
 server-home-environment
