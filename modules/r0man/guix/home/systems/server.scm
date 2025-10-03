@@ -34,7 +34,7 @@
           home-environment-variables-services
           home-fzf-services
           home-git-services
-          home-gpg-services
+          home-gpg-tty-services
           home-guile-services
           home-mbsync-services
           home-msmtp-services

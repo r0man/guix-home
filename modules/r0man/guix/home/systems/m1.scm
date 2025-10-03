@@ -45,7 +45,7 @@
           home-environment-variables-services
           home-fzf-services
           home-git-services
-          home-gpg-services
+          home-gpg-gtk-services
           home-guile-services
           home-hyprland-services
           home-i3status-services
