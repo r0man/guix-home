@@ -8,6 +8,7 @@
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home common-lisp)
   #:use-module (r0man guix home desktop)
+  #:use-module (r0man guix home eca)
   #:use-module (r0man guix home emacs)
   #:use-module (r0man guix home environment)
   #:use-module (r0man guix home fzf)
@@ -41,6 +42,7 @@
           home-clojure-services
           home-common-lisp-services
           home-dbus-services
+          home-eca-services
           home-emacs-services
           home-environment-variables-services
           home-fzf-services
