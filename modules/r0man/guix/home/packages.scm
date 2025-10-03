@@ -80,7 +80,6 @@
    ;; docker-compose
    ffmpeg
    file
-   flatpak
    font-adobe-source-code-pro
    font-awesome
    font-dejavu
@@ -159,6 +158,7 @@
 (define packages-desktop
   (list
    flameshot
+   flatpak
    gtk+ ;; Provide org.gtk.Settings.FileChooser
    inkscape
    libreoffice
