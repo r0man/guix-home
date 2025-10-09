@@ -26,16 +26,16 @@
 
 (define services
   (append home-bash-services
-          home-btop-services
+          (list (service home-btop-service-type))
           home-channels-services
           home-clojure-services
           home-common-lisp-services
           home-dbus-services
           (list (service home-eca-service-type)
+                (service home-fzf-service-type)
                 (service home-git-service-type))
           home-emacs-services
           home-environment-variables-services
-          home-fzf-services
           home-gpg-tty-services
           home-guile-services
           home-mbsync-services
