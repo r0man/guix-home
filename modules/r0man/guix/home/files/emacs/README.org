@@ -1,7 +1,7 @@
 * init.el
 #+PROPERTY: header-args:emacs-lisp :tangle init.el
 
-My Emacs [[https://github.com/r0man/.emacs.d/blob/master/init.el.org][init.el]] in [[http://orgmode.org/][Org Mode]]'s [[http://orgmode.org/worg/org-contrib/babel][Babel]] format.
+My Emacs init.el in [[http://orgmode.org/][Org Mode]]'s [[http://orgmode.org/worg/org-contrib/babel][Babel]] format.
 
 [[http://imgs.xkcd.com/comics/real_programmers.png]]
 
