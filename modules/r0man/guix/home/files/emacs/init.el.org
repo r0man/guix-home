@@ -663,6 +663,7 @@ A GNU Emacs major mode for editing BNF grammars.
 
 #+begin_src emacs-lisp
   (use-package clhs
+    :defer t
     :init (clhs-setup))
 
   (defun hyperspec-lookup--hyperspec-lookup-eww (orig-fun &rest args)
@@ -1366,6 +1367,7 @@ identical elements are deleted from the history list.
 ** Image
 #+begin_src emacs-lisp
   (use-package image
+    :defer t
     :custom
     (image-use-external-converter t))
 #+end_src
@@ -2239,6 +2241,7 @@ Support for indenting code in SQL files.
 ** Uniquify
 #+begin_src emacs-lisp
   (use-package uniquify
+    :defer t
     :custom
     (uniquify-after-kill-buffer-p t)
     (uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -2508,6 +2511,7 @@ An HTTP library for Emacs.
 
 #+begin_src emacs-lisp
   (use-package plz
+    :defer t
     :config
     ;; When not on a Guix system, use curl from host
     (unless (file-exists-p "/run/current-system")
@@ -2682,6 +2686,7 @@ Show font features in an Emacs buffer.
 ** SMTP Mail
 #+begin_src emacs-lisp
   (use-package smtpmail
+    :defer t
     :custom
     ;; Whether to print info in debug buffer.
     (smtpmail-debug-info t)
@@ -2895,6 +2900,7 @@ Log and display warnings.
 
 #+begin_src emacs-lisp
   (use-package warnings
+    :defer t
     :custom
     (warning-minimum-level :emergency))
 #+end_src
