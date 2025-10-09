@@ -31,7 +31,7 @@
           home-clojure-services
           home-common-lisp-services
           home-dbus-services
-          home-eca-services
+          (list (service home-eca-service-type))
           home-emacs-services
           home-environment-variables-services
           home-fzf-services

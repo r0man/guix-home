@@ -26,7 +26,7 @@
                       (ice-9 popen)
                       (ice-9 rdelim))
 
-         (let* ((emacs #$(file-append emacs "/bin/emacs"))
+         (let* ((emacs #$(file-append emacs-minimal "/bin/emacs"))
                 (org-file #$org-file)
                 (output-file #$output)
                 (temp-dir (tmpnam)))
