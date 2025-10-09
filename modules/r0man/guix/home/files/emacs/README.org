@@ -1946,6 +1946,7 @@ Indent Java annotations. See http://lists.gnu.org/archive/html/help-gnu-emacs/20
 
 #+begin_src emacs-lisp
   (use-package java-mode
+    :mode "\\.java\\'"
     :config
     (setq c-comment-start-regexp "\\(@\\|/\\(/\\|[*][*]?\\)\\)")
     (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
