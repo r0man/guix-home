@@ -209,6 +209,7 @@ Reload files when they change on disk.
 
 #+begin_src emacs-lisp
   (use-package autorevert
+    :defer 2
     :config
     (global-auto-revert-mode t))
 #+end_src
@@ -497,6 +498,7 @@ Chat with Github copilot in Emacs.
 ** Cape
 #+begin_src emacs-lisp
   (use-package cape
+    :after corfu
     :init
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
     (add-to-list 'completion-at-point-functions #'cape-file)
@@ -1585,9 +1587,9 @@ http://stackoverflow.com/questions/3072648/cucumbers-ansi-colors-messing-up-emac
 
 #+begin_src emacs-lisp
   (use-package desktop
-    :init
-    (desktop-save-mode 1)
+    :defer 5
     :config
+    (desktop-save-mode 1)
     ;; Disable Verbose reporting of lazily created buffers.
     (setq desktop-lazy-verbose nil)
     ;; Always save desktop.
@@ -1746,10 +1748,10 @@ Start the Emacs server if it's not running.
 #+begin_src emacs-lisp
   (use-package server
     :if window-system
-    :init
-    (require 'server)
+    :defer 1
+    :config
     (unless (server-running-p)
-      (add-hook 'after-init-hook 'server-start t)))
+      (server-start)))
 #+end_src
 
 ** Emacs multimedia system
@@ -2844,7 +2846,8 @@ Major mode of Terraform configuration files.
 
 ** Transient
 #+begin_src emacs-lisp
-  (use-package transient)
+  (use-package transient
+    :defer t)
 #+end_src
 ** Unfill
 
@@ -2924,6 +2927,7 @@ Emacs package that displays available keybindings in popup.
 
 #+begin_src emacs-lisp
   (use-package which-key
+    :defer 1
     :diminish
     :config (which-key-mode))
 #+end_src
