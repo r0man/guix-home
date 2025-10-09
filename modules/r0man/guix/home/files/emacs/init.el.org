@@ -1,0 +1,3032 @@
+* init.el
+
+#+begin_src emacs-lisp
+  ;;; init.el --- My Emacs configuration. -*- lexical-binding: t; -*-
+#+end_src
+
+** Fonts
+#+begin_src emacs-lisp
+  (defun set-font-laptop ()
+    "Set the default font for use without external monitor."
+    (interactive)
+    (set-frame-font "Inconsolata-14" nil t))
+
+  (defun set-font-monitor ()
+    "Set the default font for use with external monitor."
+    (interactive)
+    (set-frame-font "Inconsolata-12" nil t))
+
+  (defun current-font-size ()
+    "Get the font size for the current system."
+    (cond ((and (equal "m1" (system-name)))
+           (if (getenv "WAYLAND_DISPLAY")
+               14
+             14))
+          ((and (equal "precision" (system-name)))
+           14)
+          (t 14)))
+
+  (add-to-list 'default-frame-alist `(font . ,(format "Inconsolata-%s" (current-font-size))))
+#+end_src
+
+** Emacs native compiler
+
+Compile Elisp to native machine code.
+
+#+begin_src emacs-lisp
+  (setq comp-num-cpus 4)
+  (setq comp-deferred-compilation t)
+#+end_src
+
+Whether to report warnings and errors from asynchronous native compilation.
+
+#+begin_src emacs-lisp
+  (setq native-comp-async-report-warnings-errors nil)
+#+end_src
+
+** Process output
+
+Maximum number of bytes to read from subprocess in a single chunk.
+
+Enlarge the value only if the subprocess generates very large
+(megabytes) amounts of data in one go.
+
+#+begin_src emacs-lisp
+  (setq read-process-output-max (* 1024 1024))
+#+end_src
+
+** Language & Encoding
+
+Add UTF8 at the front of the priority list for automatic detection.
+
+#+begin_src emacs-lisp
+  (prefer-coding-system 'utf-8)
+#+end_src
+
+Set up multilingual environment to use UTF-8.
+
+#+begin_src emacs-lisp
+  (set-language-environment "UTF-8")
+#+end_src
+
+Set default value of various coding systems to UTF-8.
+
+#+begin_src emacs-lisp
+  (set-default-coding-systems 'utf-8)
+#+end_src
+
+** Resize Frame Pixelwise
+
+If this option is nil, resizing a frame rounds its sizes to the
+frame’s current values of ‘frame-char-height’ and ‘frame-char-width’.
+If this is non-nil, no rounding occurs, hence frame sizes can
+increase/decrease by one pixel.
+
+This prevents StumpWM from graching when using gaps.
+
+#+begin_src emacs-lisp
+  (setq frame-resize-pixelwise t)
+#+end_src
+** Transparency
+#+begin_src emacs-lisp
+  (set-frame-parameter (selected-frame) 'alpha '(85 50))
+  (add-to-list 'default-frame-alist '(alpha 85 50))
+#+end_src
+
+** Use package
+
+Bootstrap [[https://github.com/jwiegley/use-package][use-package]].
+
+#+begin_src emacs-lisp
+  (require 'package)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+#+end_src
+
+Report details about loading and configuration.
+
+#+begin_src emacs-lisp
+  (setq use-package-verbose t)
+#+end_src
+
+Show load time of all packages.
+
+#+begin_src emacs-lisp
+  (setq use-package-minimum-reported-time 0)
+#+end_src
+
+Always ensure packages are installed when running on a non-guix
+system.
+
+#+begin_src emacs-lisp
+  (unless (file-exists-p "/gnu/store")
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t))
+#+end_src
+
+** External Monitor
+#+begin_src emacs-lisp
+  (defvar my-external-monitor "DP-1"
+    "The name of the external monitor.")
+
+  (defun monitor-connected-p (monitor)
+    "Return t if MONITOR is connected, otherwise nil."
+    (not (string= "" (shell-command-to-string (format "xrandr --listmonitors | grep %s" monitor)))))
+#+end_src
+** Abbrev mode
+
+#+begin_src emacs-lisp
+  (use-package abbrev
+    :diminish
+    :hook ((text-mode prog-mode) . abbrev-mode)
+    :custom
+    ;; Set the name of file from which to read abbrevs.
+    (abbrev-file-name "~/.config/emacs/abbrev_defs")
+    ;; Silently save word abbrevs too when files are saved.
+    (save-abbrevs 'silently))
+#+end_src
+
+** Agent Shell
+#+begin_src emacs-lisp
+  (use-package agent-shell
+    :commands (agent-shell-anthropic-start-claude-code)
+    :custom
+    (agent-shell-anthropic-authentication
+     (agent-shell-anthropic-make-authentication
+      :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))))
+#+end_src
+** Aide.el
+#+begin_src emacs-lisp
+  (use-package aide
+    :commands (aide-openai-completion-region-insert)
+    :load-path ("~/workspace/aide.el"))
+#+end_src
+
+** Aider.el
+
+Aider is AI pair programming in your terminal.
+
+#+begin_src emacs-lisp
+  (use-package aider
+    :commands (aider-run-aider)
+    :custom
+    (aider-args '("--openai-api-key=dummy" "--openai-api-base=http://127.0.0.1:8899/v1")))
+#+end_src
+** Aidermacs
+#+begin_src emacs-lisp
+  (use-package aidermacs
+    :bind (("C-c a" . aidermacs-transient-menu))
+    :config
+    (setenv "OPENAI_API_BASE" "http://127.0.0.1:8899/v1")
+    (setenv "OPENAI_API_KEY" "dummy")
+    :custom
+    (aidermacs-backend 'vterm)
+    (aidermacs-use-architect-mode t)
+    (aidermacs-default-model "gpt-4o"))
+#+end_src
+** Aio
+#+begin_src emacs-lisp
+  (use-package aio
+    :defer t)
+#+end_src
+** Ansi Color
+
+Colorize the current buffer.
+See: [[https://stackoverflow.com/questions/3072648/cucumbers-ansi-colors-messing-up-emacs-compilation-buffer][Stack Overflow]]
+
+#+begin_src emacs-lisp
+  (defun colorize-current-buffer ()
+    (interactive)
+    (require 'ansi-color)
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+#+end_src
+
+** Auto revert mode
+
+Reload files when they change on disk.
+
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :config
+    (global-auto-revert-mode t))
+#+end_src
+
+** Bug Reference
+
+Viewing Bugs within Emacs
+
+https://guix.gnu.org/en/manual/devel/en/html_node/Viewing-Bugs-within-Emacs.html
+
+#+begin_src emacs-lisp
+  (use-package bug-reference
+    :hook ((erc-mode . bug-reference-mode)
+           (gnus-article-mode . bug-reference-mode)
+           (gnus-mode . bug-reference-mode)
+           (gnus-summary-mode . bug-reference-mode)
+           (prog-mode . bug-reference-prog-mode))
+    :custom
+    (bug-reference-bug-regexp
+     (rx (group (or (seq word-boundary
+                         (or (seq (char "Bb") "ug"
+                                  (zero-or-one " ")
+                                  (zero-or-one "#"))
+                             (seq (char "Pp") "atch"
+                                  (zero-or-one " ")
+                                  "#")
+                             (seq (char "Ff") "ixes"
+                                  (zero-or-one ":")
+                                  (zero-or-one " ") "#")
+                             (seq "RFE"
+                                  (zero-or-one " ") "#")
+                             (seq "PR "
+                                  (one-or-more (char "a-z+-")) "/"))
+                         (group (one-or-more (char "0-9"))
+                                (zero-or-one
+                                 (seq "#" (one-or-more
+                                           (char "0-9"))))))
+                    (seq (? "<") "https://bugs.gnu.org/"
+                         (group-n 2 (one-or-more (char "0-9")))
+                         (? ">"))
+                    (seq (? "<") "https://issues.guix.gnu.org/"
+                         (? "issue/")
+                         (group-n 2 (one-or-more (char "0-9")))
+                         (? ">"))))))
+    (bug-reference-url-format "https://issues.guix.gnu.org/%s"))
+#+end_src
+** Calendar
+
+The calendar and diary by default display times of day in the
+conventional American style with the hours from 1 through 12, minutes,
+and either ‘am’ or ‘pm’. If you prefer the European style, also known
+in the US as military, in which the hours go from 00 to 23, you can
+alter the variable calendar-time-display-form. This variable is a list
+of expressions that can involve the variables 12-hours, 24-hours, and
+minutes, which are all numbers in string form, and am-pm and
+time-zone, which are both alphabetic strings.
+
+#+begin_src emacs-lisp
+  (setq calendar-time-display-form
+        '(24-hours ":" minutes
+                   (if time-zone " (") time-zone (if time-zone ")")))
+#+end_src
+** ChatGPT
+
+Use ChatGPT inside Emacs
+
+This Emacs Code extension allows you to use the official OpenAI
+API to generate code or natural language responses from OpenAI's
+ChatGPT to your questions, right within the editor.
+
+#+begin_src emacs-lisp
+  (use-package chatgpt
+    :commands (chatgpt chatgpt-new))
+#+end_src
+** Custom functions
+
+Load a file only if it exists.
+
+#+begin_src emacs-lisp
+  (defun load-if-exists (file)
+    "Load `file` if it exists."
+    (when (file-exists-p file)
+      (load file)))
+#+end_src
+
+Indent the whole buffer.
+
+#+begin_src emacs-lisp
+  (defun indent-buffer ()
+    "Indent the whole buffer."
+    (interactive)
+    (if (and (fboundp 'eglot-managed-p)
+             (eglot-managed-p))
+        (eglot-format-buffer)
+      (indent-region (point-min) (point-max))))
+#+end_src
+
+Remove all tabs from the current buffer.
+
+#+begin_src emacs-lisp
+  (defun untabify-buffer ()
+    "Remove all tabs from the current buffer."
+    (interactive)
+    (untabify (point-min) (point-max)))
+#+end_src
+
+Cleanup the current buffer.
+
+#+begin_src emacs-lisp
+  (defun cleanup-buffer ()
+    "Cleanup the current buffer."
+    (interactive)
+    (indent-buffer)
+    (delete-trailing-whitespace))
+#+end_src
+
+Find file as root.
+
+#+begin_src emacs-lisp
+  (defun sudo-edit (&optional arg)
+    (interactive "p")
+    (if (or arg (not buffer-file-name))
+        (find-file (concat "/sudo:root@localhost:" (read-file-name "File: ")))
+      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+#+end_src
+
+Swap two buffers.
+
+#+begin_src emacs-lisp
+  (defun swap-buffers ()
+    "Swap your buffers."
+    (interactive)
+    (cond ((not (> (count-windows)1))
+           (message "You can't rotate a single window!"))
+          (t
+           (setq i 1)
+           (setq numWindows (count-windows))
+           (while  (< i numWindows)
+             (let* ((w1 (elt (window-list) i))
+                    (w2 (elt (window-list) (+ (% i numWindows) 1)))
+                    (b1 (window-buffer w1))
+                    (b2 (window-buffer w2))
+                    (s1 (window-start w1))
+                    (s2 (window-start w2)))
+               (set-window-buffer w1  b2)
+               (set-window-buffer w2 b1)
+               (set-window-start w1 s2)
+               (set-window-start w2 s1)
+               (setq i (1+ i)))))))
+#+end_src
+
+Rotate two buffers.
+
+#+begin_src emacs-lisp
+  (defun rotate-buffers ()
+    "Rotate your buffers."
+    (interactive)
+    (if (= (count-windows) 2)
+        (let* ((this-win-buffer (window-buffer))
+               (next-win-buffer (window-buffer (next-window)))
+               (this-win-edges (window-edges (selected-window)))
+               (next-win-edges (window-edges (next-window)))
+               (this-win-2nd (not (and (<= (car this-win-edges)
+                                           (car next-win-edges))
+                                       (<= (cadr this-win-edges)
+                                           (cadr next-win-edges)))))
+               (splitter
+                (if (= (car this-win-edges)
+                       (car (window-edges (next-window))))
+                    'split-window-horizontally
+                  'split-window-vertically)))
+          (delete-other-windows)
+          (let ((first-win (selected-window)))
+            (funcall splitter)
+            (if this-win-2nd (other-window 1))
+            (set-window-buffer (selected-window) this-win-buffer)
+            (set-window-buffer (next-window) next-win-buffer)
+            (select-window first-win)
+            (if this-win-2nd (other-window 1))))))
+#+end_src
+
+Show the face found at the current point.
+
+#+begin_src emacs-lisp
+  (defun what-face (pos)
+    "Show the face found at the current point."
+    (interactive "d")
+    (let ((face (or (get-char-property (point) 'read-face-name)
+                    (get-char-property (point) 'face))))
+      (if face (message "Face: %s" face) (message "No face at %d" pos))))
+#+end_src
+
+Reload the ~/.Xresources configuration.
+
+#+begin_src emacs-lisp
+  (defun xresources ()
+    "Reload the ~/.Xresources configuration."
+    (interactive)
+    (shell-command "xrdb -merge ~/.Xresources ")
+    (message "X resources reloaded."))
+#+end_src
+
+Insert a Clojure UUID.
+
+#+begin_src emacs-lisp
+  (defun insert-clj-uuid (n)
+    "Insert a Clojure UUID tagged literal in the form of #uuid
+    \"11111111-1111-1111-1111-111111111111\". The prefix argument N
+    specifies the padding used."
+    (interactive "P")
+    (let ((n (or n 1)))
+      (if (or (< n 0) (> n 9))
+          (error "Argument N must be between 0 and 9."))
+      (let ((n (string-to-char (number-to-string n))))
+        (insert
+         (format "#uuid \"%s-%s-%s-%s-%s\""
+                 (make-string 8 n)
+                 (make-string 4 n)
+                 (make-string 4 n)
+                 (make-string 4 n)
+                 (make-string 12 n))))))
+#+end_src
+
+Run the current buffer through zprint.
+
+#+begin_src emacs-lisp
+  (defun zprint-buffer ()
+    "Run the current buffer through zprint."
+    (interactive)
+    (shell-command-on-region (point-min) (point-max) "zprint" nil t)
+    (goto-char (point-min))
+    (deactivate-mark))
+#+end_src
+
+** Claude Code IDE
+#+begin_src emacs-lisp
+  (use-package claude-code-ide
+    :commands (claude-code-ide)
+    :bind ("C-c C-'" . claude-code-ide-menu)
+    :custom
+    (claude-code-ide-use-side-window nil)
+    :config
+    (claude-code-ide-emacs-tools-setup))
+#+end_src
+** Copilot.el
+
+Copilot.el is an Emacs plugin for GitHub Copilot.
+
+#+begin_src emacs-lisp
+  (use-package copilot
+    :when (member (system-name) '("precision"))
+    :hook ((clojure-mode . copilot-mode)
+           (clojure-ts-mode . copilot-mode)
+           (clojurec-mode . copilot-mode)
+           (clojurescript-mode . copilot-mode)
+           (emacs-lisp-mode . copilot-mode)
+           (prog-mode . copilot-mode))
+    :bind (:map copilot-completion-map
+                ("C-<return>" . 'copilot-accept-completion)
+                ("M-n" . 'copilot-next-completion)
+                ("M-p" . 'copilot-previous-completion)))
+#+end_src
+** Copilot Chat
+
+Chat with Github copilot in Emacs.
+
+#+begin_src emacs-lisp
+  (use-package copilot-chat
+    :when (member (system-name) '("precision")))
+#+end_src
+
+** Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    :bind
+    (:map corfu-map
+          ("TAB" . corfu-next)
+          ([tab] . corfu-next)
+          ("C-<tab>" . corfu-previous))
+    :custom
+    (corfu-cycle t)
+    (corfu-preselect 'first)
+    :hook ((after-init . global-corfu-mode)))
+#+end_src
+
+** Cape
+#+begin_src emacs-lisp
+  (use-package cape
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+    (add-to-list 'completion-at-point-functions #'cape-history)
+    (add-to-list 'completion-at-point-functions #'cape-keyword)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
+#+end_src
+** Datomic.el
+#+begin_src emacs-lisp
+  (use-package datomic
+    :commands (datomic)
+    :load-path
+    ("~/workspace/datomic.el/src"
+     "~/workspace/datomic.el/test"))
+#+end_src
+** Debbugs
+
+Access the GNU Bug Tracker from within Emacs.
+
+https://elpa.gnu.org/packages/doc/debbugs-ug.html
+
+#+begin_src emacs-lisp
+  (use-package debbugs
+    :commands (debbugs-gnu)
+    :custom
+    ;; Open the issue directly within Emacs.
+    (debbugs-browse-url-regexp
+     (rx line-start
+         "http" (zero-or-one "s") "://"
+         (or "debbugs" "issues.guix" "bugs")
+         ".gnu.org" (one-or-more "/")
+         (group (zero-or-one "cgi/bugreport.cgi?bug="))
+         (group-n 3 (one-or-more digit))
+         line-end))
+    ;; Change the default when run as 'M-x debbugs-gnu'.
+    (debbugs-gnu-default-packages '("guix" "guix-patches"))
+    ;; Show feature requests.
+    (debbugs-gnu-default-severities
+     '("serious" "important" "normal" "minor" "wishlist")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package debbugs-browse
+    :hook
+    ((bug-reference-mode . debbugs-browse-mode)
+     (bug-reference-prog-mode . debbugs-browse-mode)))
+#+end_src
+** Docopt.el
+#+begin_src emacs-lisp
+  (use-package parsec
+    :defer t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package docopt
+    :commands docopt
+    :load-path
+    ("~/workspace/docopt.el/src"
+     "~/workspace/docopt.el/test"))
+#+end_src
+** Editor Code Assistent
+#+begin_src emacs-lisp
+  (use-package eca
+    :load-path ("~/workspace/eca-emacs")
+    :commands (eca)
+    :custom
+    (eca-chat-use-side-window nil)
+    (eca-custom-command '("~/workspace/eca/eca" "server" "--log-level" "debug" "--verbose")))
+#+end_src
+** Efrit
+#+begin_src emacs-lisp
+  (use-package efrit
+    :commands (efrit-chat
+               efrit-do
+               efrit-do-async
+               efrit-remote-queue
+               efrit-streamlined-send
+               efrit-unified-do))
+#+end_src
+** Eldoc
+
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :diminish
+    :hook ((c-mode-common . eldoc-mode)
+           (emacs-lisp-mode . eldoc-mode)
+           (scheme-mode . eldoc-mode))
+    :custom
+    (eldoc-echo-area-display-truncation-message nil)
+    (eldoc-echo-area-prefer-doc-buffer t)
+    (eldoc-echo-area-use-multiline-p 3))
+#+end_src
+** Mac OSX
+
+Make Emacs use the $PATH set up by the user's shell.
+
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :init
+    (setq exec-path-from-shell-variables
+          '("CHROME_EXECUTABLE"
+            "EDITOR"
+            "GOOGLE_APPLICATION_CREDENTIALS"
+            "MANPATH"
+            "METALS_JAVA_OPTS"
+            "METALS_JDK_PATH"
+            "NPM_PACKAGES"
+            "NUCLI_HOME"
+            "NUCLI_PY_FULL"
+            "NU_COUNTRY"
+            "NU_HOME"
+            "PATH"
+            "SPARK_HOME"
+            "XDG_CONFIG_DIRS"
+            "XDG_DATA_DIRS"))
+    (exec-path-from-shell-initialize))
+#+end_src
+
+This variable describes the behavior of the command key.
+
+#+begin_src emacs-lisp
+  (setq mac-option-key-is-meta t)
+  (setq mac-right-option-modifier nil)
+#+end_src
+
+** Ascii Doc
+#+begin_src emacs-lisp
+  (use-package adoc-mode
+    :mode (("\\.adoc\\'" . adoc-mode)))
+#+end_src
+** Arei
+
+Asynchronous Reliable Extensible IDE for Guile Scheme.
+
+#+begin_src emacs-lisp
+  (use-package arei
+    :commands (arei))
+#+end_src
+
+** Avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :bind (("M-j" . avy-goto-char-timer)
+           :map isearch-mode-map
+           ("C-'" . avy-search)))
+
+#+end_src
+** Bluetooth
+
+#+begin_src emacs-lisp
+  (use-package bluetooth
+    :commands bluetooth-list-devices)
+#+end_src
+** BNF Mode
+
+A GNU Emacs major mode for editing BNF grammars.
+
+#+begin_src emacs-lisp
+  (use-package bnf-mode
+    :mode (("\\.bnf\\'" . bnf-mode)))
+#+end_src
+** Common Lisp Hyper Spec
+
+#+begin_src emacs-lisp
+  (use-package clhs
+    :init (clhs-setup))
+
+  (defun hyperspec-lookup--hyperspec-lookup-eww (orig-fun &rest args)
+    (let ((browse-url-browser-function 'eww-browse-url))
+      (apply orig-fun args)))
+
+  (advice-add 'hyperspec-lookup :around #'hyperspec-lookup--hyperspec-lookup-eww)
+#+end_src
+** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs '(elixir-mode . ("~/workspace/elixir-ls/release/language_server.sh")))
+    (add-to-list 'eglot-server-programs '(java-mode . ("~/.config/emacs/share/eclipse.jdt.ls/bin/jdtls")))
+    (add-to-list 'eglot-server-programs '(scala-mode . ("metals")))
+    ;; (add-to-list 'eglot-server-programs `(scheme-mode . ("guile-lsp-server")))
+    ;; (add-hook 'eglot-managed-mode-hook
+    ;;           ;; This displays full docs for clojure functions.
+    ;;           ;; See https://github.com/joaotavora/eglot/discussions/894
+    ;;           #'(lambda ()
+    ;;               (setq-local eldoc-documentation-strategy
+    ;;                           #'eldoc-documentation-compose
+
+    ;;                           eldoc-echo-area-use-multiline-p
+    ;;                           5)))
+    :custom
+    (eglot-connect-timeout 120)
+    (eglot-extend-to-xref t))
+#+end_src
+** ElFeed
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :commands (elfeed)
+    :config
+    (setq elfeed-feeds
+          '("http://planet.clojure.in/atom.xml"
+            "https://grumpyhacker.com/feed.xml"
+            "https://nullprogram.com/feed"
+            "https://planet.emacslife.com/atom.xml"
+            "https://sulami.github.io/atom.xml"
+            "http://planet.lisp.org/rss20.xml"
+            "https://planet.scheme.org/atom.xml")))
+#+end_src
+** LLM
+#+begin_src emacs-lisp
+  (use-package llm
+    :defer t
+    :custom
+    (llm-log t))
+#+end_src
+
+** Ellama
+#+begin_src emacs-lisp
+  (use-package ellama
+    :commands (ellama-ask-about
+               ellama-ask-line
+               ellama-ask-selection
+               ellama-code-complete
+               ellama-code-edit
+               ellama-code-improve
+               ellama-code-review
+               ellama-complete
+               ellama-context-add-buffer
+               ellama-context-add-file
+               ellama-context-add-info-node
+               ellama-context-add-selection
+               ellama-define-word
+               ellama-improve-conciseness
+               ellama-improve-grammar
+               ellama-improve-wording
+               ellama-load-session
+               ellama-provider-select
+               ellama-session-switch
+               ellama-summarize
+               ellama-summarize-killring
+               ellama-summarize-webpage
+               ellama-translate
+               ellama-translate-buffer)
+    :custom
+    (ellama-auto-scroll t)
+    (ellama-language "German")
+    :config
+    (require 'llm-openai)
+    (require 'llm-vertex)
+    (add-to-list 'ellama-providers
+                 (cons "Nu Gemini 1.0"
+                       (make-llm-vertex
+                        :chat-model "gemini-pro"
+                        :project "iteng-itsystems")))
+    (add-to-list 'ellama-providers
+                 (cons "Nu Gemini 1.5"
+                       (make-llm-vertex
+                        :chat-model "gemini-1.5-pro-preview-0215"
+                        :project "iteng-itsystems")))
+    (add-to-list 'ellama-providers
+                 (cons "Nu OpenAI Local Proxy"
+                       (make-llm-openai-compatible
+                        :url "http://127.0.0.1:8899/v1/"
+                        :chat-model "gpt-4.1")))
+    (add-to-list 'ellama-providers
+                 (cons "OpenAI GPT-4.1"
+                       (make-llm-openai
+                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
+                        :chat-model "gpt-4.1")))
+    (add-to-list 'ellama-providers
+                 (cons "OpenAI o4-mini"
+                       (make-llm-openai
+                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
+                        :chat-model "o4-mini")))
+    (add-to-list 'ellama-providers
+                 (cons "OpenAI o3"
+                       (make-llm-openai
+                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
+                        :chat-model "o3")))
+    (add-to-list 'ellama-providers
+                 (cons "Nu LiteLLM OpenAI GPT-5"
+                       (make-llm-openai-compatible
+                        :url "https://ist-prod-litellm.nullmplatform.com/"
+                        :key (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey")
+                        :chat-model "gpt-5"
+                        :embedding-model "text-embedding-3-small")))
+    (setq ellama-provider (alist-get "Nu LiteLLM OpenAI GPT-5" ellama-providers nil nil #'string=)))
+
+  (defun ellama-chat-whisper ()
+    "Record audio in a temporary buffer with the `whisper-run`
+  command. When the user presses a key, stop the recording with by
+  invoking `whisper-run` again.  The text in the temporary buffer
+  is then passwd to the ellama-chat command."
+    (interactive)
+    (require 'ellama)
+    (require 'whisper)
+    (let ((buffer (get-buffer-create whisper--stdout-buffer-name)))
+      (with-current-buffer buffer
+        (erase-buffer)
+        (make-local-variable 'whisper-after-transcription-hook)
+        (add-hook 'whisper-after-transcription-hook
+                  (lambda ()
+                    (let ((transcription (buffer-substring (line-beginning-position)
+                                                           (line-end-position))))
+
+                      (ellama-chat transcription)))
+                  nil t)
+        (let ((recording-process (whisper-run)))
+          (message "Recording, then asking Ellama. Press RET to stop.")
+          (while (not (equal ?\r (read-char)))
+            (sit-for 0.5))
+          (whisper-run)))))
+
+
+  (defun ellama-ask-about-whisper ()
+    "Record audio in a temporary buffer with the `whisper-run`
+  command. When the user presses a key, stop the recording with by
+  invoking `whisper-run` again.  The text in the temporary buffer
+  is then passwd to the ellama-chat command."
+    (interactive)
+    (require 'ellama)
+    (require 'whisper)
+    (let ((about-buffer (current-buffer))
+          (buffer (get-buffer-create whisper--stdout-buffer-name)))
+      (with-current-buffer buffer
+        (erase-buffer)
+        (make-local-variable 'whisper-after-transcription-hook)
+        (add-hook 'whisper-after-transcription-hook
+                  (lambda ()
+                    (let ((transcription (buffer-substring (line-beginning-position)
+                                                           (line-end-position))))
+                      (with-current-buffer about-buffer
+                        (if (region-active-p)
+                            (ellama-context-add-selection)
+                          (ellama-context-add-buffer (buffer-name (current-buffer)))))
+                      (ellama-chat transcription)))
+                  nil t)
+        (let ((recording-process (whisper-run)))
+          (message "Recording, then asking Ellama. Press RET to stop.")
+          (while (not (equal ?\r (read-char)))
+            (sit-for 0.5))
+          (whisper-run)))))
+#+end_src
+** Elixir
+#+begin_src emacs-lisp
+  (use-package elixir-mode
+    :bind (:map elixir-mode-map
+                ("C-c C-f" . elixir-format)))
+#+end_src
+** eval-expr
+#+begin_src emacs-lisp
+  (use-package eval-expr
+    :hook ((emacs-lisp-mode . eval-expr-install)))
+#+end_src
+** Clojure mode
+#+begin_src emacs-lisp
+  (use-package clojure-mode
+    :after (nu)
+    :mode (("\\.edn\\'" . clojure-mode)
+           ("\\.cljs\\'" . clojurescript-mode)
+           ("\\.cljx\\'" . clojurex-mode)
+           ("\\.cljc\\'" . clojurec-mode))
+    :config
+    (add-hook 'clojure-mode-hook #'subword-mode)
+    (define-key clojure-mode-map (kbd "C-c t") #'projectile-toggle-between-implementation-and-test)
+    (define-clojure-indent
+     (assoc 1)
+     (match? 0)
+     (time! 1)
+     (fdef 1)
+     (providing 1)
+     ;; cljs.test
+     (async 1)
+     ;; ClojureScript
+     (this-as 1)
+     ;; COMPOJURE
+     (ANY 2)
+     (DELETE 2)
+     (GET 2)
+     (HEAD 2)
+     (POST 2)
+     (PUT 2)
+     (context 2)
+     ;; ALGO.MONADS
+     (domonad 1)
+     ;; Om.next
+     (defui '(1 nil nil (1)))
+     ;; CUSTOM
+     (api-test 1)
+     (web-test 1)
+     (database-test 1)
+     (defroutes 'defun)
+     (flow 'defun)
+     (for-all '(1 (2)))
+     (assoc-some 1)
+     (let-entities 2)
+     (functions/constraint-fn 2))
+    (put 'defmixin 'clojure-backtracking-indent '(4 (2)))
+    (require 'clojure-mode-extra-font-locking))
+#+end_src
+** Cider
+#+begin_src emacs-lisp
+  (use-package cider
+    :commands (cider-jack-in cider-jack-in-clojurescript)
+    :load-path ("~/workspace/cider")
+    :config
+    ;; Enable eldoc in Clojure buffers
+    (add-hook 'cider-mode-hook #'eldoc-mode)
+
+    ;; ;; Disable showing eldoc, use lsp-mode.
+    ;; (setq cider-eldoc-display-for-symbol-at-point nil)
+
+    ;; Add Cider Xref backend to the end, use lsp-mode.
+    ;; (setq cider-xref-fn-depth -90)
+    ;; (setq cider-xref-fn-depth 0)
+    ;; (setq cider-xref-fn-depth 90)
+
+    ;; Pretty print in the REPL.
+    (setq cider-repl-use-pretty-printing t)
+
+    ;; Whether to automatically download source artifacts for 3rd-party
+    ;; Java classes.
+    (setq cider-download-java-sources t)
+
+    ;; Hide *nrepl-connection* and *nrepl-server* buffers from appearing
+    ;; in some buffer switching commands like switch-to-buffer
+    (setq nrepl-hide-special-buffers nil)
+
+    ;; Enabling CamelCase support for editing commands(like forward-word,
+    ;; backward-word, etc) in the REPL is quite useful since we often have
+    ;; to deal with Java class and method names. The built-in Emacs minor
+    ;; mode subword-mode provides such functionality
+    (add-hook 'cider-repl-mode-hook #'subword-mode)
+
+    ;; Auto-select the error buffer when it's displayed:
+    (setq cider-auto-select-error-buffer t)
+
+    ;; Controls whether to stop a test run on failure/error.
+    (setq cider-test-fail-fast nil)
+
+    ;; Controls whether to pop to the REPL buffer on connect.
+    (setq cider-repl-pop-to-buffer-on-connect nil)
+
+    ;; T to wrap history around when the end is reached.
+    (setq cider-repl-wrap-history t)
+
+    ;; Don't log protocol messages to the `nrepl-message-buffer-name' buffer.
+    (setq nrepl-log-messages t)
+
+    ;; Don't show the `*cider-test-report*` buffer on passing tests.
+    (setq cider-test-report-on-success nil)
+
+    ;; (setq cider-injected-middleware-version "0.0.0")
+    ;; (setq cider-required-middleware-version "0.0.0")
+
+    ;; (add-to-list 'cider-jack-in-nrepl-middlewares "stem.nrepl/middleware")
+    ;; (cider-add-to-alist 'cider-jack-in-dependencies "stem/nrepl" "1.1.2-SNAPSHOT")
+
+    ;; (add-to-list 'cider-jack-in-nrepl-middlewares "nrepl-rebl.core/wrap-rebl")
+    ;; (cider-add-to-alist 'cider-jack-in-dependencies "nrepl-rebl/nrepl-rebl" "0.1.1")
+
+    ;; (cider-add-to-alist 'cider-jack-in-dependencies "refactor-nrepl/refactor-nrepl" "3.11.0")
+
+    ;; TODO: How to do this without printing a message?
+    (defun custom/cider-inspector-mode-hook ()
+      (visual-line-mode -1)
+      (toggle-truncate-lines 1))
+
+    (add-hook 'cider-inspector-mode-hook #'custom/cider-inspector-mode-hook))
+#+end_src
+** Clojure refactor
+
+#+begin_src emacs-lisp
+  (use-package clj-refactor
+    :hook ((clojure-mode . clj-refactor-mode))
+    :config
+    (cljr-add-keybindings-with-prefix "C-c C-R")
+    ;; Don't place a newline after the `:require` and `:import` tokens
+    (setq cljr-insert-newline-after-require nil)
+    ;; Don't use prefix notation when cleaning the ns form.
+    (setq cljr-favor-prefix-notation nil)
+    ;; Don't warn when running an AST op.
+    (setq cljr-warn-on-eval nil)
+    ;; ;; Don't build AST on startup.
+    (setq cljr-eagerly-build-asts-on-startup nil)
+    ;; Print a message when the AST has been built.
+    (setq cljr--debug-mode t))
+#+end_src
+** Code GPT
+
+This Emacs Code extension allows you to use the official OpenAI API to
+generate code or natural language responses from OpenAI's GPT-3 to
+your questions, right within the editor.
+
+#+begin_src emacs-lisp
+  (use-package codegpt
+    :commands (codegpt))
+#+end_src
+
+** Consult
+
+#+begin_src emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+           ("C-c h" . consult-history)
+           ("C-c m" . consult-mode-command)
+           ("C-c b" . consult-bookmark)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+           ("C-M-#" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ("<help> a" . consult-apropos)            ;; orig. apropos-command
+           ;; M-g bindings (goto-map)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-project-imenu)
+           ;; M-s bindings (search-map)
+           ("M-s f" . consult-find)
+           ("M-s L" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s m" . consult-multi-occur)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+           ("M-s l" . consult-line))                 ;; required by consult-line to detect isearch
+
+    ;; Enable automatic preview at point in the *Completions* buffer.
+    ;; This is relevant when you use the default completion UI,
+    ;; and not necessary for Selectrum, Vertico etc.
+    ;; :hook (completion-list-mode . consult-preview-at-point-mode)
+
+    ;; The :init configuration is always executed (Not lazy)
+    :init
+
+    ;; Optionally configure the register formatting. This improves the register
+    ;; preview for `consult-register', `consult-register-load',
+    ;; `consult-register-store' and the Emacs built-ins.
+    (setq register-preview-delay 0
+          register-preview-function #'consult-register-format)
+
+    ;; Optionally tweak the register preview window.
+    ;; This adds thin lines, sorting and hides the mode line of the window.
+    (advice-add #'register-preview :override #'consult-register-window)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+
+    ;; Configure other variables and modes in the :config section,
+    ;; after lazily loading the package.
+    :config
+
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key (kbd "M-."))
+    ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme
+     :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-recent-file
+     consult--source-project-recent-file
+     :preview-key "M-.")
+
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+    ;; Optionally make narrowing help available in the minibuffer.
+    ;; You may want to use `embark-prefix-help-command' or which-key instead.
+    ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+    (autoload 'projectile-project-root "projectile")
+    (setq consult-project-root-function #'projectile-project-root))
+#+end_src
+
+** Consult Github
+
+#+begin_src emacs-lisp
+  (use-package consult-gh
+    :after consult)
+#+end_src
+
+** Geiser
+
+Emacs and Scheme talk to each other.
+
+#+begin_src emacs-lisp
+  (use-package geiser
+    :commands (geiser run-geiser))
+#+end_src
+
+The Geiser implementation for Guile scheme.
+
+#+begin_src emacs-lisp
+  (use-package geiser-guile
+    :after geiser
+    :custom
+    (geiser-default-implementation 'guile)
+    :config
+    ;; (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/guix"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/asahi-guix/installer/modules"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/asahi-guix/channel/modules"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/asahi-guix/website/modules"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/asahi-guix/maintenance/modules"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/guix-channel"))
+    (add-to-list 'geiser-guile-load-path (expand-file-name "~/workspace/guix-home/modules"))
+    (defun geiser-con--tq-filter (tq in)
+      (when (buffer-live-p (tq-buffer tq))
+        (with-current-buffer (tq-buffer tq)
+          (if (tq-queue-empty tq)
+              (progn (geiser-log--error "Unexpected queue input:\n %s" in)
+                     (delete-region (point-min) (point-max)))
+            (goto-char (point-max))
+            (insert in)
+            (goto-char (point-min))
+            (when (re-search-forward (tq-queue-head-regexp tq) nil t)
+              (unwind-protect
+                  (funcall (tq-queue-head-fn tq)
+                           (tq-queue-head-closure tq)
+                           (buffer-substring (point-min) (point)))
+                (delete-region (point-min) (point-max))
+                (tq-queue-pop tq))))))))
+#+end_src
+
+** GraphQL Mode
+#+begin_src emacs-lisp
+  (use-package graphql-mode
+    :mode "\\.graphql\\'"
+    :config
+    (setq graphql-url "http://localhost:7000/graphql"))
+#+end_src
+** Guix
+#+begin_src emacs-lisp
+  (defun guix-system-p ()
+    (interactive)
+    (file-exists-p "/run/current-system/configuration.scm"))
+#+end_src
+#+begin_src emacs-lisp
+    (defun guix-home-reconfigure ()
+      "Run Guix Home reconfigure."
+      (interactive)
+      (with-current-buffer (get-buffer-create "*Guix Home Reconfigure*")
+        (pop-to-buffer (current-buffer))
+        (erase-buffer)
+        (let ((default-directory "~/workspace/guix-home"))
+          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/systems/precision.scm" (current-buffer)))))
+#+end_src
+#+begin_src emacs-lisp
+  (defun guix-system-reconfigure ()
+    "Run Guix System reconfigure."
+    (interactive)
+    (with-current-buffer (get-buffer-create "*Guix System Reconfigure*")
+      (pop-to-buffer (current-buffer))
+      (erase-buffer)
+      (let ((default-directory "~/workspace/guix-home"))
+        (cd (format "/sudo::%s" (expand-file-name default-directory)))
+        (async-shell-command "~/.config/guix/current/bin/guix system reconfigure -L modules modules/r0man/guix/system/m1.scm --allow-downgrades --no-offload" (current-buffer)))))
+#+end_src
+
+Enable global minor-mode for prettifying Guix store files.
+
+#+begin_src emacs-lisp
+  (use-package guix-prettify
+    :hook ((after-init . global-guix-prettify-mode)))
+#+end_src
+
+** Configure the full name of the user logged in.
+
+#+begin_src emacs-lisp
+  (setq user-full-name "r0man")
+#+end_src
+** Dart
+
+#+begin_src emacs-lisp
+  (use-package dart-mode
+    :hook (dart-mode . flutter-test-mode))
+#+end_src
+** Data Debug
+
+#+begin_src emacs-lisp
+  (use-package data-debug
+    :bind (("M-:" . data-debug-eval-expression)))
+#+end_src
+
+** Delete trailing whitespace
+
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+** Docker
+#+begin_src emacs-lisp
+  (use-package docker
+    :commands (docker))
+#+end_src
+** EIEIO
+
+Enhanced Implementation of Emacs Interpreted Objects
+
+#+begin_src emacs-lisp
+  (use-package eieio-datadebug
+    :after (eieio))
+#+end_src
+** Emacs Lisp
+
+#+begin_src emacs-lisp
+  (use-package emacs-lisp
+    :bind (("C-c C-p " . pp-eval-last-sexp)
+           ("C-c C-j " . pp-json-eval-last-sexp)))
+#+end_src
+
+** Emacs Refactor
+#+begin_src emacs-lisp
+  (use-package emr
+    :commands (emr-show-refactor-menu))
+#+end_src
+** Embark
+
+Emacs Mini-Buffer Actions Rooted in Key maps.
+
+Make sure the OS does not capture =C-.=.
+
+See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-other-keys-from-my-emacs/
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :bind
+    (("C-." . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+    :custom-face
+    (embark-keybinding ((t :inherit bold)))
+    :config
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+#+end_src
+** Embark Consult
+#+begin_src emacs-lisp
+  (use-package embark-consult
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+** Erlang
+#+begin_src emacs-lisp
+  (use-package erlang
+    :mode (("\\.erl\\'" . erlang-mode)))
+#+end_src
+** Flutter
+#+begin_src emacs-lisp
+  (use-package flutter
+    :after dart-mode
+    :bind (:map dart-mode-map ("C-M-x" . #'flutter-run-or-hot-reload))
+    :custom (flutter-sdk-path "/opt/flutter"))
+#+end_src
+** Forge
+#+begin_src emacs-lisp
+  (use-package forge
+    :after magit
+    :commands (forge-pull))
+#+end_src
+** GIF Screencast
+#+begin_src emacs-lisp
+  (use-package gif-screencast
+    :commands gif-screencast-start-or-stop
+    ;; :bind ("<f9>" . gif-screencast-start-or-stop)
+    :config
+    (setq gif-screencast-scale-factor 1.0))
+  ;; (with-eval-after-load 'gif-screencast
+  ;;   (setq gif-screencast-scale-factor 1.0)
+  ;;   (define-key gif-screencast-mode-map (kbd "<f8>") 'gif-screencast-toggle-pause)
+  ;;   (global-set-key (kbd "<f9>") 'gif-screencast-start-or-stop))
+#+end_src
+** Guix
+#+begin_src emacs-lisp
+  (use-package guix
+    :hook ((scheme-mode . guix-devel-mode)))
+#+end_src
+** GPTel
+#+begin_src emacs-lisp
+  (use-package gptel
+    :commands gptel
+    :config
+    (require 'gptel-integrations)
+    (setq-default gptel-backend
+                  (gptel-make-openai
+                   "NuLLM Open AI"
+                   :stream t
+                   :models '(o1-mini o3-mini o4-mini o1 o3 gpt-4.1-nano gpt-4.1-mini gpt-4.1)
+                   :host "ist-prod-litellm.nullmplatform.com"
+                   :key (lambda ()
+                          (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey"))))
+    :custom
+    (gptel-use-curl "~/.guix-profile/bin/curl"))
+#+end_src
+** History
+
+If set to t when adding a new history element, all previous
+identical elements are deleted from the history list.
+
+#+begin_src emacs-lisp
+  (setq history-delete-duplicates t)
+#+end_src
+
+** HTMLize
+
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :commands (htmlize-buffer htmlize-file))
+#+end_src
+
+** Hy Mode
+#+begin_src emacs-lisp
+  (use-package hy-mode
+    :mode (("\\.hy\\'" . hy-mode))
+    :config
+    (setq hy-indent-specform
+          '(("for" . 1)
+            ("for*" . 1)
+            ("while" . 1)
+            ("except" . 1)
+            ("catch" . 1)
+            ("let" . 1)
+            ("if" . 1)
+            ("when" . 1)
+            ("unless" . 1)
+            ("test-set" . 1)
+            ("test-set-fails" . 1))))
+#+end_src
+** Image
+#+begin_src emacs-lisp
+  (use-package image
+    :custom
+    (image-use-external-converter t))
+#+end_src
+** Lisp Mode
+#+begin_src emacs-lisp
+  (use-package lisp-mode
+    :mode (("source-registry.conf" . lisp-mode)))
+#+end_src
+** Auto Save
+
+Set the auto save directory.
+
+#+begin_src emacs-lisp
+  (setq my-auto-save-directory (concat user-emacs-directory "auto-save/"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq auto-save-file-name-transforms `((".*" ,my-auto-save-directory t)))
+#+end_src
+
+** Backup
+
+Set the backup directory.
+
+#+begin_src emacs-lisp
+  (setq my-backup-directory (concat user-emacs-directory "backups/"))
+#+end_src
+
+Put all backup files in a separate directory.
+
+#+begin_src emacs-lisp
+  (setq backup-directory-alist `((".*" . ,my-backup-directory)))
+#+end_src
+
+Copy all files, don't rename them.
+
+#+begin_src emacs-lisp
+  (setq backup-by-copying t)
+#+end_src
+
+If non-nil, backups of registered files are made as with other
+files. If nil (the default), files covered by version control don’t
+get backups.
+
+#+begin_src emacs-lisp
+  (setq vc-make-backup-files nil)
+#+end_src
+
+If t, delete excess backup versions silently.
+
+#+begin_src emacs-lisp
+  (setq delete-old-versions t)
+#+end_src
+
+Number of newest versions to keep when a new numbered backup is made.
+
+#+begin_src emacs-lisp
+  (setq kept-new-versions 20)
+#+end_src
+
+Number of oldest versions to keep when a new numbered backup is made.
+
+#+begin_src emacs-lisp
+  (setq kept-old-versions 20)
+#+end_src
+
+Make numeric backup versions unconditionally.
+
+#+begin_src emacs-lisp
+  (setq version-control t)
+#+end_src
+
+** Version Control
+
+Disable all version control to speed up file saving.
+
+#+begin_src emacs-lisp
+  (setq vc-handled-backends nil)
+#+end_src
+
+** Message Buffer
+
+Increase the number of messages in the *Messages* buffer.
+
+#+begin_src emacs-lisp
+  (setq message-log-max 10000)
+#+end_src
+
+** Mermaid
+
+Emacs major mode for working with mermaid graphs.
+
+#+begin_src emacs-lisp
+  (use-package mermaid-mode
+    :mode ("\\.mermaid\\'" "\\.mmd\\'"))
+#+end_src
+** Misc
+
+Answer questions with "y" or "n".
+
+#+begin_src emacs-lisp
+  (setq use-short-answers t)
+#+end_src
+
+Highlight matching parentheses when the point is on them.
+
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
+
+Enter debugger if an error is signaled?
+
+#+begin_src emacs-lisp
+  (setq debug-on-error nil)
+#+end_src
+
+Don't show startup message.
+
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)
+#+end_src
+
+Toggle column number display in the mode line.
+
+#+begin_src emacs-lisp
+  (column-number-mode)
+#+end_src
+
+Don't display time, load level, and mail flag in mode lines.
+
+#+begin_src emacs-lisp
+  (display-time-mode 0)
+#+end_src
+
+Whether to add a newline automatically at the end of the file.
+
+#+begin_src emacs-lisp
+  (setq require-final-newline t)
+#+end_src
+
+Highlight trailing whitespace.
+
+#+begin_src emacs-lisp
+  (setq show-trailing-whitespace t)
+#+end_src
+
+Controls the operation of the TAB key.
+
+#+begin_src emacs-lisp
+  (setq tab-always-indent 'complete)
+#+end_src
+
+The maximum size in lines for term buffers.
+
+#+begin_src emacs-lisp
+  (setq term-buffer-maximum-size (* 10 2048))
+#+end_src
+
+Use Firefox as default browser.
+
+#+begin_src emacs-lisp
+  (setq browse-url-browser-function 'browse-url-xdg-open)
+#+end_src
+
+Clickable URLs.
+
+#+begin_src emacs-lisp
+  (define-globalized-minor-mode global-goto-address-mode goto-address-mode goto-address-mode)
+  (global-goto-address-mode)
+#+end_src
+
+Whether Emacs should confirm killing processes on exit.
+
+#+begin_src emacs-lisp
+  (setq confirm-kill-processes nil)
+#+end_src
+
+** Compilation mode
+
+Enable colors in compilation mode.
+http://stackoverflow.com/questions/3072648/cucumbers-ansi-colors-messing-up-emacs-compilation-buffer
+
+#+begin_src emacs-lisp
+  (defun colorize-compilation-buffer ()
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package compile
+    :commands (compile)
+    :custom
+    ;; Auto scroll compilation buffer.
+    (compilation-scroll-output 't)
+    :config
+    (add-hook 'compilation-filter-hook #'colorize-compilation-buffer))
+#+end_src
+
+** CSS mode
+#+begin_src emacs-lisp
+  (use-package css-mode
+    :mode ("\\.css\\'" . css-mode)
+    :custom
+    (css-indent-offset 2))
+#+end_src
+** SCSS mode
+#+begin_src emacs-lisp
+  (use-package scss-mode
+    :mode (("\\.sass\\'" . scss-mode)
+           ("\\.scss\\'" . scss-mode))
+    :custom
+    (scss-compile-at-save nil))
+#+end_src
+** Desktop save mode
+
+#+begin_src emacs-lisp
+  (use-package desktop
+    :init
+    (desktop-save-mode 1)
+    :config
+    ;; Disable Verbose reporting of lazily created buffers.
+    (setq desktop-lazy-verbose nil)
+    ;; Always save desktop.
+    (setq desktop-save t)
+    ;; Load desktop even if it is locked.
+    (setq desktop-load-locked-desktop t)
+    ;; Number of buffers to restore immediately.
+    (setq desktop-restore-eager 4)
+    ;; Don't save some buffers.
+    (setq desktop-buffers-not-to-save
+          (concat "\\("
+                  "\\.bbdb|\\.gz"
+                  "\\)$")))
+#+end_src
+
+** Inferior Lisp mode
+
+#+begin_src emacs-lisp
+  (use-package inf-lisp
+    :commands (inferior-lisp)
+    :custom
+    (inferior-lisp-program "sbcl"))
+#+end_src
+
+** Dired mode
+
+#+begin_src emacs-lisp
+  (use-package dired
+    :bind (("C-x C-d" . dired))
+    :commands (dired)
+    :custom
+    ;; Try to guess a default target directory.
+    (dired-dwim-target t)
+    ;; Switches passed to `ls' for Dired. MUST contain the `l' option.
+    (dired-listing-switches "-alh"))
+#+end_src
+
+Find Clojure files in dired mode.
+
+#+begin_src emacs-lisp
+  (defun find-dired-clojure (dir)
+    "Run find-dired on Clojure files."
+    (interactive (list (read-directory-name "Find Clojure files in directory: " nil "" t)))
+    (find-dired dir "-name \"*.clj\""))
+#+end_src
+
+Find Elisp files in dired mode.
+
+#+begin_src emacs-lisp
+  (defun find-dired-elisp (dir)
+    "Run find-dired on Elisp files."
+    (interactive (list (read-directory-name "Find Elisp files in directory: " nil "" t)))
+    (find-dired dir "-name \"*.el\""))
+#+end_src
+
+** Dired-x mode
+
+Run shell command in background.
+
+#+begin_src emacs-lisp
+  (defun dired-do-shell-command-in-background (command)
+    "In dired, do shell command in background on the file or directory named on
+   this line."
+    (interactive
+     (list (dired-read-shell-command (concat "& on " "%s: ") nil (list (dired-get-filename)))))
+    (call-process command nil 0 nil (dired-get-filename)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package dired-x
+    :after dired
+    :bind (:map dired-mode-map
+                ("&" . dired-do-shell-command-in-background))
+    :custom
+    (dired-guess-shell-alist-user
+     '(("\\.mp4\\'" "mplayer")
+       ("\\.mkv\\'" "mplayer")
+       ("\\.mov\\'" "mplayer")
+       ("\\.xlsx?\\'" "libreoffice"))))
+#+end_src
+
+** Electric pair mode
+
+Electric Pair mode, a global minor mode, provides a way to easily
+insert matching delimiters. Whenever you insert an opening
+delimiter, the matching closing delimiter is automatically inserted
+as well, leaving point between the two.
+
+#+begin_src emacs-lisp
+  (use-package elec-pair
+    :hook (after-init . electric-pair-mode))
+#+end_src
+
+** Prog Mode
+
+#+begin_src emacs-lisp
+  (use-package prog-mode
+    :hook (emacs-lisp-mode . prettify-symbols-mode))
+#+end_src
+
+** Elint
+
+A linter for Emacs Lisp.
+
+#+begin_src emacs-lisp
+  (use-package elint
+    :commands (elint-initialize elint-current-buffer)
+    :bind (:map emacs-lisp-mode-map
+                ("C-c e E" . elint-current-buffer)))
+#+end_src
+
+** Elisp
+
+The major mode for editing Emacs Lisp code.
+
+#+begin_src emacs-lisp
+  (use-package emacs-lisp-mode
+    :no-require t
+    :mode ("\\.el\\'" "Cask")
+    :bind (:map emacs-lisp-mode-map
+                ("C-c C-k" . eval-buffer)
+                ("C-c e c" . cancel-debug-on-entry)
+                ("C-c e d" . debug-on-entry)
+                ("C-c e e" . toggle-debug-on-error)
+                ("C-c e f" . emacs-lisp-byte-compile-and-load)
+                ("C-c e l" . find-library)
+                ("C-c e r" . eval-region)))
+#+end_src
+
+** ERT
+
+The major mode for editing Emacs Lisp code.
+
+#+begin_src emacs-lisp
+  (use-package ert
+    ;; :no-require t
+    ;; :mode ("\\.el\\'")
+    :bind (:map emacs-lisp-mode-map
+                ("C-c ," . ert)
+                ("C-c C-," . ert)))
+#+end_src
+
+** Elisp slime navigation
+
+Slime-style navigation for Emacs Lisp.
+
+#+begin_src emacs-lisp
+  (use-package elisp-slime-nav
+    :diminish
+    :hook (emacs-lisp-mode . elisp-slime-nav-mode))
+#+end_src
+** Emacs server
+
+Start the Emacs server if it's not running.
+
+#+begin_src emacs-lisp
+  (use-package server
+    :if window-system
+    :init
+    (require 'server)
+    (unless (server-running-p)
+      (add-hook 'after-init-hook 'server-start t)))
+#+end_src
+
+** Emacs multimedia system
+#+begin_src emacs-lisp
+  (use-package emms
+    :commands (emms)
+    :config
+    (emms-all)
+    (emms-default-players)
+    (add-to-list 'emms-player-list 'emms-player-mpd)
+    (condition-case nil
+        (emms-player-mpd-connect)
+      (error (message "Can't connect to music player daemon.")))
+    (setq emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
+    (setq emms-player-mpd-music-directory (expand-file-name "~/Music"))
+    (load-if-exists "~/.emms.el"))
+#+end_src
+** Expand region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :bind (("C-c C-+" . er/expand-region)
+           ("C-c C--" . er/contract-region)))
+#+end_src
+** Flycheck
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :hook ((after-init . global-flycheck-mode)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package flycheck-elsa
+    :hook ((emacs-lisp-mode . flycheck-elsa-setup)))
+#+end_src
+
+** Git Email
+#+begin_src emacs-lisp
+  (use-package git-email
+    :commands (git-email-send-email git-email-format-patch))
+#+end_src
+** Github browse file
+#+begin_src emacs-lisp
+  (use-package github-browse-file
+    :commands (github-browse-file github-browse-file-blame))
+#+end_src
+** Inspector
+#+begin_src emacs-lisp
+  (use-package inspector
+    :commands (inspector-inspect-expression
+               inspector-inspect-last-sexp))
+
+  (use-package tree-inspector
+    :commands (tree-inspector-inspect-expression
+               tree-inspector-inspect-last-sexp))
+#+end_src
+** isa.el
+#+begin_src emacs-lisp
+  (use-package isa
+    :commands (isa)
+    :if (file-directory-p "~/workspace/nu/isa.el/")
+    :load-path "~/workspace/nu/isa.el/")
+#+end_src
+** Jira
+#+begin_src emacs-lisp
+  (use-package jira
+    :custom
+    (jira-api-version 3)
+    (jira-base-url "https://nubank.atlassian.net")
+    (jira-username "roman.scherer@nubank.com.br"))
+#+end_src
+** Jiralib2
+
+Lisp bindings to JIRA REST API.
+
+#+begin_src emacs-lisp
+  (use-package jiralib2
+    :after (ox-jira)
+    :defer t)
+#+end_src
+
+** Kubel
+#+begin_src emacs-lisp
+  (use-package kubel
+    :commands (kubel))
+#+end_src
+** Kubernetes
+#+begin_src emacs-lisp
+  (use-package kubernetes
+    :bind (("C-x C-k s" . kubernetes-overview))
+    :commands (kubernetes-overview))
+#+end_src
+** Kotlin
+
+#+begin_src emacs-lisp
+  (use-package kotlin-mode
+    :mode ("\\.kt\\'" "\\.kts\\'" "\\.ktm\\'"))
+#+end_src
+
+** Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :bind (("C-x C-g s" . magit-status))
+    :config
+    (setq magit-stage-all-confirm nil)
+    (setq magit-unstage-all-confirm nil)
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+#+end_src
+** MCP
+
+Client for interfacing with MCP servers.
+
+#+begin_src emacs-lisp
+  (use-package mcp
+    :commands (mcp-hub)
+    :config
+    (setq mcp-hub-servers
+          `(("apistemic" . (:command "/bin/sh"
+                                     :args ("-c"
+                                            ,(concat "cd ~/workspace/nu/apistemic && "
+                                                     "clojure -X:mcp :port 45525")))))))
+#+end_src
+** MCP Tools
+#+begin_src emacs-lisp
+  (use-package emacs-mcp
+    :commands (emacs-mcp-run-stdio))
+#+end_src
+** Nubank
+#+begin_src emacs-lisp
+  (use-package nu
+    :commands (nu nu-datomic-query nu-session-switch)
+    :load-path ("~/workspace/nu/nudev/ides/emacs/"
+                "~/workspace/nu/nudev/ides/emacs/test/")
+    :config
+    (require 'nu)
+    (require 'nu-metapod)
+    (require 'nu-datomic-query))
+#+end_src
+** Nu Tools Build
+#+begin_src emacs-lisp
+  (use-package nu-tools-build
+    :commands (nu-tools-build)
+    :load-path ("~/workspace/nu/tools-build/"))
+#+end_src
+** Java
+
+Indent Java annotations. See http://lists.gnu.org/archive/html/help-gnu-emacs/2011-04/msg00262.html
+
+#+begin_src emacs-lisp
+  (use-package java-mode
+    :config
+    (setq c-comment-start-regexp "\\(@\\|/\\(/\\|[*][*]?\\)\\)")
+    (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
+#+end_src
+** JavaScript
+
+Number of spaces for each indentation step in `js-mode'.
+
+#+begin_src emacs-lisp
+  (use-package js
+    :mode "\\.js\\'"
+    :custom
+    (js-indent-level 2))
+#+end_src
+
+** JArchive
+
+Jarchive teaches emacs how to open project dependencies that reside inside jar files.
+
+#+begin_src emacs-lisp
+  (use-package jarchive
+    :config
+    (jarchive-setup)
+    :after (eglot))
+#+end_src
+** RCIRC
+
+An Emacs IRC client.
+
+#+begin_src emacs-lisp
+  (use-package rcirc
+    :commands (rcirc)
+    :custom
+    (rcirc-default-nick "r0man")
+    (rcirc-default-user-name "r0man")
+    (rcirc-default-full-name "r0man")
+    (rcirc-server-alist '(("irc.libera.chat"
+                           :channels ("#clojure" "#guix" "#spritely")
+                           :encryption tls
+                           :port 6697)))
+    (rcirc-private-chat t)
+    (rcirc-debug-flag t)
+    :config
+    (load-if-exists "~/.rcirc.el")
+    (add-hook 'rcirc-mode-hook
+              (lambda ()
+                (set (make-local-variable 'scroll-conservatively) 8192)
+                (rcirc-track-minor-mode 1))))
+#+end_src
+
+** Message
+#+begin_src emacs-lisp
+  (use-package message
+    :defer t
+    :custom
+    ;; Send mail via smtpmail.
+    (message-send-mail-function 'smtpmail-send-it)
+    :init
+    ;; GPG sign messages
+    (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime))
+#+end_src
+
+** Macrostep
+
+Interactive macro-expander for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package macrostep
+    :commands (macrostep-expand)
+    :bind (:map emacs-lisp-mode-map
+                ("C-c m" . macrostep-expand)))
+#+end_src
+** Makem.sh
+#+begin_src emacs-lisp
+  (use-package makem
+    :load-path ("~/workspace/makem.sh")
+    :commands (makem))
+#+end_src
+** Markdown mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode "\\.md\\'"
+    :custom
+    (markdown-hide-urls t)
+    :config
+    (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode)))
+#+end_src
+
+** Marginalia
+
+This package adds marginalia to the minibuffer completions. Marginalia
+are marks or annotations placed at the margin of the page of a book or
+in this case helpful colorful annotations placed at the margin of the
+minibuffer for your completion candidates. Marginalia can only add
+annotations to the completion candidates. It cannot modify the
+appearance of the candidates themselves, which are shown unaltered as
+supplied by the original command.
+
+#+begin_src emacs-lisp
+  (use-package marginalia
+    ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+    :bind (("M-A" . marginalia-cycle)
+           :map minibuffer-local-map
+           ("M-A" . marginalia-cycle))
+    :hook (after-init . marginalia-mode))
+#+end_src
+
+** Mu4e
+
+Configure mu.
+
+#+begin_src sh
+  mu init --maildir=~/Mail --my-address=roman@burningswell.com --my-address=roman.scherer@burningswell.com --my-address=roman.scherer@nubank.com.br
+  mu index
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :commands mu4e
+    :config
+    (setq mu4e-maildir "~/Mail")
+
+    ;; Make sure that moving a message (like to Trash) causes the
+    ;; message to get a new file name.  This helps to avoid the
+    ;; dreaded "UID is N beyond highest assigned" error.
+    ;; See this link for more info: https://stackoverflow.com/a/43461973
+    (setq mu4e-change-filenames-when-moving t)
+
+    ;; Do not show colors in the HTML.
+    (setq shr-use-colors nil)
+
+    ;; Refresh mail every minute.
+    (setq mu4e-update-interval (* 1 60))
+
+    ;; The policy to determine the context when entering the mu4e main view.
+    (setq mu4e-context-policy 'pick-first)
+
+    (setq mu4e-bookmarks
+          '((:name "Burning Swell"
+                   :query "maildir:/burningswell/* AND NOT flag:list"
+                   :key ?b)
+            (:name "Nubank"
+                   :query "maildir:/nubank/* AND NOT flag:list"
+                   :key ?n)
+            (:name "Guix Devel"
+                   :query "list:guix-devel.gnu.org"
+                   :key ?g)
+            (:name "Guix Help"
+                   :query "list:help-guix.gnu.org"
+                   :key ?h)
+            (:name "Unread messages"
+                   :query "flag:unread AND NOT flag:trashed AND NOT list:itaipu.nubank.github.com"
+                   :key ?u)
+            (:name "Today's messages"
+                   :query "date:today..now AND NOT list:itaipu.nubank.github.com"
+                   :key ?t)
+            (:name "Last 7 days"
+                   :query "date:7d..now AND NOT list:itaipu.nubank.github.com"
+                   ;; :hide-unread t
+                   :key ?w)
+            (:name "Messages with images"
+                   :query "mime:image/*"
+                   :key ?p)))
+
+    (setq mu4e-contexts
+          (list
+           (make-mu4e-context
+            :name "Burningswell"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/burningswell" (mu4e-message-field msg :maildir))))
+            :vars '((mu4e-drafts-folder . "/burningswell/[Gmail]/Drafts")
+                    (mu4e-refile-folder . "/burningswell/[Gmail]/All Mail")
+                    (mu4e-sent-folder . "/burningswell/[Gmail]/Sent Mail")
+                    (mu4e-trash-folder . "/burningswell/[Gmail]/Trash")
+                    (user-full-name . "Roman Scherer")
+                    (user-mail-address . "roman.scherer@burningswell.com")))
+           (make-mu4e-context
+            :name "Nubank"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/nubank" (mu4e-message-field msg :maildir))))
+            :vars '((mu4e-drafts-folder . "/nubank/[Gmail]/Drafts")
+                    (mu4e-refile-folder . "/nubank/[Gmail]/All Mail")
+                    (mu4e-sent-folder . "/nubank/[Gmail]/Sent Mail")
+                    (mu4e-trash-folder . "/nubank/[Gmail]/Trash")
+                    (user-full-name . "Roman Scherer")
+                    (user-mail-address . "roman.scherer@nubank.com.br"))))))
+#+end_src
+** Multi Libvterm
+
+#+begin_src emacs-lisp
+  (use-package multi-vterm
+    :bind (("C-x M" . multi-vterm)
+           ("C-x m" . multi-vterm-next)
+           ;; :map projectile-mode-map
+           ;; ("C-c p m" . multi-vterm-projectile)
+           ))
+#+end_src
+
+** Multiple cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :defer 1)
+#+end_src
+** Nucli
+#+begin_src emacs-lisp
+  (use-package nucli
+    :bind (("C-x N" . nucli))
+    :commands (nucli)
+    :load-path ("~/workspace/nu/nucli.el/src"
+                "~/workspace/nu/nucli.el/test"))
+#+end_src
+** Mouse
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(mouse-color . "white"))
+#+end_src
+** Save hist mode
+
+Save the mini buffer history.
+
+#+begin_src emacs-lisp
+  (use-package savehist
+    :hook (after-init . savehist-mode)
+    :custom
+    (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+    (savehist-file "~/.config/emacs/savehist"))
+#+end_src
+
+** Save buffer as is
+#+begin_src emacs-lisp
+  (defun save-buffer-as-is ()
+    "Save file \"as is\", that is in read-only-mode."
+    (interactive)
+    (if buffer-read-only
+        (save-buffer)
+      (read-only-mode 1)
+      (save-buffer)
+      (read-only-mode 0)))
+#+end_src
+** Sly
+
+SLY is Sylvester the Cat's Common Lisp IDE for Emacs
+
+#+begin_src emacs-lisp
+  (use-package sly
+    :commands (sly))
+#+end_src
+
+** Scheme
+
+Use Guile as scheme program.
+
+#+begin_src emacs-lisp
+  (use-package scheme
+    :mode (("\\.scm\\'" . scheme-mode))
+    :custom
+    (scheme-program-name "guile"))
+#+end_src
+
+** Smarter beginning of line
+#+begin_src emacs-lisp
+  (defun smarter-move-beginning-of-line (arg)
+    "Move point back to indentation of beginning of line.
+
+  Move point to the first non-whitespace character on this line.
+  If point is already there, move to the beginning of the line.
+  Effectively toggle between the first non-whitespace character and
+  the beginning of the line.
+
+  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+  point reaches the beginning or end of the buffer, stop there."
+    (interactive "^p")
+    (setq arg (or arg 1))
+
+    ;; Move lines first
+    (when (/= arg 1)
+      (let ((line-move-visual nil))
+        (forward-line (1- arg))))
+
+    (let ((orig-point (point)))
+      (back-to-indentation)
+      (when (= orig-point (point))
+        (move-beginning-of-line 1))))
+
+#+end_src
+
+Remap C-a to `smarter-move-beginning-of-line'
+
+#+begin_src emacs-lisp
+  (global-set-key [remap move-beginning-of-line]
+                  'smarter-move-beginning-of-line)
+#+end_src
+
+** SQL mode
+
+Use 2 spaces for indentation in SQL mode.
+
+#+begin_src emacs-lisp
+  (setq sql-indent-offset 0)
+#+end_src
+
+Load database connection settings.
+
+#+begin_src emacs-lisp
+  (eval-after-load "sql"
+    '(load-if-exists "~/.sql.el"))
+#+end_src
+
+** SQL Indent
+
+Support for indenting code in SQL files.
+
+#+begin_src emacs-lisp
+  (use-package sql-indent
+    :hook (sql-mode . sqlind-minor-mode))
+#+end_src
+
+** Tramp
+#+begin_src emacs-lisp
+  (use-package tramp
+    :defer t
+    :config
+    (setq tramp-verbose 10)
+    (tramp-set-completion-function
+     "ssh"
+     '((tramp-parse-shosts "~/.ssh/known_hosts")
+       (tramp-parse-hosts "/etc/hosts")))
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+    (setq tramp-remote-path
+          (append tramp-remote-path
+                  '("~/.guix-profile/bin"
+                    "~/.guix-profile/sbin"
+                    "/run/current-system/profile/bin"
+                    "/run/current-system/profile/sbin"))))
+#+end_src
+
+** Uniquify
+#+begin_src emacs-lisp
+  (use-package uniquify
+    :custom
+    (uniquify-after-kill-buffer-p t)
+    (uniquify-buffer-name-style 'post-forward-angle-brackets)
+    (uniquify-ignore-buffers-re "^\\*")
+    (uniquify-separator "|"))
+#+end_src
+
+** Open AI
+#+begin_src emacs-lisp
+  (use-package openai
+    :defer t
+    :config
+    (setq openai-key #'openai-key-auth-source))
+#+end_src
+** Open With
+
+Open files with external programs.
+
+#+begin_src emacs-lisp
+  (use-package openwith
+    :hook ((after-init . openwith-mode))
+    :config
+    (setq openwith-associations
+          (list
+           (list (openwith-make-extension-regexp
+                  '("mpg" "mpeg" "mp3" "mp4"
+                    "avi" "wmv" "wav" "mov" "flv"
+                    "ogm" "ogg" "mkv"))
+                 "vlc"
+                 '(file))
+           (list (openwith-make-extension-regexp
+                  '("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
+                 "libreoffice"
+                 '(file)))))
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :after (vertico)
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides
+     '(;; (command (styles partial-completion))
+       (file (styles basic partial-completion))
+       ;; (project-file (styles orderless partial-completion))
+       ;; (symbol (styles partial-completion))
+       ;; (variable (styles partial-completion))
+       )))
+#+end_src
+** Org GCal
+#+begin_src emacs-lisp
+  (use-package org-gcal
+    :commands (org-gcal-fetch org-gcal-sync)
+    :config
+    (setq org-gcal-remove-api-cancelled-events t)
+    (setq org-gcal-client-id "307472772807-cb0c244ep89qoec5sdu672st8funmqtr.apps.googleusercontent.com")
+    (setq org-gcal-client-secret
+          (auth-source-pick-first-password
+           :host org-gcal-client-id
+           :user "roman.scherer@nubank.com.br"))
+    (setq org-gcal-fetch-file-alist '(("roman.scherer@nubank.com.br" .  "~/nubank-calendar.org")))
+    (add-to-list 'org-agenda-files "~/nubank-calendar.org"))
+#+end_src
+** Org Jira
+
+Use Jira in Emacs org-mode.
+
+#+begin_src emacs-lisp
+  (use-package org-jira
+    :load-path ("~/workspace/org-jira")
+    :commands (org-jira-get-issues)
+    :config
+    (make-directory org-jira-working-dir t)
+    :custom
+    (jiralib-url "https://nubank.atlassian.net")
+    (org-jira-users '(("Roman Scherer" . "5d56c909acb80e0d853a95ca"))))
+#+end_src
+
+** Org mode
+
+#+begin_src emacs-lisp
+  (use-package org
+    :mode (("\\.org\\'" . org-mode)))
+#+end_src
+
+** Org Agenda
+
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :after (org)
+    :custom
+    (org-agenda-include-diary t))
+#+end_src
+
+** Org Babel
+
+#+begin_src emacs-lisp
+  (use-package ob
+    :after (org)
+    :custom
+    (org-confirm-babel-evaluate
+     (lambda (lang body)
+       (not (member lang '("plantuml")))))
+    :init
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((clojure . t)
+       (gnuplot . t)
+       (emacs-lisp . t)
+       ;; (mermaid . t)
+       (plantuml . t)
+       (ruby . t)
+       (shell . t)
+       (sql . t)
+       (sqlite . t))))
+#+end_src
+
+** Org Babel Clojure
+
+#+begin_src emacs-lisp
+  (use-package ob-clojure
+    :after (ob)
+    :custom
+    (org-babel-clojure-backend 'cider))
+#+end_src
+
+** Org Plus Contrib
+
+#+begin_src emacs-lisp
+  (use-package org-plus-contrib
+    :commands (org-invoice-report)
+    :init (require 'org-invoice)
+    :no-require t)
+#+end_src
+
+** Org Present
+
+#+begin_src emacs-lisp
+  (use-package org-present
+    :commands org-present
+    :bind (:map org-present-mode-keymap
+                ([left] . 'left-char)
+                ([right] . 'right-char)
+                (">" . 'org-present-next)
+                ("<" . 'org-present-prev)))
+#+end_src
+
+** Org Reveal
+
+#+begin_src emacs-lisp
+  (use-package ox-reveal
+    :after (ox))
+#+end_src
+
+** Org Roam
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :after (org)
+    :commands (org-roam-capture
+               org-roam-node-find
+               org-roam-node-insert)
+    :config
+    (org-roam-db-autosync-mode)
+    :custom
+    (org-roam-directory (file-truename "~/org-roam")))
+#+end_src
+
+** Org Tree Slide
+
+A presentation tool for org-mode based on the visibility of outline
+trees.
+
+#+begin_src emacs-lisp
+  (use-package org-tree-slide
+    :bind
+    (:map org-tree-slide-mode-map
+          ("<prior>" . org-tree-slide-move-previous-tree)
+          ("<next>" . org-tree-slide-move-next-tree))
+    :config
+    (add-hook 'org-tree-slide-mode-hook (lambda () (org-display-inline-images))))
+#+end_src
+** Ox GFM
+
+Github Flavored Markdown exporter for Org Mode.
+
+#+begin_src emacs-lisp
+  (use-package ox-gfm
+    :after (ox))
+#+end_src
+
+** Ox Jira
+
+JIRA Backend for Org Export Engine.
+
+#+begin_src emacs-lisp
+  (use-package ox-jira
+    :after (ox))
+#+end_src
+** Pandoc
+
+An Emacs mode for interacting with Pandoc.
+
+#+begin_src emacs-lisp
+  (use-package pandoc-mode
+    :hook markdown-mode)
+#+end_src
+
+The org-mode Pandoc exporter.
+
+#+begin_src emacs-lisp
+  (use-package ox-pandoc
+    :after (ox))
+#+end_src
+
+** Paredit
+#+begin_src emacs-lisp
+  (use-package paredit
+    :diminish
+    ;; Bind RET to nil, to fix Cider REPL buffer eval issue
+    :bind (:map paredit-mode-map ("RET" . nil))
+    :hook ((cider-repl-mode . paredit-mode)
+           (clojure-mode . paredit-mode)
+           (clojurescript-mode . paredit-mode)
+           (emacs-lisp-mode . paredit-mode)
+           (hy-mode . paredit-mode)
+           (lisp-mode . paredit-mode)
+           (scheme-mode . paredit-mode)))
+#+end_src
+** Pass
+#+begin_src emacs-lisp
+  (use-package pass
+    :commands (pass pass-copy))
+#+end_src
+** Pepita
+#+begin_src emacs-lisp
+  (use-package pepita
+    :commands (pepita-new-search)
+    :config
+    (setq pepita-splunk-url "https://localhost:8089/services/"))
+#+end_src
+
+** Pixel Scroll Precision Mode
+
+When enabled, this minor mode allows to scroll the display precisely,
+according to the turning of the mouse wheel.
+
+#+begin_src emacs-lisp
+  (use-package pixel-scroll
+    :hook (after-init . (lambda () (pixel-scroll-precision-mode 1))))
+#+end_src
+
+** PlantUML
+#+begin_src emacs-lisp
+  (use-package plantuml-mode
+    :mode (("\\.plantump\\'" . plantuml-mode)
+           ("\\.plu\\'" . plantuml-mode)
+           ("\\.pum\\'" . plantuml-mode)
+           ("\\.uml\\'" . plantuml-mode))
+    :custom
+    (org-plantuml-jar-path "~/.guix-profile/share/java/plantuml.jar"))
+#+end_src
+** Plz
+
+An HTTP library for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package plz
+    :config
+    ;; When not on a Guix system, use curl from host
+    (unless (file-exists-p "/run/current-system")
+      (setq plz-curl-program "~/.guix-profile/bin/curl")))
+#+end_src
+** Pretty Print JSON
+
+#+begin_src emacs-lisp
+  (defun pp-json-display-expression (expression out-buffer-name)
+    "Prettify and display EXPRESSION in an appropriate way, depending on length.
+  If a temporary buffer is needed for representation, it will be named
+  after OUT-BUFFER-NAME."
+    (with-current-buffer (get-buffer-create out-buffer-name)
+      (switch-to-buffer-other-window (current-buffer))
+      (js-mode)
+      (erase-buffer)
+      (json-insert expression)
+      (json-pretty-print-buffer)
+      (beginning-of-buffer)))
+
+  (defun pp-json-eval-expression (expression)
+    "Evaluate EXPRESSION and pretty-print its value.
+  Also add the value to the front of the list in the variable `values'."
+    (interactive
+     (list (read--expression "Eval: ")))
+    (message "Evaluating...")
+    (let ((result (eval expression lexical-binding)))
+      (values--store-value result)
+      (pp-json-display-expression result "*Pp JSON Eval Output*")))
+
+  (defun pp-json-eval-last-sexp (arg)
+    "Run `pp-json-eval-expression' on sexp before point.
+  With ARG, pretty-print output into current buffer.
+  Ignores leading comment characters."
+    (interactive "P")
+    (if arg
+        (insert (pp-to-string (eval (elisp--eval-defun-1
+                                     (macroexpand (pp-last-sexp)))
+                                    lexical-binding)))
+      (pp-json-eval-expression (elisp--eval-defun-1
+                                (macroexpand (pp-last-sexp))))))
+#+end_src
+
+** Projectile
+
+Project Interaction Library for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :bind
+    (("C-x C-f" . projectile-find-file)
+     :map projectile-command-map
+     ("s g" . consult-grep)
+     ("s r" . consult-ripgrep))
+    :bind-keymap
+    (("C-c p" . projectile-command-map))
+    :custom
+    (projectile-completion-system 'default)
+    :config
+    (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
+    (add-to-list 'projectile-project-root-files-bottom-up "BUILD")
+    (projectile-register-project-type 'guix '("guix.scm")
+                                      :project-file "guix.scm"
+                                      :compile "make"
+                                      :src-dir "modules/"
+                                      :test "make test"
+                                      :test-dir "tests/"
+                                      :test-suffix "")
+    :hook
+    ((after-init . projectile-mode)))
+#+end_src
+** Ruby mode
+
+Provides font-locking, indentation support, and navigation for Ruby.
+
+#+begin_src emacs-lisp
+  (use-package ruby-mode
+    :mode (("Capfile\\'" . ruby-mode)
+           ("Gemfile\\'" . ruby-mode)
+           ("Guardfile\\'" . ruby-mode)
+           ("Rakefile\\'" . ruby-mode)
+           ("Vagrantfile\\'" . ruby-mode)
+           ("\\.gemspec\\'" . ruby-mode)
+           ("\\.rake\\'" . ruby-mode)
+           ("\\.ru\\'" . ruby-mode)))
+#+end_src
+** Rainbow mode
+
+Colorize color names in buffers.
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :defer 1)
+#+end_src
+** Redshank
+
+Common Lisp Editing Extensions (for Emacs)
+
+Redshank is a collection of code-wrangling Emacs macros mostly
+geared towards Common Lisp, but some are useful for other Lisp
+dialects, too. Redshank's code transformations aim to be
+expression-based (as opposed to character-based), thus it uses the
+excellent Paredit mode as editing substrate whenever possible.
+
+#+begin_src emacs-lisp
+  (use-package redshank
+    :diminish
+    :hook ((emacs-lisp-mode . redshank-mode)
+           (lisp-mode . redshank-mode)))
+#+end_src
+
+** Scala Mode
+#+begin_src emacs-lisp
+  (use-package scala-mode
+    :interpreter ("scala" . scala-mode)
+    :mode "\\.scala\\'")
+#+end_src
+** SBT Mode
+#+begin_src emacs-lisp
+  (use-package sbt-mode
+    :commands (sbt-start sbt-command)
+    :config
+    ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+    ;; allows using SPACE when in the minibuffer
+    (substitute-key-definition
+     'minibuffer-complete-word
+     'self-insert-command
+     minibuffer-local-completion-map)
+    ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+    (setq sbt:program-options '("-Dsbt.supershell=false")))
+#+end_src
+** Sendmail
+#+begin_src emacs-lisp
+  (use-package sendmail
+    :defer t
+    :custom
+    ;; Send mail via smtpmail.
+    (send-mail-function 'smtpmail-send-it))
+#+end_src
+
+** Show Fonts
+
+Show font features in an Emacs buffer.
+
+#+begin_src emacs-lisp
+  (use-package show-fonts
+    :commands (show-font-list show-font-select-preview))
+#+end_src
+** Simple
+#+begin_src emacs-lisp
+  (use-package simple
+    :defer t
+    :custom
+    ;; Use mu4e to send emails.
+    (mail-user-agent 'mu4e-user-agent))
+#+end_src
+
+** Slite
+#+begin_src emacs-lisp
+  (use-package slite
+    :commands (slite-run))
+#+end_src
+
+** Startup
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    ;; My email address.
+    (user-mail-address "roman.scherer@burningswell.com"))
+#+end_src
+
+** SMTP Mail
+#+begin_src emacs-lisp
+  (use-package smtpmail
+    :custom
+    ;; Whether to print info in debug buffer.
+    (smtpmail-debug-info t)
+    ;; The name of the host running SMTP server.
+    (smtpmail-smtp-server "smtp.gmail.com")
+    ;; SMTP service port number.
+    (smtpmail-smtp-service 587)
+    ;; Type of SMTP connections to use.
+    (smtpmail-stream-type 'starttls))
+#+end_src
+** So Long
+#+begin_src emacs-lisp
+  (global-so-long-mode 1)
+#+end_src
+** Splunk
+#+begin_src emacs-lisp
+  (use-package paimon
+    :commands (paimon)
+    :load-path
+    ("~/workspace/paimon.el/src"
+     "~/workspace/paimon.el/test")
+    :config
+    (require 'nu-paimon))
+#+end_src
+** Language Server Protocol
+
+Emacs client for the Language Server Protocol.
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :bind-keymap ("C-c l" . lsp-command-map)
+    :commands (lsp)
+    :load-path ("~/workspace/lsp-mode"
+                "~/workspace/lsp-mode/clients")
+    :hook (;; (clojure-mode . lsp-deferred)
+           ;; (clojure-ts-mode . lsp-deferred)
+           ;; (clojurec-mode . lsp-deferred)
+           ;; (clojurescript-mode . lsp-deferred)
+           (dart-mode . lsp-deferred)
+           (elixir-mode . lsp-deferred)
+           (lsp-mode . lsp-enable-which-key-integration)
+           (lsp-mode . lsp-lens-mode)
+           (scala-mode . lsp-deferred)
+           ;; (sql-mode . lsp-deferred)
+           (terraform-mode . lsp-deferred)
+           (yaml-mode . lsp-deferred))
+    :custom
+    (lsp-eldoc-enable-hover nil)
+    (lsp-enable-indentation nil)
+    (lsp-elixir-server-command '("~/workspace/elixir-ls/release/language_server.sh"))
+    (lsp-file-watch-threshold nil)
+    (lsp-headerline-breadcrumb-enable nil)
+    (lsp-keymap-prefix "C-c l")
+    (lsp-log-io t)
+    (lsp-modeline-code-actions-enable nil)
+    (lsp-prefer-flymake nil)
+    (lsp-restart 'ignore)
+    (lsp-sqls-server "~/go/bin/sqls")
+    (lsp-terraform-server "~/bin/terraform-lsp")
+    (lsp-ui-doc-enable nil)
+    (lsp-ui-sideline-enable nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package lsp-dart
+    :after lsp-mode
+    :hook dart-mode
+    :custom
+    (lsp-dart-dap-flutter-hot-reload-on-save t)
+    (lsp-dart-dap-flutter-hot-restart-on-save nil)
+    (lsp-dart-flutter-widget-guides nil)
+    (lsp-dart-sdk-dir "/opt/flutter/bin/cache/dart-sdk"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package lsp-treemacs
+    :after lsp-mode
+    :commands lsp-treemacs-errors-list)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package lsp-metals
+    :after lsp-mode
+    :config (setq lsp-metals-treeview-show-when-views-received nil))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package lsp-ui
+    :after lsp-mode
+    :commands lsp-ui-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package hover
+    :defer t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package posframe
+    :defer t)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :load-path ("~/workspace/dap-mode")
+    :hook
+    (lsp-mode . dap-mode)
+    (lsp-mode . dap-ui-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :defer t)
+#+end_src
+
+** SoundKlaus
+#+begin_src emacs-lisp
+  (use-package soundklaus
+    :commands
+    (soundklaus-activities
+     soundklaus-connect
+     soundklaus-my-favorites
+     soundklaus-my-playlists
+     soundklaus-my-tracks
+     soundklaus-playlists
+     soundklaus-tracks)
+    :load-path
+    ("~/workspace/soundklaus.el"
+     "~/workspace/soundklaus.el/test"))
+#+end_src
+** stem.el
+#+begin_src emacs-lisp
+  (use-package stem
+    :commands (stem)
+    :if (file-directory-p "~/workspace/nu/stem.el/")
+    :load-path ("~/workspace/nu/stem.el/src/"
+                "~/workspace/nu/stem.el/test/"))
+#+end_src
+** Tabs
+
+Don't insert tabs.
+
+#+begin_src emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+end_src
+
+** Terraform
+
+Major mode of Terraform configuration files.
+
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :mode "\\.tf\\'")
+#+end_src
+
+** Transient
+#+begin_src emacs-lisp
+  (use-package transient)
+#+end_src
+** Unfill
+
+Functions providing the inverse of Emacs fill-paragraph and fill-region.
+
+#+begin_src emacs-lisp
+  (use-package unfill
+    :commands (unfill-region unfill-paragraph unfill-toggle))
+#+end_src
+** Undo Tree
+
+Treat undo history as a tree.
+
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :hook (after-init . global-undo-tree-mode)
+    :custom
+    (undo-tree-auto-save-history nil))
+#+end_src
+** Vertico
+
+Vertical Interactive Completion.
+
+#+begin_src emacs-lisp
+  (use-package vertico
+    :hook (after-init . vertico-mode)
+    :custom
+    (vertico-cycle t))
+#+end_src
+** Virtual Env Wrapper
+
+Virtualenv tool for Emacs.
+
+#+begin_src emacs-lisp
+  (use-package virtualenvwrapper
+    :commands (venv-workon)
+    :custom
+    (venv-location "~/.virtualenv"))
+#+end_src
+** Vterm
+
+Fully-fledged terminal emulator inside Emacs.
+
+#+begin_src emacs-lisp
+  (use-package vterm
+    :commands (vterm)
+    :custom
+    (vterm-max-scrollback 100000))
+#+end_src
+** Warnings
+
+Log and display warnings.
+
+#+begin_src emacs-lisp
+  (use-package warnings
+    :custom
+    (warning-minimum-level :emergency))
+#+end_src
+** Web mode
+
+An Emacs mode for editing web templates. HTML documents can embed
+parts (CSS / JavaScript) and blocks (client / server side).
+
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :mode (("\\.jsx\\'" . web-mode)
+           ("\\.html\\'" . web-mode))
+    :custom
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-markup-indent-offset 2))
+#+end_src
+** Which Key
+
+Emacs package that displays available keybindings in popup.
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :diminish
+    :config (which-key-mode))
+#+end_src
+** Whisper
+
+Speech-to-Text interface for Emacs using OpenAI's whisper model and
+whisper.cpp as inference engine.
+
+#+begin_src emacs-lisp
+  (use-package whisper
+    :bind ("C-s-r" . whisper-run)
+    :config
+    (when (file-exists-p "/usr/share/vulkan/icd.d/nvidia_icd.json")
+      (setenv "VK_ICD_FILENAMES" "/usr/share/vulkan/icd.d/nvidia_icd.json"))
+    :custom
+    (whisper-install-directory "~/workspace/")
+    (whisper-install-whispercpp 'manual)
+    (whisper-language "en")
+    (whisper-model "large-v3-turbo"))
+#+end_src
+** Winner mode
+
+Restore old window configurations.
+
+#+begin_src emacs-lisp
+  (use-package winner
+    :hook ((after-init . winner-mode)))
+#+end_src
+
+** WSD Mode
+
+Emacs major-mode for [[https://www.websequencediagrams.com/][Web Sequence Diagrams]].
+
+#+begin_src emacs-lisp
+  (use-package wsd-mode
+    :mode "\\.wsd\\'")
+#+end_src
+** X509
+
+Major mode for viewing certificates, CRLs, keys, DH-parameters and
+ASN.1 using OpenSSL.
+
+#+begin_src emacs-lisp
+  (use-package x509-mode
+    :commands
+    (x509-viewasn1
+     x509-viewcert
+     x509-viewcrl
+     x509-viewdh
+     x509-viewkey))
+#+end_src
+
+** YAML mode
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :mode (("\\.yaml\\'" . yaml-mode)
+           ("\\.yaml.tmpl\\'" . yaml-mode)
+           ("\\.yml\\'" . yaml-mode)))
+#+end_src
+** YASnippet
+
+The YASnippet mode.
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :hook ((js-mode . yas-minor-mode)
+           (js2-mode . yas-minor-mode)
+           (ruby-mode . yas-minor-mode)
+           (sql-mode . yas-minor-mode))
+    :config
+    (yas-reload-all))
+#+end_src
+
+The YASnippet collection.
+
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets
+    :after (yasnippet)
+    :defer t
+    :config
+    (add-to-list 'yas-snippet-dirs "~/workspace/guix/etc/snippets/yas"))
+#+end_src
+
+** Window Scrolling
+
+#+begin_src emacs-lisp
+  ;; (add-hook 'window-scroll-functions (lambda (window startp) (redraw-frame)))
+#+end_src
+
+** After init hook
+#+begin_src emacs-lisp
+  (add-hook
+   'after-init-hook
+   (lambda ()
+     ;; Load system specific config.
+     (load-if-exists (concat user-emacs-directory system-name ".el"))
+
+     ;; Load keyboard bindings.
+     (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+     (global-set-key (kbd "C-c n") 'cleanup-buffer)
+     (global-set-key (kbd "C-c r") 'rotate-buffers)
+     (global-set-key (kbd "C-x C-b") 'list-buffers)
+     (global-set-key (kbd "C-x C-o") 'delete-blank-lines)
+     (global-set-key (kbd "C-x TAB") 'indent-rigidly)
+     (global-set-key (kbd "C-x ^") 'enlarge-window)
+     (global-set-key (kbd "C-x f") 'find-file)
+     (global-set-key (kbd "C-x h") 'mark-whole-buffer)
+
+     (define-key emacs-lisp-mode-map (kbd "C-c C-t t") 'buttercup-run-at-point)
+     (define-key lisp-mode-shared-map (kbd "RET") 'reindent-then-newline-and-indent)
+     (define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)))
+#+end_src

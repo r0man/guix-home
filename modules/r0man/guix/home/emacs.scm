@@ -15,6 +15,12 @@
   #:use-module (r0man guix packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
+(define files
+  `((".emacs.d/README.md" ,(local-file "files/emacs/README.md"))
+    (".emacs.d/early-init.el" ,(local-file "files/emacs/early-init.el"))
+    (".emacs.d/init.el" ,(local-file "files/emacs/init.el"))
+    (".emacs.d/init.el.org" ,(local-file "files/emacs/init.el.org"))))
+
 (define packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
         emacs-adoc-mode
@@ -218,4 +224,5 @@
         clhs))
 
 (define home-emacs-services
-  (list (simple-service 'emacs-packages home-profile-service-type packages)))
+  (list (simple-service 'emacs-files home-files-service-type files)
+        (simple-service 'emacs-packages home-profile-service-type packages)))
