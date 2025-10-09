@@ -3,6 +3,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (gnu services)
   #:use-module (gnu system pam)
   #:use-module (gnu packages bash)
@@ -11,7 +12,17 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
-  #:export (home-sway-services))
+  #:export (home-sway-configuration
+            home-sway-service-type
+            ;; Backward compatibility
+            home-sway-services))
+
+;;; Commentary:
+;;;
+;;; Home service for Sway Wayland compositor configuration.
+;;; Manages Sway config file and installs required packages.
+;;;
+;;; Code:
 
 ;; emacsclient --create-frame --no-wait --eval '(multi-term)'
 
@@ -290,22 +301,43 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 # Lock the screen at login.
 #exec " swaylock-command))
 
-(define files
-  `((".config/sway/config" ,%sway-config)))
+(define-record-type* <home-sway-configuration>
+  home-sway-configuration make-home-sway-configuration
+  home-sway-configuration?
+  (config-file home-sway-config-file
+               (default %sway-config)
+               (description "Sway configuration file."))
+  (packages home-sway-packages
+            (default (list brightnessctl
+                           i3status
+                           kitty
+                           sway
+                           swaybg
+                           swayidle
+                           swaylock
+                           wofi))
+            (description "List of Sway-related packages to install.")))
 
-(define packages
-  (list brightnessctl
-        i3status
-        kitty
-        sway
-        swaybg
-        swayidle
-        swaylock
-        wofi))
+(define (home-sway-files config)
+  "Return alist of Sway configuration files to deploy."
+  `((".config/sway/config" ,(home-sway-config-file config))))
 
+(define (home-sway-profile-packages config)
+  "Return list of Sway packages to install."
+  (home-sway-packages config))
+
+(define home-sway-service-type
+  (service-type
+   (name 'home-sway)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-sway-files)
+          (service-extension home-profile-service-type
+                             home-sway-profile-packages)))
+   (default-value (home-sway-configuration))
+   (description
+    "Install and configure Sway Wayland compositor for the user.")))
+
+;; Backward compatibility: keep old service list export
 (define home-sway-services
-  (list (simple-service 'sway-files home-files-service-type files)
-        (simple-service 'sway-profile home-profile-service-type packages)
-        ;; (simple-service 'sway-environment home-environment-variables-service-type
-        ;;                 %sway-variables)
-        ))
+  (list (service home-sway-service-type)))

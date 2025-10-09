@@ -8,8 +8,19 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (guix utils)
-  #:export (home-hyprland-services))
+  #:export (home-hyprland-configuration
+            home-hyprland-service-type
+            ;; Backward compatibility
+            home-hyprland-services))
+
+;;; Commentary:
+;;;
+;;; Home service for Hyprland Wayland compositor configuration.
+;;; Manages Hyprland config file and installs required packages.
+;;;
+;;; Code:
 
 (define config
   (mixed-text-file
@@ -366,16 +377,40 @@
     # Fix some dragging issues with XWayland
     windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"))
 
-(define files
-  `((".config/hypr/hyprland.conf" ,config)))
+(define-record-type* <home-hyprland-configuration>
+  home-hyprland-configuration make-home-hyprland-configuration
+  home-hyprland-configuration?
+  (config-file home-hyprland-config-file
+               (default config)
+               (description "Hyprland configuration file."))
+  (packages home-hyprland-packages
+            (default (list (if (target-aarch64?) (replace-mesa hyprland) hyprland)
+                           nordic-theme
+                           waybar
+                           wireplumber
+                           xdg-desktop-portal-hyprland))
+            (description "List of Hyprland-related packages to install.")))
 
-(define packages
-  (list (if (target-aarch64?) (replace-mesa hyprland) hyprland)
-        nordic-theme
-        waybar
-        wireplumber
-        xdg-desktop-portal-hyprland))
+(define (home-hyprland-files config)
+  "Return alist of Hyprland configuration files to deploy."
+  `((".config/hypr/hyprland.conf" ,(home-hyprland-config-file config))))
 
+(define (home-hyprland-profile-packages config)
+  "Return list of Hyprland packages to install."
+  (home-hyprland-packages config))
+
+(define home-hyprland-service-type
+  (service-type
+   (name 'home-hyprland)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-hyprland-files)
+          (service-extension home-profile-service-type
+                             home-hyprland-profile-packages)))
+   (default-value (home-hyprland-configuration))
+   (description
+    "Install and configure Hyprland Wayland compositor for the user.")))
+
+;; Backward compatibility: keep old service list export
 (define home-hyprland-services
-  (list (simple-service 'hyprland-config home-files-service-type files)
-        (simple-service 'hyprland-packages home-profile-service-type packages)))
+  (list (service home-hyprland-service-type)))
