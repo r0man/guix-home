@@ -4,26 +4,47 @@
   #:use-module (gnu packages clojure)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (nongnu packages clojure)
-  #:export (home-clojure-services))
+  #:export (home-clojure-configuration
+            home-clojure-service-type))
 
-;; Clojure
+;;; Commentary:
+;;;
+;;; Home service for Clojure development environment configuration.
+;;; Manages clojure-lsp config and installs Clojure tooling.
+;;;
+;;; Code:
 
-(define home-clojure-service
-  (simple-service 'clojure-service home-profile-service-type
-                  (list r0man:babashka
-                        r0man:clojure-lsp
-                        ;; r0man:editor-code-assistant
-                        leiningen)))
+(define-record-type* <home-clojure-configuration>
+  home-clojure-configuration make-home-clojure-configuration
+  home-clojure-configuration?
+  (lsp-config-file home-clojure-lsp-config-file
+                   (default (local-file "files/clojure-lsp.edn"))
+                   (description "Path to clojure-lsp config.edn file."))
+  (packages home-clojure-packages
+            (default (list r0man:babashka
+                           r0man:clojure-lsp
+                           leiningen))
+            (description "List of Clojure-related packages to install.")))
 
-;; Clojure LSP
+(define (home-clojure-files config)
+  "Return alist of Clojure configuration files to deploy."
+  `((".config/clojure-lsp/config.edn"
+     ,(home-clojure-lsp-config-file config))))
 
-(define clojure-lsp-files
-  `((".config/clojure-lsp/config.edn" ,(local-file "files/clojure-lsp.edn"))))
+(define (home-clojure-profile-packages config)
+  "Return list of Clojure packages to install."
+  (home-clojure-packages config))
 
-(define home-clojure-lsp-service
-  (simple-service 'clojure-lsp-service home-files-service-type clojure-lsp-files))
-
-(define home-clojure-services
-  (list home-clojure-service
-        home-clojure-lsp-service))
+(define home-clojure-service-type
+  (service-type
+   (name 'home-clojure)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-clojure-files)
+          (service-extension home-profile-service-type
+                             home-clojure-profile-packages)))
+   (default-value (home-clojure-configuration))
+   (description
+    "Install and configure Clojure development environment for the user.")))

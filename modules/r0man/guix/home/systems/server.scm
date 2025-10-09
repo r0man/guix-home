@@ -28,19 +28,19 @@
   (append home-bash-services
           (list (service home-btop-service-type))
           home-channels-services
-          home-clojure-services
-          home-common-lisp-services
+          (list (service home-clojure-service-type)
+                (service home-common-lisp-service-type))
           home-dbus-services
           (list (service home-eca-service-type)
                 (service home-fzf-service-type)
-                (service home-git-service-type))
+                (service home-git-service-type)
+                (service home-guile-service-type))
           home-emacs-services
           home-environment-variables-services
           home-gpg-tty-services
-          home-guile-services
           home-mbsync-services
           home-msmtp-services
-          home-nix-services
+          (list (service home-nix-service-type))
           home-pm-services
           home-shepherd-services
           home-ssh-services))
