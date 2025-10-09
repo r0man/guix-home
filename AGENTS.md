@@ -131,8 +131,8 @@ during `guix home reconfigure`.
 Emacs is managed through Guix packages (not package.el). The
 configuration includes:
 - ~200+ Emacs packages declared in `home/emacs.scm`
-- Emacs Lisp config files in `files/emacs/` (init.el, early-init.el)
-- Literate config option with init.el.org
+- Emacs Lisp early init file `files/emacs/early-init.el`
+- Literate config in `files/emacs/README.org` which becomes `init.el` when untangled
 
 ## Workflow Notes
 
