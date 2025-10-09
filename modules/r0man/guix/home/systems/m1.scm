@@ -42,11 +42,11 @@
           home-clojure-services
           home-common-lisp-services
           home-dbus-services
-          (list (service home-eca-service-type))
+          (list (service home-eca-service-type)
+                (service home-git-service-type))
           home-emacs-services
           home-environment-variables-services
           home-fzf-services
-          home-git-services
           home-gpg-gtk-services
           home-guile-services
           home-hyprland-services
