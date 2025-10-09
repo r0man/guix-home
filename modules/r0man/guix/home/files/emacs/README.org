@@ -1,7 +1,52 @@
 * init.el
+#+PROPERTY: header-args:emacs-lisp :tangle init.el
+
+My Emacs [[https://github.com/r0man/.emacs.d/blob/master/init.el.org][init.el]] in [[http://orgmode.org/][Org Mode]]'s [[http://orgmode.org/worg/org-contrib/babel][Babel]] format.
+
+[[http://imgs.xkcd.com/comics/real_programmers.png]]
 
 #+begin_src emacs-lisp
   ;;; init.el --- My Emacs configuration. -*- lexical-binding: t; -*-
+#+end_src
+
+** Package Archives
+
+Setup package archives for package.el.
+
+#+begin_src emacs-lisp
+  (setq package-archives
+        '(("melpa" . "http://melpa.org/packages/")
+          ("melpa-stable" . "http://stable.melpa.org/packages/")
+          ("gnu" . "http://elpa.gnu.org/packages/")))
+#+end_src
+
+** Theme
+
+Load the theme.
+
+#+begin_src emacs-lisp
+  (defun current-theme ()
+    "Return the theme, depending on the current month and hour of the day."
+    (let ((month (string-to-number (format-time-string "%m")))
+          (hour (string-to-number (format-time-string "%H"))))
+      (cond
+       ;; Use dark theme in winter
+       ((member month '(1 2 3 10 11 12))
+        'solarized-dark)
+       ((member hour '(10 11 12 13 14 15 16))
+        'solarized-light)
+       (t 'solarized-dark))))
+
+  (let ((theme 'nord))
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (select-frame frame)
+                    (load-theme theme)))
+      (load-theme theme))
+    (add-hook 'after-init-hook
+              (lambda ()
+                (load-theme theme))))
 #+end_src
 
 ** Fonts
@@ -2010,12 +2055,10 @@ supplied by the original command.
 
 ** Mu4e
 
-Configure mu.
+Configure mu with:
 
-#+begin_src sh
   mu init --maildir=~/Mail --my-address=roman@burningswell.com --my-address=roman.scherer@burningswell.com --my-address=roman.scherer@nubank.com.br
   mu index
-#+end_src
 
 #+begin_src emacs-lisp
   (use-package mu4e

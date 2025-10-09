@@ -15,11 +15,71 @@
   #:use-module (r0man guix packages emacs)
   #:export (emacs-shepherd-service home-emacs-services))
 
+;; Helper to tangle any org file during build
+(define* (tangle-org-file org-file #:optional (output-name "init.el"))
+  "Create a computed-file that tangles ORG-FILE to OUTPUT-NAME"
+  (computed-file
+   output-name
+   (with-imported-modules '((guix build utils))
+     #~(begin
+         (use-modules (guix build utils)
+                      (ice-9 popen)
+                      (ice-9 rdelim))
+
+         (let* ((emacs #$(file-append emacs "/bin/emacs"))
+                (org-file #$org-file)
+                (output-file #$output)
+                (temp-dir (tmpnam)))
+
+           ;; Create temporary directory
+           (mkdir-p temp-dir)
+
+           ;; Copy org file to temp directory
+           (let ((temp-org (string-append temp-dir "/input.org")))
+             (copy-file org-file temp-org)
+
+             (format #t "Tangling ~a...~%" temp-org)
+
+             ;; Run emacs to tangle the file
+             (let* ((cmd (list emacs
+                              "--batch"
+                              "--eval" "(require 'org)"
+                              "--eval" "(setq org-confirm-babel-evaluate nil)"
+                              "--eval" (format #f "(cd \"~a\")" temp-dir)
+                              "--eval" (format #f "(find-file \"~a\")" temp-org)
+                              "--eval" "(org-babel-tangle)"
+                              "--kill"))
+                    (port (apply open-pipe* OPEN_READ cmd)))
+
+               ;; Print output
+               (let loop ((line (read-line port)))
+                 (unless (eof-object? line)
+                   (format #t "~a~%" line)
+                   (loop (read-line port))))
+
+               ;; Check status
+               (let ((status (close-pipe port)))
+                 (unless (zero? status)
+                   (error "Tangling failed with status" status))))
+
+             ;; Find the tangled output (org-babel-tangle creates it based on :tangle directive)
+             (let ((tangled-file (string-append temp-dir "/" #$output-name)))
+               (unless (file-exists? tangled-file)
+                 (error "Tangling failed - expected output file not created:" tangled-file))
+
+               ;; Copy to final destination
+               (copy-file tangled-file output-file)
+               (format #t "Successfully tangled to ~a~%" output-file)
+
+               ;; Clean up
+               (delete-file-recursively temp-dir))))))))
+
+(define readme-org (local-file "files/emacs/README.org"))
+(define init-el (tangle-org-file readme-org "init.el"))
+
 (define files
-  `((".emacs.d/README.md" ,(local-file "files/emacs/README.md"))
-    (".emacs.d/early-init.el" ,(local-file "files/emacs/early-init.el"))
-    (".emacs.d/init.el" ,(local-file "files/emacs/init.el"))
-    (".emacs.d/init.el.org" ,(local-file "files/emacs/init.el.org"))))
+  `((".emacs.d/early-init.el" ,(local-file "files/emacs/early-init.el"))
+    (".emacs.d/init.el" ,init-el)))
 
 (define packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
