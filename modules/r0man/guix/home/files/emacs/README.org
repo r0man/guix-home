@@ -523,6 +523,7 @@ Chat with Github copilot in Emacs.
 
 #+begin_src emacs-lisp
   (use-package copilot-chat
+    :commands (copilot-chat-display)
     :when (member (system-name) '("precision")))
 #+end_src
 
@@ -543,6 +544,7 @@ Chat with Github copilot in Emacs.
 ** Cape
 #+begin_src emacs-lisp
   (use-package cape
+    :defer t
     :after corfu
     :init
     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -643,6 +645,7 @@ Make Emacs use the $PATH set up by the user's shell.
 
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
+    :defer 1
     :init
     (setq exec-path-from-shell-variables
           '("CHROME_EXECUTABLE"
@@ -722,6 +725,7 @@ A GNU Emacs major mode for editing BNF grammars.
 ** Eglot
 #+begin_src emacs-lisp
   (use-package eglot
+    :defer t
     :config
     (add-to-list 'eglot-server-programs '(elixir-mode . ("~/workspace/elixir-ls/release/language_server.sh")))
     (add-to-list 'eglot-server-programs '(java-mode . ("~/.config/emacs/share/eclipse.jdt.ls/bin/jdtls")))
@@ -1152,6 +1156,7 @@ your questions, right within the editor.
 
 #+begin_src emacs-lisp
   (use-package consult-gh
+    :defer t
     :after consult)
 #+end_src
 
@@ -1168,6 +1173,7 @@ The Geiser implementation for Guile scheme.
 
 #+begin_src emacs-lisp
   (use-package geiser-guile
+    :defer t
     :after geiser
     :custom
     (geiser-default-implementation 'guile)
@@ -1274,6 +1280,7 @@ Enhanced Implementation of Emacs Interpreted Objects
 
 #+begin_src emacs-lisp
   (use-package eieio-datadebug
+    :defer t
     :after (eieio))
 #+end_src
 ** Emacs Lisp
@@ -1862,6 +1869,7 @@ Start the Emacs server if it's not running.
 ** Jira
 #+begin_src emacs-lisp
   (use-package jira
+    :defer t
     :custom
     (jira-api-version 3)
     (jira-base-url "https://nubank.atlassian.net")
@@ -1968,6 +1976,7 @@ Jarchive teaches emacs how to open project dependencies that reside inside jar f
 
 #+begin_src emacs-lisp
   (use-package jarchive
+    :defer t
     :config
     (jarchive-setup)
     :after (eglot))
@@ -2327,6 +2336,7 @@ Open files with external programs.
 ** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
+    :defer t
     :after (vertico)
     :custom
     (completion-styles '(orderless basic))
@@ -2378,6 +2388,7 @@ Use Jira in Emacs org-mode.
 
 #+begin_src emacs-lisp
   (use-package org-agenda
+    :defer t
     :after (org)
     :custom
     (org-agenda-include-diary t))
@@ -2387,6 +2398,7 @@ Use Jira in Emacs org-mode.
 
 #+begin_src emacs-lisp
   (use-package ob
+    :defer t
     :after (org)
     :custom
     (org-confirm-babel-evaluate
@@ -2410,6 +2422,7 @@ Use Jira in Emacs org-mode.
 
 #+begin_src emacs-lisp
   (use-package ob-clojure
+    :defer t
     :after (ob)
     :custom
     (org-babel-clojure-backend 'cider))
@@ -2440,6 +2453,7 @@ Use Jira in Emacs org-mode.
 
 #+begin_src emacs-lisp
   (use-package ox-reveal
+    :defer t
     :after (ox))
 #+end_src
 
@@ -2477,6 +2491,7 @@ Github Flavored Markdown exporter for Org Mode.
 
 #+begin_src emacs-lisp
   (use-package ox-gfm
+    :defer t
     :after (ox))
 #+end_src
 
@@ -2486,6 +2501,7 @@ JIRA Backend for Org Export Engine.
 
 #+begin_src emacs-lisp
   (use-package ox-jira
+    :defer t
     :after (ox))
 #+end_src
 ** Pandoc
@@ -2501,6 +2517,7 @@ The org-mode Pandoc exporter.
 
 #+begin_src emacs-lisp
   (use-package ox-pandoc
+    :defer t
     :after (ox))
 #+end_src
 
@@ -2815,6 +2832,7 @@ Emacs client for the Language Server Protocol.
 
 #+begin_src emacs-lisp
   (use-package lsp-metals
+    :defer t
     :after lsp-mode
     :config (setq lsp-metals-treeview-show-when-views-received nil))
 #+end_src
