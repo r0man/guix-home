@@ -3,13 +3,24 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:export (home-wofi-services))
+  #:use-module (guix records)
+  #:export (home-wofi-configuration
+            home-wofi-service-type))
 
-;; https://github.com/alxndr13/wofi-nord-theme/blob/master/style.css
+;;; Commentary:
+;;;
+;;; Home service for Wofi application launcher (Wayland-native rofi).
+;;; Manages ~/.config/wofi/style.css and installs wofi package.
+;;; Theme based on: https://github.com/alxndr13/wofi-nord-theme
+;;;
+;;; Code:
 
-(define %wofi-theme
-  (mixed-text-file
-   "wofi-theme" "
+(define-record-type* <home-wofi-configuration>
+  home-wofi-configuration make-home-wofi-configuration
+  home-wofi-configuration?
+  (theme-file home-wofi-theme-file
+              (default (mixed-text-file
+                        "wofi-theme" "
 
     * {
       font-family: \"Hack\", monospace;
@@ -60,13 +71,27 @@
     #text:selected {
       background: transparent;
     }"))
+              (description "Path to wofi theme CSS file."))
+  (packages home-wofi-packages
+            (default (list wofi))
+            (description "List of wofi-related packages to install.")))
 
-(define files
-  `((".config/wofi/style.css" ,%wofi-theme)))
+(define (home-wofi-files config)
+  "Return alist of wofi configuration files to deploy."
+  `((".config/wofi/style.css" ,(home-wofi-theme-file config))))
 
-(define packages
-  (list wofi))
+(define (home-wofi-profile-packages config)
+  "Return list of wofi packages to install."
+  (home-wofi-packages config))
 
-(define home-wofi-services
-  (list (simple-service 'wofi-files home-files-service-type files)
-        (simple-service 'wofi-profile home-profile-service-type packages)))
+(define home-wofi-service-type
+  (service-type
+   (name 'home-wofi)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-wofi-files)
+          (service-extension home-profile-service-type
+                             home-wofi-profile-packages)))
+   (default-value (home-wofi-configuration))
+   (description
+    "Install and configure Wofi application launcher for Wayland.")))

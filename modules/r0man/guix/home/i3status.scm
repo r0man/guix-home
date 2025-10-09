@@ -3,6 +3,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (gnu services)
   #:use-module (gnu system pam)
   #:use-module (gnu packages bash)
@@ -11,7 +12,15 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
-  #:export (home-i3status-services))
+  #:export (home-i3status-configuration
+            home-i3status-service-type))
+
+;;; Commentary:
+;;;
+;;; Home service for i3status status bar configuration.
+;;; Manages ~/.config/i3status/config and installs i3status package.
+;;;
+;;; Code:
 
 (define %i3status-config
   (mixed-text-file
@@ -90,12 +99,32 @@ memory {
 
 "))
 
-(define files
-  `((".config/i3status/config" ,%i3status-config)))
+(define-record-type* <home-i3status-configuration>
+  home-i3status-configuration make-home-i3status-configuration
+  home-i3status-configuration?
+  (config-file home-i3status-config-file
+               (default %i3status-config)
+               (description "Path to i3status config file."))
+  (packages home-i3status-packages
+            (default (list i3status))
+            (description "List of i3status-related packages to install.")))
 
-(define packages
-  (list i3status))
+(define (home-i3status-files config)
+  "Return alist of i3status configuration files to deploy."
+  `((".config/i3status/config" ,(home-i3status-config-file config))))
 
-(define home-i3status-services
-  (list (simple-service 'i3status-files home-files-service-type files)
-        (simple-service 'i3status-profile home-profile-service-type packages)))
+(define (home-i3status-profile-packages config)
+  "Return list of i3status packages to install."
+  (home-i3status-packages config))
+
+(define home-i3status-service-type
+  (service-type
+   (name 'home-i3status)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-i3status-files)
+          (service-extension home-profile-service-type
+                             home-i3status-profile-packages)))
+   (default-value (home-i3status-configuration))
+   (description
+    "Install and configure i3status status bar for the user.")))

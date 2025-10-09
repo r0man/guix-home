@@ -50,8 +50,8 @@
           home-gpg-gtk-services
           home-guile-services
           home-hyprland-services
-          home-i3status-services
-          (list (service home-kitty-service-type))
+          (list (service home-i3status-service-type)
+                (service home-kitty-service-type))
           home-librewolf-services
           home-mbsync-services
           home-msmtp-services
@@ -61,10 +61,10 @@
           (list (service home-rofi-service-type))
           home-shepherd-services
           home-ssh-services
-          home-stumpwm-services
+          (list (service home-stumpwm-service-type))
           home-sway-services
           home-waybar-services
-          home-wofi-services
+          (list (service home-wofi-service-type))
           home-xdg-services
           home-x11-services))
 
