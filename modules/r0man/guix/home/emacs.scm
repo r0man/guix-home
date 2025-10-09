@@ -9,11 +9,25 @@
   #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (nongnu packages emacs)
   #:use-module (r0man guix packages emacs)
-  #:export (emacs-shepherd-service home-emacs-services))
+  #:export (home-emacs-configuration
+            home-emacs-service-type
+            tangle-org-file
+            ;; Backward compatibility
+            emacs-shepherd-service
+            home-emacs-services))
+
+;;; Commentary:
+;;;
+;;; Home service for GNU Emacs configuration.
+;;; Manages Emacs init files with org-babel tangling support and
+;;; installs Emacs packages.
+;;;
+;;; Code:
 
 ;; Helper to tangle any org file during build
 (define* (tangle-org-file org-file #:optional (output-name "init.el"))
@@ -74,14 +88,7 @@
                ;; Clean up
                (delete-file-recursively temp-dir))))))))
 
-(define readme-org (local-file "files/emacs/README.org"))
-(define init-el (tangle-org-file readme-org "init.el"))
-
-(define files
-  `((".emacs.d/early-init.el" ,(local-file "files/emacs/early-init.el"))
-    (".emacs.d/init.el" ,init-el)))
-
-(define packages
+(define default-emacs-packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
         emacs-adoc-mode
         emacs-agent-shell
@@ -283,6 +290,44 @@
         emacs-yasnippet-snippets
         clhs))
 
+(define-record-type* <home-emacs-configuration>
+  home-emacs-configuration make-home-emacs-configuration
+  home-emacs-configuration?
+  (readme-org-file home-emacs-readme-org-file
+                   (default (local-file "files/emacs/README.org"))
+                   (description "Org file to tangle for init.el."))
+  (early-init-file home-emacs-early-init-file
+                   (default (local-file "files/emacs/early-init.el"))
+                   (description "Emacs early-init.el file."))
+  (packages home-emacs-packages
+            (default default-emacs-packages)
+            (description "List of Emacs-related packages to install.")))
+
+(define (home-emacs-files config)
+  "Return alist of Emacs configuration files to deploy."
+  `((".emacs.d/early-init.el" ,(home-emacs-early-init-file config))
+    (".emacs.d/init.el" ,(tangle-org-file (home-emacs-readme-org-file config)
+                                           "init.el"))))
+
+(define (home-emacs-profile-packages config)
+  "Return list of Emacs packages to install."
+  (home-emacs-packages config))
+
+(define home-emacs-service-type
+  (service-type
+   (name 'home-emacs)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-emacs-files)
+          (service-extension home-profile-service-type
+                             home-emacs-profile-packages)))
+   (default-value (home-emacs-configuration))
+   (description
+    "Install and configure GNU Emacs with org-babel tangling support.")))
+
+;; Backward compatibility: keep old service list export
 (define home-emacs-services
-  (list (simple-service 'emacs-files home-files-service-type files)
-        (simple-service 'emacs-packages home-profile-service-type packages)))
+  (list (service home-emacs-service-type)))
+
+;; Backward compatibility: emacs-shepherd-service (currently unused)
+(define emacs-shepherd-service #f)

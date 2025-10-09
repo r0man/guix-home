@@ -6,9 +6,20 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix packages)
-  #:export (home-mbsync-services))
+  #:use-module (guix records)
+  #:export (home-mbsync-configuration
+            home-mbsync-service-type
+            ;; Backward compatibility
+            home-mbsync-services))
 
-(define mbsync-config
+;;; Commentary:
+;;;
+;;; Home service for mbsync (isync) mail synchronization.
+;;; Manages ~/.mbsyncrc configuration and sets up periodic sync via mcron.
+;;;
+;;; Code:
+
+(define default-mbsync-config
   (mixed-text-file
    "mbsyncrc"
    "IMAPAccount burningswell\n"
@@ -72,14 +83,40 @@
    "Create Both\n"
    "SyncState *\n"))
 
-(define jobs
-  (list #~(job next-minute-from
-               (lambda ()
-                 (system* (string-append #$isync "/bin/mbsync") "--all")))))
+(define-record-type* <home-mbsync-configuration>
+  home-mbsync-configuration make-home-mbsync-configuration
+  home-mbsync-configuration?
+  (config-file home-mbsync-config-file
+               (default default-mbsync-config)
+               (description "Path to .mbsyncrc configuration file."))
+  (enable-cron? home-mbsync-enable-cron?
+                (default #t)
+                (description "Whether to enable periodic sync via mcron.")))
 
+(define (home-mbsync-files config)
+  "Return alist of mbsync configuration files to deploy."
+  `((".mbsyncrc" ,(home-mbsync-config-file config))))
+
+(define (home-mbsync-mcron-jobs config)
+  "Return list of mcron jobs for mbsync."
+  (if (home-mbsync-enable-cron? config)
+      (list #~(job next-minute-from
+                   (lambda ()
+                     (system* (string-append #$isync "/bin/mbsync") "--all"))))
+      '()))
+
+(define home-mbsync-service-type
+  (service-type
+   (name 'home-mbsync)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-mbsync-files)
+          (service-extension home-mcron-service-type
+                             home-mbsync-mcron-jobs)))
+   (default-value (home-mbsync-configuration))
+   (description
+    "Configure mbsync mail synchronization with periodic sync via mcron.")))
+
+;; Backward compatibility: keep old service list export
 (define home-mbsync-services
-  (list (simple-service
-         'mbsync-config home-files-service-type
-         `((".mbsyncrc" ,mbsync-config)))
-        (service home-mcron-service-type
-                 (home-mcron-configuration (jobs jobs)))))
+  (list (service home-mbsync-service-type)))
