@@ -7,9 +7,19 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix utils)
-  #:export (home-waybar-services))
+  #:use-module (guix records)
+  #:export (home-waybar-configuration
+            home-waybar-service-type))
 
-(define config
+;;; Commentary:
+;;;
+;;; Home service for Waybar status bar configuration.
+;;; Manages ~/.config/waybar/ configuration and style files for
+;;; Wayland compositors (Hyprland, Sway, etc.).
+;;;
+;;; Code:
+
+(define %waybar-config
   (mixed-text-file
    "waybar-config.jsonc"
    "{
@@ -122,7 +132,7 @@
           \"on-click\": \"pavucontrol\"
       }}"))
 
-(define style
+(define %waybar-style
   (mixed-text-file
    "waybar-style.css"
    "
@@ -197,13 +207,36 @@ window#waybar {
 #custom-system { margin: 0 1em; }"
    ))
 
-(define files
-  `((".config/waybar/config.jsonc" ,config)
-    (".config/waybar/style.css" ,style)))
+(define-record-type* <home-waybar-configuration>
+  home-waybar-configuration make-home-waybar-configuration
+  home-waybar-configuration?
+  (config-file home-waybar-config-file
+               (default %waybar-config)
+               (description "Path to waybar config.jsonc file."))
+  (style-file home-waybar-style-file
+              (default %waybar-style)
+              (description "Path to waybar style.css file."))
+  (packages home-waybar-packages
+            (default (list font-awesome pavucontrol waybar))
+            (description "List of waybar-related packages to install.")))
 
-(define packages
-  (list font-awesome pavucontrol waybar))
+(define (home-waybar-files config)
+  "Return alist of waybar configuration files to deploy."
+  `((".config/waybar/config.jsonc" ,(home-waybar-config-file config))
+    (".config/waybar/style.css" ,(home-waybar-style-file config))))
 
-(define home-waybar-services
-  (list (simple-service 'waybar-config home-files-service-type files)
-        (simple-service 'waybar-packages home-profile-service-type packages)))
+(define (home-waybar-profile-packages config)
+  "Return list of waybar packages to install."
+  (home-waybar-packages config))
+
+(define home-waybar-service-type
+  (service-type
+   (name 'home-waybar)
+   (extensions
+    (list (service-extension home-files-service-type
+                             home-waybar-files)
+          (service-extension home-profile-service-type
+                             home-waybar-profile-packages)))
+   (default-value (home-waybar-configuration))
+   (description
+    "Install and configure Waybar status bar for Wayland compositors.")))

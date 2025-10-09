@@ -63,8 +63,8 @@
           home-ssh-services
           (list (service home-stumpwm-service-type))
           home-sway-services
-          home-waybar-services
-          (list (service home-wofi-service-type))
+          (list (service home-waybar-service-type)
+                (service home-wofi-service-type))
           home-xdg-services
           home-x11-services))
 
