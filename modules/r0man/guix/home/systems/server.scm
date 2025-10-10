@@ -30,37 +30,37 @@
 
 (define services
   (list (service home-bash-service-type
-                         home-bash-default-configuration)
-                (simple-service 'bash-packages
-                                home-profile-service-type
-                                home-bash-default-packages)
-                (service home-batsignal-service-type
-                         home-batsignal-default-configuration)
-                (service home-btop-service-type)
-                (service home-channels-service-type
-                         home-channels-default-list)
-                (service home-clojure-service-type)
-                (service home-common-lisp-service-type)
-                (service home-dbus-service-type)
-                (service home-eca-service-type)
-                (service home-emacs-service-type)
-                (service home-environment-service-type)
-                (service home-fzf-service-type)
-                (service home-git-service-type)
-                (service home-gpg-agent-service-type
-                         home-gpg-tty-configuration)
-                (service home-guile-service-type)
-                (service home-mbsync-service-type)
-                (service home-msmtp-service-type
-                         home-msmtp-default-configuration)
-                (service home-nix-service-type)
-                (service home-openssh-service-type
-                         home-openssh-default-configuration)
-                (service home-ssh-agent-service-type)))
+                 home-bash-default-configuration)
+        (simple-service 'bash-packages
+                        home-profile-service-type
+                        home-bash-default-packages)
+        (service home-batsignal-service-type
+                 home-batsignal-default-configuration)
+        (service home-btop-service-type)
+        (service home-channels-service-type
+                 home-channels-default-list)
+        (service home-clojure-service-type)
+        (service home-common-lisp-service-type)
+        (service home-dbus-service-type)
+        (service home-eca-service-type)
+        (service home-emacs-service-type)
+        (service home-environment-service-type)
+        (service home-fzf-service-type)
+        (service home-git-service-type)
+        (service home-gpg-agent-service-type
+                 home-gpg-tty-configuration)
+        (service home-guile-service-type)
+        (service home-mbsync-service-type)
+        (service home-msmtp-service-type
+                 home-msmtp-default-configuration)
+        (service home-nix-service-type)
+        (service home-openssh-service-type
+                 home-openssh-default-configuration)
+        (service home-ssh-agent-service-type)))
 
 (define-public server-home-environment
   (home-environment
-   (packages packages-base)
-   (services services)))
+    (packages packages-base)
+    (services services)))
 
 server-home-environment
