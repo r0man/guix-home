@@ -43,18 +43,11 @@
   "Generate kitty.conf file from CONFIG."
   (mixed-text-file
    "kitty-config"
-   (format #f "
-background_opacity ~a
-font_family ~a
-font_size ~a
-foreground ~a
-shell ~a
-"
-           (home-kitty-background-opacity config)
-           (home-kitty-font-family config)
-           (home-kitty-font-size config)
-           (home-kitty-foreground config)
-           (home-kitty-shell config))))
+   "background_opacity " (number->string (home-kitty-background-opacity config)) "\n"
+   "font_family " (home-kitty-font-family config) "\n"
+   "font_size " (number->string (home-kitty-font-size config)) "\n"
+   "foreground " (home-kitty-foreground config) "\n"
+   "shell " (home-kitty-shell config) "\n"))
 
 (define (home-kitty-files config)
   "Return alist of kitty configuration files to deploy."
