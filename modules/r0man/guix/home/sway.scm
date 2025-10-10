@@ -13,9 +13,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:export (home-sway-configuration
-            home-sway-service-type
-            ;; Backward compatibility
-            home-sway-services))
+            home-sway-service-type))
 
 ;;; Commentary:
 ;;;
@@ -337,7 +335,3 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
    (default-value (home-sway-configuration))
    (description
     "Install and configure Sway Wayland compositor for the user.")))
-
-;; Backward compatibility: keep old service list export
-(define home-sway-services
-  (list (service home-sway-service-type)))
