@@ -3,58 +3,38 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages gnupg)
   #:use-module (guix gexp)
-  #:use-module (guix records)
-  #:export (home-gpg-custom-configuration
-            make-home-gpg-services
-            ;; Backward compatibility
-            home-gpg-gtk-services
-            home-gpg-tty-services))
+  #:export (home-gpg-gtk-configuration
+            home-gpg-tty-configuration))
 
 ;;; Commentary:
 ;;;
-;;; Home service for GPG agent configuration.
-;;; Manages GPG agent with configurable pinentry program.
+;;; This module provides pre-configured home-gpg-agent-configuration
+;;; instances for common use cases:
+;;;
+;;; - home-gpg-gtk-configuration: For desktop systems with GTK pinentry
+;;; - home-gpg-tty-configuration: For servers with TTY pinentry
+;;;
+;;; Both configurations use 24-hour cache TTL for GPG and SSH keys.
+;;;
+;;; Usage in system configs:
+;;;   (service home-gpg-agent-service-type home-gpg-gtk-configuration)
+;;;   (service home-gpg-agent-service-type home-gpg-tty-configuration)
 ;;;
 ;;; Code:
 
-(define-record-type* <home-gpg-custom-configuration>
-  home-gpg-custom-configuration make-home-gpg-custom-configuration
-  home-gpg-custom-configuration?
-  (pinentry-program home-gpg-pinentry-program
-                    (default (file-append pinentry-gtk2
-                                          "/bin/pinentry-gtk-2"))
-                    (description "Pinentry program for GPG agent."))
-  (default-cache-ttl home-gpg-default-cache-ttl
-                     (default 86400)
-                     (description "Default cache TTL in seconds."))
-  (default-cache-ttl-ssh home-gpg-default-cache-ttl-ssh
-                         (default 86400)
-                         (description "Default SSH cache TTL in seconds."))
-  (max-cache-ttl home-gpg-max-cache-ttl
-                 (default 86400)
-                 (description "Maximum cache TTL in seconds."))
-  (max-cache-ttl-ssh home-gpg-max-cache-ttl-ssh
-                     (default 86400)
-                     (description "Maximum SSH cache TTL in seconds.")))
+(define home-gpg-default-configuration
+  (home-gpg-agent-configuration
+    (default-cache-ttl 86400)
+    (default-cache-ttl-ssh 86400)
+    (max-cache-ttl 86400)
+    (max-cache-ttl-ssh 86400)))
 
-(define* (make-home-gpg-services #:optional
-                                 (config (home-gpg-custom-configuration)))
-  "Create list of GPG services from configuration."
-  (list (service home-gpg-agent-service-type
-                 (home-gpg-agent-configuration
-                  (default-cache-ttl (home-gpg-default-cache-ttl config))
-                  (default-cache-ttl-ssh (home-gpg-default-cache-ttl-ssh config))
-                  (max-cache-ttl (home-gpg-max-cache-ttl config))
-                  (max-cache-ttl-ssh (home-gpg-max-cache-ttl-ssh config))
-                  (pinentry-program (home-gpg-pinentry-program config))))))
+(define home-gpg-gtk-configuration
+  (home-gpg-agent-configuration
+    (inherit home-gpg-default-configuration)
+    (pinentry-program (file-append pinentry-gtk2 "/bin/pinentry-gtk-2"))))
 
-;; Backward compatibility: keep old service list exports
-(define home-gpg-gtk-services
-  (make-home-gpg-services
-   (home-gpg-custom-configuration
-    (pinentry-program (file-append pinentry-gtk2 "/bin/pinentry-gtk-2")))))
-
-(define home-gpg-tty-services
-  (make-home-gpg-services
-   (home-gpg-custom-configuration
-    (pinentry-program (file-append pinentry-tty "/bin/pinentry")))))
+(define home-gpg-tty-configuration
+  (home-gpg-agent-configuration
+    (inherit home-gpg-default-configuration)
+    (pinentry-program (file-append pinentry-tty "/bin/pinentry"))))
