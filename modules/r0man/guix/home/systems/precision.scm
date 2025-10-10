@@ -6,6 +6,7 @@
   #:use-module (gnu home services pm)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services sound)
+  #:use-module (gnu home services ssh)
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
@@ -32,7 +33,6 @@
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
   #:use-module (r0man guix home rofi)
-  #:use-module (r0man guix home shepherd)
   #:use-module (r0man guix home ssh)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
@@ -42,10 +42,7 @@
   #:use-module (r0man guix home x11))
 
 (define services
-  (append home-shepherd-services
-          home-ssh-services
-          home-x11-services
-          (list (service home-bash-service-type
+  (list (service home-bash-service-type
                          home-bash-default-configuration)
                 (simple-service 'bash-packages
                                 home-profile-service-type
@@ -74,14 +71,20 @@
                 (service home-msmtp-service-type
                          home-msmtp-default-configuration)
                 (service home-nix-service-type)
+                (service home-openssh-service-type
+                         home-openssh-default-configuration)
                 (service home-pipewire-service-type)
                 (service home-rofi-service-type)
+                (service home-ssh-agent-service-type)
                 (service home-stumpwm-service-type)
                 (service home-sway-service-type)
+                (service home-unclutter-service-type)
                 (service home-waybar-service-type)
                 (service home-wofi-service-type)
+                (service home-x11-custom-service-type)
+                (service home-x11-service-type)
                 (service home-xdg-mime-applications-service-type
-                         home-xdg-mime-applications-default-configuration))))
+                         home-xdg-mime-applications-default-configuration)))
 
 (define-public precision-home-environment
   (home-environment

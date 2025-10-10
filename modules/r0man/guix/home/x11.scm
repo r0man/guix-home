@@ -19,14 +19,26 @@
   #:use-module (guix packages)
   #:use-module (guix records)
   #:export (home-x11-custom-configuration
-            home-x11-custom-service-type
-            ;; Backward compatibility
-            home-x11-services))
+            home-x11-custom-service-type))
 
 ;;; Commentary:
 ;;;
-;;; Home service for X11 window system configuration.
-;;; Manages X11 config files, window manager utilities, and services.
+;;; This module provides a custom home-x11-custom-service-type for
+;;; managing X11 window system configuration files and packages.
+;;;
+;;; The service manages:
+;;; - X11 configuration files (.Xresources, .xinitrc, .xprofile, etc.)
+;;; - Desktop notification config (dunst)
+;;; - Window manager utilities and X11 tools
+;;;
+;;; Additionally, use upstream GNU services for X11 features:
+;;; - home-x11-service-type: Core X11 configuration
+;;; - home-unclutter-service-type: Hide mouse cursor when idle
+;;;
+;;; Usage in system configs:
+;;;   (service home-x11-custom-service-type)
+;;;   (service home-x11-service-type)
+;;;   (service home-unclutter-service-type)
 ;;;
 ;;; Code:
 
@@ -96,9 +108,3 @@
    (default-value (home-x11-custom-configuration))
    (description
     "Install and configure X11 window system for the user.")))
-
-;; Backward compatibility: keep old service list export
-(define home-x11-services
-  (list (service home-x11-custom-service-type)
-        (service home-x11-service-type)
-        (service home-unclutter-service-type)))
