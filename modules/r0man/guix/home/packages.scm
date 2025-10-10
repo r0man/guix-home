@@ -57,6 +57,7 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
+  #:use-module (r0man guix packages node)
   #:export (packages-aarch64
             packages-base
             packages-desktop
@@ -96,6 +97,7 @@
         mu
         mumi
         ncurses
+        node-anthropic-ai-claude-code
         node-lts
         nss-certs
         openssl
