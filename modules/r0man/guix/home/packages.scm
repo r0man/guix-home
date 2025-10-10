@@ -80,21 +80,6 @@
    ;; docker-compose
    ffmpeg
    file
-   font-adobe-source-code-pro
-   font-awesome
-   font-dejavu
-   font-fira-code
-   font-ghostscript
-   font-gnu-freefont
-   font-google-noto
-   font-google-noto-emoji
-   font-google-roboto
-   font-google-roboto-mono
-   font-hack
-   font-inconsolata
-   font-montserrat
-   font-terminus
-   fontconfig
    gcc-toolchain
    glibc-locales
    `(,glib "bin")
@@ -158,6 +143,21 @@
   (list
    flameshot
    flatpak
+   font-adobe-source-code-pro
+   font-awesome
+   font-dejavu
+   font-fira-code
+   font-ghostscript
+   font-gnu-freefont
+   font-google-noto
+   font-google-noto-emoji
+   font-google-roboto
+   font-google-roboto-mono
+   font-hack
+   font-inconsolata
+   font-montserrat
+   font-terminus
+   fontconfig
    gtk+ ;; Provide org.gtk.Settings.FileChooser
    inkscape
    libreoffice
