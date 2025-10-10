@@ -31,9 +31,6 @@
 (define services
   (list (service home-bash-service-type
                  home-bash-default-configuration)
-        (simple-service 'bash-packages
-                        home-profile-service-type
-                        home-bash-default-packages)
         (service home-btop-service-type)
         (service home-channels-service-type
                  home-channels-default-list)

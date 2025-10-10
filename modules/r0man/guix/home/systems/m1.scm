@@ -44,9 +44,6 @@
 (define services
   (list (service home-bash-service-type
                  home-bash-default-configuration)
-        (simple-service 'bash-packages
-                        home-profile-service-type
-                        home-bash-default-packages)
         (service home-batsignal-service-type
                  home-batsignal-default-configuration)
         (service home-btop-service-type)
