@@ -1425,6 +1425,15 @@ identical elements are deleted from the history list.
     :custom
     (image-use-external-converter t))
 #+end_src
+** Kind Icon
+#+begin_src emacs-lisp
+  (use-package kind-icon
+    :after corfu
+    :custom
+    (kind-icon-default-style '(:padding 0 :stroke 0 :margin 0 :radius 0 :height 0.8 :scale 1.0 :background nil))
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
 ** Lisp Mode
 #+begin_src emacs-lisp
   (use-package lisp-mode

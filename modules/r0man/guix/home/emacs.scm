@@ -195,6 +195,7 @@
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
+        emacs-kind-icon
         emacs-kotlin-mode
         emacs-kubel
         emacs-language-detection
