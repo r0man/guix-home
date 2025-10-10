@@ -121,8 +121,6 @@
         emacs-combobulate
         emacs-consult
         emacs-consult-gh
-        emacs-copilot
-        emacs-copilot-chat
         emacs-corfu
         emacs-dall-e
         emacs-dart-mode
