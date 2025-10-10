@@ -2,6 +2,7 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services guix)
+  #:use-module (gnu home services mail)
   #:use-module (gnu home services pm)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services)
@@ -28,8 +29,7 @@
   #:use-module (r0man guix home ssh))
 
 (define services
-  (append home-msmtp-services
-          home-shepherd-services
+  (append home-shepherd-services
           home-ssh-services
           (list (service home-bash-service-type
                          home-bash-default-configuration)
@@ -53,6 +53,8 @@
                          home-gpg-tty-configuration)
                 (service home-guile-service-type)
                 (service home-mbsync-service-type)
+                (service home-msmtp-service-type
+                         home-msmtp-default-configuration)
                 (service home-nix-service-type))))
 
 (define-public server-home-environment

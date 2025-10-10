@@ -2,6 +2,7 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services guix)
+  #:use-module (gnu home services mail)
   #:use-module (gnu home services pm)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services sound)
@@ -41,8 +42,7 @@
   #:use-module (r0man guix home x11))
 
 (define services
-  (append home-msmtp-services
-          home-shepherd-services
+  (append home-shepherd-services
           home-ssh-services
           home-x11-services
           (list (service home-bash-service-type
@@ -71,6 +71,8 @@
                 (service home-kitty-service-type)
                 (service home-librewolf-service-type)
                 (service home-mbsync-service-type)
+                (service home-msmtp-service-type
+                         home-msmtp-default-configuration)
                 (service home-nix-service-type)
                 (service home-pipewire-service-type)
                 (service home-rofi-service-type)
