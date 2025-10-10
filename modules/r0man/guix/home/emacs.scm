@@ -16,10 +16,7 @@
   #:use-module (r0man guix packages emacs)
   #:export (home-emacs-configuration
             home-emacs-service-type
-            tangle-org-file
-            ;; Backward compatibility
-            emacs-shepherd-service
-            home-emacs-services))
+            tangle-org-file))
 
 ;;; Commentary:
 ;;;
@@ -321,10 +318,3 @@
    (default-value (home-emacs-configuration))
    (description
     "Install and configure GNU Emacs with org-babel tangling support.")))
-
-;; Backward compatibility: keep old service list export
-(define home-emacs-services
-  (list (service home-emacs-service-type)))
-
-;; Backward compatibility: emacs-shepherd-service (currently unused)
-(define emacs-shepherd-service #f)
