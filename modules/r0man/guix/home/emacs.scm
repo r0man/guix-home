@@ -235,7 +235,6 @@
         emacs-org-tree-slide
         emacs-osm
         emacs-ox-gfm
-        emacs-ox-gfm
         emacs-ox-jira
         emacs-ox-slack
         emacs-paimon
