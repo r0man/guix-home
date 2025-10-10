@@ -11,9 +11,7 @@
   #:use-module (guix records)
   #:use-module (guix utils)
   #:export (home-hyprland-configuration
-            home-hyprland-service-type
-            ;; Backward compatibility
-            home-hyprland-services))
+            home-hyprland-service-type))
 
 ;;; Commentary:
 ;;;
@@ -410,7 +408,3 @@
    (default-value (home-hyprland-configuration))
    (description
     "Install and configure Hyprland Wayland compositor for the user.")))
-
-;; Backward compatibility: keep old service list export
-(define home-hyprland-services
-  (list (service home-hyprland-service-type)))
