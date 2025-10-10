@@ -43,5 +43,3 @@
 ;; Backward compatibility: keep old service list export
 (define home-channels-services
   (make-home-channels-services))
-
-channels

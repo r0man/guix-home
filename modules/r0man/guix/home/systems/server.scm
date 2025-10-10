@@ -1,13 +1,16 @@
 (define-module (r0man guix home systems server)
+  #:use-module (gnu home services desktop)
+  #:use-module (gnu home services shells)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu services)
+  #:use-module (guix gexp)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home common-lisp)
-  #:use-module (r0man guix home desktop)
   #:use-module (r0man guix home eca)
   #:use-module (r0man guix home emacs)
   #:use-module (r0man guix home environment)
@@ -21,29 +24,30 @@
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
   #:use-module (r0man guix home shepherd)
-  #:use-module (r0man guix home sound)
   #:use-module (r0man guix home ssh))
 
 (define services
-  (append home-bash-services
-          (list (service home-btop-service-type))
-          home-channels-services
-          (list (service home-clojure-service-type)
-                (service home-common-lisp-service-type))
-          home-dbus-services
-          (list (service home-eca-service-type)
+  (append (make-home-bash-services)
+          (make-home-channels-services)
+          (make-home-gpg-services
+           (home-gpg-custom-configuration
+            (pinentry-program (file-append pinentry-tty "/bin/pinentry"))))
+          (make-home-pm-services)
+          home-msmtp-services
+          home-shepherd-services
+          home-ssh-services
+          (list (service home-btop-service-type)
+                (service home-clojure-service-type)
+                (service home-common-lisp-service-type)
+                (service home-dbus-service-type)
+                (service home-eca-service-type)
+                (service home-emacs-service-type)
+                (service home-environment-service-type)
                 (service home-fzf-service-type)
                 (service home-git-service-type)
-                (service home-guile-service-type))
-          home-emacs-services
-          home-environment-variables-services
-          home-gpg-tty-services
-          home-mbsync-services
-          home-msmtp-services
-          (list (service home-nix-service-type))
-          home-pm-services
-          home-shepherd-services
-          home-ssh-services))
+                (service home-guile-service-type)
+                (service home-mbsync-service-type)
+                (service home-nix-service-type))))
 
 (define-public server-home-environment
   (home-environment

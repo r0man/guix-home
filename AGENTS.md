@@ -37,21 +37,64 @@ The codebase follows Guix's module structure under `modules/r0man/guix/`:
 
 ### Service Pattern
 
-Each module in `home/` follows a consistent pattern:
+Modules in `home/` follow one of two patterns:
 
+**1. Service Type Pattern** (most modules):
 ```scheme
 (define-module (r0man guix home <name>)
   #:use-module (gnu home services ...)
+  #:use-module (guix records)
+  #:export (home-<name>-configuration
+            home-<name>-service-type))
+
+(define-record-type* <home-<name>-configuration>
+  home-<name>-configuration make-home-<name>-configuration
+  home-<name>-configuration?
+  ...)
+
+(define home-<name>-service-type
+  (service-type
+   (name 'home-<name>)
+   (extensions ...)
+   (default-value (home-<name>-configuration))
+   (description "...")))
+```
+
+System configs instantiate with: `(service home-<name>-service-type)`
+
+**2. Wrapper Function Pattern** (for custom configurations):
+```scheme
+(define-module (r0man guix home <name>)
+  #:use-module (gnu home services ...)
+  #:use-module (guix records)
+  #:export (home-<name>-custom-configuration
+            make-home-<name>-services))
+
+(define-record-type* <home-<name>-custom-configuration> ...)
+
+(define* (make-home-<name>-services #:optional (config ...))
+  "Create list of services from configuration."
+  (list (service ...)))
+```
+
+System configs instantiate with: `(make-home-<name>-services)`
+
+**3. Service List Pattern** (for multi-service modules):
+```scheme
+(define-module (r0man guix home <name>)
   #:export (home-<name>-services))
 
 (define home-<name>-services
-  (list (service <service-type> <configuration>)
-        (simple-service '<name>-packages home-profile-service-type
-                        <package-list>)))
+  (list (service ...) (service ...)))
 ```
 
-System configurations in `home/systems/` compose services by importing
-and appending all `home-*-services` lists.
+System configs use directly: `home-<name>-services`
+
+System configurations in `home/systems/` compose services using `append`:
+- Use `(service home-<name>-service-type)` for service types
+- Use `(make-home-<name>-services)` or `(make-home-<name>-services config)`
+  for wrappers
+- Use `home-<name>-services` directly for service lists
 
 ### Channel Dependencies
 
