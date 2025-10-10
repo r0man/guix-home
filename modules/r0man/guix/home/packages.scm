@@ -74,10 +74,8 @@
   (list `(,isc-bind "utils")
         autoconf
         automake
-        ;; awscli
         cmake
         coreutils
-        ;; docker-compose
         ffmpeg
         file
         gcc-toolchain
