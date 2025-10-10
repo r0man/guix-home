@@ -499,33 +499,6 @@ Run the current buffer through zprint.
     :config
     (claude-code-ide-emacs-tools-setup))
 #+end_src
-** Copilot.el
-
-Copilot.el is an Emacs plugin for GitHub Copilot.
-
-#+begin_src emacs-lisp
-  (use-package copilot
-    :when (member (system-name) '("precision"))
-    :hook ((clojure-mode . copilot-mode)
-           (clojure-ts-mode . copilot-mode)
-           (clojurec-mode . copilot-mode)
-           (clojurescript-mode . copilot-mode)
-           (emacs-lisp-mode . copilot-mode)
-           (prog-mode . copilot-mode))
-    :bind (:map copilot-completion-map
-                ("C-<return>" . 'copilot-accept-completion)
-                ("M-n" . 'copilot-next-completion)
-                ("M-p" . 'copilot-previous-completion)))
-#+end_src
-** Copilot Chat
-
-Chat with Github copilot in Emacs.
-
-#+begin_src emacs-lisp
-  (use-package copilot-chat
-    :commands (copilot-chat-display)
-    :when (member (system-name) '("precision")))
-#+end_src
 
 ** Corfu
 #+begin_src emacs-lisp
