@@ -3,9 +3,7 @@
   #:use-module (gnu services)
   #:use-module (guix records)
   #:export (home-environment-configuration
-            home-environment-service-type
-            ;; Backward compatibility
-            home-environment-variables-services))
+            home-environment-service-type))
 
 ;;; Commentary:
 ;;;
@@ -41,7 +39,3 @@
    (default-value (home-environment-configuration))
    (description
     "Set user environment variables.")))
-
-;; Backward compatibility: keep old service list export
-(define home-environment-variables-services
-  (list (service home-environment-service-type)))

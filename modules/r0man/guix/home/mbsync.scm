@@ -8,9 +8,7 @@
   #:use-module (guix packages)
   #:use-module (guix records)
   #:export (home-mbsync-configuration
-            home-mbsync-service-type
-            ;; Backward compatibility
-            home-mbsync-services))
+            home-mbsync-service-type))
 
 ;;; Commentary:
 ;;;
@@ -116,7 +114,3 @@
    (default-value (home-mbsync-configuration))
    (description
     "Configure mbsync mail synchronization with periodic sync via mcron.")))
-
-;; Backward compatibility: keep old service list export
-(define home-mbsync-services
-  (list (service home-mbsync-service-type)))

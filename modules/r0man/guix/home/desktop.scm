@@ -3,9 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (guix records)
   #:export (home-desktop-custom-configuration
-            make-home-dbus-services
-            ;; Backward compatibility
-            home-dbus-services))
+            make-home-dbus-services))
 
 ;;; Commentary:
 ;;;
@@ -27,7 +25,3 @@
   (if (home-desktop-enable-dbus? config)
       (list (service home-dbus-service-type))
       '()))
-
-;; Backward compatibility: keep old service list export
-(define home-dbus-services
-  (make-home-dbus-services))

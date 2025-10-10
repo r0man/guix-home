@@ -1,8 +1,7 @@
 (define-module (r0man guix home channels)
   #:use-module (r0man guix channels)
   #:use-module (gnu home services guix)
-  #:export (home-channels-default-list
-            channels))
+  #:export (home-channels-default-list))
 
 ;;; Commentary:
 ;;;
@@ -25,6 +24,3 @@
         guix-channel
         nonguix-channel
         r0man-guix-channel))
-
-;; Backward compatibility: keep channels export
-(define channels home-channels-default-list)
