@@ -2,6 +2,8 @@
   #:use-module (asahi guix home services sound)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
+  #:use-module (gnu home services guix)
+  #:use-module (gnu home services pm)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services)
   #:use-module (gnu home)
@@ -38,15 +40,21 @@
   #:use-module (r0man guix home x11))
 
 (define services
-  (append (make-home-bash-services)
-          (make-home-channels-services)
-          (make-home-pm-services)
-          home-msmtp-services
+  (append home-msmtp-services
           home-shepherd-services
           home-ssh-services
           home-xdg-services
           home-x11-services
-          (list (service home-btop-service-type)
+          (list (service home-bash-service-type
+                         home-bash-default-configuration)
+                (simple-service 'bash-packages
+                                home-profile-service-type
+                                home-bash-default-packages)
+                (service home-batsignal-service-type
+                         home-batsignal-default-configuration)
+                (service home-btop-service-type)
+                (service home-channels-service-type
+                         home-channels-default-list)
                 (service home-clojure-service-type)
                 (service home-common-lisp-service-type)
                 (service home-dbus-service-type)
@@ -55,7 +63,8 @@
                 (service home-environment-service-type)
                 (service home-fzf-service-type)
                 (service home-git-service-type)
-                (service home-gpg-agent-service-type home-gpg-gtk-configuration)
+                (service home-gpg-agent-service-type
+                         home-gpg-gtk-configuration)
                 (service home-guile-service-type)
                 (service home-hyprland-service-type)
                 (service home-i3status-service-type)
