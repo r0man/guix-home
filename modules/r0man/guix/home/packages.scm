@@ -125,7 +125,6 @@
    postgresql
    pv
    python-virtualenv
-   python-yubikey-manager
    ripgrep
    rlwrap
    sed

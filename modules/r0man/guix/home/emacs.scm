@@ -124,7 +124,6 @@
         emacs-copilot
         emacs-copilot-chat
         emacs-corfu
-        emacs-corfu
         emacs-dall-e
         emacs-dart-mode
         emacs-debbugs
