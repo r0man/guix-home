@@ -22,19 +22,8 @@
 ;;;
 ;;; Code:
 
-;; emacsclient --create-frame --no-wait --eval '(multi-term)'
-
 (define background
   (local-file "files/wallpapers/stop-customizing-start-working.jpg"))
-
-;; (define %sway-variables
-;;   '(("CLUTTER_BACKEND" . "wayland")     ; GTK
-;;     ("QT_QPA_PLATFORM" . "wayland")     ; Qt
-;;     ("MOZ_ENABLE_WAYLAND" . "1")        ; IceCat, et.al.
-;;     ;; These are normally provided by login managers(?).
-;;     ("XDG_SESSION_TYPE" . "wayland")
-;;     ("XDG_SESSION_DESKTOP" . "sway")
-;;     ("XDG_CURRENT_DESKTOP" . "sway")))
 
 (define swaylock-config
   (plain-file
@@ -295,9 +284,7 @@ exec --no-startup-id pactl stat
 # GTK+ applications take 20 seconds to start
 # See: https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-
-# Lock the screen at login.
-#exec " swaylock-command))
+" swaylock-command))
 
 (define-record-type* <home-sway-configuration>
   home-sway-configuration make-home-sway-configuration
