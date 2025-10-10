@@ -284,7 +284,7 @@ exec --no-startup-id pactl stat
 # GTK+ applications take 20 seconds to start
 # See: https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-" swaylock-command))
+"))
 
 (define-record-type* <home-sway-configuration>
   home-sway-configuration make-home-sway-configuration
