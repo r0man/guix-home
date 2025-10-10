@@ -5,6 +5,7 @@
   #:use-module (gnu home services guix)
   #:use-module (gnu home services pm)
   #:use-module (gnu home services shells)
+  #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
   #:use-module (gnu services)
@@ -43,7 +44,6 @@
   (append home-msmtp-services
           home-shepherd-services
           home-ssh-services
-          home-xdg-services
           home-x11-services
           (list (service home-bash-service-type
                          home-bash-default-configuration)
@@ -77,7 +77,9 @@
                 (service home-stumpwm-service-type)
                 (service home-sway-service-type)
                 (service home-waybar-service-type)
-                (service home-wofi-service-type))))
+                (service home-wofi-service-type)
+                (service home-xdg-mime-applications-service-type
+                         home-xdg-mime-applications-default-configuration))))
 
 (define-public m1-home-environment
   (home-environment
