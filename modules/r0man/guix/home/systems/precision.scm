@@ -85,7 +85,7 @@
 
 (define-public precision-home-environment
   (home-environment
-    (packages packages)
-    (services services)))
+   (packages (append packages-base packages-desktop packages-x86-64))
+   (services services)))
 
 precision-home-environment

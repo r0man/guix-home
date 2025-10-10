@@ -57,9 +57,10 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
-  #:export (packages
+  #:export (packages-aarch64
             packages-base
-            packages-desktop))
+            packages-desktop
+            packages-x86-64))
 
 (define packages-aarch64
   (list))
@@ -70,114 +71,99 @@
         python-yubikey-manager))
 
 (define packages-base
-  (list
-   `(,isc-bind "utils")
-   autoconf
-   automake
-   ;; awscli
-   cmake
-   coreutils
-   ;; docker-compose
-   ffmpeg
-   file
-   gcc-toolchain
-   glibc-locales
-   `(,glib "bin")
-   gnu-make
-   gnupg
-   gnutls
-   graphviz
-   help2man
-   htop
-   imagemagick
-   ispell
-   isync
-   jq
-   libatasmart
-   libvterm
-   mu
-   mumi
-   ncurses
-   node-lts
-   nss-certs
-   openssl
-   password-store
-   pgcli
-   pkg-config
-   plocate
-   podman
-   podman-compose
-   postgresql
-   pv
-   python-virtualenv
-   ripgrep
-   rlwrap
-   sed
-   sendgmail
-   shared-mime-info
-   sqitch
-   sqlite
-   strace
-   texi2html
-   texinfo
-   tor
-   tree-sitter
-   tree-sitter-bash
-   tree-sitter-cli
-   tree-sitter-clojure
-   tree-sitter-dockerfile
-   tree-sitter-go
-   tree-sitter-html
-   tree-sitter-json
-   tree-sitter-markdown
-   tree-sitter-markdown-gfm
-   tree-sitter-org
-   tree-sitter-scheme
-   unzip
-   util-linux
-   vivid
-   whisper-cpp
-   wireless-tools
-   zip))
+  (list `(,isc-bind "utils")
+        autoconf
+        automake
+        ;; awscli
+        cmake
+        coreutils
+        ;; docker-compose
+        ffmpeg
+        file
+        gcc-toolchain
+        glibc-locales
+        `(,glib "bin")
+        gnu-make
+        gnupg
+        gnutls
+        graphviz
+        help2man
+        htop
+        imagemagick
+        ispell
+        isync
+        jq
+        libatasmart
+        libvterm
+        mu
+        mumi
+        ncurses
+        node-lts
+        nss-certs
+        openssl
+        password-store
+        pgcli
+        pkg-config
+        plocate
+        podman
+        podman-compose
+        postgresql
+        pv
+        python-virtualenv
+        ripgrep
+        rlwrap
+        sed
+        sendgmail
+        shared-mime-info
+        sqitch
+        sqlite
+        strace
+        texi2html
+        texinfo
+        tor
+        tree-sitter
+        tree-sitter-bash
+        tree-sitter-cli
+        tree-sitter-clojure
+        tree-sitter-dockerfile
+        tree-sitter-go
+        tree-sitter-html
+        tree-sitter-json
+        tree-sitter-markdown
+        tree-sitter-markdown-gfm
+        tree-sitter-org
+        tree-sitter-scheme
+        unzip
+        util-linux
+        vivid
+        whisper-cpp
+        wireless-tools
+        zip))
 
 (define packages-desktop
-  (list
-   flameshot
-   flatpak
-   font-adobe-source-code-pro
-   font-awesome
-   font-dejavu
-   font-fira-code
-   font-ghostscript
-   font-gnu-freefont
-   font-google-noto
-   font-google-noto-emoji
-   font-google-roboto
-   font-google-roboto-mono
-   font-hack
-   font-inconsolata
-   font-montserrat
-   font-terminus
-   fontconfig
-   gtk+ ;; Provide org.gtk.Settings.FileChooser
-   inkscape
-   libreoffice
-   mplayer
-   nerd-dictation/xdotool
-   redshift
-   rofi
-   xdg-desktop-portal
-   xdg-desktop-portal-gtk))
-
-(define packages
-  (cond ((target-aarch64?)
-         (append packages-base
-                 packages-desktop
-                 packages-aarch64))
-        ((target-x86-64?)
-         (append packages-base
-                 packages-desktop
-                 packages-x86-64))
-        (else
-         (append packages-base
-                 packages-desktop))))
+  (list flameshot
+        flatpak
+        font-adobe-source-code-pro
+        font-awesome
+        font-dejavu
+        font-fira-code
+        font-ghostscript
+        font-gnu-freefont
+        font-google-noto
+        font-google-noto-emoji
+        font-google-roboto
+        font-google-roboto-mono
+        font-hack
+        font-inconsolata
+        font-montserrat
+        font-terminus
+        fontconfig
+        gtk+ ;; Provide org.gtk.Settings.FileChooser
+        inkscape
+        libreoffice
+        mplayer
+        nerd-dictation/xdotool
+        redshift
+        rofi
+        xdg-desktop-portal
+        xdg-desktop-portal-gtk))

@@ -85,7 +85,7 @@
 
 (define-public m1-home-environment
   (home-environment
-    (packages packages)
-    (services services)))
+   (packages (append packages-base packages-desktop packages-aarch64))
+   (services services)))
 
 m1-home-environment
