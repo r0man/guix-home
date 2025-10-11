@@ -249,7 +249,6 @@
         emacs-redshank
         emacs-refactor
         emacs-request-deferred
-        emacs-scala-mode
         emacs-scss-mode
         emacs-selectrum
         emacs-semext
