@@ -2670,12 +2670,6 @@ excellent Paredit mode as editing substrate whenever possible.
            (lisp-mode . redshank-mode)))
 #+end_src
 
-** Scala Mode
-#+begin_src emacs-lisp
-  (use-package scala-mode
-    :interpreter ("scala" . scala-mode)
-    :mode "\\.scala\\'")
-#+end_src
 ** Sendmail
 #+begin_src emacs-lisp
   (use-package sendmail
