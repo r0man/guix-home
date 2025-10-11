@@ -54,5 +54,10 @@ xbindkeys
 # Set wallpaper
 feh --bg-scale ~/.local/share/wallpapers/stop-customizing-start-working.jpg
 
+# Start XDG Desktop Portal (for Flatpak integration)
+~/.guix-home/profile/libexec/xdg-desktop-portal-gtk &
+sleep 1
+~/.guix-home/profile/libexec/xdg-desktop-portal &
+
 # Start Emacs.
 emacs --bg-daemon &
