@@ -2835,14 +2835,6 @@ Emacs client for the Language Server Protocol.
     ("~/workspace/soundklaus.el"
      "~/workspace/soundklaus.el/test"))
 #+end_src
-** stem.el
-#+begin_src emacs-lisp
-  (use-package stem
-    :commands (stem)
-    :if (file-directory-p "~/workspace/nu/stem.el/")
-    :load-path ("~/workspace/nu/stem.el/src/"
-                "~/workspace/nu/stem.el/test/"))
-#+end_src
 ** Tabs
 
 Don't insert tabs.
