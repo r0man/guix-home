@@ -1,0 +1,35 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("Asahi Guix - Root Home (Dired)"
+  (filename . "/ssh:root@www.asahi-guix.org:~/")
+  (position . 176))
+ ("Asahi Guix - Roman Home (Dired)"
+  (filename . "/ssh:roman@www.asahi-guix.org:~/"))
+ ("Bombaclaat - Root Home"
+  (filename . "/ssh:root@bombaclaat:/"))
+ ("Emacs Configuration"
+  (filename . "~/workspace/guix-home/modules/r0man/guix/home/files/emacs/init.el.org")
+  (position . 1))
+ ("Kubernetes Configuration"
+  (filename . "~/.kube/config")
+  (position . 1))
+ ("Leiningen Profiles"
+  (filename . "~/.lein/profiles.clj")
+  (position . 1))
+ ("Mcron User Logfile"
+  (filename . "~/.local/state/shepherd/mcron.log")
+  (position . 1))
+ ("Shepherd User Logfile"
+  (filename . "~/.local/state/log/shepherd.log")
+  (position . 1))
+ ("System Logs"
+  (filename . "/sudo:root@localhost:/var/log/")
+  (position . 1))
+ ("Stumpwm Configuration"
+  (filename . "~/workspace/guix-home/modules/r0man/guix/home/files/stumpwm/config")
+  (position . 713))
+ ("X Resources"
+  (filename . "~/workspace/guix-home/modules/r0man/guix/home/files/Xresources")
+  (position . 1)))
