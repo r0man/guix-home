@@ -283,7 +283,7 @@
   home-emacs-configuration make-home-emacs-configuration
   home-emacs-configuration?
   (readme-org-file home-emacs-readme-org-file
-                   (default (local-file "files/emacs/README.org"))
+                   (default (local-file "files/emacs/init.el.org"))
                    (description "Org file to tangle for init.el."))
   (early-init-file home-emacs-early-init-file
                    (default (local-file "files/emacs/early-init.el"))
