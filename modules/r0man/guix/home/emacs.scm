@@ -198,7 +198,6 @@
         emacs-lsp-dart
         emacs-lsp-docker
         emacs-lsp-java
-        emacs-lsp-metals
         emacs-lsp-treemacs
         emacs-lsp-ui
         emacs-macrostep
