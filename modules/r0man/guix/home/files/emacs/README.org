@@ -2728,16 +2728,6 @@ Show font features in an Emacs buffer.
 #+begin_src emacs-lisp
   (global-so-long-mode 1)
 #+end_src
-** Splunk
-#+begin_src emacs-lisp
-  (use-package paimon
-    :commands (paimon)
-    :load-path
-    ("~/workspace/paimon.el/src"
-     "~/workspace/paimon.el/test")
-    :config
-    (require 'nu-paimon))
-#+end_src
 ** Language Server Protocol
 
 Emacs client for the Language Server Protocol.
