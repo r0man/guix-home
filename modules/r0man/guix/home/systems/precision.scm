@@ -10,6 +10,7 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
@@ -38,8 +39,10 @@
   #:use-module (r0man guix home sway)
   #:use-module (r0man guix home waybar)
   #:use-module (r0man guix home wofi)
+  #:use-module (r0man guix home x11)
   #:use-module (r0man guix home xdg)
-  #:use-module (r0man guix home x11))
+  #:use-module (r0man guix system keyboard)
+  #:use-module (r0man guix system xorg))
 
 (define services
   (list (service home-bash-service-type
@@ -73,6 +76,10 @@
         (service home-pipewire-service-type)
         (service home-rofi-service-type)
         (service home-ssh-agent-service-type)
+        (service home-startx-command-service-type
+                 (xorg-configuration
+                  (keyboard-layout %keyboard-layout)
+                  (extra-config (list %xorg-libinput-config))))
         (service home-stumpwm-service-type)
         (service home-sway-service-type)
         (service home-unclutter-service-type)
