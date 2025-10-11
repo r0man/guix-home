@@ -1,0 +1,61 @@
+#+TITLE: Emacs Early Init Configuration
+#+PROPERTY: header-args:emacs-lisp :tangle early-init.el
+#+STARTUP: overview
+
+* Commentary
+
+This file is loaded before the package system and GUI is initialized.
+
+* Early Init
+
+#+begin_src emacs-lisp
+  ;;; early-init.el --- The Early Init File. -*- lexical-binding: t; -*-
+
+  ;;; Commentary:
+
+  ;; This file is loaded before the package system and GUI is
+  ;; initialized.
+
+  ;;; Code:
+#+end_src
+
+* Disable GUI Elements
+
+Disable GUI elements early to improve startup time and provide a
+cleaner interface.
+
+#+begin_src emacs-lisp
+  ;; Disable GUI elements early
+  (add-to-list 'default-frame-alist '(horizontal-scroll-bars . nil))
+  (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
+
+  (if (fboundp 'horizontal-scroll-bar-mode) (horizontal-scroll-bar-mode -1))
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+#+end_src
+
+* Custom File
+
+Load customization settings first.
+
+#+begin_src emacs-lisp
+  (setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file))
+#+end_src
+
+* Garbage Collection
+
+Use a low garbage collection threshold on startup to speed up
+initialization, then increase it after initialization for better
+runtime performance.
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold 64000000)
+  (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 100000000)))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;;; early-init.el ends here
+#+end_src

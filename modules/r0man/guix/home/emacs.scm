@@ -85,7 +85,8 @@
                ;; Clean up
                (delete-file-recursively temp-dir))))))))
 
-(list (if (target-aarch64?) emacs-pgtk emacs)
+(define default-emacs-packages
+  (list (if (target-aarch64?) emacs-pgtk emacs)
       emacs-adoc-mode
       emacs-agent-shell
       emacs-aider
@@ -245,39 +246,38 @@
       emacs-redshank
       emacs-refactor
       emacs-request-deferred
-      (define default-emacs-packages
-        emacs-scss-mode
-        emacs-selectrum
-        emacs-semext
-        emacs-show-font
-        emacs-slite
-        emacs-sly
-        emacs-sly-asdf
-        emacs-sly-macrostep
-        emacs-sly-stepper
-        emacs-sql-indent
-        emacs-standard-themes
-        emacs-stumpwm-mode
-        emacs-svg-lib
-        emacs-terraform-mode
-        emacs-timesheet
-        emacs-transient
-        emacs-treemacs
-        emacs-undercover
-        emacs-undo-tree
-        emacs-unfill
-        emacs-use-package
-        emacs-vertico
-        emacs-virtualenvwrapper
-        emacs-vterm
-        emacs-web-mode
-        emacs-which-key
-        emacs-whisper
-        emacs-x509-mode
-        emacs-yaml-mode
-        emacs-yasnippet
-        emacs-yasnippet-snippets
-        clhs))
+      emacs-scss-mode
+      emacs-selectrum
+      emacs-semext
+      emacs-show-font
+      emacs-slite
+      emacs-sly
+      emacs-sly-asdf
+      emacs-sly-macrostep
+      emacs-sly-stepper
+      emacs-sql-indent
+      emacs-standard-themes
+      emacs-stumpwm-mode
+      emacs-svg-lib
+      emacs-terraform-mode
+      emacs-timesheet
+      emacs-transient
+      emacs-treemacs
+      emacs-undercover
+      emacs-undo-tree
+      emacs-unfill
+      emacs-use-package
+      emacs-vertico
+      emacs-virtualenvwrapper
+      emacs-vterm
+      emacs-web-mode
+      emacs-which-key
+      emacs-whisper
+      emacs-x509-mode
+      emacs-yaml-mode
+      emacs-yasnippet
+      emacs-yasnippet-snippets
+      clhs))
 
 (define-record-type* <home-emacs-configuration>
   home-emacs-configuration make-home-emacs-configuration
@@ -285,18 +285,24 @@
   (readme-org-file home-emacs-readme-org-file
                    (default (local-file "files/emacs/init.el.org"))
                    (description "Org file to tangle for init.el."))
-  (early-init-file home-emacs-early-init-file
-                   (default (local-file "files/emacs/early-init.el"))
-                   (description "Emacs early-init.el file."))
+  (early-init-org-file home-emacs-early-init-org-file
+                       (default (local-file "files/emacs/early-init.el.org"))
+                       (description "Org file to tangle for early-init.el."))
+  (bookmarks-file home-emacs-bookmarks-file
+                  (default (local-file "files/emacs/bookmarks"))
+                  (description "Emacs bookmarks file."))
   (packages home-emacs-packages
             (default default-emacs-packages)
             (description "List of Emacs-related packages to install.")))
 
 (define (home-emacs-files config)
   "Return alist of Emacs configuration files to deploy."
-  `((".emacs.d/early-init.el" ,(home-emacs-early-init-file config))
+  `((".emacs.d/early-init.el" ,(tangle-org-file
+                                (home-emacs-early-init-org-file config)
+                                "early-init.el"))
     (".emacs.d/init.el" ,(tangle-org-file (home-emacs-readme-org-file config)
-                                           "init.el"))))
+                                           "init.el"))
+    (".emacs.d/bookmarks" ,(home-emacs-bookmarks-file config))))
 
 (define (home-emacs-profile-packages config)
   "Return list of Emacs packages to install."
