@@ -5,6 +5,7 @@
   #:use-module (gnu packages emacs-build)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages erlang)
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages)
   #:use-module (gnu services)
@@ -26,64 +27,86 @@
 ;;;
 ;;; Code:
 
+;; Helper to infer output filename from org filename
+(define (infer-output-name org-file-name)
+  "Infer tangled output name from ORG-FILE-NAME.
+   E.g., 'init.el.org' -> 'init.el', 'early-init.el.org' -> 'early-init.el'"
+  (let* ((name (basename org-file-name))
+         (len (string-length name)))
+    (if (and (> len 4) (string=? (substring name (- len 4)) ".org"))
+        (substring name 0 (- len 4))
+        name)))
+
 ;; Helper to tangle any org file during build
-(define* (tangle-org-file org-file #:optional (output-name "init.el"))
-  "Create a computed-file that tangles ORG-FILE to OUTPUT-NAME"
-  (computed-file
-   output-name
-   (with-imported-modules '((guix build utils))
-     #~(begin
-         (use-modules (guix build utils)
-                      (ice-9 popen)
-                      (ice-9 rdelim))
+(define* (tangle-org-file file-name #:key (filename #f))
+  "Create a computed-file that tangles FILE-NAME to FILENAME.
+   FILE-NAME must be a string path to the org file (relative to module).
+   FILENAME defaults to inferring from FILE-NAME (e.g., init.el.org -> init.el)"
+  (let* ((module-dir (or (and=> (current-filename) dirname)
+                         (string-append (getcwd) "/modules/r0man/guix/home")))
+         (full-path (string-append module-dir "/" file-name))
+         (org-file (local-file full-path))
+         (result-name (or filename (infer-output-name file-name))))
+    (computed-file
+     result-name
+     (with-imported-modules '((guix build utils))
+       #~(call-with-output-file #$output
+           (lambda (out-port)
+             (use-modules (guix build utils)
+                          (ice-9 popen)
+                          (ice-9 rdelim)
+                          (srfi srfi-13))
 
-         (let* ((emacs #$(file-append emacs-minimal "/bin/emacs"))
-                (org-file #$org-file)
-                (output-file #$output)
-                (temp-dir (tmpnam)))
+             (let* ((emacs #$(file-append emacs-minimal "/bin/emacs"))
+                    (org-file #$org-file)
+                    (output-basename #$(infer-output-name file-name))
+                    (temp-dir (tmpnam))
+                    (temp-org (string-append temp-dir "/input.org")))
 
-           ;; Create temporary directory
-           (mkdir-p temp-dir)
+               ;; Create temporary directory
+               (mkdir-p temp-dir)
 
-           ;; Copy org file to temp directory
-           (let ((temp-org (string-append temp-dir "/input.org")))
-             (copy-file org-file temp-org)
+               ;; Copy org file to temp directory
+               (copy-file org-file temp-org)
+               (format #t "Tangling ~a...~%" temp-org)
 
-             (format #t "Tangling ~a...~%" temp-org)
+               ;; Run emacs to tangle the file
+               (let* ((cmd (list emacs
+                                 "--batch"
+                                 "--eval" "(require 'org)"
+                                 "--eval" "(setq org-confirm-babel-evaluate nil)"
+                                 "--eval" (format #f "(cd \"~a\")" temp-dir)
+                                 "--eval" (format #f "(find-file \"~a\")" temp-org)
+                                 "--eval" "(org-babel-tangle)"
+                                 "--kill"))
+                      (port (apply open-pipe* OPEN_READ cmd)))
 
-             ;; Run emacs to tangle the file
-             (let* ((cmd (list emacs
-                              "--batch"
-                              "--eval" "(require 'org)"
-                              "--eval" "(setq org-confirm-babel-evaluate nil)"
-                              "--eval" (format #f "(cd \"~a\")" temp-dir)
-                              "--eval" (format #f "(find-file \"~a\")" temp-org)
-                              "--eval" "(org-babel-tangle)"
-                              "--kill"))
-                    (port (apply open-pipe* OPEN_READ cmd)))
+                 ;; Print output
+                 (let loop ((line (read-line port)))
+                   (unless (eof-object? line)
+                     (format #t "~a~%" line)
+                     (loop (read-line port))))
 
-               ;; Print output
-               (let loop ((line (read-line port)))
-                 (unless (eof-object? line)
-                   (format #t "~a~%" line)
-                   (loop (read-line port))))
+                 ;; Check status
+                 (let ((status (close-pipe port)))
+                   (unless (zero? status)
+                     (error "Tangling failed with status" status))))
 
-               ;; Check status
-               (let ((status (close-pipe port)))
-                 (unless (zero? status)
-                   (error "Tangling failed with status" status))))
+               ;; Find the tangled output
+               (let ((tangled-file (string-append temp-dir "/" output-basename)))
+                 (unless (file-exists? tangled-file)
+                   (error "Tangling failed - expected output file not created:"
+                          tangled-file))
 
-             ;; Find the tangled output (org-babel-tangle creates it based on :tangle directive)
-             (let ((tangled-file (string-append temp-dir "/" #$output-name)))
-               (unless (file-exists? tangled-file)
-                 (error "Tangling failed - expected output file not created:" tangled-file))
+                 ;; Write tangled content to output port
+                 (call-with-input-file tangled-file
+                   (lambda (in-port)
+                     (dump-port in-port out-port)))
 
-               ;; Copy to final destination
-               (copy-file tangled-file output-file)
-               (format #t "Successfully tangled to ~a~%" output-file)
+                 (format #t "Successfully tangled to output~%")
 
-               ;; Clean up
-               (delete-file-recursively temp-dir))))))))
+                 ;; Clean up
+                 (delete-file-recursively temp-dir)))))))))
 
 (define default-emacs-packages
   (list (if (target-aarch64?) emacs-pgtk emacs)
@@ -282,12 +305,12 @@
 (define-record-type* <home-emacs-configuration>
   home-emacs-configuration make-home-emacs-configuration
   home-emacs-configuration?
-  (readme-org-file home-emacs-readme-org-file
-                   (default (local-file "files/emacs/init.el.org"))
-                   (description "Org file to tangle for init.el."))
-  (early-init-org-file home-emacs-early-init-org-file
-                       (default (local-file "files/emacs/early-init.el.org"))
-                       (description "Org file to tangle for early-init.el."))
+  (init-file home-emacs-init-file
+             (default (tangle-org-file "files/emacs/init.el.org"))
+             (description "Tangled init.el file."))
+  (early-init-file home-emacs-early-init-file
+                   (default (tangle-org-file "files/emacs/early-init.el.org"))
+                   (description "Tangled early-init.el file."))
   (bookmarks-file home-emacs-bookmarks-file
                   (default (local-file "files/emacs/bookmarks"))
                   (description "Emacs bookmarks file."))
@@ -297,11 +320,8 @@
 
 (define (home-emacs-files config)
   "Return alist of Emacs configuration files to deploy."
-  `((".emacs.d/early-init.el" ,(tangle-org-file
-                                (home-emacs-early-init-org-file config)
-                                "early-init.el"))
-    (".emacs.d/init.el" ,(tangle-org-file (home-emacs-readme-org-file config)
-                                           "init.el"))
+  `((".emacs.d/init.el" ,(home-emacs-init-file config))
+    (".emacs.d/early-init.el" ,(home-emacs-early-init-file config))
     (".emacs.d/bookmarks" ,(home-emacs-bookmarks-file config))))
 
 (define (home-emacs-profile-packages config)
