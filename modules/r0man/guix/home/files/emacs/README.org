@@ -978,9 +978,6 @@ A GNU Emacs major mode for editing BNF grammars.
     ;; (setq cider-injected-middleware-version "0.0.0")
     ;; (setq cider-required-middleware-version "0.0.0")
 
-    ;; (add-to-list 'cider-jack-in-nrepl-middlewares "stem.nrepl/middleware")
-    ;; (cider-add-to-alist 'cider-jack-in-dependencies "stem/nrepl" "1.1.2-SNAPSHOT")
-
     ;; (add-to-list 'cider-jack-in-nrepl-middlewares "nrepl-rebl.core/wrap-rebl")
     ;; (cider-add-to-alist 'cider-jack-in-dependencies "nrepl-rebl/nrepl-rebl" "0.1.1")
 
