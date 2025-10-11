@@ -77,7 +77,7 @@
                                  "--eval" "(setq org-confirm-babel-evaluate nil)"
                                  "--eval" (format #f "(cd \"~a\")" temp-dir)
                                  "--eval" (format #f "(find-file \"~a\")" temp-org)
-                                 "--eval" "(org-babel-tangle)"
+                                 "--eval" (format #f "(org-babel-tangle-file \"~a\" \"~a\")" temp-org output-basename)
                                  "--kill"))
                       (port (apply open-pipe* OPEN_READ cmd)))
 

@@ -1,5 +1,4 @@
 * init.el
-#+PROPERTY: header-args:emacs-lisp :tangle init.el
 
 My Emacs init.el in [[http://orgmode.org/][Org Mode]]'s [[http://orgmode.org/worg/org-contrib/babel][Babel]] format.
 

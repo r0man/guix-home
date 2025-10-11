@@ -1,5 +1,4 @@
 #+TITLE: Emacs Early Init Configuration
-#+PROPERTY: header-args:emacs-lisp :tangle early-init.el
 #+STARTUP: overview
 
 * Commentary
