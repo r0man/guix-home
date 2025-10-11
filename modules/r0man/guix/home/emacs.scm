@@ -181,7 +181,6 @@
         emacs-helpful
         emacs-htmlize
         emacs-hy-mode
-        emacs-ido-vertical-mode
         emacs-inflections
         emacs-inspector
         emacs-jarchive
