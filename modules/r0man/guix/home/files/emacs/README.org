@@ -1995,6 +1995,8 @@ An Emacs IRC client.
     :custom
     ;; Send mail via smtpmail.
     (message-send-mail-function 'smtpmail-send-it)
+    ;; Use message sender to find an OpenPGP key to sign with.
+    (mml-secure-openpgp-sign-with-sender t)
     :init
     ;; GPG sign messages
     (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime))
