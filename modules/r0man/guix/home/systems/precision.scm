@@ -79,12 +79,15 @@
         (service home-pipewire-service-type)
         (service home-rofi-service-type)
         (service home-ssh-agent-service-type)
-        ;; See: https://github.com/Yappaholic/guix-config/blob/master/config/system/home.scm#L69-L73
         (service home-startx-command-service-type
                  (xorg-configuration
-                   (extra-config (list %xorg-libinput-config))
-                   (keyboard-layout %keyboard-layout)
-                   (server (replace-mesa xorg-server))))
+                  ;; Manually install the same version as the Nonguix `nvidia-driver` package
+                  ;; From: https://download.nvidia.com/XFree86/Linux-x86_64/
+                  ;;(drivers '("nvidia"))
+                  ;; (extra-config (list %xorg-libinput-config))
+                  (keyboard-layout %keyboard-layout)
+                  (modules (cons nvda %default-xorg-modules))
+                  (server (replace-mesa xorg-server))))
         (service home-stumpwm-service-type)
         (service home-sway-service-type)
         (service home-unclutter-service-type)
