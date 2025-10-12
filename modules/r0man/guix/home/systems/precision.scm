@@ -96,11 +96,11 @@
 
 (define-public precision-home-environment
   (home-environment
-    (packages (map replace-mesa
-                   (append packages-base
-                           packages-desktop
-                           packages-x86-64
-                           (list vulkan-tools))))
-    (services services)))
+   (packages (map replace-mesa
+                  (append packages-base
+                          packages-desktop
+                          packages-x86-64
+                          (list vulkan-tools))))
+   (services services)))
 
 precision-home-environment
