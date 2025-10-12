@@ -10,8 +10,11 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages vulkan)
+  #:use-module (gnu packages xorg)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
+  #:use-module (nongnu packages nvidia)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
@@ -78,8 +81,9 @@
         (service home-ssh-agent-service-type)
         (service home-startx-command-service-type
                  (xorg-configuration
-                  (keyboard-layout %keyboard-layout)
-                  (extra-config (list %xorg-libinput-config))))
+                   (extra-config (list %xorg-libinput-config))
+                   (keyboard-layout %keyboard-layout)
+                   (server (replace-mesa xorg-server))))
         (service home-stumpwm-service-type)
         (service home-sway-service-type)
         (service home-unclutter-service-type)
@@ -92,7 +96,11 @@
 
 (define-public precision-home-environment
   (home-environment
-   (packages (append packages-base packages-desktop packages-x86-64))
-   (services services)))
+    (packages (map replace-mesa
+                   (append packages-base
+                           packages-desktop
+                           packages-x86-64
+                           (list vulkan-tools))))
+    (services services)))
 
 precision-home-environment
