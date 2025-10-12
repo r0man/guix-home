@@ -47,6 +47,39 @@
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system xorg))
 
+;;; Commentary:
+;;;
+;;; Home environment configuration for Dell Precision laptop (x86-64).
+;;;
+;;; Hardware:
+;;;   - Intel Alder Lake-P (Iris Xe Graphics) - PCI:0:2:0
+;;;   - NVIDIA RTX A1000 Laptop GPU (GA107GLM) - PCI:1:0:0
+;;;
+;;; Hybrid Graphics (PRIME Render Offload):
+;;;   This laptop has hybrid graphics where displays are physically
+;;;   connected to the Intel GPU, not NVIDIA. X11 configuration uses
+;;;   Intel's modesetting driver for display output and makes NVIDIA
+;;;   available for 3D rendering via PRIME render offload.
+;;;
+;;; Verification:
+;;;   Default renderer (Intel):
+;;;     glxinfo | grep "OpenGL renderer"
+;;;     => Mesa Intel(R) Iris(R) Xe Graphics
+;;;
+;;;   NVIDIA offload:
+;;;     __NV_PRIME_RENDER_OFFLOAD=1 \
+;;;     __GLX_VENDOR_LIBRARY_NAME=nvidia \
+;;;     glxinfo | grep "OpenGL renderer"
+;;;     => NVIDIA RTX A1000 Laptop GPU/PCIe/SSE2
+;;;
+;;; Usage:
+;;;   Run applications with NVIDIA rendering by prefixing commands:
+;;;     __NV_PRIME_RENDER_OFFLOAD=1 \
+;;;     __GLX_VENDOR_LIBRARY_NAME=nvidia \
+;;;     <application>
+;;;
+;;; Code:
+
 (define services
   (list (service home-bash-service-type
                  home-bash-default-configuration)
@@ -81,11 +114,38 @@
         (service home-ssh-agent-service-type)
         (service home-startx-command-service-type
                  (xorg-configuration
-                  ;; Manually install the same version as the Nonguix `nvidia-driver` package
-                  ;; From: https://download.nvidia.com/XFree86/Linux-x86_64/
-                  ;; Current version: https://download.nvidia.com/XFree86/Linux-x86_64/580.82.09/README
-                  (drivers '("nvidia"))
-                  (extra-config (list %xorg-libinput-config))
+                  ;; NVIDIA driver version must match nonguix package
+                  ;; https://download.nvidia.com/XFree86/Linux-x86_64/580.82.09/README
+                  (drivers '("modesetting" "nvidia"))
+                  (extra-config
+                   (list %xorg-libinput-config
+                         "Section \"ServerLayout\"
+    Identifier     \"layout\"
+    Screen      0  \"intel\"
+    Inactive       \"nvidia\"
+EndSection
+
+Section \"Device\"
+    Identifier     \"intel\"
+    Driver         \"modesetting\"
+    BusID          \"PCI:0:2:0\"
+EndSection
+
+Section \"Screen\"
+    Identifier     \"intel\"
+    Device         \"intel\"
+EndSection
+
+Section \"Device\"
+    Identifier     \"nvidia\"
+    Driver         \"nvidia\"
+    BusID          \"PCI:1:0:0\"
+EndSection
+
+Section \"Screen\"
+    Identifier     \"nvidia\"
+    Device         \"nvidia\"
+EndSection"))
                   (keyboard-layout %keyboard-layout)
                   (modules (cons nvda %default-xorg-modules))
                   (server (replace-mesa xorg-server))))
