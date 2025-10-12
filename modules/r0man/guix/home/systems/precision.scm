@@ -84,7 +84,7 @@
                   ;; Manually install the same version as the Nonguix `nvidia-driver` package
                   ;; From: https://download.nvidia.com/XFree86/Linux-x86_64/
                   ;;(drivers '("nvidia"))
-                  ;; (extra-config (list %xorg-libinput-config))
+                  (extra-config (list %xorg-libinput-config))
                   (keyboard-layout %keyboard-layout)
                   (modules (cons nvda %default-xorg-modules))
                   (server (replace-mesa xorg-server))))
