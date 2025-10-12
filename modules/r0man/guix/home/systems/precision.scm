@@ -83,7 +83,8 @@
                  (xorg-configuration
                   ;; Manually install the same version as the Nonguix `nvidia-driver` package
                   ;; From: https://download.nvidia.com/XFree86/Linux-x86_64/
-                  ;;(drivers '("nvidia"))
+                  ;; Current version: https://download.nvidia.com/XFree86/Linux-x86_64/580.82.09/README
+                  (drivers '("nvidia"))
                   (extra-config (list %xorg-libinput-config))
                   (keyboard-layout %keyboard-layout)
                   (modules (cons nvda %default-xorg-modules))
