@@ -2945,6 +2945,9 @@ whisper.cpp as inference engine.
     :config
     (when (file-exists-p "/usr/share/vulkan/icd.d/nvidia_icd.json")
       (setenv "VK_ICD_FILENAMES" "/usr/share/vulkan/icd.d/nvidia_icd.json"))
+    (defun whisper--find-whispercpp-main ()
+      "Find whisper.cpp main binary in a backward compatible way."
+      "whisper-cli")
     :custom
     (whisper-install-directory "~/workspace/")
     (whisper-install-whispercpp 'manual)
