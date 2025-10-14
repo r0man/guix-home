@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "clojure-mcp": {
+      "type": "stdio",
+      "command": "clojure-mcp",
+      "args": [],
+      "env": {}
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(guix*)"
+    ],
+    "deny": [
+      "Bash(curl:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  }
+}

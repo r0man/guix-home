@@ -18,6 +18,7 @@
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
+  #:use-module (r0man guix home claude-code)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home common-lisp)
   #:use-module (r0man guix home eca)
@@ -88,6 +89,7 @@
         (service home-btop-service-type)
         (service home-channels-service-type
                  home-channels-default-list)
+        (service home-claude-code-service-type)
         (service home-clojure-service-type)
         (service home-common-lisp-service-type)
         (service home-dbus-service-type)
