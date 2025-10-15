@@ -258,6 +258,12 @@ Reload files when they change on disk.
     (global-auto-revert-mode t))
 #+end_src
 
+** Beads
+#+begin_src emacs-lisp
+  (use-package beads
+    :load-path ("~/workspace/beads/lisp")
+    :bind ("C-c b" . beads-main))
+#+end_src
 ** Bug Reference
 
 Viewing Bugs within Emacs
