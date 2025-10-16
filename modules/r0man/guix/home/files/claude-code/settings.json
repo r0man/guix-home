@@ -9,7 +9,7 @@
   },
   "permissions": {
     "allow": [
-      "Bash(guix*)"
+      "Bash(guix:*)"
     ],
     "deny": [
       "Bash(curl:*)",
