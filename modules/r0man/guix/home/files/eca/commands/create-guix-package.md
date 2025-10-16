@@ -64,5 +64,7 @@ Provide:
 2. Explanation of key packaging decisions made
 3. Any notable challenges encountered and how they were resolved
 4. Confirmation that the package builds and passes lint checks
+5. All changes committed. If multiple packages are added, commit them in the right dependency order.
+6. The Beads issues have been updated.
 
 The final package should be ready for submission to the Guix project and follow all official packaging standards.

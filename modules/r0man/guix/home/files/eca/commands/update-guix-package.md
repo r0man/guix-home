@@ -75,5 +75,7 @@ Provide:
 2. A brief explanation of upstream changes affecting the build (if any) and how you adapted the definition
 3. Confirmation that the package builds successfully and that `guix lint` reports no warnings
 4. Any notable considerations (e.g., removed patches, updated dependencies, changes in license or homepage)
+5. All changes committed. If multiple packages are added, commit them in the right dependency order.
+6. The Beads issues have been updated.
 
 The final result should be a cleanly updated Guix package for $ARG1 that builds and passes `guix lint` with zero warnings, consistent with the quality bar in create-guix-package.md.
