@@ -42,6 +42,7 @@ exec guix shell \
      --preserve='^XDG_DATA_HOME$' \
      --preserve='^XDG_RUNTIME_DIR$' \
      --share="$HOME/.claude" \
+     --share="$HOME/.claude.json" \
      --share="$HOME/.config/git" \
      --share="$HOME/.emacs.d" \
      --share="$HOME/.gitconfig" \
