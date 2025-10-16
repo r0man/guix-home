@@ -63,6 +63,7 @@ guix shell \
      --share=$HOME/.emacs.d \
      --writable-root \
      bash \
+     bd \
      coreutils \
      curl \
      emacs \
