@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# Default workspace directory
+DEFAULT_WORKSPACE="$HOME/workspace"
+
+# Use provided workspace directory or default
+WORKSPACE_DIR="${1:-$DEFAULT_WORKSPACE}"
+
+# Validate workspace directory exists
+if [ ! -d "$WORKSPACE_DIR" ]; then
+    echo "Error: Workspace directory '$WORKSPACE_DIR' does not exist."
+    exit 1
+fi
+
+# Add SSH agent support
+export SSH_AUTH_SOCK="$SSH_AUTH_SOCK"
+
+# Workaround, otherwise the home directory in Guix is group writeable
+# which SSH does not approve of
+export CONTAINER_HOME="/tmp/container-home"
+mkdir -p "$CONTAINER_HOME"
+chmod g-w /tmp/container-home
+
+# guix shell \
+#      --container \
+#      --expose="$XAUTHORITY" \
+#      --network \
+#      --no-cwd \
+#      --preserve='^DISPLAY$' \
+#      --preserve='^SSH_AUTH_SOCK$' \
+#      --preserve='^XAUTHORITY$' \
+#      --share="$CONTAINER_HOME"=/home/munen \
+#      --share="$SSH_AUTH_SOCK" \
+#      --share="$WORKSPACE_DIR"=/workspace \
+#      --share=$HOME/.emacs.d \
+#      --share=$HOME/.gitconfig \
+#      --share=$HOME/.guix-profile/share/emacs/site-lisp \
+#      --share=$HOME/.local \
+#      --share=$HOME/.ssh \
+#      --share=/tmp/.X11-unix \
+#      emacs \
+#      bash \
+#      findutils \
+#      coreutils \
+#      git \
+#      curl \
+#      nss-certs \
+#      openssh \
+#      -- emacs /workspace
+
+guix shell \
+     --container \
+     --emulate-fhs \
+     --expose="$XAUTHORITY" \
+     --link-profile \
+     --nesting \
+     --network \
+     --preserve='TERM$' \
+     --writable-root \
+     bash \
+     coreutils \
+     curl \
+     emacs \
+     findutils \
+     git \
+     node-anthropic-ai-claude-code \
+     nss-certs \
+     openssh \
+     -- claude

@@ -29,7 +29,8 @@
 
 (define (home-claude-code-files config)
   "Return alist of Claude Code configuration files to deploy."
-  `((".claude/commands" ,(home-claude-code-commands-dir config))
+  `(("bin/container-claude" ,(local-file "files/bin/container-claude" #:recursive? #t))
+    (".claude/commands" ,(home-claude-code-commands-dir config))
     (".claude/settings.json" ,(home-claude-code-settings config))))
 
 (define (home-claude-code-profile-packages config)
