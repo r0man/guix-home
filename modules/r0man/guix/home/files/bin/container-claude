@@ -1,76 +1,69 @@
 #!/usr/bin/env bash
+# Run Claude Code inside a Guix container with proper isolation
 
-# Default workspace directory
-DEFAULT_WORKSPACE="$HOME/workspace"
+set -euo pipefail
 
-# Use provided workspace directory or default
-WORKSPACE_DIR="${1:-$DEFAULT_WORKSPACE}"
+# Build expose/share arguments for optional paths
+EXTRA_ARGS=()
 
-# Validate workspace directory exists
-if [ ! -d "$WORKSPACE_DIR" ]; then
-    echo "Error: Workspace directory '$WORKSPACE_DIR' does not exist."
-    exit 1
+# SSH agent socket (if available)
+if [ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ]; then
+    EXTRA_ARGS+=(--expose="$SSH_AUTH_SOCK")
 fi
 
-# Add SSH agent support
-export SSH_AUTH_SOCK="$SSH_AUTH_SOCK"
+# X11 authority file (if available)
+if [ -n "${XAUTHORITY:-}" ] && [ -f "$XAUTHORITY" ]; then
+    EXTRA_ARGS+=(--expose="$XAUTHORITY")
+fi
 
-# Workaround, otherwise the home directory in Guix is group writeable
-# which SSH does not approve of
-export CONTAINER_HOME="/tmp/container-home"
-mkdir -p "$CONTAINER_HOME"
-chmod g-w /tmp/container-home
+# Ensure required directories exist
+mkdir -p "$HOME/.claude"
 
-# guix shell \
-#      --container \
-#      --expose="$XAUTHORITY" \
-#      --network \
-#      --no-cwd \
-#      --preserve='^DISPLAY$' \
-#      --preserve='^SSH_AUTH_SOCK$' \
-#      --preserve='^XAUTHORITY$' \
-#      --share="$CONTAINER_HOME"=/home/munen \
-#      --share="$SSH_AUTH_SOCK" \
-#      --share="$WORKSPACE_DIR"=/workspace \
-#      --share=$HOME/.emacs.d \
-#      --share=$HOME/.gitconfig \
-#      --share=$HOME/.guix-profile/share/emacs/site-lisp \
-#      --share=$HOME/.local \
-#      --share=$HOME/.ssh \
-#      --share=/tmp/.X11-unix \
-#      emacs \
-#      bash \
-#      findutils \
-#      coreutils \
-#      git \
-#      curl \
-#      nss-certs \
-#      openssh \
-#      -- emacs /workspace
-
-guix shell \
+# Execute guix shell with container
+exec guix shell \
      --container \
      --emulate-fhs \
-     --expose="$XAUTHORITY" \
+     --expose=/gnu/store \
      --link-profile \
      --nesting \
      --network \
-     --preserve='TERM$' \
+     --preserve='^ANTHROPIC_API_KEY$' \
+     --preserve='^COLORTERM$' \
      --preserve='^DISPLAY$' \
+     --preserve='^HOME$' \
+     --preserve='^LANG$' \
+     --preserve='^LC_.*$' \
+     --preserve='^PATH$' \
      --preserve='^SSH_AUTH_SOCK$' \
+     --preserve='^TERM$' \
+     --preserve='^USER$' \
      --preserve='^XAUTHORITY$' \
-     --share=$HOME/.claude \
-     --share=$HOME/.emacs.d \
-     --writable-root \
+     --preserve='^XDG_CONFIG_HOME$' \
+     --preserve='^XDG_DATA_HOME$' \
+     --preserve='^XDG_RUNTIME_DIR$' \
+     --share="$HOME/.claude" \
+     --share="$HOME/.config/git" \
+     --share="$HOME/.emacs.d" \
+     --share="$HOME/.gitconfig" \
+     "${EXTRA_ARGS[@]}" \
      bash \
      bd \
      coreutils \
      curl \
+     diffutils \
      emacs \
      findutils \
+     gawk \
      git \
+     grep \
      inetutils \
+     ncurses \
      node-anthropic-ai-claude-code \
      nss-certs \
      openssh \
-     -- claude
+     procps \
+     ripgrep \
+     sed \
+     tree \
+     which \
+     -- claude "$@"
