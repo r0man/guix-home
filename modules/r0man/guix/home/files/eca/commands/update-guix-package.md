@@ -4,6 +4,11 @@ Follow these comprehensive guidelines from the Guix Reference Manual and ensure 
 
 ## Update Process
 
+0. **Plan the creation of the package:**
+   - If this projects contains a `.beads/issues.jsonl` file we are using Beads (https://github.com/steveyegge/beads/) we track work in Beads instead of Markdown.
+   - Run `bd quickstart` to see how.
+   - Create an epic in Beads for this.
+
 1. Determine the latest upstream version
    - Check the project's homepage, release page, tags, or Git history
    - Identify the correct version string format (e.g., 1.2.3, 2025-01-15, git version tag)

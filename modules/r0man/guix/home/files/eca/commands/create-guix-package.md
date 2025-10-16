@@ -4,6 +4,11 @@ Follow these comprehensive guidelines from the Guix Reference Manual:
 
 ## Package Creation Process
 
+0. **Plan the creation of the package:**
+   - If this projects contains a `.beads/issues.jsonl` file we are using Beads (https://github.com/steveyegge/beads/) we track work in Beads instead of Markdown.
+   - Run `bd quickstart` to see how.
+   - Create an epic in Beads for this.
+
 1. **Analyze the Software:**
    - Examine the source code, build system, dependencies, and documentation
    - Determine the appropriate package name following Guix naming conventions (lowercase, hyphens for separators)
