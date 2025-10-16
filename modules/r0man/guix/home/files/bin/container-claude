@@ -69,6 +69,7 @@ guix shell \
      emacs \
      findutils \
      git \
+     inetutils \
      node-anthropic-ai-claude-code \
      nss-certs \
      openssh \
