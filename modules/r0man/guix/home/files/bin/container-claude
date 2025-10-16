@@ -56,6 +56,11 @@ guix shell \
      --nesting \
      --network \
      --preserve='TERM$' \
+     --preserve='^DISPLAY$' \
+     --preserve='^SSH_AUTH_SOCK$' \
+     --preserve='^XAUTHORITY$' \
+     --share=$HOME/.claude \
+     --share=$HOME/.emacs.d \
      --writable-root \
      bash \
      coreutils \
