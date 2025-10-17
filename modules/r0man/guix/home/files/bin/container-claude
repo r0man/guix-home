@@ -56,6 +56,7 @@ exec guix shell \
      findutils \
      gawk \
      git \
+     gnupg \
      grep \
      inetutils \
      ncurses \
