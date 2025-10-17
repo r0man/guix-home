@@ -26,4 +26,13 @@
 (define home-openssh-default-configuration
   (home-openssh-configuration
    (add-keys-to-agent "yes")
-   (authorized-keys (list %ssh-public-key-roman))))
+   (authorized-keys (list %ssh-public-key-roman))
+   (hosts
+    (list (openssh-host
+           (name "*")
+           (extra-content
+            (string-join
+             '("ControlMaster auto"
+               "ControlPath /tmp/ssh-%r@%h:%p"
+               "ControlPersist 10m")
+             "\n")))))))
