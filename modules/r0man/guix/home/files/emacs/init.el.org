@@ -2266,7 +2266,25 @@ Support for indenting code in SQL files.
   (use-package tramp
     :defer t
     :config
-    (setq tramp-verbose 10)
+    ;; Performance optimizations from "Making TRAMP go Brrrr"
+    ;; https://coredumped.dev/2025/06/18/making-tramp-go-brrrr
+
+    ;; Reduce verbose logging (10 is too high for normal use)
+    ;; Set to 10 only when actively debugging TRAMP issues
+    (setq tramp-verbose 1)
+
+    ;; Inhibit remote file locks (reduces remote filesystem operations)
+    (setq remote-file-name-inhibit-locks t)
+
+    ;; Disable auto-save for remote files (prevents extra writes)
+    (setq remote-file-name-inhibit-auto-save-visited t)
+
+    ;; Use direct SCP for remote copying (faster than default method)
+    (setq tramp-use-scp-direct-remote-copying t)
+
+    ;; Enable SSH connection sharing
+    (setq tramp-use-connection-share t)
+
     (tramp-set-completion-function
      "ssh"
      '((tramp-parse-shosts "~/.ssh/known_hosts")
