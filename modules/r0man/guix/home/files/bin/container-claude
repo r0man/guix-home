@@ -11,6 +11,17 @@ if [ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ]; then
     EXTRA_ARGS+=(--expose="$SSH_AUTH_SOCK")
 fi
 
+# GPG agent sockets directory (if available)
+GPG_SOCKET_DIR=$(gpgconf --list-dirs socketdir 2>/dev/null || true)
+if [ -n "$GPG_SOCKET_DIR" ] && [ -d "$GPG_SOCKET_DIR" ]; then
+    EXTRA_ARGS+=(--expose="$GPG_SOCKET_DIR")
+fi
+
+# GPG home directory (needs write access for lock files)
+if [ -d "${GNUPGHOME:-$HOME/.gnupg}" ]; then
+    EXTRA_ARGS+=(--share="${GNUPGHOME:-$HOME/.gnupg}")
+fi
+
 # X11 authority file (if available)
 if [ -n "${XAUTHORITY:-}" ] && [ -f "$XAUTHORITY" ]; then
     EXTRA_ARGS+=(--expose="$XAUTHORITY")
@@ -30,6 +41,8 @@ exec guix shell \
      --preserve='^ANTHROPIC_API_KEY$' \
      --preserve='^COLORTERM$' \
      --preserve='^DISPLAY$' \
+     --preserve='^GNUPGHOME$' \
+     --preserve='^GPG_AGENT_INFO$' \
      --preserve='^HOME$' \
      --preserve='^LANG$' \
      --preserve='^LC_.*$' \
