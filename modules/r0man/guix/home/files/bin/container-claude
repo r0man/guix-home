@@ -3,28 +3,33 @@
 
 set -euo pipefail
 
-# Build expose/share arguments for optional paths
-EXTRA_ARGS=()
+# Default Claude arguments (can be overridden by setting CLAUDE_ARGS)
+CLAUDE_ARGS="${CLAUDE_ARGS:---dangerously-skip-permissions}"
+
+# Shell arguments for guix shell (can be overridden by pre-setting SHELL_ARGS)
+if [ -z "${SHELL_ARGS+x}" ]; then
+    SHELL_ARGS=()
+fi
 
 # SSH agent socket (if available)
 if [ -n "${SSH_AUTH_SOCK:-}" ] && [ -S "$SSH_AUTH_SOCK" ]; then
-    EXTRA_ARGS+=(--expose="$SSH_AUTH_SOCK")
+    SHELL_ARGS+=(--expose="$SSH_AUTH_SOCK")
 fi
 
 # GPG agent sockets directory (if available)
 GPG_SOCKET_DIR=$(gpgconf --list-dirs socketdir 2>/dev/null || true)
 if [ -n "$GPG_SOCKET_DIR" ] && [ -d "$GPG_SOCKET_DIR" ]; then
-    EXTRA_ARGS+=(--expose="$GPG_SOCKET_DIR")
+    SHELL_ARGS+=(--expose="$GPG_SOCKET_DIR")
 fi
 
 # GPG home directory (needs write access for lock files)
 if [ -d "${GNUPGHOME:-$HOME/.gnupg}" ]; then
-    EXTRA_ARGS+=(--share="${GNUPGHOME:-$HOME/.gnupg}")
+    SHELL_ARGS+=(--share="${GNUPGHOME:-$HOME/.gnupg}")
 fi
 
 # X11 authority file (if available)
 if [ -n "${XAUTHORITY:-}" ] && [ -f "$XAUTHORITY" ]; then
-    EXTRA_ARGS+=(--expose="$XAUTHORITY")
+    SHELL_ARGS+=(--expose="$XAUTHORITY")
 fi
 
 # Ensure required directories exist
@@ -59,7 +64,7 @@ exec guix shell \
      --share="$HOME/.config/git" \
      --share="$HOME/.emacs.d" \
      --share="$HOME/.gitconfig" \
-     "${EXTRA_ARGS[@]}" \
+     "${SHELL_ARGS[@]}" \
      bash \
      beads \
      coreutils \
@@ -81,4 +86,4 @@ exec guix shell \
      sed \
      tree \
      which \
-     -- claude "$@"
+     -- claude $CLAUDE_ARGS "$@"
