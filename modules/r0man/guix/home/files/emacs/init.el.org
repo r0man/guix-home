@@ -264,7 +264,8 @@ Reload files when they change on disk.
     :commands (beads)
     :load-path ("~/workspace/beads.el/lisp"
                 "~/workspace/beads.el/lisp/test")
-    :bind ("C-c b" . beads))
+    :bind ("C-c b" . beads)
+    :hook (after-init . beads-eldoc-mode))
 #+end_src
 ** Bug Reference
 
