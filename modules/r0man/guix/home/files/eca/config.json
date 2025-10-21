@@ -22,10 +22,6 @@
   },
   "defaultModel" : "nubank/gpt-5",
   "mcpServers" : {
-    "atlassian" : {
-      "command" : "mcp-remote",
-      "args" : [ "https://mcp.atlassian.com/v1/sse" ]
-    },
     "clojure-mcp" : {
       "command" : "clojure-mcp"
     }
