@@ -20,7 +20,7 @@
       }
     }
   },
-  "defaultModel" : "nubank/gpt-5",
+  "defaultModel" : "nubank/gpt-5-codex",
   "mcpServers" : {
     "clojure-mcp" : {
       "command" : "clojure-mcp"
