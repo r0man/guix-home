@@ -17,9 +17,9 @@
 (define-record-type* <home-claude-code-configuration>
   home-claude-code-configuration make-home-claude-code-configuration
   home-claude-code-configuration?
-  (commands-dir home-claude-code-commands-dir
-                (default (local-file "files/claude-code/commands" #:recursive? #t))
-                (description "Path to commands directory."))
+  (commands home-claude-code-commands
+            (default (local-file "files/claude-code/commands" #:recursive? #t))
+            (description "Path to commands directory."))
   (packages home-claude-code-packages
             (default (list node-anthropic-ai-claude-code))
             (description "List of Claude Code packages to install."))
@@ -30,7 +30,7 @@
 (define (home-claude-code-files config)
   "Return alist of Claude Code configuration files to deploy."
   `(("bin/container-claude" ,(local-file "files/bin/container-claude" #:recursive? #t))
-    (".claude/commands" ,(home-claude-code-commands-dir config))
+    (".claude/commands" ,(home-claude-code-commands config))
     (".claude/settings.json" ,(home-claude-code-settings config))))
 
 (define (home-claude-code-profile-packages config)
