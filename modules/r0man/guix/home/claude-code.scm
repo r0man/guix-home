@@ -10,13 +10,17 @@
 ;;; Commentary:
 ;;;
 ;;; Home service for Claude Code AI assistant configuration.
-;;; Manages ~/.claude/commands and ~/.claude/settings.json.
+;;; Manages ~/.claude/agents, ~/.claude/commands, and
+;;; ~/.claude/settings.json.
 ;;;
 ;;; Code:
 
 (define-record-type* <home-claude-code-configuration>
   home-claude-code-configuration make-home-claude-code-configuration
   home-claude-code-configuration?
+  (agents home-claude-code-agents
+          (default (local-file "files/claude-code/agents" #:recursive? #t))
+          (description "Path to agents directory."))
   (commands home-claude-code-commands
             (default (local-file "files/claude-code/commands" #:recursive? #t))
             (description "Path to commands directory."))
@@ -30,6 +34,7 @@
 (define (home-claude-code-files config)
   "Return alist of Claude Code configuration files to deploy."
   `(("bin/container-claude" ,(local-file "files/bin/container-claude" #:recursive? #t))
+    (".claude/agents" ,(home-claude-code-agents config))
     (".claude/commands" ,(home-claude-code-commands config))
     (".claude/settings.json" ,(home-claude-code-settings config))))
 
