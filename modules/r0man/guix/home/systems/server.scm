@@ -22,6 +22,7 @@
   #:use-module (r0man guix home git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home guile)
+  #:use-module (r0man guix home kitty)
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home msmtp)
   #:use-module (r0man guix home nix)
@@ -44,6 +45,7 @@
         (service home-environment-service-type)
         (service home-fzf-service-type)
         (service home-git-service-type)
+        (service home-kitty-service-type)
         (service home-gpg-agent-service-type
                  home-gpg-tty-configuration)
         (service home-guile-service-type)
