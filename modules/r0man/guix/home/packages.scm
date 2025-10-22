@@ -93,6 +93,7 @@
         ispell
         isync
         jq
+        kitty
         libatasmart
         libvterm
         mu
