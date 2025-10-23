@@ -64,6 +64,7 @@ exec guix shell \
      --share="$HOME/.config/git" \
      --share="$HOME/.emacs.d" \
      --share="$HOME/.gitconfig" \
+     --share="$HOME/.ssh/known_hosts" \
      "${SHELL_ARGS[@]}" \
      bash \
      beads \
