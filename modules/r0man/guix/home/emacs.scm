@@ -296,6 +296,7 @@
       emacs-web-mode
       emacs-which-key
       emacs-whisper
+      emacs-with-simulated-input
       emacs-x509-mode
       emacs-yaml-mode
       emacs-yasnippet
