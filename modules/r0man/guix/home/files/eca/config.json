@@ -1,10 +1,14 @@
 {
+  "completion": {
+    "model": "nubank/gpt-4.1"
+  },
   "providers" : {
     "nubank" : {
       "api" : "openai-responses",
       "url" : "https://ist-prod-litellm.nullmplatform.com",
       "keyRc" : "apikey@ist-prod-litellm.nullmplatform.com",
       "models" : {
+        "gpt-4.1" : { },
         "gpt-5" : { },
         "gpt-5-codex" : { }
       }
