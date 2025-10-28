@@ -10,7 +10,11 @@
       "models" : {
         "gpt-4.1" : { },
         "gpt-5" : { },
-        "gpt-5-codex" : { }
+        "gpt-5-codex" : { },
+        "gpt-5-high": {
+          "modelName": "gpt-5",
+          "extraPayload": {"reasoning": {"effort": "high"}}
+        }
       }
     },
     "anthropic" : {
