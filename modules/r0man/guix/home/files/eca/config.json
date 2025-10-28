@@ -10,7 +10,8 @@
       "models" : {
         "gpt-4.1" : { },
         "gpt-5" : { },
-        "gpt-5-codex" : { }
+        "gpt-5-codex" : { },
+        "gpt-5-high" : { }
       }
     },
     "anthropic" : {
