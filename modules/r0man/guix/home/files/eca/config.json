@@ -11,7 +11,7 @@
         "gpt-4.1" : { },
         "gpt-5" : { },
         "gpt-5-codex" : { },
-        "gpt-5-high" : { }
+        "gpt-5-pro" : { }
       }
     },
     "anthropic" : {
