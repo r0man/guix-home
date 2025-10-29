@@ -88,5 +88,6 @@ exec guix shell \
      ripgrep \
      sed \
      tree \
+     wget \
      which \
      -- claude $CLAUDE_ARGS "$@"
