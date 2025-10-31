@@ -87,6 +87,7 @@ exec guix shell \
      python \
      ripgrep \
      sed \
+     tar \
      tree \
      wget \
      which \
