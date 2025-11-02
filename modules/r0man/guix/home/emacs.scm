@@ -176,7 +176,6 @@
       emacs-eval-expr
       emacs-evil
       emacs-exec-path-from-shell
-      emacs-expand-region
       emacs-find-file-in-project
       emacs-flx
       emacs-flycheck

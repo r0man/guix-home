@@ -1810,12 +1810,6 @@ Start the Emacs server if it's not running.
     (setq emms-player-mpd-music-directory (expand-file-name "~/Music"))
     (load-if-exists "~/.emms.el"))
 #+end_src
-** Expand region
-#+begin_src emacs-lisp
-  (use-package expand-region
-    :bind (("C-c C-+" . er/expand-region)
-           ("C-c C--" . er/contract-region)))
-#+end_src
 ** Flycheck
 
 #+begin_src emacs-lisp
