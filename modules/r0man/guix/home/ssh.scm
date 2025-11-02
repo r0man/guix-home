@@ -25,14 +25,26 @@
 
 (define home-openssh-default-configuration
   (home-openssh-configuration
-   (add-keys-to-agent "yes")
-   (authorized-keys (list %ssh-public-key-roman))
-   (hosts
-    (list (openssh-host
-           (name "*")
-           (extra-content
-            (string-join
-             '("ControlMaster auto"
-               "ControlPath /tmp/ssh-%r@%h:%p"
-               "ControlPersist 10m")
-             "\n")))))))
+    (add-keys-to-agent "yes")
+    (authorized-keys (list %ssh-public-key-roman))
+    (hosts
+     (list (openssh-host
+             (name "*")
+             (extra-content
+              (string-join
+               '("ControlMaster auto"
+                 "ControlPath /tmp/ssh-%r@%h:%p"
+                 "ControlPersist 10m")
+               "\n")))
+           (openssh-host
+             (name "www.asahi-guix.org")
+             (compression? #t)
+             (forward-agent? #t)
+             (forward-x11-trusted? #t)
+             (forward-x11? #t))
+           (openssh-host
+             (name "precision")
+             (compression? #t)
+             (forward-agent? #t)
+             (forward-x11-trusted? #t)
+             (forward-x11? #t))))))
