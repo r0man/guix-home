@@ -95,7 +95,6 @@
         jq
         libatasmart
         libvterm
-        mu
         mumi
         ncurses
         node-lts
@@ -164,6 +163,5 @@
         mplayer
         nerd-dictation/xdotool
         redshift
-        rofi
         xdg-desktop-portal
         xdg-desktop-portal-gtk))

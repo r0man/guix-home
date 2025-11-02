@@ -79,7 +79,6 @@
                            xbindkeys
                            xclip
                            xdg-utils
-                           xdotool
                            xdpyinfo
                            xrandr
                            xrdb
