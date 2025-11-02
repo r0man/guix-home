@@ -2147,11 +2147,6 @@ Configure mu with:
            ))
 #+end_src
 
-** Multiple cursors
-#+begin_src emacs-lisp
-  (use-package multiple-cursors
-    :defer 1)
-#+end_src
 ** Nucli
 #+begin_src emacs-lisp
   (use-package nucli

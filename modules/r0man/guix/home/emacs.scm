@@ -235,7 +235,6 @@
       emacs-mu4e-alert
       emacs-multi-term
       emacs-multi-vterm
-      emacs-multiple-cursors
       emacs-nano-theme
       emacs-nord-theme
       emacs-oauth2
