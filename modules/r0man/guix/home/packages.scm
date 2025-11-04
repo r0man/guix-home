@@ -120,6 +120,7 @@
         texi2html
         texinfo
         tor
+        tree
         tree-sitter
         tree-sitter-bash
         tree-sitter-cli
