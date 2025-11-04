@@ -33,7 +33,7 @@
              (extra-content
               (string-join
                '("ControlMaster auto"
-                 "ControlPath /tmp/ssh-%r@%h:%p"
+                 "ControlPath ~/.ssh/control-%h-%p-%r"
                  "ControlPersist 10m")
                "\n")))
            (openssh-host
