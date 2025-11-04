@@ -75,7 +75,7 @@
   (list `(,isc-bind "utils")
         autoconf
         automake
-        beads
+        ;; beads
         cmake
         coreutils
         ffmpeg
