@@ -34,7 +34,8 @@
               (string-join
                '("ControlMaster auto"
                  "ControlPath ~/.ssh/control-%h-%p-%r"
-                 "ControlPersist 10m")
+                 "ControlPersist 10m"
+                 "SendEnv COLORTERM")
                "\n")))
            (openssh-host
              (name "www.asahi-guix.org")

@@ -1569,6 +1569,14 @@ The maximum size in lines for term buffers.
   (setq term-buffer-maximum-size (* 10 2048))
 #+end_src
 
+Full color support in terminals.
+
+#+begin_src emacs-lisp
+  (add-to-list 'term-file-aliases '("screen.xterm-256color" . "xterm-256color"))
+  (add-to-list 'term-file-aliases '("xterm-kitty" . "xterm-direct"))
+  (add-to-list 'term-file-aliases '("tmux-256color" . "xterm-direct"))
+#+end_src
+
 Use Firefox as default browser.
 
 #+begin_src emacs-lisp

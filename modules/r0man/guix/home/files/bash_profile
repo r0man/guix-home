@@ -80,6 +80,13 @@ fi
 
 export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
 
+## TERMINAL COLOR SUPPORT
+
+# Enable 24-bit true color support for kitty terminal
+if [[ "$TERM" == "xterm-kitty" ]]; then
+    export COLORTERM=truecolor
+fi
+
 ## COURSIER
 
 export PATH="$PATH:/home/roman/.local/share/coursier/bin"

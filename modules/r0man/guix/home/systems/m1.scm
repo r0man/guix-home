@@ -36,17 +36,19 @@
   #:use-module (r0man guix home ssh)
   #:use-module (r0man guix home stumpwm)
   #:use-module (r0man guix home sway)
+  #:use-module (r0man guix home tmux)
   #:use-module (r0man guix home waybar)
   #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home xdg)
   #:use-module (r0man guix home x11))
 
 (define services
-  (list (service home-bash-service-type
-                 home-bash-default-configuration)
-        (service home-batsignal-service-type
-                 home-batsignal-default-configuration)
-        (service home-btop-service-type)
+  (append home-tmux-services
+          (list (service home-bash-service-type
+                         home-bash-default-configuration)
+                (service home-batsignal-service-type
+                         home-batsignal-default-configuration)
+                (service home-btop-service-type)
         (service home-channels-service-type
                  home-channels-default-list)
         (service home-clojure-service-type)
@@ -81,7 +83,7 @@
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
         (service home-xdg-mime-applications-service-type
-                 home-xdg-mime-applications-default-configuration)))
+                 home-xdg-mime-applications-default-configuration))))
 
 (define-public m1-home-environment
   (home-environment
