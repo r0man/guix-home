@@ -32,6 +32,10 @@ if [ -n "${XAUTHORITY:-}" ] && [ -f "$XAUTHORITY" ]; then
     SHELL_ARGS+=(--expose="$XAUTHORITY")
 fi
 
+# Node
+export NPM_CONFIG_PREFIX="${HOME}/.npm/node_modules"
+export PATH="$PATH:$NPM_CONFIG_PREFIX/bin"
+
 # Ensure required directories exist
 mkdir -p "$HOME/.claude"
 
@@ -52,6 +56,7 @@ exec guix shell \
      --preserve='^HOME$' \
      --preserve='^LANG$' \
      --preserve='^LC_.*$' \
+     --preserve='^NPM_CONFIG_PREFIX$' \
      --preserve='^PATH$' \
      --preserve='^SSH_AUTH_SOCK$' \
      --preserve='^TERM$' \
@@ -65,10 +70,10 @@ exec guix shell \
      --share="$HOME/.config/git" \
      --share="$HOME/.emacs.d" \
      --share="$HOME/.gitconfig" \
+     --share="$HOME/.npm" \
      --share="$HOME/.ssh/known_hosts" \
      "${SHELL_ARGS[@]}" \
      bash \
-     beads \
      coreutils \
      curl \
      diffutils \
@@ -81,6 +86,7 @@ exec guix shell \
      inetutils \
      jq \
      ncurses \
+     node \
      node-anthropic-ai-claude-code \
      nss-certs \
      openssh \
@@ -92,4 +98,4 @@ exec guix shell \
      tree \
      wget \
      which \
-     -- claude $CLAUDE_ARGS "$@"
+     -- claude $CLAUDE_ARGS $@
