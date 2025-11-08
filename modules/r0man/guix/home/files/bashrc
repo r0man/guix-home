@@ -14,6 +14,10 @@ PS1='[\u@\h \W]\$ '
 # Use bash-completion, if available
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
+# Beads
+export BEADS_AUTO_START_DAEMON=false
+export BEADS_NO_DAEMON=1
+
 #GUIX
 
 GUIX_PROFILE="$HOME/.guix-profile"
