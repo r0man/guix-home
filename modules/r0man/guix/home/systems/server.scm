@@ -28,7 +28,8 @@
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
-  #:use-module (r0man guix home ssh))
+  #:use-module (r0man guix home ssh)
+  #:use-module (r0man guix home tmux))
 
 (define services
   (list (service home-bash-service-type
@@ -55,7 +56,8 @@
         (service home-nix-service-type)
         (service home-openssh-service-type
                  home-openssh-default-configuration)
-        (service home-ssh-agent-service-type)))
+        (service home-ssh-agent-service-type)
+        (service home-tmux-services)))
 
 (define-public server-home-environment
   (home-environment
