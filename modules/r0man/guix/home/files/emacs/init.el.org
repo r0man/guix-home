@@ -600,6 +600,12 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
     (eca-chat-use-side-window nil)
     (eca-custom-command '("~/workspace/eca/eca" "server" "--log-level" "debug" "--verbose")))
 #+end_src
+** Eat
+#+begin_src emacs-lisp
+  (use-package eat
+    :bind (;; ("C-x M" . multi-vterm)
+           ("C-x m" . eat)))
+#+end_src
 ** Efrit
 #+begin_src emacs-lisp
   (use-package efrit
@@ -2143,6 +2149,7 @@ Configure mu with:
 
 #+begin_src emacs-lisp
   (use-package multi-vterm
+    :disabled
     :bind (("C-x M" . multi-vterm)
            ("C-x m" . multi-vterm-next)
            ;; :map projectile-mode-map
