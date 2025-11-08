@@ -10,8 +10,8 @@
 ;;; Commentary:
 ;;;
 ;;; Home service for Claude Code AI assistant configuration.
-;;; Manages ~/.claude/agents, ~/.claude/commands, and
-;;; ~/.claude/settings.json.
+;;; Manages ~/.claude/agents, ~/.claude/commands, ~/.claude/skills,
+;;; and ~/.claude/settings.json.
 ;;;
 ;;; Code:
 
@@ -24,6 +24,9 @@
   (commands home-claude-code-commands
             (default (local-file "files/claude-code/commands" #:recursive? #t))
             (description "Path to commands directory."))
+  (skills home-claude-code-skills
+          (default (local-file "files/claude-code/skills" #:recursive? #t))
+          (description "Path to skills directory."))
   (packages home-claude-code-packages
             (default (list node-anthropic-ai-claude-code))
             (description "List of Claude Code packages to install."))
@@ -36,6 +39,7 @@
   `(("bin/container-claude" ,(local-file "files/bin/container-claude" #:recursive? #t))
     (".claude/agents" ,(home-claude-code-agents config))
     (".claude/commands" ,(home-claude-code-commands config))
+    (".claude/skills" ,(home-claude-code-skills config))
     (".claude/settings.json" ,(home-claude-code-settings config))))
 
 (define (home-claude-code-profile-packages config)
