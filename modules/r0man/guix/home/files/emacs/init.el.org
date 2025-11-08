@@ -2927,6 +2927,15 @@ Fully-fledged terminal emulator inside Emacs.
     :custom
     (vterm-max-scrollback 100000))
 #+end_src
+** Clipetty
+
+Enable clipboard support in terminal emulators.
+
+#+begin_src emacs-lisp
+  (use-package clipetty
+    :ensure t
+    :bind ("M-w" . clipetty-kill-ring-save))
+#+end_src
 ** Warnings
 
 Log and display warnings.

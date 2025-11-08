@@ -131,6 +131,7 @@
       emacs-claude-code
       emacs-claude-code-ide
       emacs-claudemacs
+      emacs-clipetty
       emacs-clj-refactor
       emacs-clojure-mode-extra-font-locking
       emacs-clojure-ts-mode
