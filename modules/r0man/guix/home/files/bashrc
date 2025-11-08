@@ -60,6 +60,13 @@ vterm_prompt_end(){
 
 PS1=$PS1'\[$(vterm_prompt_end)\]'
 
+## EAT (Emulate A Terminal)
+
+# Source eat's bash integration if available
+if [ -n "$EAT_SHELL_INTEGRATION_DIR" ]; then
+    source "$EAT_SHELL_INTEGRATION_DIR/bash"
+fi
+
 # Reset custom shell prompt when logged in with Tramp.
 if [ "$TERM" == "dumb" ]; then
     PS1="[\u@\h \w]$ "
