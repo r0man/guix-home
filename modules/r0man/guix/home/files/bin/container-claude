@@ -32,6 +32,15 @@ if [ -n "${XAUTHORITY:-}" ] && [ -f "$XAUTHORITY" ]; then
     SHELL_ARGS+=(--expose="$XAUTHORITY")
 fi
 
+# Beads directories (if available)
+if [ -d "$HOME/.beads" ]; then
+    SHELL_ARGS+=(--share="$HOME/.beads")
+fi
+
+if [ -d "$HOME/.beads-planning" ]; then
+    SHELL_ARGS+=(--share="$HOME/.beads-planning")
+fi
+
 # Ensure required directories exist
 mkdir -p "$HOME/.claude"
 
@@ -60,8 +69,6 @@ exec guix shell \
      --preserve='^XDG_CONFIG_HOME$' \
      --preserve='^XDG_DATA_HOME$' \
      --preserve='^XDG_RUNTIME_DIR$' \
-     --share="$HOME/.beads" \
-     --share="$HOME/.beads-planning" \
      --share="$HOME/.claude" \
      --share="$HOME/.claude.json" \
      --share="$HOME/.config/git" \
