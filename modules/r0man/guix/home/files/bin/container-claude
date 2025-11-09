@@ -60,6 +60,8 @@ exec guix shell \
      --preserve='^XDG_CONFIG_HOME$' \
      --preserve='^XDG_DATA_HOME$' \
      --preserve='^XDG_RUNTIME_DIR$' \
+     --share="$HOME/.beads" \
+     --share="$HOME/.beads-planning" \
      --share="$HOME/.claude" \
      --share="$HOME/.claude.json" \
      --share="$HOME/.config/git" \
