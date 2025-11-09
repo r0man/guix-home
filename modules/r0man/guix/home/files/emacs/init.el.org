@@ -261,6 +261,7 @@ Reload files when they change on disk.
 ** Beads
 #+begin_src emacs-lisp
   (use-package beads
+    :bind (("C-x C-g b" . beads))
     :commands (beads)
     :load-path ("~/workspace/beads.el/lisp"
                 "~/workspace/beads.el/lisp/test")
