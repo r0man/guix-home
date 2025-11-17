@@ -1,4 +1,5 @@
 {
+  "includeCoAuthoredBy": false,
   "mcpServers": {
     "clojure-mcp": {
       "type": "stdio",
