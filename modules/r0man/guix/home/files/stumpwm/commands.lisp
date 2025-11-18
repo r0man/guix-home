@@ -38,6 +38,10 @@
   "Run the web browser."
   (librewolf))
 
+(defcommand btop () ()
+  "Run btop."
+  (run-or-raise "kitty --name BTop btop" '(:instance "BTop")))
+
 (defcommand htop () ()
   "Run htop."
   (run-or-raise "kitty --name HTop htop" '(:instance "HTop")))
