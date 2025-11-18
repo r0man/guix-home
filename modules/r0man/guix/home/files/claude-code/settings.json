@@ -13,7 +13,6 @@
       "Bash(guix:*)"
     ],
     "deny": [
-      "Bash(curl:*)",
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)"
