@@ -507,7 +507,6 @@ Run the current buffer through zprint.
     :custom
     (claude-code-ide-cli-extra-flags "")
     (claude-code-ide-cli-path "container-claude")
-    (claude-code-ide-terminal-backend 'eat)
     (claude-code-ide-use-side-window nil)
     :config
     (claude-code-ide-emacs-tools-setup))
