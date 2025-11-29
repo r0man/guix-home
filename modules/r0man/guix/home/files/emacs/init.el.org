@@ -611,7 +611,7 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
                efrit-streamlined-send
                efrit-unified-do)
     :custom
-    (efrit-api-key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))
+    (efrit-api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com" :user "personal"))))
 #+end_src
 ** Eldoc
 
