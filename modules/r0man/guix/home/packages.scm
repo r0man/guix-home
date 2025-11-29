@@ -131,7 +131,6 @@
         tree-sitter-html
         tree-sitter-json
         tree-sitter-markdown
-        tree-sitter-markdown-gfm
         tree-sitter-org
         tree-sitter-scheme
         unzip
