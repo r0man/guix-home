@@ -143,6 +143,7 @@
       emacs-consult
       emacs-consult-gh
       emacs-corfu
+      emacs-cov
       emacs-dall-e
       emacs-dart-mode
       emacs-debbugs
