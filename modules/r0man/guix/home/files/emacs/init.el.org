@@ -2985,7 +2985,9 @@ whisper.cpp as inference engine.
     (defun whisper--find-whispercpp-main ()
       "Find whisper.cpp main binary in a backward compatible way."
       "whisper-cli")
+    (defun whisper--ensure-server ())
     :custom
+    (whisper-server-mode 'local)
     (whisper-install-directory "~/workspace/")
     (whisper-install-whispercpp 'manual)
     (whisper-language "en")
