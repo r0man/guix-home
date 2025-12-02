@@ -38,6 +38,12 @@
                  "SendEnv COLORTERM")
                "\n")))
            (openssh-host
+             (name "localhost")
+             (compression? #t)
+             (forward-agent? #t)
+             (forward-x11-trusted? #t)
+             (forward-x11? #t))
+           (openssh-host
              (name "www.asahi-guix.org")
              (compression? #t)
              (forward-agent? #t)
