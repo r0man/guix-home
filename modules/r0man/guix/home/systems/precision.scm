@@ -158,7 +158,12 @@ EndSection"))
         (service home-sway-service-type)
         (service home-unclutter-service-type)
         (service home-waybar-service-type)
-        (service home-whisper-server-service-type)
+        (service home-whisper-server-service-type
+                 (home-whisper-server-configuration
+                  (environment
+                   `(("MESA_VK_DEVICE_SELECT" . "10de:25b9")
+                     ("__NV_PRIME_RENDER_OFFLOAD" . "1")
+                     ("__VK_LAYER_NV_optimus" . "NVIDIA_only")))))
         (service home-wofi-service-type)
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
