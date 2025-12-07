@@ -162,14 +162,11 @@ EndSection"))
         (service home-waybar-service-type)
         (service home-whisper-server-service-type
                  (home-whisper-server-configuration
+                  (environment `(("MESA_VK_DEVICE_SELECT" . "10de:25b9")))
                   (model "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin")
-                  (package (replace-mesa whisper-cpp))
-                  (packages (map replace-mesa (list ffmpeg nvda vulkan-loader whisper-cpp)))
-                  ;; (environment
-                  ;;  `(("MESA_VK_DEVICE_SELECT" . "10de:25b9")
-                  ;;    ("__NV_PRIME_RENDER_OFFLOAD" . "1")
-                  ;;    ("__VK_LAYER_NV_optimus" . "NVIDIA_only")))
-                  ))
+                  (packages (list ffmpeg nvda vulkan-loader))
+                  (vad-model "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin")
+                  (vad? #t)))
         (service home-wofi-service-type)
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
