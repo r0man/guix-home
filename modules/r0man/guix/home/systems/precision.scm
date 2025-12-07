@@ -11,6 +11,8 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages machine-learning)
+  #:use-module (gnu packages video)
   #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services xorg)
@@ -160,10 +162,14 @@ EndSection"))
         (service home-waybar-service-type)
         (service home-whisper-server-service-type
                  (home-whisper-server-configuration
-                  (environment
-                   `(("MESA_VK_DEVICE_SELECT" . "10de:25b9")
-                     ("__NV_PRIME_RENDER_OFFLOAD" . "1")
-                     ("__VK_LAYER_NV_optimus" . "NVIDIA_only")))))
+                  (model "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin")
+                  (package (replace-mesa whisper-cpp))
+                  (packages (map replace-mesa (list ffmpeg nvda vulkan-loader whisper-cpp)))
+                  ;; (environment
+                  ;;  `(("MESA_VK_DEVICE_SELECT" . "10de:25b9")
+                  ;;    ("__NV_PRIME_RENDER_OFFLOAD" . "1")
+                  ;;    ("__VK_LAYER_NV_optimus" . "NVIDIA_only")))
+                  ))
         (service home-wofi-service-type)
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
