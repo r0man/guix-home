@@ -214,6 +214,7 @@
         emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
+        emacs-kele
         emacs-kind-icon
         emacs-kotlin-mode
         emacs-kubel
