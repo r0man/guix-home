@@ -601,6 +601,17 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
     (eca-chat-use-side-window nil)
     (eca-custom-command '("~/workspace/eca/eca" "server" "--log-level" "debug" "--verbose")))
 #+end_src
+** Ef Themes
+
+The ef-themes are a collection of light and dark themes for GNU Emacs
+whose goal is to provide colorful ("pretty") yet legible options for
+users who want something with a bit more flair than the modus-themes.
+
+#+begin_src emacs-lisp
+  (use-package ef-themes
+    :commands (ef-themes-load-random
+               ef-themes-rotate))
+#+end_src
 ** Efrit
 #+begin_src emacs-lisp
   (use-package efrit
