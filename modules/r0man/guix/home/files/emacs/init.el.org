@@ -1890,7 +1890,13 @@ Lisp bindings to JIRA REST API.
     :after (ox-jira)
     :defer t)
 #+end_src
-
+** Kele
+#+begin_src emacs-lisp
+  (use-package kele
+    :disabled
+    :config
+    (kele-mode 1))
+#+end_src
 ** Kubel
 #+begin_src emacs-lisp
   (use-package kubel
