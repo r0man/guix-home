@@ -28,6 +28,13 @@
 ;;;
 ;;; Code:
 
+;; Pre-load org files at module load time when current-filename is available
+(define %init-el-org
+  (local-file "files/emacs/init.el.org"))
+
+(define %early-init-el-org
+  (local-file "files/emacs/early-init.el.org"))
+
 ;; Helper to infer output filename from org filename
 (define (infer-output-name org-file-name)
   "Infer tangled output name from ORG-FILE-NAME.
@@ -38,16 +45,13 @@
         (substring name 0 (- len 4))
         name)))
 
-;; Helper to tangle any org file during build
-(define* (tangle-org-file file-name #:key (filename #f))
-  "Create a computed-file that tangles FILE-NAME to FILENAME.
-   FILE-NAME must be a string path to the org file (relative to module).
-   FILENAME defaults to inferring from FILE-NAME (e.g., init.el.org -> init.el)"
-  (let* ((module-dir (or (and=> (current-filename) dirname)
-                         (string-append (getcwd) "/modules/r0man/guix/home")))
-         (full-path (string-append module-dir "/" file-name))
-         (org-file (local-file full-path))
-         (result-name (or filename (infer-output-name file-name))))
+;; Helper to tangle an org file during build
+(define* (tangle-org-file org-file result-name)
+  "Create a computed-file that tangles ORG-FILE to RESULT-NAME.
+   ORG-FILE must be a file-like object (e.g., from local-file).
+   RESULT-NAME is the output filename (e.g., 'init.el')."
+  (let ((org-file org-file)
+        (result-name result-name))
     (computed-file
      result-name
      (with-imported-modules '((guix build utils))
@@ -60,7 +64,7 @@
 
              (let* ((emacs #$(file-append emacs-minimal "/bin/emacs"))
                     (org-file #$org-file)
-                    (output-basename #$(infer-output-name file-name))
+                    (output-basename #$result-name)
                     (temp-dir (tmpnam))
                     (temp-org (string-append temp-dir "/input.org")))
 
@@ -305,17 +309,21 @@
         emacs-yasnippet-snippets
         clhs))
 
+;; Pre-load bookmarks file at module load time
+(define %emacs-bookmarks
+  (local-file "files/emacs/bookmarks"))
+
 (define-record-type* <home-emacs-configuration>
   home-emacs-configuration make-home-emacs-configuration
   home-emacs-configuration?
   (init-file home-emacs-init-file
-             (default (tangle-org-file "files/emacs/init.el.org"))
+             (default (tangle-org-file %init-el-org "init.el"))
              (description "Tangled init.el file."))
   (early-init-file home-emacs-early-init-file
-                   (default (tangle-org-file "files/emacs/early-init.el.org"))
+                   (default (tangle-org-file %early-init-el-org "early-init.el"))
                    (description "Tangled early-init.el file."))
   (bookmarks-file home-emacs-bookmarks-file
-                  (default (local-file "files/emacs/bookmarks"))
+                  (default %emacs-bookmarks)
                   (description "Emacs bookmarks file."))
   (packages home-emacs-packages
             (default default-emacs-packages)
