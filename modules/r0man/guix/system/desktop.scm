@@ -71,7 +71,6 @@
                                     %bluetooth-service
                                     %containerd-service
                                     %cups-service
-                                    %docker-service
                                     %libvirt-service
                                     %nix-service
                                     %openssh-service
