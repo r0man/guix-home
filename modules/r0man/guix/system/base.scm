@@ -17,7 +17,7 @@
          "network-manager")))
 
 (define %supplementary-groups
-  '("audio" "cgroup" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
+  '("audio" "cgroup" "kvm" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
 
 (define %users
   (list (user-account
