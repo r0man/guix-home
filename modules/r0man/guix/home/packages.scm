@@ -68,7 +68,10 @@
   (list))
 
 (define packages-x86-64
-  (list gimp
+  (list flameshot
+        gimp
+        libreoffice
+        nerd-dictation/xdotool
         pandoc
         python-yubikey-manager))
 
@@ -142,8 +145,7 @@
         zip))
 
 (define packages-desktop
-  (list flameshot
-        flatpak
+  (list flatpak
         font-adobe-source-code-pro
         font-awesome
         font-dejavu
@@ -161,9 +163,7 @@
         fontconfig
         gtk+ ;; Provide org.gtk.Settings.FileChooser
         inkscape
-        libreoffice
         mplayer
-        nerd-dictation/xdotool
         redshift
         xdg-desktop-portal
         xdg-desktop-portal-gtk))
