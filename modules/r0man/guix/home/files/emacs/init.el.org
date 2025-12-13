@@ -19,33 +19,18 @@ Setup package archives for package.el.
           ("gnu" . "http://elpa.gnu.org/packages/")))
 #+end_src
 
-** Theme
+** Ef Themes
 
-Load the theme.
+The ef-themes are a collection of light and dark themes for GNU Emacs
+whose goal is to provide colorful ("pretty") yet legible options for
+users who want something with a bit more flair than the modus-themes.
 
 #+begin_src emacs-lisp
-  (defun current-theme ()
-    "Return the theme, depending on the current month and hour of the day."
-    (let ((month (string-to-number (format-time-string "%m")))
-          (hour (string-to-number (format-time-string "%H"))))
-      (cond
-       ;; Use dark theme in winter
-       ((member month '(1 2 3 10 11 12))
-        'solarized-dark)
-       ((member hour '(10 11 12 13 14 15 16))
-        'solarized-light)
-       (t 'solarized-dark))))
-
-  (let ((theme 'nord))
-    (if (daemonp)
-        (add-hook 'after-make-frame-functions
-                  (lambda (frame)
-                    (select-frame frame)
-                    (load-theme theme)))
-      (load-theme theme))
-    (add-hook 'after-init-hook
-              (lambda ()
-                (load-theme theme))))
+  (use-package ef-themes
+    :commands (ef-themes-load-random
+               ef-themes-rotate)
+    :init
+    (ef-themes-load-random))
 #+end_src
 
 ** Fonts
@@ -600,17 +585,6 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
     :custom
     (eca-chat-use-side-window nil)
     (eca-custom-command '("~/workspace/eca/eca" "server" "--log-level" "debug" "--verbose")))
-#+end_src
-** Ef Themes
-
-The ef-themes are a collection of light and dark themes for GNU Emacs
-whose goal is to provide colorful ("pretty") yet legible options for
-users who want something with a bit more flair than the modus-themes.
-
-#+begin_src emacs-lisp
-  (use-package ef-themes
-    :commands (ef-themes-load-random
-               ef-themes-rotate))
 #+end_src
 ** Efrit
 #+begin_src emacs-lisp
