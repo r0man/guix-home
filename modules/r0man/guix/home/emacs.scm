@@ -114,7 +114,7 @@
                  (delete-file-recursively temp-dir)))))))))
 
 (define default-emacs-packages
-  (list (if (target-aarch64?) emacs-pgtk emacs)
+  (list (if (target-aarch64?) emacs emacs)
         emacs-adoc-mode
         emacs-agent-shell
         emacs-aider
