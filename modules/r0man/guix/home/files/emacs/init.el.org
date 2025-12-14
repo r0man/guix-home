@@ -490,6 +490,8 @@ Run the current buffer through zprint.
     :commands (claude-code-ide)
     :bind ("C-c C-'" . claude-code-ide-menu)
     :custom
+    ;; (claude-code-ide-cli-extra-flags "--dangerously-skip-permissions")
+    ;; (claude-code-ide-cli-path "claude")
     (claude-code-ide-cli-extra-flags "")
     (claude-code-ide-cli-path "container-claude")
     (claude-code-ide-use-side-window nil)
