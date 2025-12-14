@@ -3048,7 +3048,7 @@ The YASnippet collection.
 ** Window Scrolling
 
 #+begin_src emacs-lisp
-  ;; (add-hook 'window-scroll-functions (lambda (window startp) (redraw-frame)))
+  (add-hook 'window-scroll-functions (lambda (window startp) (redraw-frame)))
 #+end_src
 
 ** After init hook
