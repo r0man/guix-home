@@ -1,5 +1,4 @@
 (define-module (r0man guix home hyprland)
-  #:use-module (asahi guix packages gl)
   #:use-module (gnu home services)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages linux)
@@ -366,7 +365,7 @@
                (default config)
                (description "Hyprland configuration file."))
   (packages home-hyprland-packages
-            (default (list (if (target-aarch64?) (replace-mesa hyprland) hyprland)
+            (default (list hyprland
                            nordic-theme
                            waybar
                            wireplumber

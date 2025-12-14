@@ -2,12 +2,8 @@
   #:use-module ((gnu services sound) #:prefix sound:)
   #:use-module (asahi guix initrd)
   #:use-module (asahi guix packages audio)
-  #:use-module (asahi guix packages display-managers)
-  #:use-module (asahi guix packages gl)
   #:use-module (asahi guix packages linux)
   #:use-module (asahi guix packages misc)
-  #:use-module (asahi guix packages wm)
-  #:use-module (asahi guix packages xorg)
   #:use-module (asahi guix services firmware)
   #:use-module (asahi guix services sound)
   #:use-module (asahi guix services udev)
@@ -61,16 +57,14 @@
 
 (define %packages
   (cons* asahi-alsa-utils
-         asahi-mesa-utils
-         asahi-sway
+         sway
          asahi-scripts
          network-manager
          (remove (lambda (package)
                    (equal? "network-manager" (package-name package)))
-                 (map replace-mesa
-                      (cons* hyprland
-                             stumpwm
-                             (operating-system-packages desktop-operating-system))))))
+                 (cons* hyprland
+                        stumpwm
+                        (operating-system-packages desktop-operating-system)))))
 
 (define %mapped-devices
   (list (mapped-device
@@ -99,20 +93,18 @@
 (define %xorg-configuration
   (xorg-configuration
    (keyboard-layout %keyboard-layout)
-   (modules (map replace-mesa
-                 (list xf86-video-fbdev
-                       xf86-input-libinput
-                       xf86-input-evdev
-                       xf86-input-mouse)))
+   (modules (list xf86-video-fbdev
+                  xf86-input-libinput
+                  xf86-input-evdev
+                  xf86-input-mouse))
    (extra-config (list %xorg-libinput-config
-                       %xorg-modeset-config))
-   (server asahi-xorg-server)))
+                       %xorg-modeset-config))))
 
 (define %sddm-service
   (service sddm-service-type
            (sddm-configuration
             (auto-login-user "roman")
-            (sddm (replace-mesa sddm-qt5))
+            (sddm sddm-qt5)
             (theme "guix-sugar-light")
             (themes-directory (file-append guix-sugar-light-sddm-theme "/share/sddm/themes"))
             (xorg-configuration %xorg-configuration))))
@@ -162,12 +154,12 @@
                 (systems (list "aarch64-linux"))
                 (user "root")
                 (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZPlAeMk4hiHKHDCoDd1bT/ddMaZZR0iMWHE/mCGDFX"))
-             ;; #~(build-machine
-             ;;    (name "m1.local")
-             ;;    (systems (list "aarch64-linux"))
-             ;;    (speed 2.0)
-             ;;    (user "root")
-             ;;    (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNeSygSvBbdxA8FkDGXHM9Nb/6fqzWluqxQO6eUWjb6"))
+             #~(build-machine
+                (name "m1.local")
+                (systems (list "aarch64-linux"))
+                (speed 2.0)
+                (user "root")
+                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNeSygSvBbdxA8FkDGXHM9Nb/6fqzWluqxQO6eUWjb6"))
              #~(build-machine
                 (name "precision.local")
                 (systems (list "x86_64-linux"))
