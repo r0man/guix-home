@@ -251,6 +251,9 @@ Reload files when they change on disk.
     :load-path ("~/workspace/beads.el/lisp"
                 "~/workspace/beads.el/lisp/test")
     :bind ("C-c b" . beads)
+    :custom
+    (beads-debug-level 'verbose)
+    (beads-enable-debug t)
     :hook (after-init . beads-eldoc-mode))
 #+end_src
 ** Bug Reference
