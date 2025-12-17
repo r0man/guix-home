@@ -24,6 +24,7 @@
                    (description "Path to clojure-lsp config.edn file."))
   (packages home-clojure-packages
             (default (list r0man:babashka
+                           r0man:bbin
                            r0man:clojure-lsp
                            leiningen))
             (description "List of Clojure-related packages to install.")))
