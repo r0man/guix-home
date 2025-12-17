@@ -2,6 +2,7 @@
   #:use-module ((r0man guix packages clojure) #:prefix r0man:)
   #:use-module (gnu home services)
   #:use-module (gnu packages clojure)
+  #:use-module (gnu packages text-editors)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
@@ -26,7 +27,8 @@
             (default (list r0man:babashka
                            r0man:bbin
                            r0man:clojure-lsp
-                           leiningen))
+                           leiningen
+                           parinfer-rust))
             (description "List of Clojure-related packages to install.")))
 
 (define (home-clojure-files config)
