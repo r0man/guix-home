@@ -152,19 +152,16 @@
        (list #~(build-machine
                 (name "m1.local")
                 (systems (list "aarch64-linux"))
-                (speed 2.0)
                 (user "root")
                 (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNeSygSvBbdxA8FkDGXHM9Nb/6fqzWluqxQO6eUWjb6"))
              #~(build-machine
                 (name "www.asahi-guix.org")
                 (systems (list "aarch64-linux"))
-                (speed 1.0)
                 (user "root")
                 (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZPlAeMk4hiHKHDCoDd1bT/ddMaZZR0iMWHE/mCGDFX"))
              #~(build-machine
                 (name "precision.local")
                 (systems (list "x86_64-linux"))
-                (speed 1.0)
                 (user "root")
                 (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPgG2A1s40fYCkbqYW4K3Hs+Ap/iFDysLiw/8OXZLFRZ"))))
       (channels %channels)
