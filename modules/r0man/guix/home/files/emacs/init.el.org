@@ -181,6 +181,7 @@ system.
   (use-package agent-shell
     :commands (agent-shell-anthropic-start-claude-code)
     :custom
+    (agent-shell-header-style 'text)
     (agent-shell-anthropic-authentication
      (agent-shell-anthropic-make-authentication
       :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))))
