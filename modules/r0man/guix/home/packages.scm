@@ -84,6 +84,7 @@
         coreutils
         ffmpeg
         file
+        forgejo-cli
         gcc-toolchain
         glibc-locales
         `(,glib "bin")
