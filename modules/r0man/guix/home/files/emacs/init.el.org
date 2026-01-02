@@ -1631,6 +1631,7 @@ http://stackoverflow.com/questions/3072648/cucumbers-ansi-colors-messing-up-emac
 
 #+begin_src emacs-lisp
   (use-package desktop
+    :disabled
     :defer 5
     :config
     (desktop-save-mode 1)
