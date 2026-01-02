@@ -85,6 +85,7 @@
         ffmpeg
         file
         forgejo-cli
+        gastown
         gcc-toolchain
         glibc-locales
         `(,glib "bin")
