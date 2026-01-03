@@ -16,6 +16,7 @@
   (channel
    (name 'guix)
    (url "https://git.guix.gnu.org/guix.git")
+   (commit "52366256c4fddb381d2d3f3e96608b621dd70fa1")
    (introduction
     (make-channel-introduction
      "9edb3f66fd807b096b48283debdcddccfea34bad"
@@ -27,6 +28,7 @@
    (name 'nonguix)
    (url "https://gitlab.com/nonguix/nonguix")
    (branch "master")
+   (commit "889b2f01dc2375bfdd3d3fda378c45159fa06f00")
    (introduction
     (make-channel-introduction
      "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
