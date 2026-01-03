@@ -150,19 +150,6 @@
               %default-authorized-guix-keys))
       (build-machines
        (list #~(build-machine
-                (name "m1.local")
-                (systems (list "aarch64-linux"))
-                (user "root")
-                (speed 1.0)
-                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGNeSygSvBbdxA8FkDGXHM9Nb/6fqzWluqxQO6eUWjb6"))
-             #~(build-machine
-                (name "www.asahi-guix.org")
-                (systems (list "aarch64-linux"))
-                (user "root")
-                (speed 0.1)
-                (parallel-builds 1)
-                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFZPlAeMk4hiHKHDCoDd1bT/ddMaZZR0iMWHE/mCGDFX"))
-             #~(build-machine
                 (name "precision.local")
                 (systems (list "x86_64-linux"))
                 (user "root")
