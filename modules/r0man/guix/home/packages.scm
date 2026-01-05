@@ -57,7 +57,6 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
-  #:use-module (r0man guix packages golang-apps)
   #:use-module (r0man guix packages task-management)
   #:export (packages-aarch64
             packages-base
@@ -141,7 +140,6 @@
         unzip
         util-linux
         vivid
-        vibecoder
         whisper-cpp
         wireless-tools
         zip))
