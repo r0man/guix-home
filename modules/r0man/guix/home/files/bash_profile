@@ -57,6 +57,14 @@ export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
 #     unset profile
 # done
 
+## GRAAL VM
+GRAALVM_HOME="~/graalvm/graalvm-ce-java17-22.3.3"
+if [ -d "$GRAALVM_HOME" ]; then
+    export GRAALVM_HOME
+else
+    unset GRAALVM_HOME
+fi
+
 ## NIX
 
 NIX_PROFILE="/run/current-system/profile/etc/profile.d/nix.sh"
