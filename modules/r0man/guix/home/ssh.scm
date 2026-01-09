@@ -20,13 +20,18 @@
 ;;;
 ;;; Code:
 
-(define %ssh-public-key-roman
-  (local-file "files/ssh/roman@precision.pub" "ssh-public-key-roman"))
+(define %ssh-public-key-roman-burningswell
+  (local-file "files/ssh/roman@burningswell.com.pub" "ssh-public-key-roman-burningswell-com"))
+
+(define %ssh-public-key-roman-precision
+  (local-file "files/ssh/roman@precision.pub" "ssh-public-key-roman-precision"))
 
 (define home-openssh-default-configuration
   (home-openssh-configuration
     (add-keys-to-agent "yes")
-    (authorized-keys (list %ssh-public-key-roman))
+    (authorized-keys
+     (list %ssh-public-key-roman-burningswell
+           %ssh-public-key-roman-precision))
     (hosts
      (list (openssh-host
              (name "*")
