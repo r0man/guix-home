@@ -78,13 +78,13 @@
   (list `(,isc-bind "utils")
         autoconf
         automake
-        beads
+        beads-next
         cmake
         coreutils
         ffmpeg
         file
         forgejo-cli
-        gastown
+        gastown-next
         gcc-toolchain
         glibc-locales
         `(,glib "bin")
