@@ -1903,7 +1903,10 @@ Lisp bindings to JIRA REST API.
     :config
     (setq magit-stage-all-confirm nil)
     (setq magit-unstage-all-confirm nil)
-    (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+    ;; Performance optimizations for magit-revision buffer
+    (setq magit-revision-insert-related-refs nil)
+    (setq magit-diff-refine-hunk t))
 #+end_src
 ** MCP
 
