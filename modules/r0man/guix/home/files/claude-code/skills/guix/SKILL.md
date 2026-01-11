@@ -789,6 +789,7 @@ When working from a Guix repository checkout, refer to these locations:
 8. **Minimize inputs** - only include necessary dependencies
 9. **Propagate sparingly** - only when truly needed by users
 10. **Document unusual choices** - add comments for non-obvious decisions
+11. **Avoid make clean/distclean** - Rebuilding the Guix repo takes time
 
 ## Getting Help
 
