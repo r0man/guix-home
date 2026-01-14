@@ -161,7 +161,7 @@
         emacs-eat
         emacs-edit-indirect
         emacs-efrit
-        ;; emacs-editor-code-assistant
+        emacs-editor-code-assistant
         emacs-ef-themes
         ;; emacs-eglot
         ;; emacs-eglot-java

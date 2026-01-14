@@ -586,7 +586,6 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
 ** Editor Code Assistent
 #+begin_src emacs-lisp
   (use-package eca
-    :load-path ("~/workspace/eca-emacs")
     :commands (eca)
     :custom
     (eca-chat-use-side-window nil)
