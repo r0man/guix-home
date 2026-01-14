@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+export ECA_CONFIG='{"netrcFile": "/tmp/eca-authinfo.$$"}'
+gpg --batch -q -d ~/.authinfo.gpg > /tmp/eca-authinfo.$$
+chmod 600 /tmp/eca-authinfo.$$
+
+# Start eca server in background
+eca server "$@" &
+ECA_PID=$!
+
+# Wait 2 seconds for server to read netrc, then shred it
+sleep 2
+shred -u /tmp/eca-authinfo.$$
+
+# Wait for the eca server process to complete
+wait $ECA_PID
