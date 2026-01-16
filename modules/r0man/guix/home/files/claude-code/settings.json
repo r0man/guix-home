@@ -3,14 +3,6 @@
     "DISABLE_AUTOUPDATER": "1"
   },
   "includeCoAuthoredBy": false,
-  "mcpServers": {
-    "clojure-mcp": {
-      "type": "stdio",
-      "command": "clojure-mcp",
-      "args": [],
-      "env": {}
-    }
-  },
   "model": "opus",
   "permissions": {
     "allow": [
