@@ -11,7 +11,9 @@
     "deny": [
       "Read(~/.authinfo)",
       "Read(~/.authinfo.gpg)",
-      "Read(~/.aws/**)"
+      "Read(~/.aws/**)",
+      "Read(~/.password-store/**)",
+      "Read(~/Mail/**)"
     ]
   }
 }
