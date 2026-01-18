@@ -135,6 +135,7 @@
                           %sddm-service
                           %udev-backlight-service
                           %udev-kbd-backlight-service
+                          %udev-mtd-by-name-service
                           (operating-system-user-services desktop-operating-system))
     (delete sound:alsa-service-type)
     (delete sound:pulseaudio-service-type)
