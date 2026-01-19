@@ -16,6 +16,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
   #:use-module (gnu services containers)
+  #:use-module (gnu services desktop)
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
@@ -125,6 +126,7 @@
 (define %services
   (modify-services (cons* (service alsa-service-type)
                           (service asahi-firmware-service-type)
+                          (service clightd-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
                           (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
@@ -140,6 +142,13 @@
     (delete sound:alsa-service-type)
     (delete sound:pulseaudio-service-type)
     (delete slim-service-type)
+    (geoclue-service-type
+     config =>
+     (geoclue-configuration
+      (inherit config)
+      (applications
+       (cons (geoclue-application "clight")
+             %standard-geoclue-applications))))
     (guix-service-type
      config =>
      (guix-configuration

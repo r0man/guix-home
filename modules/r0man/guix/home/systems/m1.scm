@@ -50,6 +50,9 @@
                 (service home-batsignal-service-type
                          home-batsignal-default-configuration)
                 (service home-btop-service-type)
+        (service home-clight-service-type
+                 (home-clight-configuration
+                  (no-gamma? #t)))
         (service home-channels-service-type
                  home-channels-default-list)
         (service home-claude-code-service-type)
