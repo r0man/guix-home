@@ -167,6 +167,10 @@ EndSection"))
                   (threads 4)
                   (vad-model "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin")
                   (vad? #f)))
+        (service home-whisper-stream-service-type
+                 (home-whisper-stream-configuration
+                  (model "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin")
+                  (gpu-device "1")))
         (service home-wofi-service-type)
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
