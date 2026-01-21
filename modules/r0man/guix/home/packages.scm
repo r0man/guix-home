@@ -140,7 +140,6 @@
         unzip
         util-linux
         vivid
-        whisper-cpp
         wireless-tools
         zip))
 
