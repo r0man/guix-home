@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# Run any command inside a Guix container using pre-built home profile
+#
+# Uses ~/.guix-container-home symlink created by guix home reconfigure.
+
+set -euo pipefail
+
+DEBUG="${DEBUG:-0}"
+CONTAINER_HOME="${CONTAINER_HOME:-$HOME/.guix-container-home}"
+
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS] COMMAND [ARGS...]
+
+Run commands inside a Guix container using pre-built home environment.
+
+Options:
+    -h, --help      Show this help message
+    -d, --debug     Enable debug output
+
+Examples:
+    $(basename "$0") bash
+    $(basename "$0") emacs
+    $(basename "$0") emacs -nw
+EOF
+    exit 0
+}
+
+debug() {
+    [[ "$DEBUG" = "1" ]] && echo "[DEBUG] $*" >&2 || true
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help) usage ;;
+        -d|--debug) DEBUG=1; shift ;;
+        --) shift; break ;;
+        -*) echo "Unknown option: $1" >&2; usage ;;
+        *) break ;;
+    esac
+done
+
+if [[ $# -eq 0 ]]; then
+    echo "Error: No command specified" >&2
+    usage
+fi
+
+COMMAND="$1"
+shift
+
+if [[ ! -d "$CONTAINER_HOME" ]]; then
+    echo "Error: Container home not found at $CONTAINER_HOME" >&2
+    echo "Run 'guix home reconfigure' to build it." >&2
+    exit 1
+fi
+
+debug "Using home: $CONTAINER_HOME"
+
+FILES_PATH=$(readlink -f "$CONTAINER_HOME/files")
+PROFILE_PATH=$(readlink -f "$CONTAINER_HOME/profile")
+
+ARGS=()
+
+# Container home as ~/.guix-home (required for shell profile)
+ARGS+=(--expose="$CONTAINER_HOME"="$HOME/.guix-home")
+
+# Dotfiles from container home (read-only)
+for f in "$FILES_PATH"/.*; do
+    [[ -e "$f" ]] || continue
+    name=$(basename "$f")
+    [[ "$name" == "." || "$name" == ".." ]] && continue
+    debug "Exposing dotfile: $name"
+    ARGS+=(--expose="$f"="$HOME/$name")
+done
+
+# Bin directory from container home
+[[ -d "$FILES_PATH/bin" ]] && {
+    debug "Exposing bin directory"
+    ARGS+=(--expose="$FILES_PATH/bin"="$HOME/bin")
+}
+
+# === SOCKETS ONLY ===
+
+# X11 socket
+[[ -d /tmp/.X11-unix ]] && {
+    debug "Exposing X11 socket"
+    ARGS+=(--expose=/tmp/.X11-unix)
+}
+
+# X11 authority
+[[ -n "${XAUTHORITY:-}" && -f "$XAUTHORITY" ]] && {
+    debug "Exposing XAUTHORITY: $XAUTHORITY"
+    ARGS+=(--expose="$XAUTHORITY")
+}
+
+# SSH agent socket
+[[ -n "${SSH_AUTH_SOCK:-}" && -S "$SSH_AUTH_SOCK" ]] && {
+    debug "Exposing SSH agent socket"
+    ARGS+=(--expose="$SSH_AUTH_SOCK")
+}
+
+# GPG agent socket
+GPG_SOCKET_DIR=$(gpgconf --list-dirs socketdir 2>/dev/null || true)
+[[ -n "$GPG_SOCKET_DIR" && -d "$GPG_SOCKET_DIR" ]] && {
+    debug "Exposing GPG socket dir"
+    ARGS+=(--expose="$GPG_SOCKET_DIR")
+}
+
+# === WRITABLE DIRECTORIES ===
+
+# Workspace (where we actually work)
+mkdir -p "$HOME/workspace"
+ARGS+=(--share="$HOME/workspace")
+
+# Timezone (read-only)
+[[ -f /etc/localtime ]] && ARGS+=(--expose=/etc/localtime)
+
+debug "Starting container with $COMMAND"
+
+# Set SHELL to container's bash (host's /bin/bash doesn't exist in container)
+SHELL="$PROFILE_PATH/bin/bash"
+export SHELL
+
+# Signal to Emacs that we're in a container (exec-path-from-shell needs -l only)
+GUIX_CONTAINER=1
+export GUIX_CONTAINER
+
+# Set XDG_RUNTIME_DIR to non-existent path so on-first-login skips shepherd start
+XDG_RUNTIME_DIR=/nonexistent
+export XDG_RUNTIME_DIR
+
+exec guix shell \
+    --container \
+    --network \
+    --profile="$PROFILE_PATH" \
+    --expose=/gnu/store \
+    --preserve='^DISPLAY$' \
+    --preserve='^GUIX_CONTAINER$' \
+    --preserve='^HOME$' \
+    --preserve='^LANG$' \
+    --preserve='^SHELL$' \
+    --preserve='^SSH_AUTH_SOCK$' \
+    --preserve='^TERM$' \
+    --preserve='^USER$' \
+    --preserve='^XAUTHORITY$' \
+    --preserve='^XDG_RUNTIME_DIR$' \
+    "${ARGS[@]}" \
+    -- "$COMMAND" "$@"

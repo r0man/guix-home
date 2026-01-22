@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Run Emacs inside a Guix container
+#
+# Thin wrapper around container-run with Emacs-specific options.
+
+set -euo pipefail
+
+COMMAND="emacs"
+
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [-- EMACS_ARGS...]
+
+Run Emacs inside a Guix container.
+
+Options:
+    -h, --help      Show this help message
+    -d, --debug     Enable debug output
+    -s, --shell     Start a shell instead of Emacs
+    --              Pass remaining arguments to Emacs
+
+Examples:
+    $(basename "$0")                    # Start Emacs
+    $(basename "$0") -s                 # Start a shell
+    $(basename "$0") -- -nw             # Start Emacs in terminal mode
+    $(basename "$0") -- file.txt        # Open file in Emacs
+EOF
+    exit 0
+}
+
+CONTAINER_RUN_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            usage
+            ;;
+        -d|--debug)
+            CONTAINER_RUN_ARGS+=(-d)
+            shift
+            ;;
+        -s|--shell)
+            COMMAND="bash"
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+exec container-run ${CONTAINER_RUN_ARGS[@]+"${CONTAINER_RUN_ARGS[@]}"} "$COMMAND" "$@"
