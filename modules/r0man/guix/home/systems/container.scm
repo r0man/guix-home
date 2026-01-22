@@ -5,17 +5,22 @@
   #:use-module (gnu home)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages curl)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages less)
+  #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages web)
   #:use-module (gnu packages terminals)
-  #:use-module (r0man guix packages task-management)
   #:use-module (gnu services)
   #:use-module (r0man guix packages clojure)
   #:use-module (r0man guix packages java)
+  #:use-module (r0man guix packages task-management)
   #:use-module (r0man guix home bash)
+  #:use-module (r0man guix home claude-code)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home emacs)
   #:use-module (r0man guix home environment)
+  #:use-module (r0man guix home fzf)
   #:use-module (r0man guix home git)
   #:use-module (r0man guix home ssh)
   #:use-module (r0man guix home tmux))
@@ -44,9 +49,11 @@
   (append home-tmux-services
           (list (service home-bash-service-type
                          home-bash-default-configuration)
+                (service home-claude-code-service-type)
                 (service home-clojure-service-type)
                 (service home-emacs-service-type)
                 (service home-environment-service-type)
+                (service home-fzf-service-type)
                 (service home-git-service-type)
                 (service home-openssh-service-type
                          home-openssh-default-configuration)
@@ -56,14 +63,18 @@
   (list beads-next
         clojure-tools-bin-latest
         coreutils
+        curl
+        fd
         findutils
         font-inconsolata
         glibc-locales
         graalvm-ce
         grep
         inetutils
+        jq
         less
         libvterm
+        ripgrep
         sed
         which))
 
