@@ -246,6 +246,9 @@
 
 (define-key *root-map* (kbd "!") "rofi-run")
 (define-key *root-map* (kbd "E") "exec emacs")
+;; (define-key *root-map* (kbd "E") "exec cd ~/workspace && container-emacs")
+;; (define-key *root-map* (kbd "P") "exec emacs")
+;; (define-key *root-map* (kbd "E") "exec cd ~/workspace && container-emacs")
 (define-key *root-map* (kbd "a") '*applications-keymap*)
 (define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
