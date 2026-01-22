@@ -136,6 +136,9 @@ ARGS+=(--share="$HOME/.claude")
 # Guix daemon socket (for running guix inside container)
 [[ -S /var/guix/daemon-socket/socket ]] && ARGS+=(--expose=/var/guix/daemon-socket)
 
+# Host's guix configuration and binary (for guix commands inside container)
+[[ -d "$HOME/.config/guix" ]] && ARGS+=(--share="$HOME/.config/guix")
+
 debug "Starting container with $COMMAND"
 
 # Set SHELL to container's bash (host's /bin/bash doesn't exist in container)
