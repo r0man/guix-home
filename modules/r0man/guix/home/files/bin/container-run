@@ -116,8 +116,25 @@ ARGS+=(--share="$HOME/workspace")
 mkdir -p "$HOME/.m2"
 ARGS+=(--share="$HOME/.m2")
 
+# Beads task tracking
+[[ -d "$HOME/.beads" ]] && ARGS+=(--share="$HOME/.beads")
+
+# Claude Code config
+mkdir -p "$HOME/.claude"
+ARGS+=(--share="$HOME/.claude")
+[[ -f "$HOME/.claude.json" ]] && ARGS+=(--share="$HOME/.claude.json")
+
+# Git config from host
+[[ -f "$HOME/.gitconfig" ]] && ARGS+=(--share="$HOME/.gitconfig")
+
+# SSH known hosts
+[[ -f "$HOME/.ssh/known_hosts" ]] && ARGS+=(--share="$HOME/.ssh/known_hosts")
+
 # Timezone (read-only)
 [[ -f /etc/localtime ]] && ARGS+=(--expose=/etc/localtime)
+
+# Guix daemon socket (for running guix inside container)
+[[ -S /var/guix/daemon-socket/socket ]] && ARGS+=(--expose=/var/guix/daemon-socket)
 
 debug "Starting container with $COMMAND"
 
@@ -138,6 +155,7 @@ exec guix shell \
     --network \
     --profile="$PROFILE_PATH" \
     --expose=/gnu/store \
+    --preserve='^COLORTERM$' \
     --preserve='^DISPLAY$' \
     --preserve='^GUIX_CONTAINER$' \
     --preserve='^HOME$' \
