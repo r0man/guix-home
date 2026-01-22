@@ -112,6 +112,10 @@ GPG_SOCKET_DIR=$(gpgconf --list-dirs socketdir 2>/dev/null || true)
 mkdir -p "$HOME/workspace"
 ARGS+=(--share="$HOME/workspace")
 
+# Maven local repository (shared for caching)
+mkdir -p "$HOME/.m2"
+ARGS+=(--share="$HOME/.m2")
+
 # Timezone (read-only)
 [[ -f /etc/localtime ]] && ARGS+=(--expose=/etc/localtime)
 
