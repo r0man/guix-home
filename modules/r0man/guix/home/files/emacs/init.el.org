@@ -249,8 +249,8 @@ Reload files when they change on disk.
   (use-package beads
     :bind (("C-x C-g b" . beads))
     :commands (beads)
-    :load-path ("~/workspace/beads.el/lisp"
-                "~/workspace/beads.el/lisp/test")
+    :load-path ("~/workspace/beads.el/bde-koh7/lisp"
+                "~/workspace/beads.el/bde-koh7/lisp/test")
     :bind ("C-c b" . beads)
     :custom
     (beads-debug-level 'verbose)

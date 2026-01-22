@@ -1,8 +1,10 @@
 (define-module (r0man guix home bash)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services)
+  #:use-module (gnu packages rust-apps)
   #:use-module (guix gexp)
-  #:export (home-bash-default-configuration))
+  #:export (home-bash-default-configuration
+            home-bash-packages))
 
 ;;; Commentary:
 ;;;
@@ -17,6 +19,10 @@
 ;;;   (service home-bash-service-type home-bash-default-configuration)
 ;;;
 ;;; Code:
+
+;; Packages required by bash configuration (e.g., vivid for LS_COLORS)
+(define home-bash-packages
+  (list vivid))
 
 (define home-bash-default-configuration
   (home-bash-configuration

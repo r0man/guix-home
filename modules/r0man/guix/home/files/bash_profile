@@ -86,7 +86,9 @@ fi
 
 ## SOLARIZED
 
-export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
+if command -v vivid &>/dev/null; then
+    export LS_COLORS="$(vivid -m 8-bit generate solarized-dark)"
+fi
 
 ## TERMINAL COLOR SUPPORT
 

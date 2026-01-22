@@ -333,7 +333,11 @@
   "Return alist of Emacs configuration files to deploy."
   `((".emacs.d/init.el" ,(home-emacs-init-file config))
     (".emacs.d/early-init.el" ,(home-emacs-early-init-file config))
-    (".emacs.d/bookmarks" ,(home-emacs-bookmarks-file config))))
+    (".emacs.d/bookmarks" ,(home-emacs-bookmarks-file config))
+    ("bin/container-emacs" ,(local-file "files/bin/container-emacs"
+                                         #:recursive? #t))
+    ("bin/container-run" ,(local-file "files/bin/container-run"
+                                       #:recursive? #t))))
 
 (define (home-emacs-profile-packages config)
   "Return list of Emacs packages to install."

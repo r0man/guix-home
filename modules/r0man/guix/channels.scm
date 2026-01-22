@@ -72,6 +72,7 @@
   (list asahi-channel
         guix-channel
         nonguix-channel
-        r0man-guix-channel))
+        r0man-guix-channel
+        r0man-guix-home))
 
 channels
