@@ -8,6 +8,7 @@
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages less)
   #:use-module (gnu packages terminals)
+  #:use-module (r0man guix packages task-management)
   #:use-module (gnu services)
   #:use-module (r0man guix packages clojure)
   #:use-module (r0man guix packages java)
@@ -52,7 +53,8 @@
                 (service home-ssh-agent-service-type))))
 
 (define base-packages
-  (list clojure-tools-bin-latest
+  (list beads-next
+        clojure-tools-bin-latest
         coreutils
         findutils
         font-inconsolata
