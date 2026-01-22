@@ -9,6 +9,8 @@
   #:use-module (gnu packages less)
   #:use-module (gnu packages terminals)
   #:use-module (gnu services)
+  #:use-module (r0man guix packages clojure)
+  #:use-module (r0man guix packages java)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home clojure)
   #:use-module (r0man guix home emacs)
@@ -50,10 +52,12 @@
                 (service home-ssh-agent-service-type))))
 
 (define base-packages
-  (list coreutils
+  (list clojure-tools-bin-latest
+        coreutils
         findutils
         font-inconsolata
         glibc-locales
+        graalvm-ce
         grep
         inetutils
         less
