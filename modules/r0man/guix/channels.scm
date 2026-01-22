@@ -34,6 +34,17 @@
      (openpgp-fingerprint
       "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA")))))
 
+(define-public guix-home-r0man
+  (channel
+   (name 'r0man-home)
+   (url "https://github.com/r0man/guix-home")
+   (branch "main")
+   (introduction
+    (make-channel-introduction
+     "fdf26126b62dd922620ef3ce922b71180e57f455"
+     (openpgp-fingerprint
+      "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199")))))
+
 (define-public nonguix-channel
   (channel
    (name 'nonguix)
