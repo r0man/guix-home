@@ -2,6 +2,11 @@
 
 ;;; COMMANDS
 
+;; Helper macro to run code in a background thread to keep WM responsive
+(defmacro in-thread (&body body)
+  "Execute BODY in a background thread to avoid blocking the window manager."
+  `(sb-thread:make-thread (lambda () ,@body)))
+
 (defcommand delete-window-and-frame () ()
   "Delete the current frame with its window."
   (delete-window)
@@ -9,11 +14,11 @@
 
 (defcommand chromium () ()
   "Run the chromium web browser."
-  (run-shell-command "chromium"))
+  (in-thread (run-shell-command "chromium")))
 
 (defcommand emacs-client () ()
   "Run the emacs client."
-  (run-shell-command "emacsclient --create-frame"))
+  (in-thread (run-shell-command "emacsclient --create-frame")))
 
 (defcommand herd-status () ()
   "Run herd status and show the result."
@@ -24,15 +29,15 @@
 
 (defcommand firefox () ()
   "Run the Firefox web browser."
-  (run-shell-command "firefox"))
+  (in-thread (run-shell-command "firefox")))
 
 (defcommand librewolf () ()
   "Run the Librewolf web browser."
-  (run-shell-command "librewolf"))
+  (in-thread (run-shell-command "librewolf")))
 
 (defcommand icecat () ()
   "Run the Icecat web browser."
-  (run-shell-command "icecat"))
+  (in-thread (run-shell-command "icecat")))
 
 (defcommand browser () ()
   "Run the web browser."
@@ -40,11 +45,11 @@
 
 (defcommand btop () ()
   "Run btop."
-  (run-or-raise "kitty --name BTop btop" '(:instance "BTop")))
+  (in-thread (run-or-raise "kitty --name BTop btop" '(:instance "BTop"))))
 
 (defcommand htop () ()
   "Run htop."
-  (run-or-raise "kitty --name HTop htop" '(:instance "HTop")))
+  (in-thread (run-or-raise "kitty --name HTop htop" '(:instance "HTop"))))
 
 (defcommand keyboard-backlight (on-or-off)
     ((:y-or-n " Turn Keyboard Backlight on? "))
@@ -53,25 +58,27 @@
 
 (defcommand logs () ()
   "Show the logs."
-  (run-or-raise "kitty --name Logs -e sudo journalctl -f -a -n 100" '(:instance "Logs")))
+  (in-thread
+    (run-or-raise "kitty --name Logs -e sudo journalctl -f -a -n 100"
+                  '(:instance "Logs"))))
 
 (defcommand polybar () ()
   "Run the polybar status bar."
-  (run-shell-command "start-polybar"))
+  (in-thread (run-shell-command "start-polybar")))
 
 (defcommand slack () ()
   "Run slack."
-  (run-or-raise "slack --startup" '(:instance "Slack")))
+  (in-thread (run-or-raise "slack --startup" '(:instance "Slack"))))
 
 (defcommand terminal () ()
   "Run the kitty terminal."
   ;; (hsplit)
   ;; (fnext)
-  (run-shell-command "kitty"))
+  (in-thread (run-shell-command "kitty")))
 
 (defcommand terminal-raise () ()
   "Run or raise the kitty terminal."
-  (run-or-raise "kitty --name Terminal" '(:instance "Terminal")))
+  (in-thread (run-or-raise "kitty --name Terminal" '(:instance "Terminal"))))
 
 ;; (defcommand (fprev tile-group) () ()
 ;;   "Cycle through the frame tree to the prev frame."
@@ -125,7 +132,7 @@
 ;; Rofi
 
 (defun rofi (mode)
-  (run-shell-command (concat "rofi -show " mode " -m -1")))
+  (in-thread (run-shell-command (concat "rofi -show " mode " -m -1"))))
 
 (defcommand rofi-run () ()
   (rofi "run -sidebar-mode"))
