@@ -8,6 +8,7 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages less)
+  #:use-module (gnu packages nss)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages web)
   #:use-module (gnu packages terminals)
@@ -74,6 +75,7 @@
         jq
         less
         libvterm
+        nss-certs
         ripgrep
         sed
         which))

@@ -6,6 +6,7 @@
 set -euo pipefail
 
 COMMAND="emacs"
+EMACS_NAME=""
 
 usage() {
     cat <<EOF
@@ -16,11 +17,13 @@ Run Emacs inside a Guix container.
 Options:
     -h, --help      Show this help message
     -d, --debug     Enable debug output
+    -n, --name NAME Set X11 instance name (for WM placement rules)
     -s, --shell     Start a shell instead of Emacs
     --              Pass remaining arguments to Emacs
 
 Examples:
     $(basename "$0")                    # Start Emacs
+    $(basename "$0") -n dev-3           # Start with instance name "dev-3"
     $(basename "$0") -s                 # Start a shell
     $(basename "$0") -- -nw             # Start Emacs in terminal mode
     $(basename "$0") -- file.txt        # Open file in Emacs
@@ -29,6 +32,7 @@ EOF
 }
 
 CONTAINER_RUN_ARGS=()
+EMACS_ARGS=()
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -38,6 +42,10 @@ while [[ $# -gt 0 ]]; do
         -d|--debug)
             CONTAINER_RUN_ARGS+=(-d)
             shift
+            ;;
+        -n|--name)
+            EMACS_NAME="$2"
+            shift 2
             ;;
         -s|--shell)
             COMMAND="bash"
@@ -53,4 +61,10 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-exec container-run ${CONTAINER_RUN_ARGS[@]+"${CONTAINER_RUN_ARGS[@]}"} "$COMMAND" "$@"
+# Add instance name if specified
+if [[ -n "$EMACS_NAME" && "$COMMAND" == "emacs" ]]; then
+    EMACS_ARGS+=(-name "$EMACS_NAME")
+fi
+
+exec container-run ${CONTAINER_RUN_ARGS[@]+"${CONTAINER_RUN_ARGS[@]}"} \
+    "$COMMAND" ${EMACS_ARGS[@]+"${EMACS_ARGS[@]}"} "$@"

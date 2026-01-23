@@ -65,10 +65,18 @@ ARGS=()
 ARGS+=(--expose="$CONTAINER_HOME"="$HOME/.guix-home")
 
 # Dotfiles from container home (read-only)
+# Skip files we handle separately (shared from host for write access)
+SKIP_DOTFILES=(".claude" ".config" ".gitconfig" ".ssh")
 for f in "$FILES_PATH"/.*; do
     [[ -e "$f" ]] || continue
     name=$(basename "$f")
     [[ "$name" == "." || "$name" == ".." ]] && continue
+    # Skip if in SKIP_DOTFILES array
+    skip=false
+    for skip_name in "${SKIP_DOTFILES[@]}"; do
+        [[ "$name" == "$skip_name" ]] && skip=true && break
+    done
+    [[ "$skip" == "true" ]] && { debug "Skipping dotfile (handled separately): $name"; continue; }
     debug "Exposing dotfile: $name"
     ARGS+=(--expose="$f"="$HOME/$name")
 done
@@ -116,6 +124,14 @@ ARGS+=(--share="$HOME/workspace")
 mkdir -p "$HOME/.m2"
 ARGS+=(--share="$HOME/.m2")
 
+# Leiningen directory (shared for caching)
+mkdir -p "$HOME/.lein"
+ARGS+=(--share="$HOME/.lein")
+
+# Clojure git libraries (shared for caching)
+mkdir -p "$HOME/.gitlibs"
+ARGS+=(--share="$HOME/.gitlibs")
+
 # Beads task tracking
 [[ -d "$HOME/.beads" ]] && ARGS+=(--share="$HOME/.beads")
 
@@ -127,17 +143,21 @@ ARGS+=(--share="$HOME/.claude")
 # Git config from host
 [[ -f "$HOME/.gitconfig" ]] && ARGS+=(--share="$HOME/.gitconfig")
 
-# SSH known hosts
-[[ -f "$HOME/.ssh/known_hosts" ]] && ARGS+=(--share="$HOME/.ssh/known_hosts")
+# SSH directory from host (config, keys, known_hosts)
+[[ -d "$HOME/.ssh" ]] && ARGS+=(--share="$HOME/.ssh")
+
+# Config directory from host (for guix, etc.)
+[[ -d "$HOME/.config" ]] && ARGS+=(--share="$HOME/.config")
 
 # Timezone (read-only)
 [[ -f /etc/localtime ]] && ARGS+=(--expose=/etc/localtime)
 
+# SSL certificates at standard location (some tools ignore env vars)
+[[ -d "$PROFILE_PATH/etc/ssl/certs" ]] && \
+    ARGS+=(--expose="$PROFILE_PATH/etc/ssl/certs"=/etc/ssl/certs)
+
 # Guix daemon socket (for running guix inside container)
 [[ -S /var/guix/daemon-socket/socket ]] && ARGS+=(--expose=/var/guix/daemon-socket)
-
-# Host's guix configuration and binary (for guix commands inside container)
-[[ -d "$HOME/.config/guix" ]] && ARGS+=(--share="$HOME/.config/guix")
 
 debug "Starting container with $COMMAND"
 
@@ -149,9 +169,10 @@ export SHELL
 GUIX_CONTAINER=1
 export GUIX_CONTAINER
 
-# Set XDG_RUNTIME_DIR to non-existent path so on-first-login skips shepherd start
-XDG_RUNTIME_DIR=/nonexistent
+# Share host's XDG_RUNTIME_DIR for access to runtime sockets (audio, wayland, etc.)
+XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export XDG_RUNTIME_DIR
+[[ -d "$XDG_RUNTIME_DIR" ]] && ARGS+=(--share="$XDG_RUNTIME_DIR")
 
 exec guix shell \
     --container \
