@@ -188,23 +188,38 @@
 
 (clear-window-placement-rules)
 
-;; (define-frame-preference "Emacs"
-;;   (0 t t :class "Emacs"))
+;; Host Emacs (instance "emacs") goes to Emacs group
+(define-frame-preference "Emacs"
+  (0 t t :instance "emacs"))
 
+;; raise=nil so windows don't steal focus during startup
 (define-frame-preference "Web"
-  (1 t t :class "Firefox")
-  (1 t t :class "IceCat")
-  (1 t t :class "LibreWolf")
-  (1 t t :class "Navigator"))
+  (0 nil t :class "Firefox")
+  (0 nil t :class "IceCat")
+  (0 nil t :class "LibreWolf")
+  (0 nil t :class "Navigator"))
+
+;; Container Emacs instances (Daltons)
+(define-frame-preference "3"
+  (0 nil t :instance "joe"))
+
+(define-frame-preference "4"
+  (0 nil t :instance "jack"))
+
+(define-frame-preference "5"
+  (0 nil t :instance "william"))
+
+(define-frame-preference "6"
+  (0 nil t :instance "averell"))
 
 (define-frame-preference "Slack"
-  (7 nil t :class "Slack"))
+  (0 nil t :class "Slack"))
 
 (define-frame-preference "Logs"
-  (8 nil t :instance "Logs"))
+  (0 nil t :instance "Logs"))
 
 (define-frame-preference "Top"
-  (9 nil t :instance "BTop"))
+  (0 nil t :instance "BTop"))
 
 ;; Key Bindings
 
@@ -245,10 +260,8 @@
 ;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
-(define-key *root-map* (kbd "E") "exec emacs")
-;; (define-key *root-map* (kbd "E") "exec cd ~/workspace && container-emacs")
-;; (define-key *root-map* (kbd "P") "exec emacs")
-;; (define-key *root-map* (kbd "E") "exec cd ~/workspace && container-emacs")
+(define-key *root-map* (kbd "E") "emacs")
+(define-key *root-map* (kbd "C") "exec cd ~/workspace && container-emacs")
 (define-key *root-map* (kbd "a") '*applications-keymap*)
 (define-key *root-map* (kbd "b") "browser")
 (define-key *root-map* (kbd "c") "terminal")
@@ -297,14 +310,18 @@
 
 ;; Start programs last
 
-(run-commands
- "gselect Web"
- "browser"
- "gselect Emacs"
- "btop"
- "gselect Logs"
- "logs"
- "gselect Emacs")
+;; Start applications on their respective groups
+;; Placement rules (with raise=nil) put windows in groups without stealing focus
+;; Emacs is started first and keeps focus throughout
+(when *initializing*
+  (run-shell-command "emacs")
+  (run-shell-command "librewolf")
+  (run-shell-command "cd ~/workspace && container-emacs -n joe")
+  (run-shell-command "cd ~/workspace && container-emacs -n jack")
+  (run-shell-command "cd ~/workspace && container-emacs -n william")
+  (run-shell-command "cd ~/workspace && container-emacs -n averell")
+  (run-shell-command "kitty --name BTop -e btop")
+  (run-shell-command "kitty --name Logs -e journalctl --user -f"))
 
 ;; Centered floating window
 
