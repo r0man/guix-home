@@ -1,3 +1,5 @@
 *.fasl
 .lsp
 .clj-kondo
+modules/r0man/guix/home/files/emacs/init.el
+modules/r0man/guix/home/files/emacs/early-init.el

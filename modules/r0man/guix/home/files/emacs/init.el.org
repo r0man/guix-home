@@ -16,7 +16,8 @@ Setup package archives for package.el.
   (setq package-archives
         '(("melpa" . "http://melpa.org/packages/")
           ("melpa-stable" . "http://stable.melpa.org/packages/")
-          ("gnu" . "http://elpa.gnu.org/packages/")))
+          ("gnu" . "http://elpa.gnu.org/packages/")
+          ("nongnu" . "http://elpa.nongnu.org/nongnu/")))
 #+end_src
 
 ** Ef Themes
@@ -161,7 +162,10 @@ system.
 
   (defun monitor-connected-p (monitor)
     "Return t if MONITOR is connected, otherwise nil."
-    (not (string= "" (shell-command-to-string (format "xrandr --listmonitors | grep %s" monitor)))))
+    (if (executable-find "xrandr")
+        (not (string= "" (shell-command-to-string
+                          (format "xrandr --listmonitors | grep %s" monitor))))
+      nil))
 #+end_src
 ** Abbrev mode
 
@@ -451,8 +455,11 @@ Reload the ~/.Xresources configuration.
   (defun xresources ()
     "Reload the ~/.Xresources configuration."
     (interactive)
-    (shell-command "xrdb -merge ~/.Xresources ")
-    (message "X resources reloaded."))
+    (if (executable-find "xrdb")
+        (progn
+          (shell-command "xrdb -merge ~/.Xresources")
+          (message "X resources reloaded."))
+      (message "xrdb not found (not on X11).")))
 #+end_src
 
 Insert a Clojure UUID.
@@ -490,7 +497,7 @@ Run the current buffer through zprint.
 ** Claude Code IDE
 #+begin_src emacs-lisp
   (use-package claude-code-ide
-    :load-path ("~/workspace/claude-code-ide.el")
+    :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :branch "main")
     :commands (claude-code-ide)
     :bind ("C-c C-'" . claude-code-ide-menu)
     :custom
@@ -566,6 +573,8 @@ https://elpa.gnu.org/packages/doc/debbugs-ug.html
 
 #+begin_src emacs-lisp
   (use-package debbugs-browse
+    :ensure nil
+    :after debbugs
     :hook
     ((bug-reference-mode . debbugs-browse-mode)
      (bug-reference-prog-mode . debbugs-browse-mode)))
@@ -690,8 +699,7 @@ A GNU Emacs major mode for editing BNF grammars.
 
 #+begin_src emacs-lisp
   (use-package clhs
-    :defer t
-    :init (clhs-setup))
+    :defer t)
 
   (defun hyperspec-lookup--hyperspec-lookup-eww (orig-fun &rest args)
     (let ((browse-url-browser-function 'eww-browse-url))
@@ -1187,23 +1195,32 @@ The Geiser implementation for Guile scheme.
 ** Guix
 #+begin_src emacs-lisp
   (defun guix-system-p ()
+    "Return t if running on a Guix System."
     (interactive)
     (file-exists-p "/run/current-system/configuration.scm"))
+
+  (defun guix-available-p ()
+    "Return t if Guix is available on this system."
+    (file-exists-p "/gnu/store"))
 #+end_src
 #+begin_src emacs-lisp
-    (defun guix-home-reconfigure ()
-      "Run Guix Home reconfigure."
-      (interactive)
-      (with-current-buffer (get-buffer-create "*Guix Home Reconfigure*")
-        (pop-to-buffer (current-buffer))
-        (erase-buffer)
-        (let ((default-directory "~/workspace/guix-home"))
-          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/systems/precision.scm" (current-buffer)))))
+  (defun guix-home-reconfigure ()
+    "Run Guix Home reconfigure."
+    (interactive)
+    (unless (guix-available-p)
+      (user-error "Guix is not available on this system"))
+    (with-current-buffer (get-buffer-create "*Guix Home Reconfigure*")
+      (pop-to-buffer (current-buffer))
+      (erase-buffer)
+      (let ((default-directory "~/workspace/guix-home"))
+        (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/systems/precision.scm" (current-buffer)))))
 #+end_src
 #+begin_src emacs-lisp
   (defun guix-system-reconfigure ()
     "Run Guix System reconfigure."
     (interactive)
+    (unless (guix-available-p)
+      (user-error "Guix is not available on this system"))
     (with-current-buffer (get-buffer-create "*Guix System Reconfigure*")
       (pop-to-buffer (current-buffer))
       (erase-buffer)
@@ -1216,6 +1233,7 @@ Enable global minor-mode for prettifying Guix store files.
 
 #+begin_src emacs-lisp
   (use-package guix-prettify
+    :if (file-exists-p "/gnu/store")
     :hook ((after-init . global-guix-prettify-mode)))
 #+end_src
 
@@ -1339,6 +1357,7 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
 ** Guix
 #+begin_src emacs-lisp
   (use-package guix
+    :if (file-exists-p "/gnu/store")
     :hook ((scheme-mode . guix-devel-mode)))
 #+end_src
 ** GPTel
@@ -1356,7 +1375,9 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
                    :key (lambda ()
                           (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey"))))
     :custom
-    (gptel-use-curl "~/.guix-profile/bin/curl"))
+    (gptel-use-curl (if (file-exists-p "/gnu/store")
+                        "~/.guix-profile/bin/curl"
+                      (or (executable-find "curl") "curl"))))
 #+end_src
 ** History
 
@@ -2441,7 +2462,7 @@ Use Jira in Emacs org-mode.
 ** Org Plus Contrib
 
 #+begin_src emacs-lisp
-  (use-package org-plus-contrib
+  (use-package org-contrib
     :commands (org-invoice-report)
     :init (require 'org-invoice)
     :no-require t)
@@ -2586,9 +2607,12 @@ An HTTP library for Emacs.
   (use-package plz
     :defer t
     :config
-    ;; When not on a Guix system, use curl from host
+    ;; When not on a Guix system, use curl from the appropriate location
     (unless (file-exists-p "/run/current-system")
-      (setq plz-curl-program "~/.guix-profile/bin/curl")))
+      (setq plz-curl-program
+            (if (file-exists-p "/gnu/store")
+                "~/.guix-profile/bin/curl"
+              (or (executable-find "curl") "curl")))))
 #+end_src
 ** Pretty Print JSON
 
