@@ -9,9 +9,12 @@
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages less)
   #:use-module (gnu packages nss)
+  #:use-module (gnu packages package-management)
   #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages web)
   #:use-module (gnu packages terminals)
+  #:use-module (gnu packages version-control)
   #:use-module (gnu services)
   #:use-module (r0man guix packages clojure)
   #:use-module (r0man guix packages java)
@@ -65,17 +68,22 @@
         clojure-tools-bin-latest
         coreutils
         curl
+        diffutils
         fd
         findutils
         font-inconsolata
+        git
         glibc-locales
         graalvm-ce
         grep
+        guix
         inetutils
         jq
         less
         libvterm
+        gnu-make
         nss-certs
+        openssh
         ripgrep
         sed
         which))
