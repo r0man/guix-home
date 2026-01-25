@@ -57,8 +57,10 @@
                               "GGML_VULKAN_DEVICE=1"
                               ;; Include system library path for NVIDIA Vulkan driver
                               "LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu"
-                              ;; Tell Vulkan loader where to find NVIDIA ICD
-                              "VK_DRIVER_FILES=/etc/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
+                              ;; Tell Vulkan loader where to find NVIDIA and Intel ICDs from the profile
+                              (string-append "VK_DRIVER_FILES="
+                                             profile "/share/vulkan/icd.d/nvidia_icd.x86_64.json:"
+                                             profile "/share/vulkan/icd.d/intel_icd.x86_64.json")
                               (remove (lambda (var)
                                         (or (string-prefix? "IBUS_COMPONENT_PATH=" var)
                                             (string-prefix? "GST_PLUGIN_PATH=" var)
