@@ -55,10 +55,13 @@
                               (string-append "GST_PLUGIN_PATH=" gst-plugin-path)
                               ;; Use NVIDIA GPU (device 1) for Whisper Vulkan inference
                               "GGML_VULKAN_DEVICE=1"
+                              ;; Include system library path for NVIDIA Vulkan driver
+                              "LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu"
                               (remove (lambda (var)
                                         (or (string-prefix? "IBUS_COMPONENT_PATH=" var)
                                             (string-prefix? "GST_PLUGIN_PATH=" var)
-                                            (string-prefix? "GGML_VULKAN_DEVICE=" var)))
+                                            (string-prefix? "GGML_VULKAN_DEVICE=" var)
+                                            (string-prefix? "LD_LIBRARY_PATH=" var)))
                                       (default-environment-variables)))
                        #:log-file
                        (string-append %user-log-dir "/ibus.log")))))
