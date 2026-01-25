@@ -27,7 +27,7 @@
   (channel
    (name 'guix)
    (url "https://codeberg.org/r0man/guix")
-   (branch "add-whisper-service")
+   (branch "IBus-Speech-To-Text")
    (introduction
     (make-channel-introduction
      "9edb3f66fd807b096b48283debdcddccfea34bad"
@@ -70,7 +70,7 @@
 
 (define-public channels
   (list asahi-channel
-        guix-channel
+        guix-channel-r0man
         nonguix-channel
         r0man-guix-channel
         r0man-guix-home))
