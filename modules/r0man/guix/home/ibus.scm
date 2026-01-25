@@ -1,7 +1,9 @@
 (define-module (r0man guix home ibus)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services)
+  #:use-module (gnu packages gstreamer)
   #:use-module (gnu packages ibus)
+  #:use-module (gnu packages speech)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
@@ -22,7 +24,7 @@
         (default ibus)
         (description "The IBus package to use."))
   (packages home-ibus-packages
-            (default (list ibus ibus-speech-to-text))
+            (default (list ibus ibus-speech-to-text gst-plugins-good gst-vosk))
             (description "List of IBus-related packages to install.")))
 
 (define (home-ibus-shepherd-services config)
@@ -31,22 +33,36 @@
          (documentation "Run the IBus input method daemon.")
          (provision '(ibus))
          (requirement '(dbus))
-         (modules '((shepherd support)))
-         (start #~(make-forkexec-constructor
-                   (list #$(file-append (home-ibus-ibus config)
-                                        "/bin/ibus-daemon")
-                         "--xim"
-                         "--daemonize"
-                         "--replace")
-                   #:log-file
-                   (string-append %user-log-dir "/ibus.log")))
+         (modules '((shepherd support)
+                    (srfi srfi-1)
+                    (srfi srfi-26)))
+         (start #~(lambda _
+                    (let* ((home (getenv "HOME"))
+                           (profile (string-append home "/.guix-home/profile"))
+                           (component-path (string-append profile "/share/ibus/component"))
+                           (gst-plugin-path (string-append profile "/lib/gstreamer-1.0")))
+                      (fork+exec-command
+                       (list #$(file-append (home-ibus-ibus config)
+                                            "/bin/ibus-daemon")
+                             "--xim"
+                             "--replace")
+                       #:environment-variables
+                       (cons* (string-append "IBUS_COMPONENT_PATH=" component-path)
+                              (string-append "GST_PLUGIN_PATH=" gst-plugin-path)
+                              (remove (lambda (var)
+                                        (or (string-prefix? "IBUS_COMPONENT_PATH=" var)
+                                            (string-prefix? "GST_PLUGIN_PATH=" var)))
+                                      (default-environment-variables)))
+                       #:log-file
+                       (string-append %user-log-dir "/ibus.log")))))
          (stop #~(make-kill-destructor)))))
 
 (define (home-ibus-environment-variables config)
   "Return environment variables for IBus."
   '(("GTK_IM_MODULE" . "ibus")
     ("QT_IM_MODULE" . "ibus")
-    ("XMODIFIERS" . "@im=ibus")))
+    ("XMODIFIERS" . "@im=ibus")
+    ("GST_PLUGIN_PATH" . "$HOME/.guix-home/profile/lib/gstreamer-1.0")))
 
 (define (home-ibus-profile-packages config)
   "Return list of IBus packages to install."
