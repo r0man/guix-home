@@ -188,10 +188,6 @@
 
 (clear-window-placement-rules)
 
-;; Host Emacs (instance "emacs") goes to Emacs group
-(define-frame-preference "Emacs"
-  (0 t t :instance "emacs"))
-
 ;; raise=nil so windows don't steal focus during startup
 (define-frame-preference "Web"
   (0 nil t :class "Firefox")
