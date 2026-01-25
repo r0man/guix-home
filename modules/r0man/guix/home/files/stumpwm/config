@@ -288,10 +288,11 @@
 
 ;; Speech-to-Text (IBus STT)
 ;; Ctrl+Shift+Space is configured in ibus-setup to toggle STT.
+;; The IBUS_ADDRESS is read from the config file since it's not in the environment.
 
 (defcommand toggle-stt () ()
   "Activate IBus STT engine for speech recognition"
-  (run-shell-command "ibus engine stt"))
+  (run-shell-command "bash -c 'source ~/.config/ibus/bus/*-unix-* 2>/dev/null && ibus engine stt'"))
 
 ;; Bind both s-s (fallback) and C-S-SPC (matches ibus-setup config)
 (define-key *top-map* (kbd "s-s") "toggle-stt")
