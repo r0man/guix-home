@@ -7,6 +7,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages less)
   #:use-module (gnu packages nss)
   #:use-module (gnu packages package-management)
@@ -86,7 +87,8 @@
         openssh
         ripgrep
         sed
-        which))
+        which
+        xdg-utils))
 
 (define-public container-home-environment
   (home-environment

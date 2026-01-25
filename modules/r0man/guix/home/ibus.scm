@@ -24,7 +24,7 @@
         (default ibus)
         (description "The IBus package to use."))
   (packages home-ibus-packages
-            (default (list ibus ibus-speech-to-text gst-plugins-good gst-vosk))
+            (default (list ibus ibus-speech-to-text-whisper gst-plugins-good gst-vosk))
             (description "List of IBus-related packages to install.")))
 
 (define (home-ibus-shepherd-services config)
