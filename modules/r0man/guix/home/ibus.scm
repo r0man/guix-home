@@ -53,12 +53,9 @@
                        #:environment-variables
                        (cons* (string-append "IBUS_COMPONENT_PATH=" component-path)
                               (string-append "GST_PLUGIN_PATH=" gst-plugin-path)
-                              ;; Use NVIDIA GPU (device 1) for Whisper instead of Intel (device 0)
-                              "GGML_VULKAN_DEVICE=1"
                               (remove (lambda (var)
                                         (or (string-prefix? "IBUS_COMPONENT_PATH=" var)
-                                            (string-prefix? "GST_PLUGIN_PATH=" var)
-                                            (string-prefix? "GGML_VULKAN_DEVICE=" var)))
+                                            (string-prefix? "GST_PLUGIN_PATH=" var)))
                                       (default-environment-variables)))
                        #:log-file
                        (string-append %user-log-dir "/ibus.log")))))

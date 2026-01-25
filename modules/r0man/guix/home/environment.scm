@@ -17,6 +17,9 @@
   home-environment-configuration?
   (variables home-environment-variables
              (default `(("EDITOR" . "emacsclient")
+                        ;; Use NVIDIA GPU (device 1) for ggml/Whisper Vulkan inference
+                        ;; instead of Intel Iris Xe (device 0)
+                        ("GGML_VULKAN_DEVICE" . "1")
                         ("HISTCONTROL" . "ignoredups")
                         ("HISTFILESIZE" . "10000000")
                         ("HISTSIZE" . "100000")
