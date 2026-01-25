@@ -29,6 +29,9 @@
 
 (define (home-ibus-shepherd-services config)
   "Return Shepherd services for IBus."
+  ;; Note: The STT engine is started automatically by IBus daemon when
+  ;; the engine is activated. A separate shepherd service is not needed
+  ;; and would conflict with IBus's engine management.
   (list (shepherd-service
          (documentation "Run the IBus input method daemon.")
          (provision '(ibus))
@@ -56,32 +59,6 @@
                                       (default-environment-variables)))
                        #:log-file
                        (string-append %user-log-dir "/ibus.log")))))
-         (stop #~(make-kill-destructor)))
-        ;; Pre-start the STT engine to work around timing issues with IBus.
-        ;; The engine needs to be running before IBus tries to activate it.
-        (shepherd-service
-         (documentation "Run the IBus Speech-To-Text engine.")
-         (provision '(ibus-stt))
-         (requirement '(ibus x11-display))
-         (modules '((shepherd support)
-                    (srfi srfi-1)
-                    (srfi srfi-26)))
-         (start #~(lambda _
-                    (let* ((home (getenv "HOME"))
-                           (profile (string-append home "/.guix-home/profile"))
-                           (engine-path (string-append profile "/libexec/ibus-engine-stt"))
-                           (display (or (getenv "DISPLAY") ":0")))
-                      (fork+exec-command
-                       (list engine-path "--ibus")
-                       #:environment-variables
-                       (cons* (string-append "DISPLAY=" display)
-                              (string-append "XDG_CURRENT_DESKTOP=STUMPWM")
-                              (remove (lambda (var)
-                                        (or (string-prefix? "DISPLAY=" var)
-                                            (string-prefix? "XDG_CURRENT_DESKTOP=" var)))
-                                      (default-environment-variables)))
-                       #:log-file
-                       (string-append %user-log-dir "/ibus-stt.log")))))
          (stop #~(make-kill-destructor)))))
 
 (define (home-ibus-environment-variables config)
