@@ -287,12 +287,15 @@
 ;; (define-key *top-map* (kbd "s-r") "remove-split")
 
 ;; Speech-to-Text (IBus STT)
+;; Ctrl+Shift+Space is configured in ibus-setup to toggle STT.
 
 (defcommand toggle-stt () ()
   "Activate IBus STT engine for speech recognition"
   (run-shell-command "ibus engine stt"))
 
+;; Bind both s-s (fallback) and C-S-SPC (matches ibus-setup config)
 (define-key *top-map* (kbd "s-s") "toggle-stt")
+(define-key *top-map* (kbd "C-S-SPC") "toggle-stt")
 
 ;; Pass Bindings
 
