@@ -55,11 +55,11 @@
                               (string-append "GST_PLUGIN_PATH=" gst-plugin-path)
                               ;; Use NVIDIA GPU (device 1) for Whisper Vulkan inference
                               "GGML_VULKAN_DEVICE=1"
-                              ;; Include profile and system library paths for NVIDIA Vulkan driver
-                              (string-append "LD_LIBRARY_PATH="
-                                             profile "/lib:"
-                                             "/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu")
-                              ;; Tell Vulkan loader where to find NVIDIA and Intel ICDs from the profile
+                              ;; Enable NVIDIA PRIME render offload for Vulkan on hybrid graphics
+                              "__NV_PRIME_RENDER_OFFLOAD=1"
+                              "__GLX_VENDOR_LIBRARY_NAME=nvidia"
+                              ;; Use profile Vulkan ICDs (with absolute store paths) instead of
+                              ;; system ICDs which use relative library paths that fail in Guix
                               (string-append "VK_DRIVER_FILES="
                                              profile "/share/vulkan/icd.d/nvidia_icd.x86_64.json:"
                                              profile "/share/vulkan/icd.d/intel_icd.x86_64.json")
@@ -67,7 +67,8 @@
                                         (or (string-prefix? "IBUS_COMPONENT_PATH=" var)
                                             (string-prefix? "GST_PLUGIN_PATH=" var)
                                             (string-prefix? "GGML_VULKAN_DEVICE=" var)
-                                            (string-prefix? "LD_LIBRARY_PATH=" var)
+                                            (string-prefix? "__NV_PRIME_RENDER_OFFLOAD=" var)
+                                            (string-prefix? "__GLX_VENDOR_LIBRARY_NAME=" var)
                                             (string-prefix? "VK_DRIVER_FILES=" var)))
                                       (default-environment-variables)))
                        #:log-file
@@ -79,7 +80,10 @@
   '(("GTK_IM_MODULE" . "ibus")
     ("QT_IM_MODULE" . "ibus")
     ("XMODIFIERS" . "@im=ibus")
-    ("GST_PLUGIN_PATH" . "$HOME/.guix-home/profile/lib/gstreamer-1.0")))
+    ("GST_PLUGIN_PATH" . "$HOME/.guix-home/profile/lib/gstreamer-1.0")
+    ;; Use profile Vulkan ICDs (with absolute store paths) for GPU detection.
+    ;; System ICDs use relative library paths that fail in Guix environment.
+    ("VK_DRIVER_FILES" . "$HOME/.guix-home/profile/share/vulkan/icd.d/nvidia_icd.x86_64.json:$HOME/.guix-home/profile/share/vulkan/icd.d/intel_icd.x86_64.json")))
 
 (define (home-ibus-profile-packages config)
   "Return list of IBus packages to install."
