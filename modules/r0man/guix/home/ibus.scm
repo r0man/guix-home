@@ -55,8 +55,10 @@
                               (string-append "GST_PLUGIN_PATH=" gst-plugin-path)
                               ;; Use NVIDIA GPU (device 1) for Whisper Vulkan inference
                               "GGML_VULKAN_DEVICE=1"
-                              ;; Include system library path for NVIDIA Vulkan driver
-                              "LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu"
+                              ;; Include profile and system library paths for NVIDIA Vulkan driver
+                              (string-append "LD_LIBRARY_PATH="
+                                             profile "/lib:"
+                                             "/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu")
                               ;; Tell Vulkan loader where to find NVIDIA and Intel ICDs from the profile
                               (string-append "VK_DRIVER_FILES="
                                              profile "/share/vulkan/icd.d/nvidia_icd.x86_64.json:"
