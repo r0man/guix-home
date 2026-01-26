@@ -260,7 +260,7 @@
 ;; (set-prefix-key (kbd "s-SPC"))
 
 (define-key *root-map* (kbd "!") "rofi-run")
-(define-key *root-map* (kbd "E") "emacs")
+(define-key *root-map* (kbd "E") "exec emacs")
 (define-key *root-map* (kbd "C") "exec cd ~/workspace && container-emacs")
 (define-key *root-map* (kbd "a") '*applications-keymap*)
 (define-key *root-map* (kbd "b") "browser")
