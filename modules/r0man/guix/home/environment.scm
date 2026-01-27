@@ -17,12 +17,7 @@
   home-environment-configuration?
   (variables home-environment-variables
              (default `(("EDITOR" . "emacsclient")
-                        ;; Use NVIDIA GPU (device 1) for ggml/Whisper Vulkan inference
-                        ;; instead of Intel Iris Xe (device 0)
-                        ("GGML_VULKAN_DEVICE" . "1")
-                        ;; Enable NVIDIA PRIME render offload for Vulkan on hybrid graphics
-                        ("__NV_PRIME_RENDER_OFFLOAD" . "1")
-                        ("__GLX_VENDOR_LIBRARY_NAME" . "nvidia")
+                        ("XDG_CURRENT_DESKTOP" . "stumpwm")
                         ("HISTCONTROL" . "ignoredups")
                         ("HISTFILESIZE" . "10000000")
                         ("HISTSIZE" . "100000")

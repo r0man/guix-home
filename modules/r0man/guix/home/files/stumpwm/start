@@ -2,5 +2,9 @@
 (require :asdf)
 (require :stumpwm)
 (require :slynk)
+
+;; Set desktop environment for XDG-aware applications (ibus, portals, etc.)
+(sb-posix:setenv "XDG_CURRENT_DESKTOP" "stumpwm" 1)
+
 (slynk:create-server :dont-close t)
 (stumpwm:stumpwm)

@@ -10,6 +10,9 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages gstreamer)
+  #:use-module (gnu packages ibus)
+  #:use-module (gnu packages speech)
   #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services xorg)
@@ -107,7 +110,13 @@
                  home-gpg-gtk-configuration)
         (service home-guile-service-type)
         (service home-hyprland-service-type)
-        (service home-ibus-service-type)
+        (service home-ibus-service-type
+                 (home-ibus-configuration
+                  (packages (map replace-mesa
+                                 (list ibus
+                                       ibus-speech-to-text-whisper
+                                       gst-plugins-good
+                                       gst-vosk)))))
         (service home-i3status-service-type)
         (service home-kitty-service-type)
         (service home-librewolf-service-type)
