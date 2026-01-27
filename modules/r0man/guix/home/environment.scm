@@ -18,6 +18,11 @@
   (variables home-environment-variables
              (default `(("EDITOR" . "emacsclient")
                         ("XDG_CURRENT_DESKTOP" . "stumpwm")
+                        ;; Select NVIDIA GPU (device 1) for Whisper/GGML Vulkan inference
+                        ;; GPU 0: Intel Iris Xe (integrated)
+                        ;; GPU 1: NVIDIA RTX A1000 (discrete)
+                        ;; Note: GGML_VULKAN_DEVICE was renamed to GGML_VK_VISIBLE_DEVICES
+                        ("GGML_VK_VISIBLE_DEVICES" . "1")
                         ("HISTCONTROL" . "ignoredups")
                         ("HISTFILESIZE" . "10000000")
                         ("HISTSIZE" . "100000")

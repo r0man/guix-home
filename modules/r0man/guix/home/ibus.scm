@@ -37,9 +37,10 @@
   ;; With replace-mesa applied to IBus packages, the profile includes the
   ;; NVIDIA Vulkan ICD with absolute store paths.
   ;;
-  ;; GGML_VULKAN_DEVICE=1 selects NVIDIA GPU for Whisper inference:
+  ;; GGML_VK_VISIBLE_DEVICES=1 selects NVIDIA GPU for Whisper inference:
   ;;   GPU 0: Intel Iris Xe (integrated)
   ;;   GPU 1: NVIDIA RTX A1000 (discrete)
+  ;; Note: GGML_VULKAN_DEVICE was renamed to GGML_VK_VISIBLE_DEVICES
   (list (shepherd-service
          (documentation "Run the IBus input method daemon.")
          (provision '(ibus))
@@ -51,10 +52,10 @@
                                         "/bin/ibus-daemon")
                          "--xim" "--replace" "--verbose")
                    #:environment-variables
-                   (cons* "GGML_VULKAN_DEVICE=1"
+                   (cons* "GGML_VK_VISIBLE_DEVICES=1"
                           "DISPLAY=:0"
                           (remove (lambda (var)
-                                    (or (string-prefix? "GGML_VULKAN_DEVICE=" var)
+                                    (or (string-prefix? "GGML_VK_VISIBLE_DEVICES=" var)
                                         (string-prefix? "DISPLAY=" var)))
                                   (default-environment-variables)))
                    #:log-file

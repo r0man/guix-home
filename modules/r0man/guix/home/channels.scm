@@ -21,6 +21,7 @@
 
 (define home-channels-default-list
   (list asahi-channel
-        guix-channel
+        ;; guix-channel
+        guix-channel-r0man
         nonguix-channel
         r0man-guix-channel))
