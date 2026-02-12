@@ -25,6 +25,7 @@ The agent should:
    - File list: Include in epic description
 
 3. **Create the epic**
+   - Make sure all information from the plan is captured in the epic on a high level.
    ```bash
    bd create "[Plan Title]" -t epic -p 1 -d "[summary]. Files: N to modify." --json
    ```
@@ -32,6 +33,7 @@ The agent should:
 4. **Create tasks from phases**
    - Each phase becomes a task
    - Use first paragraph of phase content as description
+   - Make sure all information from the plan is captured by the beads issues in detail.
    ```bash
    bd create "[Phase title]" -t task -p 2 -d "[description]" --json
    ```
