@@ -15,7 +15,6 @@
   #:use-module (gnu services dbus)
   #:use-module (gnu services desktop)
   #:use-module (gnu services networking)
-  #:use-module (gnu services sddm)
   #:use-module (gnu services sound)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
@@ -74,12 +73,10 @@
                                     %nix-service
                                     %openssh-service
                                     %pcscd-service
-                                    %slim-service
                                     %udev-fido2-service
                                     %desktop-services)
               ;; (delete alsa-service-type)
               ;; (delete pulseaudio-service-type)
-              (delete gdm-service-type)
               (console-font-service-type config => (console-font-service-config config)))))
 
 (define-public desktop-operating-system

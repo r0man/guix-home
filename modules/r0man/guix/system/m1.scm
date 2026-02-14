@@ -9,7 +9,7 @@
   #:use-module (asahi guix services udev)
   #:use-module (gnu  bootloader m1n1)
   #:use-module (gnu bootloader)
-  #:use-module (gnu packages display-managers)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages wm)
@@ -19,7 +19,6 @@
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
-  #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (gnu system accounts)
@@ -33,7 +32,6 @@
   #:use-module (guix packages)
   #:use-module (r0man guix channels)
   #:use-module (r0man guix home systems m1)
-  #:use-module (r0man guix packages display-managers)
   #:use-module (r0man guix system desktop)
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system services)
@@ -57,6 +55,7 @@
 
 (define %packages
   (cons* asahi-alsa-utils
+         dbus
          sway
          asahi-scripts
          network-manager
@@ -100,15 +99,6 @@
    (extra-config (list %xorg-libinput-config
                        %xorg-modeset-config))))
 
-(define %sddm-service
-  (service sddm-service-type
-           (sddm-configuration
-            (auto-login-user "roman")
-            (sddm sddm-qt5)
-            (theme "guix-sugar-light")
-            (themes-directory (file-append guix-sugar-light-sddm-theme "/share/sddm/themes"))
-            (xorg-configuration %xorg-configuration))))
-
 (define %rootless-podman-service
   (service rootless-podman-service-type
            (rootless-podman-configuration
@@ -132,14 +122,19 @@
                           %home-service
                           %qemu-service-aarch64
                           %rootless-podman-service
-                          %sddm-service
                           %udev-backlight-service
                           %udev-kbd-backlight-service
                           %udev-mtd-by-name-service
                           (operating-system-user-services desktop-operating-system))
     (delete sound:alsa-service-type)
     (delete sound:pulseaudio-service-type)
-    (delete slim-service-type)
+    (gdm-service-type
+     config => (gdm-configuration
+                (inherit config)
+                (auto-login? #f)
+                (debug? #t)
+                (wayland? #f)
+                (xorg-configuration %xorg-configuration)))
     (guix-service-type
      config =>
      (guix-configuration
