@@ -2,5 +2,7 @@
 (require :asdf)
 (require :stumpwm)
 (require :slynk)
-(slynk:create-server :dont-close t)
+(handler-case (slynk:create-server :dont-close t)
+  (error (c) (format *error-output* "Slynk: ~a~%" c)))
 (stumpwm:stumpwm)
+(sb-ext:exit)
