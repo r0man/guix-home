@@ -29,8 +29,9 @@ users who want something with a bit more flair than the modus-themes.
   (use-package ef-themes
     :commands (ef-themes-load-random
                ef-themes-rotate)
-    :init
-    (ef-themes-load-random))
+    ;; :init
+    ;; (ef-themes-load-random)
+    )
 #+end_src
 
 ** Fonts

@@ -57,6 +57,7 @@
 
 (define %packages
   (cons* asahi-alsa-utils
+         niri
          sway
          asahi-scripts
          network-manager

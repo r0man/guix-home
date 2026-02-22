@@ -35,6 +35,7 @@
   #:use-module (r0man guix home librewolf)
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home msmtp)
+  #:use-module (r0man guix home niri)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
@@ -112,6 +113,7 @@
         (service home-mbsync-service-type)
         (service home-msmtp-service-type
                  home-msmtp-default-configuration)
+        (service home-niri-service-type)
         (service home-nix-service-type)
         (service home-openssh-service-type
                  home-openssh-default-configuration)
