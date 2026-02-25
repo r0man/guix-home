@@ -52,12 +52,8 @@
         \"format-icons\": {
             \"1:Emacs\": \" 1:Emacs\",
             \"2:Web\": \" 2:Web\",
-            \"3:Joe\": \" 3:Joe\",
-            \"4:Jack\": \" 4:Jack\",
-            \"5:William\": \" 5:William\",
-            \"6:Averell\": \" 6:Averell\",
-            \"7:Slack\": \" 7:Slack\",
-            \"8:Logs\": \" 8:Logs\",
+            \"3:Slack\": \" 3:Slack\",
+            \"0:Logs\": \" 0:Logs\",
             \"9:Top\": \" 9:Top\"
         }
       },
@@ -86,18 +82,16 @@
           \"format\": \" {}%\"
       },
       \"clock#saopaulo\": {
-        \"format\": \"S\\u00c3O PAULO: {:%H:%M:%S}\",
-        \"interval\": 1,
+        \"format\": \"S\\u00c3O PAULO {:%H:%M}\",
         \"timezone\": \"Brazil/East\"
       },
       \"clock#utc\": {
-        \"format\": \"UTC: {:%H:%M:%S}\",
-        \"interval\": 1,
+        \"format\": \"UTC {:%H:%M}\",
         \"timezone\": \"UTC\",
         \"tooltip\": false
       },
       \"clock#berlin\": {
-        \"format\": \"BERLIN: {:%H:%M:%S}\",
+        \"format\": \"BERLIN {:%H:%M:%S}\",
         \"interval\": 1,
         \"timezone\": \"Europe/Berlin\",
         \"tooltip\": false

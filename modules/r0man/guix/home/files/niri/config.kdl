@@ -1,11 +1,83 @@
 // Niri configuration — default bindings with kitty and librewolf.
 
+// Output scaling (use `niri msg outputs` to find the output name)
+output "eDP-1" {
+    scale 1.5
+}
+
+// Named workspaces
+workspace "1:Emacs"
+workspace "2:Web"
+workspace "3:Slack"
+workspace "0:Logs"
+workspace "9:Top"
+
+// Spawn at startup
+spawn-at-startup "waybar" "-c" "/home/roman/.config/niri/waybar-config.jsonc" "-s" "/home/roman/.config/niri/waybar-style.css"
+spawn-at-startup "swaybg" "-i" "/home/roman/.local/share/wallpapers/stop-customizing-start-working.jpg" "-m" "fill"
+spawn-at-startup "swayidle"
+spawn-at-startup "emacs"
+spawn-at-startup "librewolf"
+spawn-at-startup "kitty" "--class" "logs" "-e" "journalctl" "--user" "-f"
+spawn-at-startup "kitty" "--class" "btop" "-e" "btop"
+
+// Window rules — direct windows to their workspace
+window-rule {
+    match app-id="emacs"
+    open-on-workspace "1:Emacs"
+}
+
+window-rule {
+    match app-id="librewolf"
+    open-on-workspace "2:Web"
+}
+
+window-rule {
+    match app-id="Slack"
+    open-on-workspace "3:Slack"
+}
+
+window-rule {
+    match app-id="logs"
+    open-on-workspace "0:Logs"
+}
+
+window-rule {
+    match app-id="btop"
+    open-on-workspace "9:Top"
+}
+
+// Layout — Nord-themed, matching StumpWM style
+layout {
+    gaps 6
+    center-focused-column "never"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        width 1
+        active-color "#88c0d0"
+        inactive-color "#4c566a"
+    }
+
+    border {
+        off
+    }
+}
+
 binds {
     // Show hotkey overlay
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Applications
     Mod+T { spawn "kitty"; }
+    Mod+E { spawn "emacsclient" "-c"; }
     Mod+B { spawn "librewolf"; }
     Mod+D { spawn "fuzzel"; }
     Super+Alt+L { spawn "swaylock"; }
@@ -84,7 +156,8 @@ binds {
     Mod+6 { focus-workspace 6; }
     Mod+7 { focus-workspace 7; }
     Mod+8 { focus-workspace 8; }
-    Mod+9 { focus-workspace 9; }
+    Mod+9 { focus-workspace 5; }
+    Mod+0 { focus-workspace 4; }
 
     // Move column to workspace by number
     Mod+Ctrl+1 { move-column-to-workspace 1; }
@@ -95,7 +168,8 @@ binds {
     Mod+Ctrl+6 { move-column-to-workspace 6; }
     Mod+Ctrl+7 { move-column-to-workspace 7; }
     Mod+Ctrl+8 { move-column-to-workspace 8; }
-    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    Mod+Ctrl+9 { move-column-to-workspace 5; }
+    Mod+Ctrl+0 { move-column-to-workspace 4; }
 
     // Scroll bindings
     Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
