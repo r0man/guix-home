@@ -53,7 +53,9 @@
         r0man-guix-channel))
 
 (define %home-service
-  (service guix-home-service-type `(("roman" ,m1-home-environment))))
+  (service guix-home-service-type
+           `(("roman" ,(make-m1-home-environment
+                        #:agent? #t)))))
 
 (define %packages
   (cons* asahi-alsa-utils

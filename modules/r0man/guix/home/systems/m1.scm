@@ -11,11 +11,16 @@
   #:use-module (gnu home services)
   #:use-module (gnu home)
   #:use-module (gnu services)
+  #:use-module (gnu home services containers)
+  #:use-module (gnu packages containers)
+  #:use-module (gnu services containers)
+  #:use-module (r0man guix home systems agent)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
   #:use-module (r0man guix home claude-code)
   #:use-module (r0man guix home clojure)
+  #:use-module (r0man guix home containers)
   #:use-module (r0man guix home common-lisp)
   #:use-module (r0man guix home eca)
   #:use-module (r0man guix home emacs)
@@ -55,6 +60,7 @@
                  home-channels-default-list)
         (service home-claude-code-service-type)
         (service home-clojure-service-type)
+        (service home-containers-service-type)
         (service home-common-lisp-service-type)
         (service home-dbus-service-type)
         (service home-eca-service-type)
@@ -89,9 +95,34 @@
         (service home-xdg-mime-applications-service-type
                  home-xdg-mime-applications-default-configuration))))
 
+(define agent-services
+  (list (service home-oci-service-type
+                 (for-home
+                  (oci-configuration
+                   (runtime 'podman)
+                   (runtime-cli podman)
+                   (containers
+                    (list
+                     (oci-container-configuration
+                      (image (oci-image
+                              (repository "guix/agent")
+                              (tag "latest")
+                              (value agent-operating-system)))
+                      (provision "agent")
+                      (network "host")
+                      (volumes
+                       (list "/home/roman/workspace:/home/roman/workspace"
+                             "/home/roman/.ssh:/home/roman/.ssh:ro"))))))))))
+
+(define-public make-m1-home-environment
+  (lambda* (#:key (agent? #f))
+    (home-environment
+     (packages (append packages-base packages-desktop packages-aarch64))
+     (services (if agent?
+                   (append services agent-services)
+                   services)))))
+
 (define-public m1-home-environment
-  (home-environment
-   (packages (append packages-base packages-desktop packages-aarch64))
-   (services services)))
+  (make-m1-home-environment))
 
 m1-home-environment
