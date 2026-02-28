@@ -16,5 +16,6 @@
       "Read(~/.password-store/**)",
       "Read(~/Mail/**)"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }
