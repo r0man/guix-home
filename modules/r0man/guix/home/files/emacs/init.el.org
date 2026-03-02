@@ -257,6 +257,15 @@ Reload files when they change on disk.
     (beads-enable-debug t)
     :hook (after-init . beads-eldoc-mode))
 #+end_src
+** Gastown
+#+begin_src emacs-lisp
+  (use-package gastown
+    :bind (("C-x C-g g" . gastown))
+    :commands (gastown)
+    :load-path ("~/workspace/gastown.el/lisp"
+                "~/workspace/gastown.el/lisp/test")
+    :bind ("C-c g" . gastown))
+#+end_src
 ** Bug Reference
 
 Viewing Bugs within Emacs
