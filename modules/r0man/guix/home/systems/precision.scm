@@ -110,7 +110,6 @@
         (service home-i3status-service-type)
         (service home-kitty-service-type)
         (service home-librewolf-service-type)
-        (service home-mbsync-service-type)
         (service home-msmtp-service-type
                  home-msmtp-default-configuration)
         (service home-niri-service-type)
