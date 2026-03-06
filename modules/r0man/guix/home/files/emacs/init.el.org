@@ -2763,6 +2763,15 @@ Show font features in an Emacs buffer.
 #+begin_src emacs-lisp
   (global-so-long-mode 1)
 #+end_src
+** Sooper Whisper
+#+begin_src emacs-lisp
+  (use-package sooper-whisper
+    :commands
+    (sooper-whisper)
+    :load-path
+    ("~/workspace/sooper-whisper.el"
+     "~/workspace/sooper-whisper.el/test"))
+#+end_src
 ** Language Server Protocol
 
 Emacs client for the Language Server Protocol.
