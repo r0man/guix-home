@@ -6,20 +6,26 @@
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (r0man guix packages golang-dolthub)
+  #:use-module (r0man guix packages task-management)
   #:use-module (r0man guix services gastown)
   #:export (home-gastown-configuration
             home-gastown-service-type))
 
 ;;; Commentary:
 ;;;
-;;; Home service for Gas Town's Dolt SQL server.
-;;; Manages Dolt as a user-level shepherd daemon with auto-start,
-;;; Dolt global configuration, GT_TOWN environment variable, and
-;;; Dolt server config file generation.
+;;; Unified home service for Gas Town.
 ;;;
-;;; The shepherd service owns the Dolt lifecycle — use
-;;; 'herd start gastown-dolt' and 'herd stop gastown-dolt'
-;;; instead of 'gt dolt start' / 'gt dolt stop'.
+;;; Manages two shepherd services:
+;;;
+;;;   gastown-dolt — Dolt SQL server (lifecycle via herd start/stop gastown-dolt).
+;;;   gastown      — Gas Town daemon (mayor, witnesses, refineries) via 'gt up'/'gt down'.
+;;;                  Requires gastown-dolt.  Runs 'gt up' on start, 'gt down' on stop.
+;;;
+;;; The home configuration also declares rigs and crew workspaces.  During
+;;; 'guix home reconfigure', activation creates rig/crew directory structure
+;;; and attempts to register any new rigs with 'gt rig add --adopt'.
+;;;
+;;; Environment variable GT_TOWN is exported to point at the town root.
 ;;;
 ;;; Code:
 
@@ -37,27 +43,54 @@
                    (description "Dolt global user name."))
   (dolt-user-email home-gastown-dolt-user-email
                    (default "roman@burningswell.com")
-                   (description "Dolt global user email.")))
+                   (description "Dolt global user email."))
+  (rigs            home-gastown-rigs
+                   (default '())
+                   (description "List of <gastown-rig-configuration> records declaring managed rigs.")))
 
 (define (home-gastown-shepherd-services config)
-  "Return a shepherd service for the Gas Town Dolt SQL server."
+  "Return shepherd services for Gas Town: gastown-dolt and gastown."
   (let* ((dolt-bin  (file-append dolt "/bin/dolt"))
+         (gt-bin    (file-append gastown-next "/bin/gt"))
          (town-root (home-gastown-town-root config)))
-    (list (shepherd-service
-           (documentation "Run the Gas Town Dolt SQL server.")
-           (provision '(gastown-dolt))
-           (modules '((shepherd support)))
-           (start #~(lambda _
-                      (let* ((home (getenv "HOME"))
-                             (town (string-append home "/" #$town-root))
-                             (work-dir (string-append town "/.dolt-data"))
-                             (config-file (string-append home "/.config/gastown/dolt-config.yaml"))
-                             (log-file (string-append town "/log/gastown-dolt.log")))
-                        (fork+exec-command
-                         (list #$dolt-bin "sql-server" "--config" config-file)
-                         #:directory work-dir
-                         #:log-file log-file))))
-           (stop #~(make-kill-destructor SIGTERM))))))
+    (list
+     (shepherd-service
+      (documentation "Run the Gas Town Dolt SQL server.")
+      (provision '(gastown-dolt))
+      (modules '((shepherd support)))
+      (start #~(lambda _
+                 (let* ((home (getenv "HOME"))
+                        (town (string-append home "/" #$town-root))
+                        (work-dir (string-append town "/.dolt-data"))
+                        (config-file (string-append home "/.config/gastown/dolt-config.yaml"))
+                        (log-file (string-append town "/log/gastown-dolt.log")))
+                   (fork+exec-command
+                    (list #$dolt-bin "sql-server" "--config" config-file)
+                    #:directory work-dir
+                    #:log-file log-file))))
+      (stop #~(make-kill-destructor SIGTERM)))
+
+     (shepherd-service
+      (documentation "Run Gas Town services (daemon, deacon, mayor, witnesses, refineries).")
+      (provision '(gastown))
+      (requirement '(gastown-dolt))
+      (modules '((shepherd support)))
+      (start #~(lambda _
+                 ;; gt up is idempotent: skips services already running,
+                 ;; including gastown-dolt which shepherd manages separately.
+                 (let* ((home (getenv "HOME"))
+                        (log-file (string-append home "/" #$town-root "/log/gastown.log"))
+                        (pid (fork+exec-command (list #$gt-bin "up")
+                                               #:log-file log-file)))
+                   (waitpid pid)
+                   #t)))
+      (stop #~(lambda _
+                (let* ((home (getenv "HOME"))
+                       (log-file (string-append home "/" #$town-root "/log/gastown.log"))
+                       (pid (fork+exec-command (list #$gt-bin "down")
+                                              #:log-file log-file)))
+                  (waitpid pid)
+                  #f)))))))
 
 (define (home-gastown-activation config)
   "Return a gexp that creates Gas Town config files at reconfigure time."
@@ -68,10 +101,20 @@
          (read-timeout    (gastown-dolt-read-timeout dolt-config))
          (write-timeout   (gastown-dolt-write-timeout dolt-config))
          (user-name       (home-gastown-dolt-user-name config))
-         (user-email      (home-gastown-dolt-user-email config)))
+         (user-email      (home-gastown-dolt-user-email config))
+         (gt-bin          (file-append gastown-next "/bin/gt"))
+         ;; Serialize rig specs as a plain alist for use in the gexp.
+         (rig-specs       (map (lambda (rig)
+                                 (list (gastown-rig-name rig)
+                                       (or (gastown-rig-git-url rig) "")
+                                       (or (gastown-rig-prefix rig) "")
+                                       (map gastown-crew-name
+                                            (gastown-rig-crews rig))))
+                               (home-gastown-rigs config))))
     (with-imported-modules '((guix build utils))
       #~(begin
-          (use-modules (guix build utils))
+          (use-modules (guix build utils)
+                       (ice-9 textual-ports))
           (let* ((home        (getenv "HOME"))
                  (town        (string-append home "/" #$(home-gastown-town-root config)))
                  (dolt-dir    (string-append home "/.dolt"))
@@ -109,7 +152,37 @@
                    (string-append
                     "{\"user.name\":\"" #$user-name "\","
                     "\"user.email\":\"" #$user-email "\"}\n")
-                   out)))))))))
+                   out))))
+            ;; Set up rig and crew directories, register new rigs with gt.
+            (for-each
+             (lambda (rig-spec)
+               (let* ((rig-name  (car rig-spec))
+                      (git-url   (cadr rig-spec))
+                      (prefix    (caddr rig-spec))
+                      (crews     (cadddr rig-spec))
+                      (rig-dir   (string-append town "/" rig-name))
+                      (crew-dir  (string-append rig-dir "/crew"))
+                      (rigs-json (string-append town "/mayor/rigs.json")))
+                 ;; Create basic directory structure for the rig.
+                 (mkdir-p crew-dir)
+                 ;; Create crew workspace directories.
+                 (for-each (lambda (crew-name)
+                             (mkdir-p (string-append crew-dir "/" crew-name)))
+                           crews)
+                 ;; Register rig if not already listed in mayor/rigs.json.
+                 ;; Requires gt (gastown-next) and a running Dolt server.
+                 ;; Skipped gracefully if Dolt is not available yet.
+                 (when (and (file-exists? rigs-json)
+                            (not (string-contains
+                                  (call-with-input-file rigs-json get-string-all)
+                                  (string-append "\"" rig-name "\""))))
+                   (let ((args (append (list #$gt-bin "rig" "add" "--adopt" rig-name)
+                                       (if (string-null? git-url) '()
+                                           (list "--url" git-url))
+                                       (if (string-null? prefix) '()
+                                           (list "--prefix" prefix)))))
+                     (false-if-exception (apply invoke args))))))
+             '#$rig-specs))))))
 
 (define (home-gastown-environment-variables config)
   "Return alist of environment variables for Gas Town."
@@ -128,4 +201,6 @@
                              home-gastown-environment-variables)))
    (default-value (home-gastown-configuration))
    (description
-    "Manage Gas Town's Dolt SQL server as a user-level shepherd daemon.")))
+    "Unified Gas Town home service.  Manages the Dolt SQL server (gastown-dolt)
+and the Gas Town daemon (gastown) as user-level shepherd services, and
+optionally provisions rig and crew directory structure on activation.")))
