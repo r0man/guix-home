@@ -54,6 +54,7 @@
   #:use-module (gnu packages video)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xml)
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
@@ -142,6 +143,7 @@
         vivid
         whisper-cpp
         wireless-tools
+        xmlstarlet
         zip))
 
 (define packages-desktop
