@@ -32,11 +32,6 @@ spawn-at-startup "kitty" "--class" "btop" "-e" "btop"
 
 // Window rules — direct windows to their workspace
 window-rule {
-    match app-id="emacs"
-    open-on-workspace "1:Emacs"
-}
-
-window-rule {
     match app-id="librewolf"
     open-on-workspace "2:Web"
 }
@@ -56,6 +51,19 @@ window-rule {
     match app-id="btop"
     open-on-workspace "9:Top"
     open-maximized true
+}
+
+// Input
+input {
+    keyboard {
+        xkb {
+            options "caps:ctrl_modifier,terminate:ctrl_alt_bksp,altwin:swap_lalt_lwin"
+        }
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
 }
 
 // Layout — Nord-themed, matching StumpWM style

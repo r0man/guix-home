@@ -189,6 +189,7 @@ exec guix shell \
     --preserve='^TERM$' \
     --preserve='^USER$' \
     --preserve='^XAUTHORITY$' \
+    --preserve='^WAYLAND_DISPLAY$' \
     --preserve='^XDG_RUNTIME_DIR$' \
     "${ARGS[@]}" \
     -- "$COMMAND" "$@"
