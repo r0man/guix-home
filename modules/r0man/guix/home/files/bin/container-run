@@ -156,8 +156,9 @@ ARGS+=(--share="$HOME/.claude")
 [[ -d "$PROFILE_PATH/etc/ssl/certs" ]] && \
     ARGS+=(--expose="$PROFILE_PATH/etc/ssl/certs"=/etc/ssl/certs)
 
-# Guix daemon socket (for running guix inside container)
+# Guix daemon socket and profiles (for running guix inside container)
 [[ -S /var/guix/daemon-socket/socket ]] && ARGS+=(--expose=/var/guix/daemon-socket)
+[[ -d /var/guix/profiles ]] && ARGS+=(--share=/var/guix/profiles)
 
 debug "Starting container with $COMMAND"
 
