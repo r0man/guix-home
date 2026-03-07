@@ -77,7 +77,7 @@ exec guix shell \
      --share="$HOME/.ssh/known_hosts" \
      "${SHELL_ARGS[@]}" \
      bash \
-     beads \
+     beads-next \
      coreutils \
      curl \
      diffutils \

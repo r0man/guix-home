@@ -52,9 +52,14 @@
         \"format-icons\": {
             \"1:Emacs\": \" 1:Emacs\",
             \"2:Web\": \" 2:Web\",
-            \"3:Slack\": \" 3:Slack\",
-            \"0:Logs\": \" 0:Logs\",
-            \"9:Top\": \" 9:Top\"
+            \"3\": \" 3\",
+            \"4\": \" 4\",
+            \"5\": \" 5\",
+            \"6\": \" 6\",
+            \"7\": \" 7\",
+            \"8:Slack\": \" 8:Slack\",
+            \"9:Top\": \" 9:Top\",
+            \"0:Logs\": \" 0:Logs\"
         }
       },
       \"niri/window\": {
@@ -150,7 +155,7 @@
     border: none;
     border-radius: 0;
     font-family: Hack;
-    font-size: 11pt;
+    font-size: 13pt;
     min-height: 0;
 }
 window#waybar {
@@ -208,6 +213,7 @@ window#waybar {
                 (description "Waybar style CSS for Niri."))
   (packages home-niri-packages
             (default (list brightnessctl
+                           fuzzel
                            niri
                            swaybg
                            swayidle

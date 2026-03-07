@@ -1,22 +1,31 @@
 // Niri configuration — default bindings with kitty and librewolf.
 
+// Prefer server-side decorations (no client title bars)
+prefer-no-csd
+
 // Output scaling (use `niri msg outputs` to find the output name)
 output "eDP-1" {
-    scale 1.5
+    scale 1
 }
 
 // Named workspaces
 workspace "1:Emacs"
 workspace "2:Web"
-workspace "3:Slack"
-workspace "0:Logs"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+workspace "8:Slack"
 workspace "9:Top"
+workspace "0:Logs"
 
 // Spawn at startup
 spawn-at-startup "waybar" "-c" "/home/roman/.config/niri/waybar-config.jsonc" "-s" "/home/roman/.config/niri/waybar-style.css"
 spawn-at-startup "swaybg" "-i" "/home/roman/.local/share/wallpapers/stop-customizing-start-working.jpg" "-m" "fill"
 spawn-at-startup "swayidle"
-spawn-at-startup "emacs"
+spawn-at-startup "emacs" "--daemon"
+spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
 spawn-at-startup "librewolf"
 spawn-at-startup "kitty" "--class" "logs" "-e" "journalctl" "--user" "-f"
 spawn-at-startup "kitty" "--class" "btop" "-e" "btop"
@@ -34,17 +43,19 @@ window-rule {
 
 window-rule {
     match app-id="Slack"
-    open-on-workspace "3:Slack"
+    open-on-workspace "8:Slack"
 }
 
 window-rule {
     match app-id="logs"
     open-on-workspace "0:Logs"
+    open-maximized true
 }
 
 window-rule {
     match app-id="btop"
     open-on-workspace "9:Top"
+    open-maximized true
 }
 
 // Layout — Nord-themed, matching StumpWM style
@@ -77,6 +88,7 @@ binds {
 
     // Applications
     Mod+T { spawn "kitty"; }
+    Mod+Return { spawn "emacsclient" "-c" "-e" "(vterm)"; }
     Mod+E { spawn "emacsclient" "-c"; }
     Mod+B { spawn "librewolf"; }
     Mod+D { spawn "fuzzel"; }
@@ -110,24 +122,24 @@ binds {
     Mod+Ctrl+End   { move-column-to-last; }
 
     // Focus monitor
-    Mod+Shift+Left  { focus-monitor-left; }
-    Mod+Shift+Right { focus-monitor-right; }
-    Mod+Shift+Up    { focus-monitor-up; }
-    Mod+Shift+Down  { focus-monitor-down; }
-    Mod+Shift+H     { focus-monitor-left; }
-    Mod+Shift+L     { focus-monitor-right; }
-    Mod+Shift+K     { focus-monitor-up; }
-    Mod+Shift+J     { focus-monitor-down; }
+    Mod+Alt+Left  { focus-monitor-left; }
+    Mod+Alt+Right { focus-monitor-right; }
+    Mod+Alt+Up    { focus-monitor-up; }
+    Mod+Alt+Down  { focus-monitor-down; }
+    Mod+Alt+H     { focus-monitor-left; }
+    Mod+Alt+L     { focus-monitor-right; }
+    Mod+Alt+K     { focus-monitor-up; }
+    Mod+Alt+J     { focus-monitor-down; }
 
     // Move column to monitor
-    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
+    Mod+Alt+Shift+Left  { move-column-to-monitor-left; }
+    Mod+Alt+Shift+Right { move-column-to-monitor-right; }
+    Mod+Alt+Shift+Up    { move-column-to-monitor-up; }
+    Mod+Alt+Shift+Down  { move-column-to-monitor-down; }
+    Mod+Alt+Shift+H     { move-column-to-monitor-left; }
+    Mod+Alt+Shift+L     { move-column-to-monitor-right; }
+    Mod+Alt+Shift+K     { move-column-to-monitor-up; }
+    Mod+Alt+Shift+J     { move-column-to-monitor-down; }
 
     // Workspace switching
     Mod+Page_Down { focus-workspace-down; }
@@ -136,16 +148,16 @@ binds {
     Mod+I         { focus-workspace-up; }
 
     // Move column to workspace
-    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
-    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
-    Mod+Ctrl+U         { move-column-to-workspace-down; }
-    Mod+Ctrl+I         { move-column-to-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+    Mod+Shift+Page_Up   { move-column-to-workspace-up; }
+    Mod+Shift+U         { move-column-to-workspace-down; }
+    Mod+Shift+I         { move-column-to-workspace-up; }
 
-    // Move workspace
-    Mod+Shift+Page_Down { move-workspace-down; }
-    Mod+Shift+Page_Up   { move-workspace-up; }
-    Mod+Shift+U         { move-workspace-down; }
-    Mod+Shift+I         { move-workspace-up; }
+    // Move workspace (reorder)
+    Mod+Ctrl+Page_Down { move-workspace-down; }
+    Mod+Ctrl+Page_Up   { move-workspace-up; }
+    Mod+Ctrl+U         { move-workspace-down; }
+    Mod+Ctrl+I         { move-workspace-up; }
 
     // Focus workspace by number
     Mod+1 { focus-workspace 1; }
@@ -156,20 +168,20 @@ binds {
     Mod+6 { focus-workspace 6; }
     Mod+7 { focus-workspace 7; }
     Mod+8 { focus-workspace 8; }
-    Mod+9 { focus-workspace 5; }
-    Mod+0 { focus-workspace 4; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
 
     // Move column to workspace by number
-    Mod+Ctrl+1 { move-column-to-workspace 1; }
-    Mod+Ctrl+2 { move-column-to-workspace 2; }
-    Mod+Ctrl+3 { move-column-to-workspace 3; }
-    Mod+Ctrl+4 { move-column-to-workspace 4; }
-    Mod+Ctrl+5 { move-column-to-workspace 5; }
-    Mod+Ctrl+6 { move-column-to-workspace 6; }
-    Mod+Ctrl+7 { move-column-to-workspace 7; }
-    Mod+Ctrl+8 { move-column-to-workspace 8; }
-    Mod+Ctrl+9 { move-column-to-workspace 5; }
-    Mod+Ctrl+0 { move-column-to-workspace 4; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+    Mod+Shift+9 { move-column-to-workspace 9; }
+    Mod+Shift+0 { move-column-to-workspace 10; }
 
     // Scroll bindings
     Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
@@ -193,9 +205,10 @@ binds {
     Mod+Ctrl+R { reset-window-height; }
     Mod+F { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
-    // Mod+M { maximize-window; }
+    Mod+M { maximize-window-to-edges; }
     Mod+Ctrl+F { expand-column-to-available-width; }
     Mod+C { center-column; }
+    Mod+Ctrl+C { center-visible-columns; }
     Mod+Minus { set-column-width "-10%"; }
     Mod+Equal { set-column-width "+10%"; }
     Mod+Shift+Minus { set-window-height "-10%"; }
@@ -226,7 +239,7 @@ binds {
     XF86MonBrightnessDown { spawn "brightnessctl" "s" "10%-"; }
 
     // Quit / power
-    Mod+Shift+E { quit; }
-    Ctrl+Alt+Delete { quit; }
+    Mod+Shift+E { spawn "emacs"; }
+    Mod+Shift+Q { quit; }
     Mod+Shift+P { power-off-monitors; }
 }

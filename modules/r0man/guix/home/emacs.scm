@@ -29,7 +29,7 @@
 ;;; Code:
 
 (define default-emacs-packages
-  (list (if (target-aarch64?) emacs emacs)
+  (list (if (target-aarch64?) emacs-pgtk emacs-pgtk)
         emacs-adoc-mode
         emacs-agent-shell
         emacs-aider
