@@ -26,6 +26,7 @@
   #:use-module (r0man guix home environment)
   #:use-module (r0man guix home fzf)
   #:use-module (r0man guix home git)
+  #:use-module (r0man guix home services gastown)
   #:use-module (r0man guix home ssh)
   #:use-module (r0man guix home tmux))
 
@@ -58,6 +59,7 @@
                 (service home-emacs-service-type)
                 (service home-environment-service-type)
                 (service home-fzf-service-type)
+                (service home-gastown-service-type)
                 (service home-git-service-type)
                 (service home-openssh-service-type
                          home-openssh-default-configuration)

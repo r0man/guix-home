@@ -27,8 +27,8 @@
   home-gastown-configuration make-home-gastown-configuration
   home-gastown-configuration?
   (town-root       home-gastown-town-root
-                   (default "$HOME/gt")
-                   (description "Root directory for Gas Town. Uses $HOME, not ~ (tilde doesn't expand in env vars)."))
+                   (default "gt")
+                   (description "Gas Town directory name relative to $HOME (e.g. \"gt\" for $HOME/gt)."))
   (dolt-config     home-gastown-dolt-config
                    (default (gastown-dolt-configuration))
                    (description "Dolt server configuration."))
@@ -41,21 +41,23 @@
 
 (define (home-gastown-shepherd-services config)
   "Return a shepherd service for the Gas Town Dolt SQL server."
-  (let* ((dolt-bin (file-append dolt "/bin/dolt")))
+  (let* ((dolt-bin  (file-append dolt "/bin/dolt"))
+         (town-root (home-gastown-town-root config)))
     (list (shepherd-service
            (documentation "Run the Gas Town Dolt SQL server.")
            (provision '(gastown-dolt))
            (modules '((shepherd support)))
            (start #~(lambda _
                       (let* ((home (getenv "HOME"))
-                             (work-dir (string-append home "/gt/.dolt-data"))
+                             (town (string-append home "/" #$town-root))
+                             (work-dir (string-append town "/.dolt-data"))
                              (config-file (string-append home "/.config/gastown/dolt-config.yaml"))
-                             (log-file (string-append home "/.local/var/log/gastown-dolt.log")))
+                             (log-file (string-append town "/log/gastown-dolt.log")))
                         (fork+exec-command
                          (list #$dolt-bin "sql-server" "--config" config-file)
                          #:directory work-dir
                          #:log-file log-file))))
-           (stop #~(make-kill-destructor))))))
+           (stop #~(make-kill-destructor SIGTERM))))))
 
 (define (home-gastown-activation config)
   "Return a gexp that creates Gas Town config files at reconfigure time."
@@ -71,10 +73,11 @@
       #~(begin
           (use-modules (guix build utils))
           (let* ((home        (getenv "HOME"))
+                 (town        (string-append home "/" #$(home-gastown-town-root config)))
                  (dolt-dir    (string-append home "/.dolt"))
                  (config-dir  (string-append home "/.config/gastown"))
-                 (log-dir     (string-append home "/.local/var/log"))
-                 (data-dir    (string-append home "/gt/.dolt-data"))
+                 (log-dir     (string-append town "/log"))
+                 (data-dir    (string-append town "/.dolt-data"))
                  (config-yaml (string-append config-dir "/dolt-config.yaml"))
                  (global-json (string-append dolt-dir "/config_global.json")))
             (mkdir-p data-dir)
@@ -110,7 +113,8 @@
 
 (define (home-gastown-environment-variables config)
   "Return alist of environment variables for Gas Town."
-  `(("GT_TOWN" . "$HOME/gt")))
+  (let ((town-root (home-gastown-town-root config)))
+    `(("GT_TOWN" . ,(string-append "$HOME/" town-root)))))
 
 (define home-gastown-service-type
   (service-type
