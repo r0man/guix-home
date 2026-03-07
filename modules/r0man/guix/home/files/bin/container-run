@@ -176,6 +176,7 @@ export XDG_RUNTIME_DIR
 
 exec guix shell \
     --container \
+    --no-cwd \
     --network \
     --profile="$PROFILE_PATH" \
     --expose=/gnu/store \

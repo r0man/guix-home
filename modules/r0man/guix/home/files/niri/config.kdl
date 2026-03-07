@@ -4,8 +4,12 @@
 prefer-no-csd
 
 // Output scaling (use `niri msg outputs` to find the output name)
+output "DP-3" {
+    scale 1.25
+}
+
 output "eDP-1" {
-    scale 1
+    scale 1.5
 }
 
 // Named workspaces
@@ -97,7 +101,7 @@ binds {
     // Applications
     Mod+T { spawn "kitty"; }
     Mod+Return { spawn "emacsclient" "-c" "-e" "(vterm)"; }
-    Mod+E { spawn "emacsclient" "-c"; }
+    Mod+E { spawn "container-emacs"; }
     Mod+B { spawn "librewolf"; }
     Mod+D { spawn "fuzzel"; }
     Super+Alt+L { spawn "swaylock"; }
