@@ -71,6 +71,7 @@
         diffutils
         fd
         findutils
+        font-google-noto
         font-inconsolata
         git
         glibc-locales
