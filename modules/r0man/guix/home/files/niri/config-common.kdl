@@ -95,6 +95,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Applications
+    Mod+A { spawn "emacsclient" "-c" "-e" "(claude-code-ide)"; }
     Mod+T { spawn "kitty"; }
     Mod+Return { spawn "emacsclient" "-c" "-e" "(vterm)"; }
     Mod+E { spawn "container-emacs"; }
