@@ -1,3 +1,9 @@
 *.fasl
 .lsp
 .clj-kondo
+
+# Gas Town (added by gt)
+.runtime/
+.claude/
+.logs/
+__pycache__/

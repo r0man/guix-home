@@ -11,6 +11,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home)
   #:use-module (gnu services)
+  #:use-module (guix gexp)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
   #:use-module (r0man guix home channels)
@@ -72,7 +73,10 @@
         (service home-mbsync-service-type)
         (service home-msmtp-service-type
                  home-msmtp-default-configuration)
-        (service home-niri-service-type)
+        (service home-niri-service-type
+                 (home-niri-configuration
+                  (config-file (local-file "../files/niri/config-m1.kdl"))
+                  (common-config-file (local-file "../files/niri/config-common.kdl"))))
         (service home-nix-service-type)
         (service home-openssh-service-type
                  home-openssh-default-configuration)

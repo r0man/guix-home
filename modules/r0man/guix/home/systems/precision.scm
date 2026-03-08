@@ -14,6 +14,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
+  #:use-module (guix gexp)
   #:use-module (nongnu packages nvidia)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home btop)
@@ -112,7 +113,10 @@
         (service home-librewolf-service-type)
         (service home-msmtp-service-type
                  home-msmtp-default-configuration)
-        (service home-niri-service-type)
+        (service home-niri-service-type
+                 (home-niri-configuration
+                  (config-file (local-file "../files/niri/config-precision.kdl"))
+                  (common-config-file (local-file "../files/niri/config-common.kdl"))))
         (service home-nix-service-type)
         (service home-openssh-service-type
                  home-openssh-default-configuration)

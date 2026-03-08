@@ -1,0 +1,19 @@
+// Niri configuration — Dell Precision laptop (x86-64).
+include "config-common.kdl"
+
+output "DP-3" {
+    scale 1.25
+}
+
+output "eDP-1" {
+    scale 1.5
+}
+
+// Swap Alt/Win for standard PC keyboard
+input {
+    keyboard {
+        xkb {
+            options "caps:ctrl_modifier,terminate:ctrl_alt_bksp,altwin:swap_lalt_lwin"
+        }
+    }
+}
