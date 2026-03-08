@@ -1,16 +1,11 @@
-// Niri configuration — default bindings with kitty and librewolf.
+// Niri common configuration — shared across all machines.
+// Machine-specific configs include this file and override as needed.
+
+// XWayland support via xwayland-satellite (provides DISPLAY for X11 apps like pinentry-gtk2)
+xwayland-satellite { }
 
 // Prefer server-side decorations (no client title bars)
 prefer-no-csd
-
-// Output scaling (use `niri msg outputs` to find the output name)
-output "DP-3" {
-    scale 1.25
-}
-
-output "eDP-1" {
-    scale 1.5
-}
 
 // Named workspaces
 workspace "1:Emacs"
@@ -61,7 +56,7 @@ window-rule {
 input {
     keyboard {
         xkb {
-            options "caps:ctrl_modifier,terminate:ctrl_alt_bksp,altwin:swap_lalt_lwin"
+            options "caps:ctrl_modifier,terminate:ctrl_alt_bksp"
         }
     }
     touchpad {

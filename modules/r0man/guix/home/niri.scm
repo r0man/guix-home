@@ -4,6 +4,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xorg)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
@@ -203,8 +204,11 @@ window#waybar {
   home-niri-configuration make-home-niri-configuration
   home-niri-configuration?
   (config-file home-niri-config-file
-               (default (local-file "files/niri/config.kdl"))
-               (description "Niri configuration file."))
+               (default (local-file "files/niri/config-common.kdl"))
+               (description "Niri machine-specific configuration file."))
+  (common-config-file home-niri-common-config-file
+                       (default (local-file "files/niri/config-common.kdl"))
+                       (description "Niri common configuration file."))
   (waybar-config home-niri-waybar-config
                  (default %niri-waybar-config)
                  (description "Waybar config for Niri."))
@@ -219,12 +223,14 @@ window#waybar {
                            swayidle
                            swaylock
                            waybar
-                           wireplumber))
+                           wireplumber
+                           xwayland-satellite))
             (description "List of Niri-related packages to install.")))
 
 (define (home-niri-files config)
   "Return alist of Niri configuration files to deploy."
   `((".config/niri/config.kdl" ,(home-niri-config-file config))
+    (".config/niri/config-common.kdl" ,(home-niri-common-config-file config))
     (".config/niri/waybar-config.jsonc" ,(home-niri-waybar-config config))
     (".config/niri/waybar-style.css" ,(home-niri-waybar-style config))))
 

@@ -1,0 +1,11 @@
+// Niri configuration — M1 MacBook (aarch64/Asahi Linux).
+include "config-common.kdl"
+
+// Asahi Linux: manually set render device (kmsro auto-detection fails)
+debug {
+    render-drm-device "/dev/dri/renderD128"
+}
+
+output "eDP-1" {
+    scale 1.5
+}
