@@ -322,18 +322,12 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                          #$container-home town-root))
                '#$(map gastown-town-root towns))
 
-              ;; When map-host-runtime-dir? is set, bind-mount the host
-              ;; XDG_RUNTIME_DIR (e.g. /run/user/1000) into the container
-              ;; at the same path so Wayland/PipeWire sockets are found.
+              ;; When map-host-runtime-dir? is set, save the host
+              ;; XDG_RUNTIME_DIR path for later export.  No bind-mount
+              ;; needed: the mount namespace inherits the parent's mounts,
+              ;; so /run/user/UID is already visible inside the container.
               (when #$map-runtime?
-                (display "# Bind-mount host XDG_RUNTIME_DIR\n" port)
-                (display "HOST_XDG_RUNTIME_DIR=\"${XDG_RUNTIME_DIR:-}\"\n" port)
-                (format port "if [ -n \"${HOST_XDG_RUNTIME_DIR}\" ] && [ -d \"${HOST_XDG_RUNTIME_DIR}\" ]; then\n")
-                (format port "  ~a -p \"${HOST_XDG_RUNTIME_DIR}\"\n"
-                        #$(file-append coreutils "/bin/mkdir"))
-                (format port "  ~a --bind \"${HOST_XDG_RUNTIME_DIR}\" \"${HOST_XDG_RUNTIME_DIR}\"\n"
-                        #$(file-append util-linux "/bin/mount"))
-                (display "fi\n\n" port))
+                (display "HOST_XDG_RUNTIME_DIR=\"${XDG_RUNTIME_DIR:-}\"\n" port))
 
               ;; Tmpfs for shepherd socket (always isolated from host)
               (format port "~a -t tmpfs -o mode=700 tmpfs ~a/.local/run\n"
