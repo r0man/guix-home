@@ -1,0 +1,7 @@
+{"created_at":"2026-03-08T17:17:45Z","created_by":"Roman Scherer","depends_on_id":"gh-r6q","issue_id":"gh-6wb","type":"parent-child"}
+{"created_at":"2026-03-08T17:17:17Z","created_by":"Roman Scherer","depends_on_id":"gh-wdh","issue_id":"gh-6wb","type":"blocks"}
+{"created_at":"2026-03-08T17:17:45Z","created_by":"Roman Scherer","depends_on_id":"gh-r6q","issue_id":"gh-ide","type":"parent-child"}
+{"created_at":"2026-03-08T17:17:17Z","created_by":"Roman Scherer","depends_on_id":"gh-ide","issue_id":"gh-wdh","type":"blocks"}
+{"created_at":"2026-03-08T17:17:45Z","created_by":"Roman Scherer","depends_on_id":"gh-r6q","issue_id":"gh-wdh","type":"parent-child"}
+{"created_at":"2026-03-08T17:17:17Z","created_by":"Roman Scherer","depends_on_id":"gh-wg8","issue_id":"gh-wdh","type":"blocks"}
+{"created_at":"2026-03-08T17:17:45Z","created_by":"Roman Scherer","depends_on_id":"gh-r6q","issue_id":"gh-wg8","type":"parent-child"}
