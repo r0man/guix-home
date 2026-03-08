@@ -186,7 +186,12 @@ EndSection"))
                  (home-gastown-container-configuration
                   (home-environment gastown-he)
                   (user "roman")
-                  (towns gastown-towns)))))
+                  (towns gastown-towns)
+                  (map-host-runtime-dir? #t)
+                  (environment-variables
+                   '("COLORTERM" "DISPLAY" "LANG"
+                     "SSH_AUTH_SOCK" "TERM" "USER"
+                     "WAYLAND_DISPLAY" "XAUTHORITY"))))))
 
 (define-public precision-home-environment
   (home-environment

@@ -15,6 +15,8 @@
   #:export (home-gastown-configuration
             home-gastown-service-type
             home-gastown-container-configuration
+            home-gastown-container-environment-variables
+            home-gastown-container-map-host-runtime-dir?
             home-gastown-container-service-type))
 
 ;;; Commentary:
@@ -243,7 +245,15 @@ shepherd service.")))
   (home-mounts home-gastown-container-home-mounts
                (default '(".dolt" ".ssh:ro" ".claude"))
                (description "Paths relative to $HOME to bind-mount.  \
-Append ':ro' for read-only.")))
+Append ':ro' for read-only."))
+  (environment-variables home-gastown-container-environment-variables
+                         (default '())
+                         (description "List of environment variable names \
+to pass through from the host (e.g. '(\"DISPLAY\" \"WAYLAND_DISPLAY\"))."))
+  (map-host-runtime-dir? home-gastown-container-map-host-runtime-dir?
+                          (default #f)
+                          (description "When #t, bind-mount the host \
+XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
 
 (define (gastown-container-script config)
   "Return a computed-file bash script for the namespace container."
@@ -251,6 +261,8 @@ Append ':ro' for read-only.")))
          (user  (home-gastown-container-user config))
          (towns (home-gastown-container-towns config))
          (mounts (home-gastown-container-home-mounts config))
+         (env-vars (home-gastown-container-environment-variables config))
+         (map-runtime? (home-gastown-container-map-host-runtime-dir? config))
          (host-home (string-append "/home/" user))
          (container-home "/tmp/gastown-home"))
     (computed-file "gastown-container-script"
@@ -310,7 +322,20 @@ Append ':ro' for read-only.")))
                          #$container-home town-root))
                '#$(map gastown-town-root towns))
 
-              ;; Tmpfs for shepherd socket
+              ;; When map-host-runtime-dir? is set, bind-mount the host
+              ;; XDG_RUNTIME_DIR (e.g. /run/user/1000) into the container
+              ;; at the same path so Wayland/PipeWire sockets are found.
+              (when #$map-runtime?
+                (display "# Bind-mount host XDG_RUNTIME_DIR\n" port)
+                (display "HOST_XDG_RUNTIME_DIR=\"${XDG_RUNTIME_DIR:-}\"\n" port)
+                (format port "if [ -n \"${HOST_XDG_RUNTIME_DIR}\" ] && [ -d \"${HOST_XDG_RUNTIME_DIR}\" ]; then\n")
+                (format port "  ~a -p \"${HOST_XDG_RUNTIME_DIR}\"\n"
+                        #$(file-append coreutils "/bin/mkdir"))
+                (format port "  ~a --bind \"${HOST_XDG_RUNTIME_DIR}\" \"${HOST_XDG_RUNTIME_DIR}\"\n"
+                        #$(file-append util-linux "/bin/mount"))
+                (display "fi\n\n" port))
+
+              ;; Tmpfs for shepherd socket (always isolated from host)
               (format port "~a -t tmpfs -o mode=700 tmpfs ~a/.local/run\n"
                       #$(file-append util-linux "/bin/mount")
                       #$container-home)
@@ -336,11 +361,27 @@ Append ':ro' for read-only.")))
 
               ;; Export environment
               (format port "\nexport HOME=~a\n" #$container-home)
-              (format port "export XDG_RUNTIME_DIR=~a/.local/run\n"
-                      #$container-home)
+              (if #$map-runtime?
+                  (begin
+                    (display "if [ -n \"${HOST_XDG_RUNTIME_DIR:-}\" ]; then\n" port)
+                    (display "  export XDG_RUNTIME_DIR=\"${HOST_XDG_RUNTIME_DIR}\"\n" port)
+                    (display "else\n" port)
+                    (format port "  export XDG_RUNTIME_DIR=~a/.local/run\n"
+                            #$container-home)
+                    (display "fi\n" port))
+                  (format port "export XDG_RUNTIME_DIR=~a/.local/run\n"
+                          #$container-home))
               ;; Prevent activate from starting shepherd (it would try
               ;; /var/run/shepherd since UID=0 inside the namespace).
-              (display "export GUIX_SYSTEM_IS_RUNNING_HOME_ACTIVATE=1\n\n" port)
+              (display "export GUIX_SYSTEM_IS_RUNNING_HOME_ACTIVATE=1\n" port)
+
+              ;; Pass through configured environment variables from host.
+              (for-each
+               (lambda (var)
+                 (format port "[ -n \"${~a:-}\" ] && export ~a=\"${~a}\"\n"
+                         var var var))
+               '#$env-vars)
+              (newline port)
 
               ;; Activate home environment (sets up symlinks, env).
               (format port "~a/activate || exit 1\n\n" #$he)
@@ -367,11 +408,20 @@ Append ':ro' for read-only.")))
   "Return a shepherd service for the namespace container."
   (let* ((he    (home-gastown-container-home-environment config))
          (user  (home-gastown-container-user config))
+         (env-vars (home-gastown-container-environment-variables config))
          (home-dir (string-append "/home/" user))
          (container-home "/tmp/gastown-home")
          (script (gastown-container-script config))
          (nsenter-bin (file-append util-linux "/bin/nsenter"))
-         (bash-bin (file-append bash "/bin/bash")))
+         (bash-bin (file-append bash "/bin/bash"))
+         ;; Build env export string for nsenter commands.  Each variable
+         ;; is conditionally exported only if set in the host environment.
+         (env-exports (string-join
+                       (map (lambda (var)
+                              (string-append
+                               "[ -n \"${" var ":-}\" ] && export " var "=\"${" var "}\"; "))
+                            env-vars)
+                       "")))
     (list
      (shepherd-service
       (documentation "Run Gas Town in a namespace container.")
@@ -408,9 +458,9 @@ Example: herd run gastown-container gt status")
                                    read-line)))
                      (cmd (string-join args " "))
                      (port (open-input-pipe
-                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~a'"
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~a~a'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home cmd)))
+                                    #$container-home #$env-exports cmd)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -428,9 +478,9 @@ Example: herd run gastown-container gt status")
                                              pid pid)
                                    read-line)))
                      (port (open-input-pipe
-                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; for t in $HOME/*/mayor; do d=$(dirname $t); cd $d; GT_TOWN=$d gt status; done'"
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~afor t in $HOME/*/mayor; do d=$(dirname $t); cd $d; GT_TOWN=$d gt status; done'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home)))
+                                    #$container-home #$env-exports)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -448,9 +498,9 @@ Example: herd run gastown-container gt status")
                                              pid pid)
                                    read-line)))
                      (port (open-input-pipe
-                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; tmux -L gt ls'"
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~atmux -L gt ls'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home)))
+                                    #$container-home #$env-exports)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -470,9 +520,9 @@ Example: herd attach gastown-container hq-mayor")
                                              pid pid)
                                    read-line)))
                      (session (if (null? args) "" (car args))))
-                (format #t "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; tmux -L gt attach~a'\n"
+                (format #t "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~atmux -L gt attach~a'\n"
                         #$nsenter-bin child-pid #$bash-bin
-                        #$container-home
+                        #$container-home #$env-exports
                         (if (string-null? session) ""
                             (string-append " -t " session)))
                 #t))))))))))
