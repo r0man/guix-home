@@ -214,3 +214,187 @@
     "Multi-town Gas Town home service.  For each town, manages the Gas Town
 lifecycle (gt install/up/down) including dolt and the daemon as a user-level
 shepherd service.")))
+
+
+;;;
+;;; OCI container service for running Gas Town inside rootless Podman.
+;;;
+;;; Uses a manifest-based image (no full OS) with an entrypoint script
+;;; that runs gt install/up and traps SIGTERM for gt down.  The host
+;;; shepherd manages the container lifecycle.
+;;;
+
+(define-record-type* <home-gastown-oci-configuration>
+  home-gastown-oci-configuration make-home-gastown-oci-configuration
+  home-gastown-oci-configuration?
+  (user home-gastown-oci-user
+        (default "roman")
+        (description "Username for host-side volume mount paths."))
+  (image-value home-gastown-oci-image-value
+               (description "Value for the OCI image: a manifest, gexp, \
+or file-like object."))
+  (towns home-gastown-oci-towns
+         (default '())
+         (description "List of <gastown-town-configuration> records."))
+  (extra-packages home-gastown-oci-extra-packages
+                  (default '())
+                  (description "Additional packages to include in the image."))
+  (home-mounts home-gastown-oci-home-mounts
+               (default '(".dolt" ".ssh:ro" ".claude"))
+               (description "List of paths relative to $HOME to bind-mount \
+into the container.  Append ':ro' for read-only.  Default includes .dolt, \
+.ssh (read-only), and .claude."))
+  (extra-volumes home-gastown-oci-extra-volumes
+                 (default '())
+                 (description "Additional volume mounts as strings or pairs.")))
+
+(define (gastown-oci-entrypoint town)
+  "Return a shell script for TOWN that installs, starts, and traps
+SIGTERM to shut down cleanly.  Uses commands from PATH (set by the
+container's profile) rather than absolute store paths."
+  (let* ((name      (gastown-town-name town))
+         (town-root (gastown-town-root town))
+         (dolt-cfg  (gastown-town-dolt town))
+         (port      (number->string (gastown-dolt-port dolt-cfg)))
+         (rigs      (gastown-town-rigs town))
+         (user-name  (gastown-dolt-user-name dolt-cfg))
+         (user-email (gastown-dolt-user-email dolt-cfg)))
+    (plain-file
+     (string-append "gastown-oci-entrypoint-" name ".sh")
+     (string-append
+      "#!/bin/bash\n"
+      "set -euo pipefail\n\n"
+      "TOWN_DIR=\"${HOME}/" town-root "\"\n"
+      "export GT_TOWN=\"$TOWN_DIR\"\n"
+      "export GT_DOLT_PORT=" port "\n\n"
+      ;; Create directories.
+      "mkdir -p \"$TOWN_DIR/log\" \"$TOWN_DIR/.dolt-data\" \"$HOME/.dolt\"\n\n"
+      ;; Seed dolt config.
+      "if [ ! -f \"$HOME/.dolt/config_global.json\" ]; then\n"
+      "  echo '{\"user.name\":\"" user-name "\","
+      "\"user.email\":\"" user-email "\"}' "
+      "> \"$HOME/.dolt/config_global.json\"\n"
+      "fi\n\n"
+      ;; Install and start.
+      "echo \"Installing town " name "...\"\n"
+      "gt install \"$TOWN_DIR\" --force --no-beads --dolt-port " port "\n\n"
+      "cd \"$TOWN_DIR\"\n\n"
+      "echo \"Starting town " name "...\"\n"
+      "gt up || echo \"Warning: some services failed to start\"\n"
+      "sleep 3\n\n"
+      ;; Register rigs and crews.
+      (apply string-append
+             (map (lambda (rig)
+                    (let ((rig-name (gastown-rig-name rig))
+                          (git-url  (or (gastown-rig-git-url rig) ""))
+                          (prefix   (or (gastown-rig-prefix rig) ""))
+                          (crews    (map gastown-crew-name
+                                        (gastown-rig-crews rig))))
+                      (string-append
+                       "RIG_DIR=\"$TOWN_DIR/" rig-name "\"\n"
+                       (if (string-null? git-url) ""
+                           (string-append
+                            "if [ ! -d \"$RIG_DIR\" ]; then\n"
+                            "  gt rig add " rig-name " " git-url
+                            (if (string-null? prefix) ""
+                                (string-append " --prefix " prefix))
+                            "\n"
+                            "elif ! grep -q '\"" rig-name "\"' "
+                            "\"$TOWN_DIR/mayor/rigs.json\" 2>/dev/null; then\n"
+                            "  gt rig add --adopt " rig-name
+                            " --url " git-url
+                            (if (string-null? prefix) ""
+                                (string-append " --prefix " prefix))
+                            "\n"
+                            "fi\n"))
+                       (apply string-append
+                              (map (lambda (crew-name)
+                                     (string-append
+                                      "if [ ! -d \"$RIG_DIR/crew/" crew-name "\" ]; then\n"
+                                      "  gt crew add " crew-name
+                                      " --rig " rig-name "\n"
+                                      "fi\n"))
+                                   crews))
+                       "\n")))
+                  rigs))
+      ;; Trap SIGTERM and block.
+      "cleanup() {\n"
+      "  echo \"Stopping town " name "...\"\n"
+      "  gt down\n"
+      "  exit 0\n"
+      "}\n"
+      "trap cleanup SIGTERM SIGINT\n\n"
+      "echo \"Town " name " is running.\"\n"
+      "while true; do sleep 3600 & wait $!; done\n"))))
+
+(define (gastown-oci-town-volumes user town)
+  "Return volume mount strings for TOWN under USER's home."
+  (let* ((home (string-append "/home/" user))
+         (root (gastown-town-root town))
+         (town-dir (string-append home "/" root)))
+    (list (string-append town-dir ":" town-dir))))
+
+(define (home-gastown-oci-extension config)
+  "Return an OCI extension with container configurations for each town."
+  (let ((user        (home-gastown-oci-user config))
+        (image-val   (home-gastown-oci-image-value config))
+        (towns       (home-gastown-oci-towns config))
+        (extra-pkgs  (home-gastown-oci-extra-packages config))
+        (home-mounts (home-gastown-oci-home-mounts config))
+        (extra-vols  (home-gastown-oci-extra-volumes config)))
+    (let ((image-with-extras
+           (if (null? extra-pkgs)
+               image-val
+               (concatenate-manifests
+                (list image-val
+                      (packages->manifest extra-pkgs))))))
+      (oci-extension
+       (containers
+        (map (lambda (town)
+               (let* ((name (gastown-town-name town))
+                      (home (string-append "/home/" user))
+                      (log  (string-append home "/.local/state/shepherd/"
+                                           "gastown-oci-" name ".log")))
+                 (let ((entrypoint (gastown-oci-entrypoint town)))
+                   (oci-container-configuration
+                    (image (oci-image
+                            (repository (string-append "guix/gastown-oci-" name))
+                            (tag "latest")
+                            (value image-with-extras)
+                            (pack-options
+                             (list #:symlinks
+                                   '(("/bin/sh" -> "bin/bash")
+                                     ("/bin/bash" -> "bin/bash"))))))
+                    (provision (string-append "gastown-oci-" name))
+                    (log-file log)
+                    (network "host")
+                    (environment
+                     (list (cons "HOME" home)))
+                    (command (list "/bin/bash" "/entrypoint.sh"))
+                    (extra-arguments
+                     (list #~(string-append
+                              "-v=" #$entrypoint
+                              ":/entrypoint.sh:ro")))
+                    (volumes (append (gastown-oci-town-volumes user town)
+                                     (map (lambda (mount)
+                                            (let* ((parts (string-split mount #\:))
+                                                   (path  (car parts))
+                                                   (opts  (if (null? (cdr parts))
+                                                              ""
+                                                              (string-append
+                                                               ":" (cadr parts)))))
+                                              (string-append home "/" path
+                                                             ":" home "/" path
+                                                             opts)))
+                                          home-mounts)
+                                     extra-vols))))))
+             towns))))))
+
+(define home-gastown-oci-service-type
+  (service-type
+   (name 'home-gastown-oci)
+   (extensions
+    (list (service-extension home-oci-service-type
+                             home-gastown-oci-extension)))
+   (description
+    "Run Gas Town services inside OCI containers managed by Podman.")))
