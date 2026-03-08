@@ -6,16 +6,20 @@
             gastown-dolt-configuration
             gastown-dolt-configuration?
             gastown-dolt-port
-            gastown-dolt-max-connections
-            gastown-dolt-log-level
-            gastown-dolt-read-timeout
-            gastown-dolt-write-timeout
+            gastown-dolt-user-name
+            gastown-dolt-user-email
             gastown-rig-configuration
             gastown-rig-configuration?
             gastown-rig-name
             gastown-rig-git-url
             gastown-rig-prefix
-            gastown-rig-crews))
+            gastown-rig-crews
+            gastown-town-configuration
+            gastown-town-configuration?
+            gastown-town-name
+            gastown-town-root
+            gastown-town-dolt
+            gastown-town-rigs))
 
 ;;; Commentary:
 ;;;
@@ -27,11 +31,9 @@
 (define-record-type* <gastown-dolt-configuration>
   gastown-dolt-configuration make-gastown-dolt-configuration
   gastown-dolt-configuration?
-  (port            gastown-dolt-port            (default 3307))
-  (max-connections gastown-dolt-max-connections (default 1000))
-  (log-level       gastown-dolt-log-level       (default "warning"))
-  (read-timeout    gastown-dolt-read-timeout    (default 300000))
-  (write-timeout   gastown-dolt-write-timeout   (default 300000)))
+  (port       gastown-dolt-port       (default 3307))
+  (user-name  gastown-dolt-user-name  (default "Roman Scherer"))
+  (user-email gastown-dolt-user-email (default "roman@burningswell.com")))
 
 (define-record-type* <gastown-crew-configuration>
   gastown-crew-configuration make-gastown-crew-configuration
@@ -53,3 +55,16 @@
   (crews   gastown-rig-crews
            (default '())
            (description "List of <gastown-crew-configuration> records declaring crew workspaces.")))
+
+(define-record-type* <gastown-town-configuration>
+  gastown-town-configuration make-gastown-town-configuration
+  gastown-town-configuration?
+  (name      gastown-town-name
+             (description "Town name used for shepherd service naming (e.g. \"gt\")."))
+  (town-root gastown-town-root
+             (description "Directory relative to $HOME (e.g. \"gt\" → $HOME/gt)."))
+  (dolt      gastown-town-dolt
+             (default (gastown-dolt-configuration))
+             (description "Dolt server configuration (each town needs a unique port)."))
+  (rigs      gastown-town-rigs
+             (default '())))
