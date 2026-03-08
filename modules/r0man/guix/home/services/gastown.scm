@@ -1,6 +1,9 @@
 (define-module (r0man guix home services gastown)
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
+  #:use-module (gnu packages linux)
   #:use-module (gnu services)
   #:use-module (gnu services shepherd)
   #:use-module (guix gexp)
@@ -10,7 +13,9 @@
   #:use-module (r0man guix packages task-management)
   #:use-module (r0man guix services gastown)
   #:export (home-gastown-configuration
-            home-gastown-service-type))
+            home-gastown-service-type
+            home-gastown-container-configuration
+            home-gastown-container-service-type))
 
 ;;; Commentary:
 ;;;
@@ -217,184 +222,291 @@ shepherd service.")))
 
 
 ;;;
-;;; OCI container service for running Gas Town inside rootless Podman.
+;;; Namespace container service for running Gas Town inside a lightweight
+;;; Linux namespace (user/mount/pid) via unshare from util-linux.
 ;;;
-;;; Uses a manifest-based image (no full OS) with an entrypoint script
-;;; that runs gt install/up and traps SIGTERM for gt down.  The host
-;;; shepherd manages the container lifecycle.
+;;; Uses a home-environment whose shepherd manages Gas Town services
+;;; (gt install/up/down) inside the container.  No Podman dependency.
 ;;;
 
-(define-record-type* <home-gastown-oci-configuration>
-  home-gastown-oci-configuration make-home-gastown-oci-configuration
-  home-gastown-oci-configuration?
-  (user home-gastown-oci-user
+(define-record-type* <home-gastown-container-configuration>
+  home-gastown-container-configuration make-home-gastown-container-configuration
+  home-gastown-container-configuration?
+  (home-environment home-gastown-container-home-environment
+                    (description "Home environment to run inside the container."))
+  (user home-gastown-container-user
         (default "roman")
-        (description "Username for host-side volume mount paths."))
-  (image-value home-gastown-oci-image-value
-               (description "Value for the OCI image: a manifest, gexp, \
-or file-like object."))
-  (towns home-gastown-oci-towns
+        (description "Username for host-side paths."))
+  (towns home-gastown-container-towns
          (default '())
          (description "List of <gastown-town-configuration> records."))
-  (extra-packages home-gastown-oci-extra-packages
-                  (default '())
-                  (description "Additional packages to include in the image."))
-  (home-mounts home-gastown-oci-home-mounts
+  (home-mounts home-gastown-container-home-mounts
                (default '(".dolt" ".ssh:ro" ".claude"))
-               (description "List of paths relative to $HOME to bind-mount \
-into the container.  Append ':ro' for read-only.  Default includes .dolt, \
-.ssh (read-only), and .claude."))
-  (extra-volumes home-gastown-oci-extra-volumes
-                 (default '())
-                 (description "Additional volume mounts as strings or pairs.")))
+               (description "Paths relative to $HOME to bind-mount.  \
+Append ':ro' for read-only.")))
 
-(define (gastown-oci-entrypoint town)
-  "Return a shell script for TOWN that installs, starts, and traps
-SIGTERM to shut down cleanly.  Uses commands from PATH (set by the
-container's profile) rather than absolute store paths."
-  (let* ((name      (gastown-town-name town))
-         (town-root (gastown-town-root town))
-         (dolt-cfg  (gastown-town-dolt town))
-         (port      (number->string (gastown-dolt-port dolt-cfg)))
-         (rigs      (gastown-town-rigs town))
-         (user-name  (gastown-dolt-user-name dolt-cfg))
-         (user-email (gastown-dolt-user-email dolt-cfg)))
-    (plain-file
-     (string-append "gastown-oci-entrypoint-" name ".sh")
-     (string-append
-      "#!/bin/bash\n"
-      "set -euo pipefail\n\n"
-      "TOWN_DIR=\"${HOME}/" town-root "\"\n"
-      "export GT_TOWN=\"$TOWN_DIR\"\n"
-      "export GT_DOLT_PORT=" port "\n\n"
-      ;; Create directories.
-      "mkdir -p \"$TOWN_DIR/log\" \"$TOWN_DIR/.dolt-data\" \"$HOME/.dolt\"\n\n"
-      ;; Seed dolt config.
-      "if [ ! -f \"$HOME/.dolt/config_global.json\" ]; then\n"
-      "  echo '{\"user.name\":\"" user-name "\","
-      "\"user.email\":\"" user-email "\"}' "
-      "> \"$HOME/.dolt/config_global.json\"\n"
-      "fi\n\n"
-      ;; Install and start.
-      "echo \"Installing town " name "...\"\n"
-      "gt install \"$TOWN_DIR\" --force --no-beads --dolt-port " port "\n\n"
-      "cd \"$TOWN_DIR\"\n\n"
-      "echo \"Starting town " name "...\"\n"
-      "gt up || echo \"Warning: some services failed to start\"\n"
-      "sleep 3\n\n"
-      ;; Register rigs and crews.
-      (apply string-append
-             (map (lambda (rig)
-                    (let ((rig-name (gastown-rig-name rig))
-                          (git-url  (or (gastown-rig-git-url rig) ""))
-                          (prefix   (or (gastown-rig-prefix rig) ""))
-                          (crews    (map gastown-crew-name
-                                        (gastown-rig-crews rig))))
-                      (string-append
-                       "RIG_DIR=\"$TOWN_DIR/" rig-name "\"\n"
-                       (if (string-null? git-url) ""
-                           (string-append
-                            "if [ ! -d \"$RIG_DIR\" ]; then\n"
-                            "  gt rig add " rig-name " " git-url
-                            (if (string-null? prefix) ""
-                                (string-append " --prefix " prefix))
-                            "\n"
-                            "elif ! grep -q '\"" rig-name "\"' "
-                            "\"$TOWN_DIR/mayor/rigs.json\" 2>/dev/null; then\n"
-                            "  gt rig add --adopt " rig-name
-                            " --url " git-url
-                            (if (string-null? prefix) ""
-                                (string-append " --prefix " prefix))
-                            "\n"
-                            "fi\n"))
-                       (apply string-append
-                              (map (lambda (crew-name)
-                                     (string-append
-                                      "if [ ! -d \"$RIG_DIR/crew/" crew-name "\" ]; then\n"
-                                      "  gt crew add " crew-name
-                                      " --rig " rig-name "\n"
-                                      "fi\n"))
-                                   crews))
-                       "\n")))
-                  rigs))
-      ;; Trap SIGTERM and block.
-      "cleanup() {\n"
-      "  echo \"Stopping town " name "...\"\n"
-      "  gt down\n"
-      "  exit 0\n"
-      "}\n"
-      "trap cleanup SIGTERM SIGINT\n\n"
-      "echo \"Town " name " is running.\"\n"
-      "while true; do sleep 3600 & wait $!; done\n"))))
+(define (gastown-container-script config)
+  "Return a computed-file bash script for the namespace container."
+  (let* ((he    (home-gastown-container-home-environment config))
+         (user  (home-gastown-container-user config))
+         (towns (home-gastown-container-towns config))
+         (mounts (home-gastown-container-home-mounts config))
+         (host-home (string-append "/home/" user))
+         (container-home "/tmp/gastown-home"))
+    (computed-file "gastown-container-script"
+      #~(begin
+          (use-modules (ice-9 format))
+          (call-with-output-file #$output
+            (lambda (port)
+              ;; Shebang
+              (format port "#!~a\n" #$(file-append bash "/bin/bash"))
+              (display "set -euo pipefail\n\n" port)
 
-(define (gastown-oci-town-volumes user town)
-  "Return volume mount strings for TOWN under USER's home."
-  (let* ((home (string-append "/home/" user))
-         (root (gastown-town-root town))
-         (town-dir (string-append home "/" root)))
-    (list (string-append town-dir ":" town-dir))))
+              ;; Create and mount tmpfs for container home
+              (format port "~a -p ~a\n"
+                      #$(file-append coreutils "/bin/mkdir")
+                      #$container-home)
+              (format port "~a -t tmpfs tmpfs ~a\n"
+                      #$(file-append util-linux "/bin/mount")
+                      #$container-home)
 
-(define (home-gastown-oci-extension config)
-  "Return an OCI extension with container configurations for each town."
-  (let ((user        (home-gastown-oci-user config))
-        (image-val   (home-gastown-oci-image-value config))
-        (towns       (home-gastown-oci-towns config))
-        (extra-pkgs  (home-gastown-oci-extra-packages config))
-        (home-mounts (home-gastown-oci-home-mounts config))
-        (extra-vols  (home-gastown-oci-extra-volumes config)))
-    (let ((image-with-extras
-           (if (null? extra-pkgs)
-               image-val
-               (concatenate-manifests
-                (list image-val
-                      (packages->manifest extra-pkgs))))))
-      (oci-extension
-       (containers
-        (map (lambda (town)
-               (let* ((name (gastown-town-name town))
-                      (home (string-append "/home/" user))
-                      (log  (string-append home "/.local/state/shepherd/"
-                                           "gastown-oci-" name ".log")))
-                 (let ((entrypoint (gastown-oci-entrypoint town)))
-                   (oci-container-configuration
-                    (image (oci-image
-                            (repository (string-append "guix/gastown-oci-" name))
-                            (tag "latest")
-                            (value image-with-extras)
-                            (pack-options
-                             (list #:symlinks
-                                   '(("/bin/sh" -> "bin/bash")
-                                     ("/bin/bash" -> "bin/bash"))))))
-                    (provision (string-append "gastown-oci-" name))
-                    (log-file log)
-                    (network "host")
-                    (environment
-                     (list (cons "HOME" home)))
-                    (command (list "/bin/bash" "/entrypoint.sh"))
-                    (extra-arguments
-                     (list #~(string-append
-                              "-v=" #$entrypoint
-                              ":/entrypoint.sh:ro")))
-                    (volumes (append (gastown-oci-town-volumes user town)
-                                     (map (lambda (mount)
-                                            (let* ((parts (string-split mount #\:))
-                                                   (path  (car parts))
-                                                   (opts  (if (null? (cdr parts))
-                                                              ""
-                                                              (string-append
-                                                               ":" (cadr parts)))))
-                                              (string-append home "/" path
-                                                             ":" home "/" path
-                                                             opts)))
-                                          home-mounts)
-                                     extra-vols))))))
-             towns))))))
+              ;; Create directory structure
+              (for-each
+               (lambda (dir)
+                 (format port "~a -p ~a/~a\n"
+                         #$(file-append coreutils "/bin/mkdir")
+                         #$container-home dir))
+               '(".config/shepherd" ".local/state/shepherd" ".local/run"))
 
-(define home-gastown-oci-service-type
+              ;; Create and bind-mount home subdirectories
+              (for-each
+               (lambda (mount-spec)
+                 (let* ((parts (string-split mount-spec #\:))
+                        (path (car parts))
+                        (ro? (and (not (null? (cdr parts)))
+                                  (string=? "ro" (cadr parts)))))
+                   (format port "~a -p ~a/~a\n"
+                           #$(file-append coreutils "/bin/mkdir")
+                           #$container-home path)
+                   (format port "~a --bind ~a/~a ~a/~a\n"
+                           #$(file-append util-linux "/bin/mount")
+                           #$host-home path
+                           #$container-home path)
+                   (when ro?
+                     (format port "~a -o remount,bind,ro ~a/~a\n"
+                             #$(file-append util-linux "/bin/mount")
+                             #$container-home path))))
+               '#$mounts)
+
+              ;; Bind-mount town directories
+              (for-each
+               (lambda (town-root)
+                 (format port "~a -p ~a/~a\n"
+                         #$(file-append coreutils "/bin/mkdir")
+                         #$container-home town-root)
+                 (format port "~a --bind ~a/~a ~a/~a\n"
+                         #$(file-append util-linux "/bin/mount")
+                         #$host-home town-root
+                         #$container-home town-root))
+               '#$(map gastown-town-root towns))
+
+              ;; Tmpfs for shepherd socket
+              (format port "~a -t tmpfs -o mode=700 tmpfs ~a/.local/run\n"
+                      #$(file-append util-linux "/bin/mount")
+                      #$container-home)
+
+              ;; Mount /proc
+              (format port "~a -t proc proc /proc\n"
+                      #$(file-append util-linux "/bin/mount"))
+
+              ;; Generate and bind-mount /etc/passwd
+              (let ((passwd-file (string-append #$container-home "/.passwd")))
+                (format port "~a '~a:x:0:0::~a:~a\\n' > ~a\n"
+                        #$(file-append coreutils "/bin/printf")
+                        #$user #$container-home
+                        #$(file-append bash "/bin/bash")
+                        passwd-file)
+                (format port "~a --bind ~a /etc/passwd\n"
+                        #$(file-append util-linux "/bin/mount")
+                        passwd-file))
+
+              ;; Mask host nscd socket so glibc reads /etc/passwd directly.
+              (format port "~a -t tmpfs tmpfs /var/run/nscd 2>/dev/null || true\n"
+                      #$(file-append util-linux "/bin/mount"))
+
+              ;; Export environment
+              (format port "\nexport HOME=~a\n" #$container-home)
+              (format port "export XDG_RUNTIME_DIR=~a/.local/run\n"
+                      #$container-home)
+              ;; Prevent activate from starting shepherd (it would try
+              ;; /var/run/shepherd since UID=0 inside the namespace).
+              (display "export GUIX_SYSTEM_IS_RUNNING_HOME_ACTIVATE=1\n\n" port)
+
+              ;; Activate home environment (sets up symlinks, env).
+              (format port "~a/activate || exit 1\n\n" #$he)
+
+              ;; Start shepherd explicitly with user-mode socket path.
+              ;; exec replaces bash so shepherd receives SIGTERM directly
+              ;; from --kill-child=SIGTERM for graceful shutdown.
+              (let ((socket (string-append #$container-home
+                                           "/.local/run/shepherd/socket"))
+                    (shepherd (string-append #$he
+                                             "/profile/bin/shepherd"))
+                    (config (string-append #$container-home
+                                           "/.config/shepherd/init.scm"))
+                    (log (string-append #$container-home
+                                        "/.local/state/shepherd/shepherd.log")))
+                (format port "~a -p -m 700 ~a/.local/run/shepherd\n"
+                        #$(file-append coreutils "/bin/mkdir")
+                        #$container-home)
+                (format port "exec ~a --silent --socket=~a --config=~a --logfile=~a\n"
+                        shepherd socket config log))))
+          (chmod #$output #o755)))))
+
+(define (home-gastown-container-shepherd-service config)
+  "Return a shepherd service for the namespace container."
+  (let* ((he    (home-gastown-container-home-environment config))
+         (user  (home-gastown-container-user config))
+         (home-dir (string-append "/home/" user))
+         (container-home "/tmp/gastown-home")
+         (script (gastown-container-script config))
+         (nsenter-bin (file-append util-linux "/bin/nsenter"))
+         (bash-bin (file-append bash "/bin/bash")))
+    (list
+     (shepherd-service
+      (documentation "Run Gas Town in a namespace container.")
+      (provision '(gastown-container))
+      (modules '((shepherd support)
+                 (shepherd service)
+                 (ice-9 popen)
+                 (ice-9 rdelim)
+                 (ice-9 format)))
+      (respawn-limit #~(cons 3 30))
+      (start #~(make-forkexec-constructor
+                (list #$(file-append util-linux "/bin/unshare")
+                      "--user" "--map-root-user"
+                      "--mount" "--pid" "--fork" "--kill-child=SIGTERM"
+                      "--" #$script)
+                #:log-file (string-append
+                            user-homedir
+                            "/.local/state/shepherd/gastown-container.log")))
+      (stop #~(make-kill-destructor))
+      (actions
+       (list
+        (shepherd-action
+         (name 'run)
+         (documentation "Run a command inside the container.
+Usage: herd run gastown-container COMMAND [ARGS...]
+Example: herd run gastown-container gt status")
+         (procedure
+          #~(lambda (running . args)
+              (let* ((pid (process-id running))
+                     (child-pid (string-trim-both
+                                 (call-with-input-file
+                                     (format #f "/proc/~a/task/~a/children"
+                                             pid pid)
+                                   read-line)))
+                     (cmd (string-join args " "))
+                     (port (open-input-pipe
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~a'"
+                                    #$nsenter-bin child-pid #$bash-bin
+                                    #$container-home cmd)))
+                     (output (read-string port)))
+                (close-pipe port)
+                (display output)
+                #t))))
+
+        (shepherd-action
+         (name 'gt-status)
+         (documentation "Show gt status for all towns.")
+         (procedure
+          #~(lambda (running . args)
+              (let* ((pid (process-id running))
+                     (child-pid (string-trim-both
+                                 (call-with-input-file
+                                     (format #f "/proc/~a/task/~a/children"
+                                             pid pid)
+                                   read-line)))
+                     (port (open-input-pipe
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; for t in $HOME/*/mayor; do d=$(dirname $t); cd $d; GT_TOWN=$d gt status; done'"
+                                    #$nsenter-bin child-pid #$bash-bin
+                                    #$container-home)))
+                     (output (read-string port)))
+                (close-pipe port)
+                (display output)
+                #t))))
+
+        (shepherd-action
+         (name 'sessions)
+         (documentation "List tmux sessions inside the container.")
+         (procedure
+          #~(lambda (running . args)
+              (let* ((pid (process-id running))
+                     (child-pid (string-trim-both
+                                 (call-with-input-file
+                                     (format #f "/proc/~a/task/~a/children"
+                                             pid pid)
+                                   read-line)))
+                     (port (open-input-pipe
+                            (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; tmux -L gt ls'"
+                                    #$nsenter-bin child-pid #$bash-bin
+                                    #$container-home)))
+                     (output (read-string port)))
+                (close-pipe port)
+                (display output)
+                #t))))
+
+        (shepherd-action
+         (name 'attach)
+         (documentation "Print the command to attach to a tmux session.
+Usage: herd attach gastown-container [SESSION]
+Example: herd attach gastown-container hq-mayor")
+         (procedure
+          #~(lambda (running . args)
+              (let* ((pid (process-id running))
+                     (child-pid (string-trim-both
+                                 (call-with-input-file
+                                     (format #f "/proc/~a/task/~a/children"
+                                             pid pid)
+                                   read-line)))
+                     (session (if (null? args) "" (car args))))
+                (format #t "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; tmux -L gt attach~a'\n"
+                        #$nsenter-bin child-pid #$bash-bin
+                        #$container-home
+                        (if (string-null? session) ""
+                            (string-append " -t " session)))
+                #t))))))))))
+
+
+
+(define (home-gastown-container-activation config)
+  "Ensure host directories exist for bind-mount sources."
+  (let* ((towns (home-gastown-container-towns config))
+         (mounts (home-gastown-container-home-mounts config)))
+    (with-imported-modules '((guix build utils))
+      #~(begin
+          (use-modules (guix build utils))
+          (let ((home (getenv "HOME")))
+            ;; Town directories
+            (for-each
+             (lambda (town-root)
+               (mkdir-p (string-append home "/" town-root)))
+             '#$(map gastown-town-root towns))
+            ;; Home mount sources
+            (for-each
+             (lambda (mount-spec)
+               (let ((path (car (string-split mount-spec #\:))))
+                 (mkdir-p (string-append home "/" path))))
+             '#$mounts))))))
+
+(define home-gastown-container-service-type
   (service-type
-   (name 'home-gastown-oci)
+   (name 'home-gastown-container)
    (extensions
-    (list (service-extension home-oci-service-type
-                             home-gastown-oci-extension)))
+    (list (service-extension home-shepherd-service-type
+                             home-gastown-container-shepherd-service)
+          (service-extension home-activation-service-type
+                             home-gastown-container-activation)))
    (description
-    "Run Gas Town services inside OCI containers managed by Podman.")))
+    "Run a Gas Town home environment inside a Linux namespace container
+using unshare.  No Podman dependency.")))

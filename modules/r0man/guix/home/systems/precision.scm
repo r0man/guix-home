@@ -38,6 +38,8 @@
   #:use-module (r0man guix home msmtp)
   #:use-module (r0man guix home niri)
   #:use-module (r0man guix home nix)
+  #:use-module (r0man guix home services gastown)
+  #:use-module (r0man guix home systems gastown)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
   #:use-module (r0man guix home rofi)
@@ -49,6 +51,7 @@
   #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home x11)
   #:use-module (r0man guix home xdg)
+  #:use-module (r0man guix services gastown)
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system xorg))
 
@@ -170,6 +173,21 @@ EndSection"))
         (service home-xdg-mime-applications-service-type
                  home-xdg-mime-applications-default-configuration))))
 
+(define gastown-towns
+  (list (gastown-town-configuration
+         (name "gt")
+         (town-root "gt"))))
+
+(define gastown-he
+  (make-gastown-home-environment gastown-towns '()))
+
+(define gastown-container-services
+  (list (service home-gastown-container-service-type
+                 (home-gastown-container-configuration
+                  (home-environment gastown-he)
+                  (user "roman")
+                  (towns gastown-towns)))))
+
 (define-public precision-home-environment
   (home-environment
    (packages (map replace-mesa
@@ -177,6 +195,6 @@ EndSection"))
                           packages-desktop
                           packages-x86-64
                           (list vulkan-tools))))
-   (services services)))
+   (services (append services gastown-container-services))))
 
 precision-home-environment

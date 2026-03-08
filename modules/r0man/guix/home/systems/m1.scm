@@ -32,6 +32,11 @@
   #:use-module (r0man guix home mbsync)
   #:use-module (r0man guix home msmtp)
   #:use-module (r0man guix home niri)
+  #:use-module (gnu packages emacs)
+  #:use-module (gnu packages tmux)
+  #:use-module (r0man guix packages node)
+  #:use-module (r0man guix home services gastown)
+  #:use-module (r0man guix home systems gastown)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
@@ -43,7 +48,8 @@
   #:use-module (r0man guix home waybar)
   #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home xdg)
-  #:use-module (r0man guix home x11))
+  #:use-module (r0man guix home x11)
+  #:use-module (r0man guix services gastown))
 
 (define services
   (append home-tmux-services
@@ -93,9 +99,26 @@
         (service home-xdg-mime-applications-service-type
                  home-xdg-mime-applications-default-configuration))))
 
+(define gastown-towns
+  (list (gastown-town-configuration
+         (name "gt")
+         (town-root "gt"))))
+
+(define gastown-he
+  (make-gastown-home-environment
+   gastown-towns
+   (list emacs-pgtk node-anthropic-ai-claude-code tmux)))
+
+(define gastown-container-services
+  (list (service home-gastown-container-service-type
+                 (home-gastown-container-configuration
+                  (home-environment gastown-he)
+                  (user "roman")
+                  (towns gastown-towns)))))
+
 (define-public m1-home-environment
   (home-environment
    (packages (append packages-base packages-desktop packages-aarch64))
-   (services services)))
+   (services (append services gastown-container-services))))
 
 m1-home-environment
