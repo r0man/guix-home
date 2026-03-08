@@ -243,7 +243,7 @@ shepherd service.")))
          (default '())
          (description "List of <gastown-town-configuration> records."))
   (home-mounts home-gastown-container-home-mounts
-               (default '(".dolt" ".ssh:ro" ".claude"))
+               (default '(".dolt" ".ssh:ro" ".claude" ".claude.json"))
                (description "Paths relative to $HOME to bind-mount.  \
 Append ':ro' for read-only."))
   (environment-variables home-gastown-container-environment-variables
@@ -264,7 +264,7 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
          (env-vars (home-gastown-container-environment-variables config))
          (map-runtime? (home-gastown-container-map-host-runtime-dir? config))
          (host-home (string-append "/home/" user))
-         (container-home "/tmp/gastown-home"))
+         (container-home host-home))
     (computed-file "gastown-container-script"
       #~(begin
           (use-modules (ice-9 format))
@@ -274,53 +274,79 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
               (format port "#!~a\n" #$(file-append bash "/bin/bash"))
               (display "set -euo pipefail\n\n" port)
 
-              ;; Create and mount tmpfs for container home
-              (format port "~a -p ~a\n"
-                      #$(file-append coreutils "/bin/mkdir")
-                      #$container-home)
-              (format port "~a -t tmpfs tmpfs ~a\n"
-                      #$(file-append util-linux "/bin/mount")
-                      #$container-home)
+              ;; Save the real home at a temporary location, then
+              ;; overlay it with tmpfs so the container gets a clean
+              ;; home while we can still reach the originals.
+              (let ((saved-home "/tmp/.gastown-host-home"))
+                (format port "~a -p ~a\n"
+                        #$(file-append coreutils "/bin/mkdir")
+                        saved-home)
+                (format port "~a --bind ~a ~a\n"
+                        #$(file-append util-linux "/bin/mount")
+                        #$container-home saved-home)
+                (format port "~a -t tmpfs tmpfs ~a\n"
+                        #$(file-append util-linux "/bin/mount")
+                        #$container-home)
 
-              ;; Create directory structure
-              (for-each
-               (lambda (dir)
-                 (format port "~a -p ~a/~a\n"
-                         #$(file-append coreutils "/bin/mkdir")
-                         #$container-home dir))
-               '(".config/shepherd" ".local/state/shepherd" ".local/run"))
-
-              ;; Create and bind-mount home subdirectories
-              (for-each
-               (lambda (mount-spec)
-                 (let* ((parts (string-split mount-spec #\:))
-                        (path (car parts))
-                        (ro? (and (not (null? (cdr parts)))
-                                  (string=? "ro" (cadr parts)))))
+                ;; Create directory structure
+                (for-each
+                 (lambda (dir)
                    (format port "~a -p ~a/~a\n"
                            #$(file-append coreutils "/bin/mkdir")
-                           #$container-home path)
+                           #$container-home dir))
+                 '(".config/shepherd" ".local/state/shepherd" ".local/run"))
+
+                ;; Bind-mount home subdirectories and files from saved home
+                (for-each
+                 (lambda (mount-spec)
+                   (let* ((parts (string-split mount-spec #\:))
+                          (path (car parts))
+                          (ro? (and (not (null? (cdr parts)))
+                                    (string=? "ro" (cadr parts))))
+                          (host-path
+                           (string-append saved-home "/" path))
+                          (container-path
+                           (string-append #$container-home "/" path)))
+                     ;; Create parent directory, then either mkdir or
+                     ;; touch depending on whether host path is a file.
+                     (format port "~a -p \"$(~a ~a)\"\n"
+                             #$(file-append coreutils "/bin/mkdir")
+                             #$(file-append coreutils "/bin/dirname")
+                             container-path)
+                     (format port "if [ -f ~a ]; then\n" host-path)
+                     (format port "  ~a ~a\n"
+                             #$(file-append coreutils "/bin/touch")
+                             container-path)
+                     (format port "else\n")
+                     (format port "  ~a -p ~a\n"
+                             #$(file-append coreutils "/bin/mkdir")
+                             container-path)
+                     (format port "fi\n")
+                     (format port "~a --bind ~a ~a\n"
+                             #$(file-append util-linux "/bin/mount")
+                             host-path container-path)
+                     (when ro?
+                       (format port "~a -o remount,bind,ro ~a\n"
+                               #$(file-append util-linux "/bin/mount")
+                               container-path))))
+                 '#$mounts)
+
+                ;; Bind-mount town directories from saved home
+                (for-each
+                 (lambda (town-root)
+                   (format port "~a -p ~a/~a\n"
+                           #$(file-append coreutils "/bin/mkdir")
+                           #$container-home town-root)
                    (format port "~a --bind ~a/~a ~a/~a\n"
                            #$(file-append util-linux "/bin/mount")
-                           #$host-home path
-                           #$container-home path)
-                   (when ro?
-                     (format port "~a -o remount,bind,ro ~a/~a\n"
-                             #$(file-append util-linux "/bin/mount")
-                             #$container-home path))))
-               '#$mounts)
+                           saved-home town-root
+                           #$container-home town-root))
+                 '#$(map gastown-town-root towns))
 
-              ;; Bind-mount town directories
-              (for-each
-               (lambda (town-root)
-                 (format port "~a -p ~a/~a\n"
-                         #$(file-append coreutils "/bin/mkdir")
-                         #$container-home town-root)
-                 (format port "~a --bind ~a/~a ~a/~a\n"
-                         #$(file-append util-linux "/bin/mount")
-                         #$host-home town-root
-                         #$container-home town-root))
-               '#$(map gastown-town-root towns))
+                ;; Unmount saved home — no longer needed
+                (format port "~a ~a\n"
+                        #$(file-append util-linux "/bin/umount")
+                        saved-home))
 
               ;; When map-host-runtime-dir? is set, save the host
               ;; XDG_RUNTIME_DIR path for later export.  No bind-mount
@@ -368,6 +394,7 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
               ;; Prevent activate from starting shepherd (it would try
               ;; /var/run/shepherd since UID=0 inside the namespace).
               (display "export GUIX_SYSTEM_IS_RUNNING_HOME_ACTIVATE=1\n" port)
+              (display "export IS_SANDBOX=1\n" port)
 
               ;; Pass through configured environment variables from host.
               (for-each
@@ -404,7 +431,7 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
          (user  (home-gastown-container-user config))
          (env-vars (home-gastown-container-environment-variables config))
          (home-dir (string-append "/home/" user))
-         (container-home "/tmp/gastown-home")
+         (container-home home-dir)
          (script (gastown-container-script config))
          (nsenter-bin (file-append util-linux "/bin/nsenter"))
          (bash-bin (file-append bash "/bin/bash"))
@@ -536,11 +563,15 @@ Example: herd attach gastown-container hq-mayor")
              (lambda (town-root)
                (mkdir-p (string-append home "/" town-root)))
              '#$(map gastown-town-root towns))
-            ;; Home mount sources
+            ;; Home mount sources — only create directories.
+            ;; File mounts (like .claude.json) must already exist;
+            ;; the container script detects files vs dirs at runtime.
             (for-each
              (lambda (mount-spec)
-               (let ((path (car (string-split mount-spec #\:))))
-                 (mkdir-p (string-append home "/" path))))
+               (let* ((path (car (string-split mount-spec #\:)))
+                      (full (string-append home "/" path)))
+                 (unless (file-exists? full)
+                   (mkdir-p full))))
              '#$mounts))))))
 
 (define home-gastown-container-service-type
