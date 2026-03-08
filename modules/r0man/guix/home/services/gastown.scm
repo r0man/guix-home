@@ -16,8 +16,10 @@
             home-gastown-service-type
             home-gastown-container-configuration
             home-gastown-container-environment-variables
+            home-gastown-container-home-mounts
             home-gastown-container-map-host-runtime-dir?
-            home-gastown-container-service-type))
+            home-gastown-container-service-type
+            make-gastown-container-services))
 
 ;;; Commentary:
 ;;;
@@ -31,6 +33,12 @@
 ;;;                    Stays "running" so 'herd stop' triggers 'gt down'.
 ;;;
 ;;; Activation creates the town directory structure (log, .dolt-data, ~/.dolt).
+;;;
+;;; The namespace container service runs a separate home-environment inside
+;;; a lightweight Linux user/mount/pid namespace via unshare.  Security model:
+;;; --map-root-user gives UID 0 inside the namespace (no real host privilege
+;;; escalation), /etc/passwd is faked, and selective bind-mounts control
+;;; which host paths are visible.
 ;;;
 ;;; Code:
 
@@ -263,8 +271,7 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
          (mounts (home-gastown-container-home-mounts config))
          (env-vars (home-gastown-container-environment-variables config))
          (map-runtime? (home-gastown-container-map-host-runtime-dir? config))
-         (host-home (string-append "/home/" user))
-         (container-home host-home))
+         (home-dir (string-append "/home/" user)))
     (computed-file "gastown-container-script"
       #~(begin
           (use-modules (ice-9 format))
@@ -283,20 +290,21 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                         saved-home)
                 (format port "~a --bind ~a ~a\n"
                         #$(file-append util-linux "/bin/mount")
-                        #$container-home saved-home)
+                        #$home-dir saved-home)
                 (format port "~a -t tmpfs tmpfs ~a\n"
                         #$(file-append util-linux "/bin/mount")
-                        #$container-home)
+                        #$home-dir)
 
                 ;; Create directory structure
                 (for-each
                  (lambda (dir)
                    (format port "~a -p ~a/~a\n"
                            #$(file-append coreutils "/bin/mkdir")
-                           #$container-home dir))
+                           #$home-dir dir))
                  '(".config/shepherd" ".local/state/shepherd" ".local/run"))
 
-                ;; Bind-mount home subdirectories and files from saved home
+                ;; Bind-mount home subdirectories and files from saved
+                ;; home.  Skip missing sources gracefully.
                 (for-each
                  (lambda (mount-spec)
                    (let* ((parts (string-split mount-spec #\:))
@@ -306,29 +314,31 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                           (host-path
                            (string-append saved-home "/" path))
                           (container-path
-                           (string-append #$container-home "/" path)))
+                           (string-append #$home-dir "/" path)))
+                     (format port "if [ -e ~a ]; then\n" host-path)
                      ;; Create parent directory, then either mkdir or
                      ;; touch depending on whether host path is a file.
-                     (format port "~a -p \"$(~a ~a)\"\n"
+                     (format port "  ~a -p \"$(~a ~a)\"\n"
                              #$(file-append coreutils "/bin/mkdir")
                              #$(file-append coreutils "/bin/dirname")
                              container-path)
-                     (format port "if [ -f ~a ]; then\n" host-path)
-                     (format port "  ~a ~a\n"
+                     (format port "  if [ -f ~a ]; then\n" host-path)
+                     (format port "    ~a ~a\n"
                              #$(file-append coreutils "/bin/touch")
                              container-path)
-                     (format port "else\n")
-                     (format port "  ~a -p ~a\n"
+                     (format port "  else\n")
+                     (format port "    ~a -p ~a\n"
                              #$(file-append coreutils "/bin/mkdir")
                              container-path)
-                     (format port "fi\n")
-                     (format port "~a --bind ~a ~a\n"
+                     (format port "  fi\n")
+                     (format port "  ~a --bind ~a ~a\n"
                              #$(file-append util-linux "/bin/mount")
                              host-path container-path)
                      (when ro?
-                       (format port "~a -o remount,bind,ro ~a\n"
+                       (format port "  ~a -o remount,bind,ro ~a\n"
                                #$(file-append util-linux "/bin/mount")
-                               container-path))))
+                               container-path))
+                     (format port "fi\n")))
                  '#$mounts)
 
                 ;; Bind-mount town directories from saved home
@@ -336,11 +346,11 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                  (lambda (town-root)
                    (format port "~a -p ~a/~a\n"
                            #$(file-append coreutils "/bin/mkdir")
-                           #$container-home town-root)
+                           #$home-dir town-root)
                    (format port "~a --bind ~a/~a ~a/~a\n"
                            #$(file-append util-linux "/bin/mount")
                            saved-home town-root
-                           #$container-home town-root))
+                           #$home-dir town-root))
                  '#$(map gastown-town-root towns))
 
                 ;; Unmount saved home — no longer needed
@@ -348,27 +358,26 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                         #$(file-append util-linux "/bin/umount")
                         saved-home))
 
-              ;; When map-host-runtime-dir? is set, save the host
-              ;; XDG_RUNTIME_DIR path for later export.  No bind-mount
-              ;; needed: the mount namespace inherits the parent's mounts,
-              ;; so /run/user/UID is already visible inside the container.
+              ;; Save the host XDG_RUNTIME_DIR path before any mounts.
+              ;; No bind-mount needed: the mount namespace inherits the
+              ;; parent's mounts, so /run/user/UID is already visible.
               (when #$map-runtime?
                 (display "HOST_XDG_RUNTIME_DIR=\"${XDG_RUNTIME_DIR:-}\"\n" port))
 
               ;; Tmpfs for shepherd socket (always isolated from host)
               (format port "~a -t tmpfs -o mode=700 tmpfs ~a/.local/run\n"
                       #$(file-append util-linux "/bin/mount")
-                      #$container-home)
+                      #$home-dir)
 
               ;; Mount /proc
               (format port "~a -t proc proc /proc\n"
                       #$(file-append util-linux "/bin/mount"))
 
               ;; Generate and bind-mount /etc/passwd
-              (let ((passwd-file (string-append #$container-home "/.passwd")))
+              (let ((passwd-file (string-append #$home-dir "/.passwd")))
                 (format port "~a '~a:x:0:0::~a:~a\\n' > ~a\n"
                         #$(file-append coreutils "/bin/printf")
-                        #$user #$container-home
+                        #$user #$home-dir
                         #$(file-append bash "/bin/bash")
                         passwd-file)
                 (format port "~a --bind ~a /etc/passwd\n"
@@ -380,17 +389,17 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
                       #$(file-append util-linux "/bin/mount"))
 
               ;; Export environment
-              (format port "\nexport HOME=~a\n" #$container-home)
+              (format port "\nexport HOME=~a\n" #$home-dir)
               (if #$map-runtime?
                   (begin
                     (display "if [ -n \"${HOST_XDG_RUNTIME_DIR:-}\" ]; then\n" port)
                     (display "  export XDG_RUNTIME_DIR=\"${HOST_XDG_RUNTIME_DIR}\"\n" port)
                     (display "else\n" port)
                     (format port "  export XDG_RUNTIME_DIR=~a/.local/run\n"
-                            #$container-home)
+                            #$home-dir)
                     (display "fi\n" port))
                   (format port "export XDG_RUNTIME_DIR=~a/.local/run\n"
-                          #$container-home))
+                          #$home-dir))
               ;; Prevent activate from starting shepherd (it would try
               ;; /var/run/shepherd since UID=0 inside the namespace).
               (display "export GUIX_SYSTEM_IS_RUNNING_HOME_ACTIVATE=1\n" port)
@@ -410,20 +419,21 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
               ;; Start shepherd explicitly with user-mode socket path.
               ;; exec replaces bash so shepherd receives SIGTERM directly
               ;; from --kill-child=SIGTERM for graceful shutdown.
-              (let ((socket (string-append #$container-home
+              (let ((socket (string-append #$home-dir
                                            "/.local/run/shepherd/socket"))
                     (shepherd (string-append #$he
                                              "/profile/bin/shepherd"))
-                    (config (string-append #$container-home
+                    (config (string-append #$home-dir
                                            "/.config/shepherd/init.scm"))
-                    (log (string-append #$container-home
+                    (log (string-append #$home-dir
                                         "/.local/state/shepherd/shepherd.log")))
                 (format port "~a -p -m 700 ~a/.local/run/shepherd\n"
                         #$(file-append coreutils "/bin/mkdir")
-                        #$container-home)
+                        #$home-dir)
                 (format port "exec ~a --silent --socket=~a --config=~a --logfile=~a\n"
                         shepherd socket config log))))
           (chmod #$output #o755)))))
+
 
 (define (home-gastown-container-shepherd-service config)
   "Return a shepherd service for the namespace container."
@@ -431,7 +441,6 @@ XDG_RUNTIME_DIR into the container instead of using a fresh tmpfs.")))
          (user  (home-gastown-container-user config))
          (env-vars (home-gastown-container-environment-variables config))
          (home-dir (string-append "/home/" user))
-         (container-home home-dir)
          (script (gastown-container-script config))
          (nsenter-bin (file-append util-linux "/bin/nsenter"))
          (bash-bin (file-append bash "/bin/bash"))
@@ -471,17 +480,22 @@ Usage: herd run gastown-container COMMAND [ARGS...]
 Example: herd run gastown-container gt status")
          (procedure
           #~(lambda (running . args)
+              (define (shell-quote s)
+                (string-append
+                 "'" (string-join (string-split s #\') "'\\''") "'"))
               (let* ((pid (process-id running))
-                     (child-pid (string-trim-both
-                                 (call-with-input-file
-                                     (format #f "/proc/~a/task/~a/children"
-                                             pid pid)
-                                   read-line)))
-                     (cmd (string-join args " "))
+                     (child-pid
+                      (car (string-split
+                            (string-trim-both
+                             (call-with-input-file
+                                 (format #f "/proc/~a/task/~a/children" pid pid)
+                               read-line))
+                            #\space)))
+                     (cmd (string-join (map shell-quote args) " "))
                      (port (open-input-pipe
                             (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~a~a'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home #$env-exports cmd)))
+                                    #$home-dir #$env-exports cmd)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -493,15 +507,17 @@ Example: herd run gastown-container gt status")
          (procedure
           #~(lambda (running . args)
               (let* ((pid (process-id running))
-                     (child-pid (string-trim-both
-                                 (call-with-input-file
-                                     (format #f "/proc/~a/task/~a/children"
-                                             pid pid)
-                                   read-line)))
+                     (child-pid
+                      (car (string-split
+                            (string-trim-both
+                             (call-with-input-file
+                                 (format #f "/proc/~a/task/~a/children" pid pid)
+                               read-line))
+                            #\space)))
                      (port (open-input-pipe
                             (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~afor t in $HOME/*/mayor; do d=$(dirname $t); cd $d; GT_TOWN=$d gt status; done'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home #$env-exports)))
+                                    #$home-dir #$env-exports)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -513,15 +529,17 @@ Example: herd run gastown-container gt status")
          (procedure
           #~(lambda (running . args)
               (let* ((pid (process-id running))
-                     (child-pid (string-trim-both
-                                 (call-with-input-file
-                                     (format #f "/proc/~a/task/~a/children"
-                                             pid pid)
-                                   read-line)))
+                     (child-pid
+                      (car (string-split
+                            (string-trim-both
+                             (call-with-input-file
+                                 (format #f "/proc/~a/task/~a/children" pid pid)
+                               read-line))
+                            #\space)))
                      (port (open-input-pipe
                             (format #f "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~atmux -L gt ls'"
                                     #$nsenter-bin child-pid #$bash-bin
-                                    #$container-home #$env-exports)))
+                                    #$home-dir #$env-exports)))
                      (output (read-string port)))
                 (close-pipe port)
                 (display output)
@@ -535,20 +553,20 @@ Example: herd attach gastown-container hq-mayor")
          (procedure
           #~(lambda (running . args)
               (let* ((pid (process-id running))
-                     (child-pid (string-trim-both
-                                 (call-with-input-file
-                                     (format #f "/proc/~a/task/~a/children"
-                                             pid pid)
-                                   read-line)))
+                     (child-pid
+                      (car (string-split
+                            (string-trim-both
+                             (call-with-input-file
+                                 (format #f "/proc/~a/task/~a/children" pid pid)
+                               read-line))
+                            #\space)))
                      (session (if (null? args) "" (car args))))
                 (format #t "~a -t ~a -U --preserve-credentials -m -p -- ~a -c 'export HOME=~a; export PATH=$HOME/.guix-home/profile/bin:$PATH; ~atmux -L gt attach~a'\n"
                         #$nsenter-bin child-pid #$bash-bin
-                        #$container-home #$env-exports
+                        #$home-dir #$env-exports
                         (if (string-null? session) ""
                             (string-append " -t " session)))
                 #t))))))))))
-
-
 
 (define (home-gastown-container-activation config)
   "Ensure host directories exist for bind-mount sources."
@@ -563,14 +581,16 @@ Example: herd attach gastown-container hq-mayor")
              (lambda (town-root)
                (mkdir-p (string-append home "/" town-root)))
              '#$(map gastown-town-root towns))
-            ;; Home mount sources — only create directories.
-            ;; File mounts (like .claude.json) must already exist;
-            ;; the container script detects files vs dirs at runtime.
+            ;; Home mount sources — only ensure directories exist.
+            ;; File mounts (like .claude.json) must already exist on
+            ;; the host; the container script skips missing sources
+            ;; gracefully and detects files vs dirs at runtime.
             (for-each
              (lambda (mount-spec)
                (let* ((path (car (string-split mount-spec #\:)))
                       (full (string-append home "/" path)))
-                 (unless (file-exists? full)
+                 (unless (or (file-exists? full)
+                             (string-suffix? ".json" path))
                    (mkdir-p full))))
              '#$mounts))))))
 
@@ -585,3 +605,26 @@ Example: herd attach gastown-container hq-mayor")
    (description
     "Run a Gas Town home environment inside a Linux namespace container
 using unshare.  No Podman dependency.")))
+
+(define* (make-gastown-container-services towns
+                                          #:key
+                                          (extra-packages '())
+                                          (user "roman")
+                                          (environment-variables
+                                           '("COLORTERM" "DISPLAY" "LANG"
+                                             "SSH_AUTH_SOCK" "TERM" "USER"
+                                             "WAYLAND_DISPLAY" "XAUTHORITY"))
+                                          (map-host-runtime-dir? #t))
+  "Create a list containing a gastown container service for TOWNS.
+EXTRA-PACKAGES are added to the container's home environment."
+  (let* ((make-he (module-ref (resolve-module
+                               '(r0man guix home systems gastown))
+                              'make-gastown-home-environment))
+          (he (make-he towns extra-packages)))
+    (list (service home-gastown-container-service-type
+                   (home-gastown-container-configuration
+                    (home-environment he)
+                    (user user)
+                    (towns towns)
+                    (map-host-runtime-dir? map-host-runtime-dir?)
+                    (environment-variables environment-variables))))))

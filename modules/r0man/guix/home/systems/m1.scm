@@ -36,7 +36,6 @@
   #:use-module (gnu packages tmux)
   #:use-module (r0man guix packages node)
   #:use-module (r0man guix home services gastown)
-  #:use-module (r0man guix home systems gastown)
   #:use-module (r0man guix home nix)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
@@ -104,22 +103,10 @@
          (name "gt")
          (town-root "gt"))))
 
-(define gastown-he
-  (make-gastown-home-environment
-   gastown-towns
-   (list emacs-pgtk node-anthropic-ai-claude-code tmux)))
-
 (define gastown-container-services
-  (list (service home-gastown-container-service-type
-                 (home-gastown-container-configuration
-                  (home-environment gastown-he)
-                  (user "roman")
-                  (towns gastown-towns)
-                  (map-host-runtime-dir? #t)
-                  (environment-variables
-                   '("COLORTERM" "DISPLAY" "LANG"
-                     "SSH_AUTH_SOCK" "TERM" "USER"
-                     "WAYLAND_DISPLAY" "XAUTHORITY"))))))
+  (make-gastown-container-services
+   gastown-towns
+   #:extra-packages (list emacs-pgtk node-anthropic-ai-claude-code tmux)))
 
 (define-public m1-home-environment
   (home-environment
