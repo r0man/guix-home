@@ -49,7 +49,7 @@ users who want something with a bit more flair than the modus-themes.
     "Get the font size for the current system."
     (cond ((and (equal "m1" (system-name)))
            (if (getenv "WAYLAND_DISPLAY")
-               14
+               16
              14))
           ((and (equal "precision" (system-name)))
            14)

@@ -21,6 +21,7 @@
                         ("HISTFILESIZE" . "10000000")
                         ("HISTSIZE" . "100000")
                         ("ELECTRON_OZONE_PLATFORM_HINT" . "auto")
+                        ("GTK_IM_MODULE" . "none")
                         ("VISUAL" . "emacsclient")
                         ("_JAVA_AWT_WM_NONREPARENTING" . #t)))
              (description "Alist of environment variables to set.")))

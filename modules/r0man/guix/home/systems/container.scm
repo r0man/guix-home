@@ -7,6 +7,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu packages less)
   #:use-module (gnu packages nss)
   #:use-module (gnu packages package-management)
@@ -78,9 +79,11 @@
         diffutils
         fd
         findutils
+        font-google-noto
         font-inconsolata
         git
         glibc-locales
+        gnupg
         graalvm-ce
         grep
         guix
