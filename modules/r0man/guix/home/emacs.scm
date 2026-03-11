@@ -211,6 +211,7 @@
         emacs-undo-tree
         emacs-unfill
         emacs-use-package
+        emacs-vui
         emacs-vertico
         emacs-virtualenvwrapper
         emacs-vterm
