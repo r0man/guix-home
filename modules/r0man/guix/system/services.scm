@@ -23,7 +23,6 @@
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:use-module (r0man guix system base)
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system xorg)
   #:export (%auditd-service-type

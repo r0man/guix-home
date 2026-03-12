@@ -25,6 +25,7 @@
   #:use-module (r0man guix packages lisp)
   #:use-module (r0man guix system base)
   #:use-module (r0man guix system services)
+  #:re-export (%roman)
   #:use-module (srfi srfi-1))
 
 (define %packages

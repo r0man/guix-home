@@ -23,6 +23,7 @@
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (gnu system accounts)
+  #:use-module (gnu system shadow)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system mapped-devices)
   #:use-module (gnu system nss)
@@ -170,6 +171,14 @@
           (target "/dev/mapper/bombaclaat-swap")
           (dependencies %mapped-devices))))
 
+(define %users
+  (cons* (user-account
+          (inherit %roman)
+          (supplementary-groups
+           (append '("cgroup" "plugdev")
+                   (user-account-supplementary-groups %roman))))
+         %base-user-accounts))
+
 (define-public m1-operating-system
   (operating-system
     (inherit desktop-operating-system)
@@ -177,6 +186,7 @@
     (bootloader %bootloader)
     (kernel asahi-linux)
     (initrd-modules asahi-initrd-modules)
+    (users %users)
     (mapped-devices %mapped-devices)
     (file-systems %file-systems)
     (packages %packages)

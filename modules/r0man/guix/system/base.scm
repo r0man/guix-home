@@ -1,11 +1,13 @@
 (define-module (r0man guix system base)
   #:use-module (gnu packages linux)
+  #:use-module (gnu services networking)
   #:use-module (gnu system nss)
   #:use-module (gnu)
   #:use-module (guix packages)
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system services)
-  #:export (base-operating-system))
+  #:export (%roman
+            base-operating-system))
 
 (define %packages
   (map specification->package
@@ -16,19 +18,18 @@
          "net-tools"
          "network-manager")))
 
-(define %supplementary-groups
-  '("audio" "cgroup" "kvm" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
-
-(define %users
-  (list (user-account
-         (name "roman")
-         (comment "Roman")
-         (group "users")
-         (home-directory "/home/roman")
-         (supplementary-groups %supplementary-groups))))
+(define-public %roman
+  (user-account
+   (name "roman")
+   (comment "Roman")
+   (group "users")
+   (home-directory "/home/roman")
+   (supplementary-groups
+    '("audio" "kvm" "libvirt" "lp" "netdev" "video" "wheel"))))
 
 (define %services
-  (modify-services (cons* %libvirt-service
+  (modify-services (cons* (service dhcpcd-service-type)
+                          %libvirt-service
                           %openssh-service
                           %base-services)
     (console-font-service-type config => (console-font-service-config config))
@@ -60,7 +61,7 @@
                      (type "tmpfs")
                      (check? #f))
                    %base-file-systems))
-    (users (append %users %base-user-accounts))
+    (users (append (list %roman) %base-user-accounts))
     (packages (append %packages %base-packages))
     (services %services)))
 
