@@ -91,7 +91,7 @@ NEXT: Implement rate limiting"
 
 ## Requirements
 
-- [bd CLI](https://github.com/steveyegge/beads) installed (`brew install steveyegge/beads/bd`)
+- [bd CLI](https://github.com/steveyegge/beads) installed (`brew install beads`)
 - A git repository (bd requires git for sync)
 - Initialized database (`bd init` in project root)
 
@@ -99,15 +99,19 @@ NEXT: Implement rate limiting"
 
 | Version | Features |
 |---------|----------|
+| v0.60.0+ | CLI credential pass-through for Dolt server push/pull |
+| v0.58.0+ | `bd prime --claim`, `bd show --long`, `--stdin` flag |
+| v0.54.0+ | `bd doctor` detects committed runtime/sensitive files, `BD_BACKUP_ENABLED=false` |
+| v0.52.0+ | `bd sync` deprecated (use `bd dolt push`), `--claim` for atomic start-work |
+| v0.47.0+ | Pull-first sync, resolve-conflicts, dry-run create, gate auto-discovery |
 | v0.43.0+ | Full support: agents, gates, worktrees, chemistry patterns |
 | v0.40.0+ | Agent beads, async gates, worktree management |
 | v0.34.0+ | Molecules, wisps, cross-project dependencies |
 | v0.15.0+ | Core: dependencies, notes, status tracking |
-| Earlier | Basic functionality, some features missing |
 
 ## Contributing
 
-This skill is maintained at [github.com/steveyegge/beads](https://github.com/steveyegge/beads) in the `skills/beads/` directory.
+This skill is maintained at [github.com/steveyegge/beads](https://github.com/steveyegge/beads) in the `claude-plugin/skills/beads/` directory.
 
 Issues and PRs welcome for:
 - Documentation improvements
