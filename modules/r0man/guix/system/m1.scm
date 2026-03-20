@@ -4,6 +4,7 @@
   #:use-module (asahi guix packages audio)
   #:use-module (asahi guix packages linux)
   #:use-module (asahi guix packages misc)
+  #:use-module (gnu packages linux)
   #:use-module (asahi guix services firmware)
   #:use-module (asahi guix services sound)
   #:use-module (asahi guix services udev)
@@ -125,7 +126,8 @@
                           ,(plain-file "asahi.conf" "options asahi debug_flags=1")))))
 
 (define %services
-  (modify-services (cons* (service alsa-service-type)
+  (modify-services (cons* (service iwd-service-type)
+                          (service alsa-service-type)
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
                           (service sound:speakersafetyd-service-type)
@@ -142,6 +144,15 @@
     (delete sound:alsa-service-type)
     (delete sound:pulseaudio-service-type)
     (delete slim-service-type)
+    (delete wpa-supplicant-service-type)
+    (network-manager-service-type
+     config =>
+     (network-manager-configuration
+      (inherit config)
+      (extra-configuration-files
+       (list `("iwd.conf"
+               ,(plain-file "nm-iwd.conf"
+                            "[device]\nwifi.backend=iwd\n"))))))
     (guix-service-type
      config =>
      (guix-configuration
@@ -185,6 +196,7 @@
     (host-name "m1")
     (bootloader %bootloader)
     (kernel asahi-linux)
+    (firmware (cons* wireless-regdb %base-firmware))
     (initrd-modules asahi-initrd-modules)
     (users %users)
     (mapped-devices %mapped-devices)
