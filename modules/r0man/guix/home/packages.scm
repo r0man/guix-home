@@ -58,6 +58,7 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
+  #:use-module (r0man guix packages node)
   #:use-module (r0man guix packages task-management)
   #:export (packages-aarch64
             packages-base
@@ -104,6 +105,7 @@
         mumi
         ncurses
         node-lts
+        node-zed-industries-claude-agent-acp
         nss-certs
         openssl
         password-store

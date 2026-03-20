@@ -28,7 +28,8 @@
           (default (local-file "files/claude-code/skills" #:recursive? #t))
           (description "Path to skills directory."))
   (packages home-claude-code-packages
-            (default (list node-anthropic-ai-claude-code))
+            (default (list node-anthropic-ai-claude-code
+                          node-zed-industries-claude-agent-acp))
             (description "List of Claude Code packages to install."))
   (settings home-claude-code-settings
             (default (local-file "files/claude-code/settings.json"))
