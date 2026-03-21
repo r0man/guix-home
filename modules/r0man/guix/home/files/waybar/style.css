@@ -1,0 +1,88 @@
+@define-color background rgba(0, 0, 0, 0.45);
+@define-color module-bg rgba(0, 0, 0, 0.7);
+@define-color selection #44475a;
+@define-color foreground #f8f8f2;
+@define-color comment #6272a4;
+@define-color cyan #8be9fd;
+@define-color grey #888888;
+@define-color green #50fa7b;
+@define-color orange #ffb86c;
+@define-color pink #ff79c6;
+@define-color purple #bd93f9;
+@define-color red #ff5555;
+@define-color yellow #f1fa8c;
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: Hack;
+    font-size: 11pt;
+    min-height: 0;
+}
+
+window#waybar {
+    background: @background;
+    color: @foreground;
+}
+
+#workspaces {
+    padding: 2px 10px;
+    margin: 3px 3px;
+    border: 1px solid rgba(30, 55, 75, 0.9);
+    border-radius: 0;
+    background: rgba(30, 55, 75, 0.9);
+}
+
+#workspaces button {
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    color: @foreground;
+    background: transparent;
+}
+
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+    background: @selection;
+}
+
+#workspaces button.active {
+    color: @foreground;
+}
+
+#workspaces button.urgent {
+    color: @red;
+}
+
+#workspaces button.empty {
+    color: @selection;
+    background: transparent;
+}
+
+#workspaces button.special {
+    color: @yellow;
+}
+
+.module {
+    padding: 2px 10px;
+    margin: 3px 3px;
+    border-radius: 3px;
+    background: @module-bg;
+    color: @foreground;
+}
+
+#clock.saopaulo, #clock.utc {
+    color: @grey;
+}
+
+#custom-drive.on { color: @green; }
+#custom-drive.off { color: @foreground; }
+#custom-vpn.off { color: @foreground; }
+#custom-vpn.on { color: @pink; }
+
+#pulseaudio.bluetooth { color: @purple; }
+#bluetooth.connected { color: @cyan; }
+#battery.warning { color: @yellow; }
+#battery.critical { color: @red; }
