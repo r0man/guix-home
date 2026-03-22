@@ -16,7 +16,7 @@
   (channel
    (name 'guix)
    (url "https://git.guix.gnu.org/guix.git")
-   (commit "ebe4cc6b3b7c02f691c4ce236a9a7c98746205a4")
+   (commit "f1822d8680765e6df4d9b79152ab83ac7ddd1e21")
    (introduction
     (make-channel-introduction
      "9edb3f66fd807b096b48283debdcddccfea34bad"
@@ -27,7 +27,7 @@
   (channel
    (name 'guix)
    (url "https://codeberg.org/r0man/guix")
-   (branch "add-whisper-service")
+   (branch "next")
    (introduction
     (make-channel-introduction
      "9edb3f66fd807b096b48283debdcddccfea34bad"
@@ -39,7 +39,7 @@
    (name 'nonguix)
    (url "https://gitlab.com/nonguix/nonguix")
    (branch "master")
-   (commit "cbf5bd14cc0888caee8cf6e6abd9ec7c111307d7")
+   (commit "35a3ee8b8c7897fff288a890ebefa417eea0e0e3")
    (introduction
     (make-channel-introduction
      "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
