@@ -17,5 +17,6 @@
       "Read(~/Mail/**)"
     ]
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "teammateMode": "tmux"
 }
