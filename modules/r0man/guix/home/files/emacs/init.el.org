@@ -507,9 +507,7 @@ Run the current buffer through zprint.
     ;; (claude-code-ide-cli-path "container-claude")
     (claude-code-ide-cli-extra-flags "--dangerously-skip-permissions")
     (claude-code-ide-cli-path "claude")
-    (claude-code-ide-use-side-window nil)
-    :config
-    (claude-code-ide-emacs-tools-setup))
+    (claude-code-ide-use-side-window nil))
 #+end_src
 
 ** Corfu
