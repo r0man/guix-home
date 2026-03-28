@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "guix_home",
+  "project_id": "f0e91f9a-fd0e-4752-8fc3-1a458c8066cd"
+}
