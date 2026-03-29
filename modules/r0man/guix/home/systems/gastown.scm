@@ -1,4 +1,4 @@
-(define-module (r0man guix home systems gastown-test)
+(define-module (r0man guix home systems gastown)
   #:use-module (gnu home services)
   #:use-module (gnu home services shells)
   #:use-module (gnu home)
