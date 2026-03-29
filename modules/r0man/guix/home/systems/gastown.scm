@@ -1,114 +1,68 @@
 (define-module (r0man guix home systems gastown)
-  #:use-module (gnu home services)
+  #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
+  #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages ncurses)
   #:use-module (gnu packages nss)
+  #:use-module (gnu packages terminals)
   #:use-module (gnu packages version-control)
   #:use-module (gnu services)
+  #:use-module (guix gexp)
+  #:use-module (r0man guix home bash)
+  #:use-module (r0man guix home channels)
+  #:use-module (r0man guix home emacs)
+  #:use-module (r0man guix home environment)
   #:use-module (r0man guix home services gastown)
+  #:use-module (r0man guix home tmux)
   #:use-module (r0man guix packages node)
   #:use-module (r0man guix services gastown))
 
 ;;; Commentary:
 ;;;
-;;; Minimal home environments for testing home-gastown-service-type with
-;;; three independent town roots and rig/crew configurations.
+;;; Minimal home environment for testing home-gastown-service-type with a
+;;; single town at ~/gt-test and two rigs: beads.el and gastown.el.
 ;;;
 ;;; Usage:
-;;;   scripts/test-gastown-towns.sh
+;;;   guix home -L modules container --network modules/r0man/guix/home/systems/gastown.scm
 ;;;
 ;;; Code:
 
-(define* (make-test-env name town-root rigs #:key (dolt-port 3307))
-  "Return a minimal home-environment for testing with NAME, TOWN-ROOT, RIGS
-and optional DOLT-PORT (default 3307)."
+(define-public gastown-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal git
-                   node-anthropic-ai-claude-code nss-certs procps))
+   (packages (list coreutils coreutils-minimal git inetutils kitty ncurses
+                   node-anthropic-ai-claude-code nss-certs procps waypipe))
    (services
-    (list (service home-gastown-service-type
+    (append (list (service home-bash-service-type
+                           home-bash-default-configuration)
+                  (service home-channels-service-type
+                           home-channels-default-list)
+                  (service home-emacs-service-type)
+                  (service home-environment-service-type)
+                  (simple-service 'fix-container-ptmx
+                                  home-activation-service-type
+                                  #~(when (file-exists? "/dev/pts/ptmx")
+                                      (chmod "/dev/pts/ptmx" #o666)))
+
+                  (service home-gastown-service-type
                    (home-gastown-configuration
                     (towns (list (gastown-town-configuration
-                                  (name name)
-                                  (town-root town-root)
-                                  (dolt (gastown-dolt-configuration
-                                         (port dolt-port)))
-                                  (rigs rigs))))))))))
-
-;;; Three independent town/rig configurations — each uses a different town-root
-;;; so their data directories never collide.
-
-(define-public gastown-test-env-1
-  (make-test-env
-   "town1" "town1"
-   (list (gastown-rig-configuration
-          (name "repo_a")
-          (git-url "https://github.com/r0man/guix-home")
-          (prefix "ra")
-          (crews (list (gastown-crew-configuration (name "roman"))))))
-   #:dolt-port 13307))
-
-(define-public gastown-test-env-2
-  (make-test-env
-   "town2" "town2"
-   (list (gastown-rig-configuration
-          (name "repo_b")
-          (git-url "https://github.com/r0man/guix-channel")
-          (prefix "rb")
-          (crews (list (gastown-crew-configuration (name "roman"))
-                       (gastown-crew-configuration (name "alice"))))))
-   #:dolt-port 13308))
-
-(define-public gastown-test-env-3
-  (make-test-env
-   "town3" "town3"
-   (list (gastown-rig-configuration
-          (name "repo_c")
-          (git-url "https://github.com/r0man/beads.el")
-          (prefix "rc"))
-         (gastown-rig-configuration
-          (name "repo_d")
-          (git-url "https://github.com/r0man/gastown.el")
-          (prefix "rd")
-          (crews (list (gastown-crew-configuration (name "roman"))))))
-   #:dolt-port 13309))
-
-;;; Multi-town test: two towns in a single home environment, each with its
-;;; own dolt port, rig, and crew configuration.
-
-(define-public gastown-test-env-multi
-  (home-environment
-   (packages (list coreutils coreutils-minimal git
-                   node-anthropic-ai-claude-code nss-certs procps))
-   (services
-    (list (service home-gastown-service-type
-                   (home-gastown-configuration
-                    (towns (list (gastown-town-configuration
-                                  (name "alpha")
-                                  (town-root "alpha")
+                                  (name "test")
+                                  (town-root "gt-test")
                                   (dolt (gastown-dolt-configuration
                                          (port 13307)))
                                   (rigs (list (gastown-rig-configuration
-                                               (name "repo_a")
-                                               (git-url "https://github.com/r0man/guix-home")
-                                               (prefix "ra")
-                                               (crews (list (gastown-crew-configuration
-                                                              (name "roman"))))))))
-                                 (gastown-town-configuration
-                                  (name "beta")
-                                  (town-root "beta")
-                                  (dolt (gastown-dolt-configuration
-                                         (port 13308)))
-                                  (rigs (list (gastown-rig-configuration
-                                               (name "repo_b")
-                                               (git-url "https://github.com/r0man/guix-channel")
-                                               (prefix "rb")
-                                               (crews (list (gastown-crew-configuration
-                                                              (name "roman"))
-                                                            (gastown-crew-configuration
-                                                              (name "alice"))))))))))))))))
+                                               (name "beads_el")
+                                               (git-url "https://github.com/r0man/beads.el")
+                                               (prefix "be"))
+                                              (gastown-rig-configuration
+                                               (name "gastown_el")
+                                               (git-url "https://github.com/r0man/gastown.el")
+                                               (prefix "ge"))))))))))
+            home-tmux-services))))
 
-;; Default export: multi-town env (for direct `guix home container` use).
-gastown-test-env-multi
+gastown-home-environment
