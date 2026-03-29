@@ -43,7 +43,10 @@
   #:use-module (r0man guix home waybar)
   #:use-module (r0man guix home wofi)
   #:use-module (r0man guix home xdg)
-  #:use-module (r0man guix home x11))
+  #:use-module (r0man guix home x11)
+  #:use-module (r0man guix home systems container)
+  #:use-module (r0man guix services home-container)
+  #:use-module (gnu system file-systems))
 
 (define services
   (append home-tmux-services
@@ -91,7 +94,23 @@
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
         (service home-xdg-mime-applications-service-type
-                 home-xdg-mime-applications-default-configuration))))
+                 home-xdg-mime-applications-default-configuration)
+        (service home-container-service-type
+                 (list (home-container-configuration
+                        (name "gastown")
+                        (home container-home-environment)
+                        (home-directory "/home/roman")
+                        (uid 1000)
+                        (gid 998)
+                        (network? #t)
+                        (share (list (file-system-mapping
+                                      (source "/home/roman/gt")
+                                      (target "/home/roman/gt")
+                                      (writable? #t))
+                                     (file-system-mapping
+                                      (source "/home/roman/.claude")
+                                      (target "/home/roman/.claude")
+                                      (writable? #t))))))))))
 
 (define-public m1-home-environment
   (home-environment
