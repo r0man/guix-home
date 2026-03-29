@@ -35,6 +35,7 @@ Follow these comprehensive guidelines from the Guix Reference Manual and ensure 
 
 5. Metadata checks
    - Confirm `home-page`, `license`, `synopsis`, and `description` are still correct and conform to Guix conventions
+   - **Verify the license:** Check the upstream repository's `LICENSE`, `COPYING`, or equivalent file and confirm it matches the license declared in the package definition. If the upstream license has changed, update the `license` field accordingly. Do not rely on README badges or metadata alone — always check the actual license file
    - Ensure synopsis is concise (under ~50 characters, no trailing period) and description is clear and complete
 
 6. Style and formatting
