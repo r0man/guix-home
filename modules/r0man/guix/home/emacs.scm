@@ -145,6 +145,7 @@
         emacs-lsp-treemacs
         emacs-lsp-ui
         emacs-macrostep
+        emacs-madolt
         emacs-magit
         emacs-marginalia
         emacs-markdown-mode

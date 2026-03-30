@@ -20,6 +20,7 @@ Follow these comprehensive guidelines from the Guix Reference Manual:
    - Ensure the synopsis is concise (under 50 characters) and doesn't end with a period
    - Write a comprehensive description explaining what the software does and why it's useful
    - Specify the correct license using appropriate license constants from (gnu packages licenses)
+   - **Verify the license:** Check the upstream repository's `LICENSE`, `COPYING`, or equivalent file and confirm it matches the license declared in the package definition. Do not rely on README badges or metadata alone — always check the actual license file
 
 3. **Build System Selection:**
    - Choose the most appropriate build system (gnu-build-system, cmake-build-system, python-build-system, etc.)

@@ -143,6 +143,7 @@
         unzip
         util-linux
         vivid
+        waypipe
         whisper-cpp
         wireless-tools
         xmlstarlet
