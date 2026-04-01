@@ -86,6 +86,7 @@
         ffmpeg
         file
         forgejo-cli
+        gascity-next
         gastown-next
         gcc-toolchain
         glibc-locales
