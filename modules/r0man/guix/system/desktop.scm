@@ -31,34 +31,7 @@
 
 (define %packages
   (list
-   ;; alsa-plugins
-   ;; alsa-utils
    blueman
-   ;; cl-stumpwm
-   ;; sbcl
-   ;; sbcl-local-time
-   ;; sbcl-slime-swank
-   ;; sbcl-slynk
-   ;; sbcl-stumpwm-battery-portable
-   ;; sbcl-stumpwm-cpu
-   ;; sbcl-stumpwm-disk
-   ;; sbcl-stumpwm-globalwindows
-   ;; sbcl-stumpwm-kbd-layouts
-   ;; sbcl-stumpwm-mem
-   ;; sbcl-stumpwm-net
-   ;; sbcl-stumpwm-numpad-layouts
-   ;; sbcl-stumpwm-pamixer
-   ;; sbcl-stumpwm-pass
-   ;; sbcl-stumpwm-screenshot
-   ;; sbcl-stumpwm-stumptray
-   ;; sbcl-stumpwm-swm-gaps
-   ;; sbcl-stumpwm-ttf-fonts
-   ;; sbcl-stumpwm-wifi
-   ;; sbcl-stumpwm-winner-mode
-   ;; stumpish
-   ;; stumpwm
-   ;; pipewire
-   ;; wireplumber
    xf86-input-libinput))
 
 (define (network-manager-applet? service)
@@ -81,8 +54,6 @@
                                     %slim-service
                                     %udev-fido2-service
                                     %desktop-services)
-              ;; (delete alsa-service-type)
-              ;; (delete pulseaudio-service-type)
               (delete gdm-service-type)
               (console-font-service-type config => (console-font-service-config config)))))
 
