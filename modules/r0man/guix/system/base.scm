@@ -6,6 +6,7 @@
   #:use-module (guix packages)
   #:use-module (r0man guix system keyboard)
   #:use-module (r0man guix system services)
+  #:use-module (r0man guix system services substitutes)
   #:export (%roman
             base-operating-system))
 
@@ -29,11 +30,12 @@
 
 (define %services
   (modify-services (cons* (service dhcpcd-service-type)
+                          (service guix-moe-substitutes-service-type)
+                          (service nonguix-substitutes-service-type)
                           %libvirt-service
                           %openssh-service
                           %base-services)
-    (console-font-service-type config => (console-font-service-config config))
-    (guix-service-type config => (guix-service-type-config config))))
+    (console-font-service-type config => (console-font-service-config config))))
 
 (define-public base-operating-system
   (operating-system

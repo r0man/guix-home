@@ -25,6 +25,7 @@
   #:use-module (r0man guix packages lisp)
   #:use-module (r0man guix system base)
   #:use-module (r0man guix system services)
+  #:use-module (r0man guix system services substitutes)
   #:re-export (%roman)
   #:use-module (srfi srfi-1))
 
@@ -67,7 +68,9 @@
 (define %services
   (remove (lambda (service)
             (network-manager-applet? service))
-          (modify-services (cons* %auditd-service-type
+          (modify-services (cons* (service guix-moe-substitutes-service-type)
+                                    (service nonguix-substitutes-service-type)
+                                    %auditd-service-type
                                     %bluetooth-service
                                     %containerd-service
                                     %cups-service

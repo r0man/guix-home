@@ -7,6 +7,7 @@
   #:use-module (gnu packages linux)
   #:use-module (asahi guix services firmware)
   #:use-module (asahi guix services sound)
+  #:use-module (asahi guix services substitutes)
   #:use-module (asahi guix services udev)
   #:use-module (gnu  bootloader m1n1)
   #:use-module (gnu bootloader)
@@ -130,6 +131,7 @@
                           (service alsa-service-type)
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm"))
+                          (service asahi-substitutes-service-type)
                           (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
                           %asahi-kernel-module-config
@@ -158,9 +160,7 @@
      (guix-configuration
       (inherit config)
       (authorized-keys
-       (cons* (local-file "./keys/asahi-guix.pub")
-              (local-file "./keys/nonguix.pub")
-              (local-file "./keys/precision.pub")
+       (cons* (local-file "./keys/precision.pub")
               %default-authorized-guix-keys))
       (build-machines
        (list #~(build-machine
@@ -172,15 +172,12 @@
       (channels %channels)
       ;; TODO: Is this causing a pull on guix system commands?
       ;; (guix (guix-for-channels %channels))
-      (substitute-urls
-       (cons* "https://substitutes.asahi-guix.org"
-              "https://substitutes.nonguix.org"
-              %default-substitute-urls))))))
+      (substitute-urls %default-substitute-urls)))))
 
 (define %swap-devices
   (list (swap-space
-          (target "/dev/mapper/bombaclaat-swap")
-          (dependencies %mapped-devices))))
+         (target "/dev/mapper/bombaclaat-swap")
+         (dependencies %mapped-devices))))
 
 (define %users
   (cons* (user-account

@@ -45,8 +45,7 @@
             %udev-fido2-service
             certbot-ssl-certificate
             certbot-ssl-certificate-key
-            console-font-service-config
-            guix-service-type-config))
+            console-font-service-config))
 
 (define %auditd-service-type
   (service auditd-service-type))
@@ -142,16 +141,3 @@
   (map (lambda (tty)
          (cons tty (file-append font-terminus "/share/consolefonts/ter-132n")))
        '("tty1" "tty2" "tty3" "tty4" "tty5" "tty6")))
-
-(define (guix-service-type-config config)
-  (guix-configuration
-   (inherit config)
-   (substitute-urls
-    (append %default-substitute-urls
-            (list "https://substitutes.asahi-guix.org"
-                  "https://substitutes.nonguix.org")))
-   (authorized-keys
-    (append (list (local-file "./keys/asahi-guix.pub")
-                  (local-file "./keys/nonguix.pub")
-                  (local-file "./keys/precision.pub"))
-            %default-authorized-guix-keys))))
