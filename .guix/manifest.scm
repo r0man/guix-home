@@ -1,4 +1,4 @@
-(use-modules (r0man guix home systems m1)
+(use-modules (r0man guix home environments m1)
              (r0man guix system m1)
              (gnu home)
              (gnu system)

@@ -1,4 +1,4 @@
-(define-module (r0man guix home systems gastown)
+(define-module (r0man guix home environments gastown)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services)
@@ -28,7 +28,7 @@
 ;;; single town at ~/gt-test and two rigs: beads.el and gastown.el.
 ;;;
 ;;; Usage:
-;;;   guix home -L modules container --network modules/r0man/guix/home/systems/gastown.scm
+;;;   guix home -L modules container --network modules/r0man/guix/home/environments/gastown.scm
 ;;;
 ;;; Code:
 

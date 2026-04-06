@@ -1207,7 +1207,7 @@ The Geiser implementation for Guile scheme.
         (pop-to-buffer (current-buffer))
         (erase-buffer)
         (let ((default-directory "~/workspace/guix-home"))
-          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/systems/precision.scm" (current-buffer)))))
+          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/environments/precision.scm" (current-buffer)))))
 #+end_src
 #+begin_src emacs-lisp
   (defun guix-system-reconfigure ()

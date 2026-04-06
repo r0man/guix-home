@@ -3,7 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu services)
   #:use-module (guix gexp)
-  #:use-module (r0man guix home systems container)
+  #:use-module (r0man guix home environments container)
   #:export (home-container-home-service-type))
 
 ;;; Commentary:

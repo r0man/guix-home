@@ -25,7 +25,7 @@ The codebase follows Guix's module structure under `modules/r0man/guix/`:
     `packages-desktop`)
   - `files/` subdirectory contains dotfiles and configuration files
 
-- **`home/systems/`** - System-specific configurations
+- **`home/environments/`** - System-specific configurations
   - `m1.scm` - M1 MacBook configuration (aarch64)
   - `precision.scm` - Dell Precision laptop configuration (x86-64)
   - `server.scm` - Server configuration
@@ -90,7 +90,7 @@ System configs instantiate with: `(make-home-<name>-services)`
 
 System configs use directly: `home-<name>-services`
 
-System configurations in `home/systems/` compose services using `append`:
+System configurations in `home/environments/` compose services using `append`:
 - Use `(service home-<name>-service-type)` for service types
 - Use `(make-home-<name>-services)` or `(make-home-<name>-services config)`
   for wrappers
@@ -111,14 +111,14 @@ This repository depends on four Guix channels (defined in
 
 Test configuration without applying changes:
 ```bash
-guix home -L modules --dry-run reconfigure modules/r0man/guix/home/systems/m1.scm
-guix home -L modules --dry-run reconfigure modules/r0man/guix/home/systems/precision.scm
+guix home -L modules --dry-run reconfigure modules/r0man/guix/home/environments/m1.scm
+guix home -L modules --dry-run reconfigure modules/r0man/guix/home/environments/precision.scm
 ```
 
 Apply home environment configuration:
 ```bash
-guix home -L modules reconfigure modules/r0man/guix/home/systems/m1.scm
-guix home -L modules reconfigure modules/r0man/guix/home/systems/precision.scm
+guix home -L modules reconfigure modules/r0man/guix/home/environments/m1.scm
+guix home -L modules reconfigure modules/r0man/guix/home/environments/precision.scm
 ```
 
 ### Channel Management
@@ -182,7 +182,7 @@ configuration includes:
 When adding new services:
 1. Create module in `modules/r0man/guix/home/<name>.scm`
 2. Export `home-<name>-services` list
-3. Import and append to system configuration in `home/systems/*.scm`
+3. Import and append to system configuration in `home/environments/*.scm`
 4. Run dry-run to validate
 5. Apply with `guix home reconfigure`
 

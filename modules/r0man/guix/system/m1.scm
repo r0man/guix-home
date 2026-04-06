@@ -35,7 +35,7 @@
   #:use-module (guix packages)
   #:use-module (guix packages)
   #:use-module (r0man guix channels)
-  #:use-module (r0man guix home systems m1)
+  #:use-module (r0man guix home environments m1)
   #:use-module (r0man guix packages display-managers)
   #:use-module (r0man guix system desktop)
   #:use-module (r0man guix system keyboard)

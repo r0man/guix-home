@@ -1,4 +1,4 @@
-(define-module (r0man guix home systems container)
+(define-module (r0man guix home environments container)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services)
@@ -38,7 +38,7 @@
 ;;;
 ;;; Usage:
 ;;;   guix home -L modules container \
-;;;     modules/r0man/guix/home/systems/container.scm
+;;;     modules/r0man/guix/home/environments/container.scm
 ;;;
 ;;; With sound/display passthrough:
 ;;;   guix home -L modules container \
@@ -48,7 +48,7 @@
 ;;;     --share=/tmp/.X11-unix \
 ;;;     --share=/run/user/$UID/wayland-0 \
 ;;;     --share=$SSH_AUTH_SOCK \
-;;;     modules/r0man/guix/home/systems/container.scm
+;;;     modules/r0man/guix/home/environments/container.scm
 ;;;
 ;;; Code:
 

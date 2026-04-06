@@ -1,4 +1,4 @@
-(define-module (r0man guix home systems m1)
+(define-module (r0man guix home environments m1)
   #:use-module (asahi guix home services sound)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)

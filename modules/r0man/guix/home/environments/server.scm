@@ -1,4 +1,4 @@
-(define-module (r0man guix home systems server)
+(define-module (r0man guix home environments server)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services guix)

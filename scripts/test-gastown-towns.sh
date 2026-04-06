@@ -27,7 +27,7 @@ run_test() {
     local tmpfile
     tmpfile=$(mktemp /tmp/gastown-test-XXXXXX.scm)
     cat > "$tmpfile" <<SCHEME
-(use-modules (r0man guix home systems gastown-test))
+(use-modules (r0man guix home environments gastown-test))
 $env_expr
 SCHEME
 
