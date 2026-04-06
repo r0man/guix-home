@@ -1365,7 +1365,8 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
                    :key (lambda ()
                           (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey"))))
     :custom
-    (gptel-use-curl "~/.guix-profile/bin/curl"))
+    (when (file-exists-p "~/.guix-profile/bin/curl")
+      (gptel-use-curl "~/.guix-profile/bin/curl")))
 #+end_src
 ** History
 
@@ -2596,7 +2597,7 @@ An HTTP library for Emacs.
     :defer t
     :config
     ;; When not on a Guix system, use curl from host
-    (unless (file-exists-p "/run/current-system")
+    (when (file-exists-p "~/.guix-profile/bin/curl")
       (setq plz-curl-program "~/.guix-profile/bin/curl")))
 #+end_src
 ** Pretty Print JSON
