@@ -18,5 +18,6 @@
     ]
   },
   "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "tmux"
+  "teammateMode": "tmux",
+  "voiceEnabled": true
 }
