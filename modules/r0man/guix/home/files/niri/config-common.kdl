@@ -20,8 +20,8 @@ workspace "9:Top"
 workspace "0:Logs"
 
 // Spawn at startup
-spawn-at-startup "waybar" "-c" "/home/roman/.config/niri/waybar-config.jsonc" "-s" "/home/roman/.config/niri/waybar-style.css"
-spawn-at-startup "swaybg" "-i" "/home/roman/.local/share/wallpapers/stop-customizing-start-working.jpg" "-m" "fill"
+spawn-at-startup "sh" "-c" "waybar -c $HOME/.config/niri/waybar-config.jsonc -s $HOME/.config/niri/waybar-style.css"
+spawn-at-startup "sh" "-c" "swaybg -i $HOME/.local/share/wallpapers/stop-customizing-start-working.jpg -m fill"
 spawn-at-startup "swayidle"
 spawn-at-startup "emacs" "--daemon"
 spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
