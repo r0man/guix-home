@@ -783,8 +783,24 @@ A GNU Emacs major mode for editing BNF grammars.
     (ellama-auto-scroll t)
     (ellama-language "German")
     :config
+    (require 'llm-claude)
     (require 'llm-openai)
     (require 'llm-vertex)
+    (add-to-list 'ellama-providers
+                 (cons "Claude Sonnet"
+                       (make-llm-claude
+                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
+                        :chat-model "claude-sonnet-4-20250514")))
+    (add-to-list 'ellama-providers
+                 (cons "Claude Opus"
+                       (make-llm-claude
+                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
+                        :chat-model "claude-opus-4-20250514")))
+    (add-to-list 'ellama-providers
+                 (cons "Claude Haiku"
+                       (make-llm-claude
+                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
+                        :chat-model "claude-haiku-4-5-20251001")))
     (add-to-list 'ellama-providers
                  (cons "Nu Gemini 1.0"
                        (make-llm-vertex
@@ -822,7 +838,7 @@ A GNU Emacs major mode for editing BNF grammars.
                         :key (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey")
                         :chat-model "gpt-5"
                         :embedding-model "text-embedding-3-small")))
-    (setq ellama-provider (alist-get "Nu LiteLLM OpenAI GPT-5" ellama-providers nil nil #'string=)))
+    (setq ellama-provider (alist-get "Claude Opus" ellama-providers nil nil #'string=)))
 
   (defun ellama-chat-whisper ()
     "Record audio in a temporary buffer with the `whisper-run`
@@ -1356,6 +1372,10 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
     :commands gptel
     :config
     (require 'gptel-integrations)
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :key (lambda ()
+             (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))
     (setq-default gptel-backend
                   (gptel-make-openai
                    "NuLLM Open AI"
