@@ -81,7 +81,6 @@
         ;; emacs-enwc
         emacs-erlang
         emacs-eval-expr
-        emacs-evil
         emacs-exec-path-from-shell
         emacs-find-file-in-project
         emacs-flx
