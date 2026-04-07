@@ -101,7 +101,6 @@
         emacs-gptel
         emacs-graphql
         emacs-graphql-mode
-        emacs-guess-language
         emacs-guix
         emacs-haskell-mode
         emacs-helpful
