@@ -98,7 +98,6 @@
         emacs-github-browse-file
         emacs-gnuplot
         emacs-go-mode
-        emacs-google-translate
         emacs-gptel
         emacs-graphql
         emacs-graphql-mode
