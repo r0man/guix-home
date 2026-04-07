@@ -33,7 +33,6 @@
         emacs-adoc-mode
         emacs-agent-shell
         emacs-aio
-        emacs-all-the-icons
         emacs-arei
         emacs-auto-dictionary-mode
         emacs-avy
