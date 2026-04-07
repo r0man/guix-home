@@ -34,7 +34,6 @@
         emacs-agent-shell
         emacs-aio
         emacs-arei
-        emacs-auto-dictionary-mode
         emacs-avy
         emacs-avy-menu
         emacs-bluetooth
