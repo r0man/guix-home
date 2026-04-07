@@ -117,7 +117,6 @@
         emacs-kind-icon
         emacs-kotlin-mode
         emacs-kubel
-        emacs-language-detection
         emacs-logview
         emacs-lsp-dart
         emacs-lsp-docker
