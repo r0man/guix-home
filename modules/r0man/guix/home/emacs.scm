@@ -83,7 +83,6 @@
         emacs-eval-expr
         emacs-exec-path-from-shell
         emacs-find-file-in-project
-        emacs-flx
         emacs-flycheck
         emacs-flycheck-clj-kondo
         emacs-flycheck-elsa
