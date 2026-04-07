@@ -156,7 +156,6 @@
         emacs-pass
         emacs-pgemacs
         emacs-plz
-        emacs-popwin
         emacs-posframe
         emacs-projectile
         emacs-pulsar
