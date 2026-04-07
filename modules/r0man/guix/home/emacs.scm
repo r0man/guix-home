@@ -61,7 +61,6 @@
         emacs-docker-compose-mode
         emacs-dockerfile-mode
         emacs-docopt
-        emacs-doric-themes
         emacs-dracula-theme
         emacs-eat
         emacs-edit-indirect
