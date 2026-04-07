@@ -171,7 +171,6 @@
         emacs-sly-macrostep
         emacs-sly-stepper
         emacs-sql-indent
-        emacs-standard-themes
         emacs-stumpwm-mode
         emacs-svg-lib
         emacs-terraform-mode
