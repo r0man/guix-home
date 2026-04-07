@@ -79,7 +79,6 @@
         emacs-embark
         emacs-emms
         ;; emacs-enwc
-        emacs-engine-mode
         emacs-erlang
         emacs-eval-expr
         emacs-evil
