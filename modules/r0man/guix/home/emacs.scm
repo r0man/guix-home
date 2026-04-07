@@ -35,7 +35,6 @@
         emacs-aio
         emacs-arei
         emacs-avy
-        emacs-avy-menu
         emacs-bluetooth
         emacs-bnf-mode
         emacs-buttercup
