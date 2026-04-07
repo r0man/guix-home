@@ -103,7 +103,6 @@
         emacs-graphql-mode
         emacs-guix
         emacs-haskell-mode
-        emacs-helpful
         emacs-htmlize
         emacs-hy-mode
         emacs-inflections
