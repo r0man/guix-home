@@ -51,7 +51,6 @@
         emacs-clojure-ts-mode
         emacs-closql
         emacs-codegpt
-        emacs-combobulate
         emacs-consult
         emacs-consult-gh
         emacs-corfu
