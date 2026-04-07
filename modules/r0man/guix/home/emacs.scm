@@ -164,7 +164,6 @@
         emacs-request-deferred
         emacs-scss-mode
         emacs-selectrum
-        emacs-semext
         emacs-show-font
         emacs-slite
         emacs-sly
