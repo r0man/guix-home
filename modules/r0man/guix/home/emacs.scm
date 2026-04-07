@@ -32,7 +32,6 @@
   (list (if (target-aarch64?) emacs-pgtk emacs-pgtk)
         emacs-adoc-mode
         emacs-agent-shell
-        emacs-aggressive-indent
         emacs-aio
         emacs-all-the-icons
         emacs-arei
