@@ -133,7 +133,6 @@
         emacs-mu4e-alert
         emacs-multi-term
         emacs-multi-vterm
-        emacs-nord-theme
         emacs-oauth2
         emacs-ob-mermaid
         emacs-openwith
