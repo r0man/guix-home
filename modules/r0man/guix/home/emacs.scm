@@ -70,7 +70,6 @@
         ;; emacs-eglot-java
         emacs-el-mock
         emacs-eldev
-        emacs-eldoc-box
         emacs-elfeed
         emacs-elisa
         emacs-elisp-slime-nav
