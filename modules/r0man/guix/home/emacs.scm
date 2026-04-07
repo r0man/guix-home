@@ -158,7 +158,6 @@
         emacs-plz
         emacs-posframe
         emacs-projectile
-        emacs-pulsar
         emacs-rainbow-mode
         emacs-redshank
         emacs-refactor
