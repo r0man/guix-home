@@ -119,7 +119,6 @@
         emacs-kubel
         emacs-logview
         emacs-lsp-dart
-        emacs-lsp-docker
         emacs-lsp-java
         emacs-lsp-treemacs
         emacs-lsp-ui
