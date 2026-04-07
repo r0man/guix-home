@@ -71,7 +71,6 @@
         emacs-el-mock
         emacs-eldev
         emacs-elfeed
-        emacs-elisa
         emacs-elisp-slime-nav
         emacs-elixir-mode
         emacs-ellama
