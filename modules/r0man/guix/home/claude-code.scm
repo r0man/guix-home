@@ -41,7 +41,8 @@
     (".claude/agents" ,(home-claude-code-agents config))
     (".claude/commands" ,(home-claude-code-commands config))
     (".claude/skills" ,(home-claude-code-skills config))
-    (".claude/settings.json" ,(home-claude-code-settings config))))
+    ;; (".claude/settings.json" ,(home-claude-code-settings config))
+    ))
 
 (define (home-claude-code-profile-packages config)
   "Return list of Claude Code packages to install."
