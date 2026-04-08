@@ -312,10 +312,6 @@
 (when *initializing*
   (run-shell-command "emacs")
   (run-shell-command "librewolf")
-  (run-shell-command "cd ~/workspace && container-emacs -n joe")
-  (run-shell-command "cd ~/workspace && container-emacs -n jack")
-  (run-shell-command "cd ~/workspace && container-emacs -n william")
-  (run-shell-command "cd ~/workspace && container-emacs -n averell")
   (run-shell-command "kitty --name BTop -e btop")
   (run-shell-command "kitty --name Logs -e journalctl --user -f"))
 
