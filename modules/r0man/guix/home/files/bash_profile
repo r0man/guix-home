@@ -1,5 +1,12 @@
 # -*- mode: sh -*-
 
+## ANDROID
+ANDROID_HOME="$HOME/Android/Sdk"
+if [ -d "$ANDROID_HOME" ]; then
+    export ANDROID_HOME
+    export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+fi
+
 ## BURNING SWELL
 
 if [ -d "$HOME/workspace/burningswell" ]; then
@@ -16,6 +23,7 @@ fi
 
 CONFLUENT_HOME="$HOME/local/confluent-7.3.0"
 if [ -d "$CONFLUENT_HOME" ]; then
+    export CONFLUENT_HOME
     export PATH="$PATH:$CONFLUENT_HOME/bin"
 fi
 
@@ -24,8 +32,12 @@ export LEIN_JVM_OPTS="-Daether.dependencyCollector.impl=bf"
 
 ## Flatpak
 
-export XDG_DATA_DIRS="$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share"
-export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
+if [ -d "$HOME/.local/share/flatpak/exports/share" ]; then
+    export XDG_DATA_DIRS="$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share"
+fi
+if [ -d "/var/lib/flatpak/exports/share" ]; then
+    export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
+fi
 
 ## GUIX
 
@@ -99,16 +111,27 @@ fi
 
 ## COURSIER
 
-export PATH="$PATH:/home/roman/.local/share/coursier/bin"
+if [ -d "$HOME/.local/share/coursier/bin" ]; then
+    export PATH="$PATH:$HOME/.local/share/coursier/bin"
+fi
+
+## CHROME
+export CHROME_EXECUTABLE="chromium"
 
 ## FLUTTER
 
-export CHROME_EXECUTABLE="chromium"
-export PATH="$PATH:$HOME/local/flutter/bin"
+FLUTTER_ROOT="$HOME/local/flutter"
+if [ -d "$FLUTTER_ROOT" ]; then
+    export FLUTTER_ROOT
+    export PATH="$PATH:$FLUTTER_ROOT/bin"
+fi
 
 ## NPM
-export NPM_CONFIG_PREFIX="${HOME}/.npm/node_modules"
-export PATH="$PATH:$NPM_CONFIG_PREFIX/bin"
+NPM_CONFIG_PREFIX="${HOME}/.npm/node_modules"
+if [ -d "$NPM_CONFIG_PREFIX" ]; then
+    export NPM_CONFIG_PREFIX
+    export PATH="$PATH:$NPM_CONFIG_PREFIX/bin"
+fi
 
 ## KAFKA
 
@@ -120,22 +143,32 @@ fi
 
 ## NUBANK
 
-export NU_COUNTRY="br"
-export NU_HOME="$HOME/workspace/nu"
+NU_HOME="$HOME/workspace/nu"
+if [ -d "$NU_HOME" ]; then
+    export NU_COUNTRY="br"
+    export NU_HOME
 
-# NUCLI
-export NUCLI_HOME="$NU_HOME/nucli"
-export PATH="$PATH:$NUCLI_HOME"
+    # NUCLI
+    NUCLI_HOME="$NU_HOME/nucli"
+    if [ -d "$NUCLI_HOME" ]; then
+        export NUCLI_HOME
+        export PATH="$PATH:$NUCLI_HOME"
+    fi
 
-# NUCLI.PY
-export PATH="$PATH:$NU_HOME/nucli.py/bin"
-export NUCLI_PY_FORMATTER_STYLE="bw"
-# export NUCLI_PY_FULL=1
+    # NUCLI.PY
+    if [ -d "$NU_HOME/nucli.py/bin" ]; then
+        export PATH="$PATH:$NU_HOME/nucli.py/bin"
+    fi
+    if [ -d "$NU_HOME/mini-meta-repo/monocli/bin" ]; then
+        export PATH="$NU_HOME/mini-meta-repo/monocli/bin:$PATH"
+    fi
+    export NUCLI_PY_FORMATTER_STYLE="bw"
+fi
 
 # PATH
-export PATH="$HOME/.dotfiles/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.node_modules/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:/usr/local/bin"
-export PATH="$PATH:/usr/local/sbin"
+[ -d "$HOME/.dotfiles/bin" ] && export PATH="$HOME/.dotfiles/bin:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+[ -d "$HOME/.node_modules/bin" ] && export PATH="$HOME/.node_modules/bin:$PATH"
+[ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
+[ -d "/usr/local/bin" ] && export PATH="$PATH:/usr/local/bin"
+[ -d "/usr/local/sbin" ] && export PATH="$PATH:/usr/local/sbin"
