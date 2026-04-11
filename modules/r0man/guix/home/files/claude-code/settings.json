@@ -3,6 +3,17 @@
     "DISABLE_AUTOUPDATER": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "enabledPlugins": {
+    "beads@beads-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "beads-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/gastownhall/beads.git"
+      }
+    }
+  },
   "includeCoAuthoredBy": false,
   "model": "opus",
   "permissions": {
