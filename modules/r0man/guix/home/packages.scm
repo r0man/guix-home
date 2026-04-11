@@ -81,6 +81,7 @@
         autoconf
         automake
         beads-next
+        bluez
         cmake
         coreutils
         ffmpeg
