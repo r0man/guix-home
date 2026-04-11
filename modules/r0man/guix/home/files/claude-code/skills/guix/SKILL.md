@@ -97,14 +97,44 @@ Every Guix package follows this basic structure:
            (base32 "..."))))
 ```
 
-**Getting Source Hash:**
+**Getting Source Hashes**
+
+The command you use depends on how the source is fetched. These *must* match,
+or the build will fail with a hash mismatch.
+
+**`url-fetch` (tarballs, plain URLs):**
 ```bash
-# Download and get hash
+# Download URL and print its hash
 guix download https://example.com/package-1.0.tar.gz
 
-# Hash local file
+# Hash a file already on disk
 guix hash file.tar.gz
 ```
+
+**`git-fetch` (hashes a directory, not a file):** A `git-fetch` source is
+hashed over the *checked-out tree with the `.git` directory removed*. Tarball
+hashes will not match — don't mix these up.
+
+```bash
+# Option A — clone the exact tag and let guix hash the tree
+git clone --depth 1 --branch v1.2.3 https://github.com/example/repo /tmp/repo
+guix hash -rx /tmp/repo
+# -r  recursive (nar-serialize the tree, which is what git-fetch expects)
+# -x  exclude VCS metadata (skips .git even if you forgot to remove it)
+
+# Option B — the "let Guix tell you the hash" idiom (often the easiest)
+# Put *any* valid base32 in the sha256 field (e.g. all zeros), then:
+guix build -L modules my-package   # or: ./pre-inst-env guix build my-package
+# The build will fail with:
+#   sha256 hash mismatch for /gnu/store/...
+#     expected: 0000000000000000000000000000000000000000000000000000
+#     actual:   <the real hash>
+# Copy the "actual" value back into the sha256 field. This uses the exact
+# same hasher that will later verify the source, so it's the canonical path.
+```
+
+Use Option A when you want the hash before running a build; Option B when
+you're already iterating on a build and a rebuild is cheap.
 
 ### Dependency Management
 
@@ -204,14 +234,57 @@ install → patch-shebangs → strip → validate-runpath → compress-documenta
   (delete 'check))  ; Skip tests
 ```
 
-**Python Build System (Modern):**
+**Python Build System (Modern) — `pyproject-build-system`:**
 ```scheme
 (build-system pyproject-build-system)
 (arguments
  (list
-  #:test-flags #~(list "-v")
-  #:build-backend "poetry-core"))  ; or setuptools, flit, hatch, etc.
+  #:test-flags #~(list "-v"
+                       ;; Deselect tests that can't run in the sandbox:
+                       "--deselect=tests/test_net.py::test_needs_internet"
+                       "--ignore=tests/integration")
+  #:build-backend "poetry-core"))  ; or setuptools, flit-core, hatchling, …
+(native-inputs
+ (list python-pytest
+       python-pytest-httpserver         ; test-only deps go HERE
+       python-setuptools
+       python-wheel))
+(propagated-inputs
+ (list python-requests))               ; things your Python code imports
 ```
+
+**Python dependency placement rules — this is the #1 pyproject pitfall:**
+
+- **`native-inputs`** — test runners and test plugins (`python-pytest`,
+  `python-pytest-httpserver`, `python-pytest-mock`, `python-hypothesis`),
+  build backends (`python-setuptools`, `python-wheel`, `python-hatchling`,
+  `python-poetry-core`), code generators, linters used by tests. Anything
+  consumed by the `check` phase and not imported at runtime belongs here.
+- **`propagated-inputs`** — every Python library the installed package
+  *imports at runtime*. Python cannot find unpropagated site-packages, so
+  runtime deps must propagate. This is different from C libraries.
+- **`inputs`** — non-Python runtime dependencies (C libraries linked by
+  the Python extension modules, CLI programs the package shells out to).
+
+A `ModuleNotFoundError` during the `check` phase for a test-only import
+(e.g. `No module named 'pytest_httpserver'`) is almost always "I forgot to
+add it to `native-inputs`." Diagnose with:
+
+```bash
+guix build -L modules my-package --keep-failed
+grep -rn pytest_httpserver /tmp/guix-build-*/source   # confirm test-only
+guix search pytest-httpserver                          # find the Guix name
+```
+
+The Guix name convention is `python-<pypi-name-with-dashes>`. Underscores
+in Python import names become dashes in Guix package names:
+`pytest_httpserver` → `python-pytest-httpserver`,
+`opentelemetry_api` → `python-opentelemetry-api`.
+
+Do not "fix" a missing test dep with `#:tests? #f` or `(delete 'check)`.
+Those hide regressions. `#:test-flags` with `--deselect` / `--ignore` is
+the right tool only for individual tests that genuinely cannot run in the
+sandbox (network, GPU, `/dev` access).
 
 ### Common Helpers and Utilities
 
@@ -425,6 +498,97 @@ Home services go in `gnu/home/services/CATEGORY.scm`:
            (list "alias ll='ls -la'"))))
 ```
 
+### Home Service Running a User-Level Daemon
+
+When a home service needs to run a long-lived program (a daemon, a watcher,
+a user-level webhook receiver), extend `home-shepherd-service-type` rather
+than writing shell `exec` lines into a shell rc file. The result is
+equivalent to a systemd user service: `herd status` shows it, `herd restart
+<name>` works, and respawning is built in.
+
+This is the home analogue of the system service-type pattern above, but uses
+*home*-prefixed extension points (`home-shepherd-service-type`,
+`home-profile-service-type`) — not `shepherd-root-service-type`, which is
+system-level and will look wrong in a home config.
+
+```scheme
+(define-module (r0man guix home services mydaemon)
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shepherd)
+  #:use-module (gnu services shepherd)       ; for shepherd-service
+  #:use-module (guix gexp)
+  #:use-module (guix records)
+  #:use-module (r0man guix packages mydaemon)
+  #:export (home-mydaemon-configuration
+            home-mydaemon-service-type))
+
+(define-record-type* <home-mydaemon-configuration>
+  home-mydaemon-configuration make-home-mydaemon-configuration
+  home-mydaemon-configuration?
+  (package     home-mydaemon-package
+               (default mydaemon))
+  (port        home-mydaemon-port
+               (default 7070))
+  (config-file home-mydaemon-config-file
+               (default #f)))                   ; file-like or #f
+
+(define (home-mydaemon-shepherd-services config)
+  (list
+   (shepherd-service
+    (documentation "Run the mydaemon user service.")
+    (provision '(mydaemon))
+    (respawn? #t)
+    (start #~(make-forkexec-constructor
+              (append
+               (list #$(file-append
+                         (home-mydaemon-package config)
+                         "/bin/mydaemon")
+                     "--port" #$(number->string
+                                  (home-mydaemon-port config)))
+               (if #$(home-mydaemon-config-file config)
+                   (list "--config"
+                         #$(home-mydaemon-config-file config))
+                   '()))
+              #:log-file (string-append
+                          (or (getenv "XDG_STATE_HOME")
+                              (string-append (getenv "HOME")
+                                             "/.local/state"))
+                          "/mydaemon.log")))
+    (stop #~(make-kill-destructor)))))
+
+(define (home-mydaemon-profile-packages config)
+  (list (home-mydaemon-package config)))
+
+(define home-mydaemon-service-type
+  (service-type
+   (name 'home-mydaemon)
+   (extensions
+    (list (service-extension home-shepherd-service-type
+                             home-mydaemon-shepherd-services)
+          (service-extension home-profile-service-type
+                             home-mydaemon-profile-packages)))
+   (default-value (home-mydaemon-configuration))
+   (description "Run mydaemon as a user-level shepherd service.")))
+```
+
+**Key points that trip people up:**
+
+- Use **`file-append`** to compute the binary path at build time
+  (`(file-append pkg "/bin/mydaemon")`). Do not hardcode a store path and
+  do not call `which`.
+- `make-forkexec-constructor` does **not** inherit the parent shell's
+  environment. If the daemon needs specific env vars, pass
+  `#:environment-variables` explicitly with a list of `"KEY=value"`
+  strings. A common pitfall is assuming `PATH` is set — it often isn't.
+- The `start`/`stop` gexps run in the shepherd process at service-start
+  time. Values from `config` must be lowered with `#$` *inside* the gexp,
+  which is why the example `let`-binds at the outer level and then splices.
+- Logs go somewhere persistent by convention — `$XDG_STATE_HOME` or
+  `~/.local/state/<name>.log` is a reasonable default.
+- A `home-<name>-profile-packages` helper makes the package available on
+  `$PATH`, which is almost always what you also want when you're shipping
+  a daemon (so the user can invoke the binary directly too).
+
 ### Service Extensions
 
 Common extension points:
@@ -440,6 +604,72 @@ Common extension points:
 - `home-xdg-configuration-files-service-type` - Add files to $XDG_CONFIG_HOME
 - `home-profile-service-type` - Add packages to home profile
 - `home-run-on-change-service-type` - Run code when config changes
+
+## Working in a Personal Channel
+
+Most users doing real Guix work day-to-day are *not* editing a checkout of
+`guix.git`. They are working inside a personal channel or a Guix Home
+repository that ships its own `modules/` directory with package and service
+definitions. In that situation you do **not** need `./pre-inst-env` — you
+just point Guix at your modules with `-L`.
+
+**The key flag is `-L <path>`** (or `--load-path=<path>`), which adds a
+directory to Guile's module search path for that one invocation. The
+working tree is used directly, so changes are picked up immediately — no
+`guix pull`, no rebuild of Guix itself.
+
+```bash
+# From the channel repo root — build a package from your local source
+guix build -L modules my-package
+
+# Keep the build tree on failure for inspection
+guix build -L modules --keep-failed my-package
+
+# Lint it using your local checkout
+guix lint  -L modules my-package
+
+# Dry-run the whole home environment against the local tree
+# (catches module-load errors, unbound variables, and derivation-graph issues)
+guix home -L modules --dry-run reconfigure \
+  modules/r0man/guix/home/environments/m1.scm
+
+# Drop into a REPL with the local modules visible
+guix repl -L modules
+,use (r0man guix packages task-management)
+(package-version my-package)
+```
+
+If a package isn't reachable by bare name (e.g. because the CLI can't
+auto-discover it), build it by an expression instead:
+
+```bash
+guix build -L modules \
+  -e '(@ (r0man guix packages task-management) my-package)'
+```
+
+**When to use `./pre-inst-env` vs `-L modules`:**
+
+- `./pre-inst-env` — you're inside a checkout of `guix.git` itself and are
+  editing packages in upstream Guix (`gnu/packages/*.scm`). You need a
+  built Guix to run.
+- `-L modules` — you're in a personal channel or Guix Home repo whose
+  modules sit under `modules/` in the working tree. Nothing to compile
+  first; the installed Guix just loads your modules too.
+
+Use `-L modules` unless you're specifically contributing to upstream Guix.
+
+**Updating a package in a personal channel** (the common workflow):
+
+1. Edit `version` and `sha256` in the package definition.
+2. Get the new hash. For `git-fetch` sources, see "Getting Source Hashes"
+   above — the easiest path is Option B: drop in a bogus `(base32 "00…")`
+   hash, run `guix build -L modules <pkg>`, and copy the `actual:` line
+   out of the hash-mismatch error.
+3. `guix build -L modules <pkg>` until it builds cleanly.
+4. `guix lint -L modules <pkg>` for style/metadata issues.
+5. `guix home -L modules --dry-run reconfigure …environments/<host>.scm`
+   to verify dependents still resolve.
+6. Commit, then run a real `guix home reconfigure` on the affected host.
 
 ## Working with Guix Repository
 
