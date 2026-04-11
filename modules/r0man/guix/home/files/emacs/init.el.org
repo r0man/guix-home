@@ -2769,7 +2769,9 @@ Show font features in an Emacs buffer.
     (sooper-whisper)
     :load-path
     ("~/workspace/sooper-whisper.el/src"
-     "~/workspace/sooper-whisper.el/tests"))
+     "~/workspace/sooper-whisper.el/tests")
+    :custom
+    (sooper-whisper-debug 'verbose))
 #+end_src
 ** Language Server Protocol
 
