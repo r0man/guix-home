@@ -4,8 +4,10 @@
   #:use-module (gnu system nss)
   #:use-module (gnu)
   #:use-module (guix packages)
-  #:use-module (r0man guix system keyboard)
-  #:use-module (r0man guix system services)
+  #:use-module (r0man guix system services console-font)
+  #:use-module (r0man guix system services keyboard)
+  #:use-module (r0man guix system services libvirt)
+  #:use-module (r0man guix system services openssh)
   #:use-module (r0man guix system services substitutes)
   #:export (%roman
             base-operating-system))

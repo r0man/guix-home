@@ -38,9 +38,9 @@
   #:use-module (r0man guix home environments m1)
   #:use-module (r0man guix packages display-managers)
   #:use-module (r0man guix system desktop)
-  #:use-module (r0man guix system keyboard)
-  #:use-module (r0man guix system services)
-  #:use-module (r0man guix system xorg)
+  #:use-module (r0man guix system services keyboard)
+  #:use-module (r0man guix system services qemu)
+  #:use-module (r0man guix system services xorg)
   #:use-module (srfi srfi-1))
 
 (define %bootloader
