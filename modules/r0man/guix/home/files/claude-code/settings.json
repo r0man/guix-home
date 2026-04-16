@@ -4,7 +4,8 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "enabledPlugins": {
-    "beads@beads-marketplace": true
+    "beads@beads-marketplace": true,
+    "skill-creator@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
