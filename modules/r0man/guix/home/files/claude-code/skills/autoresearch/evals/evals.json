@@ -1,0 +1,23 @@
+{
+  "skill_name": "autoresearch",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a PyTorch image classifier in train.py that trains on CIFAR-10. It gets about 91% accuracy right now. I want to set up autoresearch to let Claude run experiments overnight on my RTX 3090 to push accuracy higher. The training takes about 3 minutes per run. Can you help me create a program.md?",
+      "expected_output": "A complete program.md tailored to the CIFAR-10 classifier: correct metric (accuracy, higher is better), appropriate time budget (~3 min), GPU-aware constraints for RTX 3090 (24GB VRAM), git workflow, results.tsv format, and strategy hints for image classification improvements (augmentation, LR schedules, architecture tweaks, regularization).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm working on a SQL query optimizer. I have a benchmark suite in bench.sh that runs 50 queries against PostgreSQL and prints 'avg_latency_ms: 234.5' at the end. The optimizer code is in optimizer.rs. I want to set up an autonomous loop where Claude tries different optimization strategies and keeps the ones that reduce latency. No GPU involved, just CPU. Each benchmark run takes about 8 minutes.",
+      "expected_output": "A program.md for a non-ML, CPU-only autoresearch setup: metric is avg_latency_ms (lower is better), time budget ~8 min, file constraints (only modify optimizer.rs), metric extraction via grep, strategy hints for query optimization (join reordering, predicate pushdown, index selection), and appropriate crash handling for a compiled Rust project.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I've been running autoresearch on my LLM training setup for about 8 hours. Here's my results.tsv so far — out of 45 experiments, 28 crashed, 12 were discarded, and only 5 were kept. The crashes are mostly OOM errors and NaN losses. Can you look at my program.md and help me fix it?\n\nresults.tsv:\ncommit\tval_bpb\tmemory_gb\tstatus\tdescription\nabc1234\t1.052\t38.2\tkept\tbaseline\ndef5678\t0.000\t0.0\tcrashed\tincrease model depth to 16 layers\nghi9012\t0.000\t0.0\tcrashed\tdouble batch size to 1M tokens\njkl3456\t1.048\t39.1\tkept\tadd cosine LR schedule\n...(41 more rows, mostly crashed)...\n\nprogram.md:\n# Research Program\n## Goal\nMinimize val_bpb\n## Experiment Loop\n1. Try something\n2. Run train.py\n3. Check results\n4. Keep or discard",
+      "expected_output": "Diagnosis of the high crash rate (62% crashes), identification that the program.md is too vague and lacks constraints. Specific recommendations: add memory limits (warn about OOM-prone changes), add NaN detection with early stopping, constrain change magnitude (don't double batch size in one step), add a 'do not' list, improve the experiment loop with proper metric extraction, crash categorization, and strategy guidance based on what the 5 kept experiments had in common.",
+      "files": []
+    }
+  ]
+}
