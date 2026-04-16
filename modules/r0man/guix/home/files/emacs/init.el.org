@@ -2771,6 +2771,7 @@ Show font features in an Emacs buffer.
     ("~/workspace/sooper-whisper.el/src"
      "~/workspace/sooper-whisper.el/tests")
     :custom
+    (sooper-whisper-gpu-device-index 1)
     (sooper-whisper-debug 'verbose))
 #+end_src
 ** Language Server Protocol
