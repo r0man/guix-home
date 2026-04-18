@@ -1,0 +1,61 @@
+{
+  "skill_name": "asahi-linux",
+  "evals": [
+    {
+      "id": 1,
+      "name": "boot-recovery-running-proxy",
+      "prompt": "my M1 macbook pro (14\" 2021) wont boot into fedora asahi remix anymore. did dnf upgrade last night and now when i try to boot i see the asahi logo briefly and then a black screen with just 'Running proxy...' at the top left. i can still hold power to get the boot picker and boot macOS. pls help",
+      "expected_output": "Identifies this as an m1n1 stage 2 failure (not stage 1 or hardware). Walks the user through booting into macOS, mounting the EFI partition via diskutil, cd'ing to /Volumes/EFI.../m1n1, and swapping boot.bin with boot.bin.old. Mentions running sudo update-m1n1 after successful boot. Does NOT suggest DFU, reinstalling m1n1 stage 1, or running the Asahi installer (those would be appropriate for different stages).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "steam-setup",
+      "prompt": "I just installed Fedora Asahi Remix on a Mac mini M2 Pro. How do I play Steam games on it? Is it even possible? I've heard about FEX but all the guides I find seem old and talk about setting it up manually.",
+      "expected_output": "Explains the current (post-Fedora 42) supported path: `sudo dnf install steam` which pulls in the full muvm + FEX + Proton stack automatically. Notes that older hand-rolled FEX guides are obsolete. Mentions enabling Steam Play for all titles in Settings. Covers the 'steamwebhelper crashed' first-run quirk (just retry). Optionally mentions PROTON_USE_WINED3D=1 for DX8-DX11 perf tuning.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "contribute-m3-gpu-driver",
+      "prompt": "I'm a Linux kernel dev and just got an M3 MacBook Pro. I want to help get the GPU driver working. Where should I start — which repo, which branch, how is the work organized? I'm comfortable with C but new to Rust.",
+      "expected_output": "Points to github.com/AsahiLinux/linux, branches asahi-wip / fairydust for active development. drm/asahi is in drivers/gpu/drm/asahi/. Notes that it's Rust (so Rust kernel toolchain is required — points to Documentation/rust/). Cites the latest progress report as the authoritative source on M3 GPU status. Mentions m1n1 hypervisor mode (m1n1/proxyclient/hv.py) as the key tool for reverse engineering new hardware. Points to #asahi-gpu on OFTC and #asahi-re. Does NOT claim work is complete or that the user can just 'apply patch X' — acknowledges M3 GPU is WIP.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "quiet-distorted-speakers",
+      "prompt": "hey so I've been running fedora asahi remix on my m2 macbook air for a couple months. the sound has started getting really weird — super quiet, kinda distorted on bass heavy music, headphones are fine. nothing obvious in audio settings. what should i check?",
+      "expected_output": "First priority: verify speakersafetyd is running and healthy (systemctl status speakersafetyd, journalctl -u speakersafetyd). Explains this is the daemon that enables and protects built-in speakers — without it (or with it failing), speakers are capped very low. Checks asahi-audio package is installed (provides the DSP chain). Notes that headphones bypass this stack which is why they're fine. Does NOT suggest disabling speakersafetyd or raising volume caps — that can physically damage hardware. Mentions running sudo asahi-diagnose to collect context for a bug report if the daemon is fine.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "partition-resize-safety",
+      "prompt": "I installed Fedora Asahi Remix on my M1 Mac and only gave it 60GB. Now I want to grow it to 300GB. Can I just do this from GNOME Disks or Gparted live? What's the safe way?",
+      "expected_output": "Strong safety warning: never modify nvme0n1p1 (iBootSystemContainer) or the last partition (RecoveryOSContainer). macOS must stay installed and bootable. Recommends shrinking the macOS APFS container from macOS (not from Linux live media), then using sfdisk/parted to grow the Linux root, keeping the partition table sorted by disk offset (sudo sfdisk -r /dev/nvme0n1). Btrfs supports online resize (Fedora Asahi Remix uses btrfs) so the filesystem grow is low-risk once the partition is larger. Warns about having backups before any partition work. Does NOT suggest a simple Gparted live resize without context about the reserved partitions.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "install-procedure-for-new-user",
+      "prompt": "A friend wants to try Linux on their M2 MacBook Air. They've never used Linux before. What's the install process and what should they know before starting?",
+      "expected_output": "Recommends Fedora Asahi Remix KDE Plasma edition (most tested, best integration for new users). Install command: curl https://fedora-asahi-remix.org/install | sh from macOS. Key prerequisites: macOS 13.5+ or 14.2+, internet connection, backups. Warns that macOS must remain installed afterwards (installer requires it; firmware upgrades require it). Notes that the installer partitions and provisions the system. Mentions supported hardware check (installer refuses unsupported models). Does NOT recommend an 'x86 Linux ISO' approach or mention Anaconda — installer is the only supported path.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "dfu-restore-from-fedora-pc",
+      "prompt": "My MacBook is completely bricked — stuck on the ! icon, can't get into startup options. I don't have another Mac but I have an old ThinkPad running Fedora 41. Can I use that to fix it?",
+      "expected_output": "Confirms yes, idevicerestore on Fedora can DFU Revive or DFU Restore Apple Silicon machines. Gives dnf install idevicerestore usbmuxd, udevadm reload. Specifies cable requirements (USB 2.0/3.0 data cable, NOT Thunderbolt, NOT charge-only). Specifies the target-machine port (leftmost rearmost Type C on left side for laptops). Gives the laptop DFU entry key combination (Left Ctrl + Left Option + Right Shift + Power). Distinguishes DFU Revive (preserves data, try first) from DFU Restore (wipes everything). Notes that after DFU, the Linux install will likely need stage 1 repair via asahi-installer's 'p' option. Notes the 40GB TMPDIR requirement.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "external-monitor-usbc",
+      "prompt": "I have a USB-C dock with a DisplayPort monitor. Connected to my M1 MacBook Pro running Fedora Asahi Remix but the monitor isn't detected. HDMI on the dock is supposedly the same. Is this supposed to work?",
+      "expected_output": "Honestly admits: DisplayPort over USB-C alt-mode is actively being developed on the `fairydust` kernel branch, not yet in stable Fedora Asahi Remix as of recent progress reports. Points to https://asahilinux.org/blog/ for the latest status. For now, external display via USB-C is limited. HDMI on dedicated ports (Mac mini/Studio) works, but USB-C DP-alt is the tricky bit. Does NOT invent a kernel parameter or claim the user is doing something wrong — this is a known limitation.",
+      "files": []
+    }
+  ]
+}
