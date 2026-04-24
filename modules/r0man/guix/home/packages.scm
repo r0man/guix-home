@@ -124,7 +124,6 @@
         sed
         sendgmail
         shared-mime-info
-        sqitch
         sqlite
         strace
         texi2html
