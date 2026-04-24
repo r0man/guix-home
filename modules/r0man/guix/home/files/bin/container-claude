@@ -90,7 +90,7 @@ exec guix shell \
      inetutils \
      jq \
      ncurses \
-     node-anthropic-ai-claude-code \
+     claude-code \
      nss-certs \
      openssh \
      procps \

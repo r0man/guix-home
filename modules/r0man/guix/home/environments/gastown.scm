@@ -19,7 +19,7 @@
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services gastown)
   #:use-module (r0man guix home tmux)
-  #:use-module (r0man guix packages node)
+  #:use-module (r0man guix packages claude)
   #:use-module (r0man guix services gastown))
 
 ;;; Commentary:
@@ -35,7 +35,7 @@
 (define-public gastown-home-environment
   (home-environment
    (packages (list coreutils coreutils-minimal git inetutils kitty ncurses
-                   node-anthropic-ai-claude-code nss-certs procps waypipe))
+                   claude-code nss-certs procps waypipe))
    (services
     (append (list (service home-bash-service-type
                            home-bash-default-configuration)

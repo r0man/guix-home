@@ -3,6 +3,7 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (r0man guix packages claude)
   #:use-module (r0man guix packages node)
   #:export (home-claude-code-configuration
             home-claude-code-service-type))
@@ -28,7 +29,7 @@
           (default (local-file "../files/claude-code/skills" #:recursive? #t))
           (description "Path to skills directory."))
   (packages home-claude-code-packages
-            (default (list node-anthropic-ai-claude-code
+            (default (list claude-code
                           node-zed-industries-claude-agent-acp))
             (description "List of Claude Code packages to install."))
   (settings home-claude-code-settings
