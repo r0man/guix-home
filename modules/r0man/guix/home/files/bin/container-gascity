@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Run the gascity home environment inside a Guix container with display
+# forwarding and shared GC_HOME / cities root.
+
+set -euo pipefail
+
+GASCITY_MODULE="modules/r0man/guix/home/environments/gascity.scm"
+GC_HOME_TEST="$HOME/.gc-test"
+CITIES_ROOT="$HOME/cities"
+CLAUDE_DIR="$HOME/.claude"
+
+# Ensure required directories exist
+mkdir -p "$GC_HOME_TEST" "$CITIES_ROOT" "$CLAUDE_DIR"
+
+# Build container arguments
+ARGS=(
+    --share="$GC_HOME_TEST"
+    --share="$CITIES_ROOT"
+    --share="$CLAUDE_DIR"
+)
+
+# Bash history (writable)
+HISTFILE="${HISTFILE:-$HOME/.bash_history}"
+[[ -f "$HISTFILE" ]] && ARGS+=(--share="$HISTFILE")
+
+# Share .claude.json if it exists
+[[ -f "$HOME/.claude.json" ]] && ARGS+=(--share="$HOME/.claude.json")
+
+# SSH agent socket (for git operations)
+if [[ -n "${SSH_AUTH_SOCK:-}" && -S "$SSH_AUTH_SOCK" ]]; then
+    ARGS+=(--expose="$SSH_AUTH_SOCK")
+fi
+
+# Wayland display socket
+XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [[ -n "${WAYLAND_DISPLAY:-}" && -d "$XDG_RUNTIME_DIR" ]]; then
+    ARGS+=(--share="$XDG_RUNTIME_DIR")
+fi
+
+# X11 display
+if [[ -n "${DISPLAY:-}" ]]; then
+    [[ -n "${XAUTHORITY:-}" && -f "$XAUTHORITY" ]] && ARGS+=(--expose="$XAUTHORITY")
+fi
+
+# Guix current profile (so guix commands work inside the container)
+GUIX_CURRENT="$HOME/.config/guix/current"
+[[ -e "$GUIX_CURRENT" ]] && ARGS+=(--expose="$GUIX_CURRENT")
+
+exec guix home -L modules container \
+     --expose=/gnu/store \
+     --share=/var/guix/profiles \
+     --expose=/var/guix/daemon-socket \
+     --network \
+     "${ARGS[@]}" \
+     "$GASCITY_MODULE" "$@"
