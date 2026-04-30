@@ -258,6 +258,14 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
               #:environment-variables env))))
       (stop #~(make-kill-destructor))))))
 
+(define (home-gascity-environment-variables config)
+  "Export GC_HOME=$HOME/<gc-home> into the user's shell so interactive
+'gc' invocations talk to the same supervisor that shepherd starts.
+Without this, 'gc supervisor status' would default to ~/.gc and report
+'Supervisor is not running' even though shepherd's gascity-supervisor
+is healthy at the configured gc-home."
+  `(("GC_HOME" . ,(string-append "$HOME/" (home-gascity-gc-home config)))))
+
 (define (home-gascity-activation config)
   "Seed ~/.dolt/config_global.json with a user identity so dolt — which
 beads invokes during 'gc init' and city startup — does not refuse to run
@@ -293,6 +301,8 @@ home-git-service-type satisfies the requirement on its own."
                              home-gascity-packages)
           (service-extension home-shepherd-service-type
                              home-gascity-shepherd-services)
+          (service-extension home-environment-variables-service-type
+                             home-gascity-environment-variables)
           (service-extension home-activation-service-type
                              home-gascity-activation)))
    (default-value (home-gascity-configuration))
