@@ -99,6 +99,16 @@ Created and 'gc init'ed if city.toml is missing."))
   (gc-home  home-gascity-gc-home
             (default ".gc")
             (description "Supervisor runtime directory relative to $HOME."))
+  (dolt-user-name home-gascity-dolt-user-name
+                  (default "Gas City")
+                  (description "Identity written to ~/.dolt/config_global.json so
+that dolt — which beads invokes during 'gc init' and city startup — has a
+user.name.  Only seeded if the file does not already exist; existing dolt
+configs are preserved."))
+  (dolt-user-email home-gascity-dolt-user-email
+                   (default "gascity@localhost")
+                   (description "Companion email for the seeded
+~/.dolt/config_global.json; see dolt-user-name."))
   (cities   home-gascity-cities
             (default '())
             (description "List of <gascity-city-configuration> records.")))
@@ -248,6 +258,29 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
               #:environment-variables env))))
       (stop #~(make-kill-destructor))))))
 
+(define (home-gascity-activation config)
+  "Seed ~/.dolt/config_global.json with a user identity so dolt — which
+beads invokes during 'gc init' and city startup — does not refuse to run
+with 'dolt identity not configured and git user.name not available'.
+Existing config_global.json files are left untouched."
+  (let ((user-name  (home-gascity-dolt-user-name config))
+        (user-email (home-gascity-dolt-user-email config)))
+    (with-imported-modules '((guix build utils))
+      #~(begin
+          (use-modules (guix build utils))
+          (let* ((home (getenv "HOME"))
+                 (dolt-dir (string-append home "/.dolt"))
+                 (global-json (string-append dolt-dir "/config_global.json")))
+            (mkdir-p dolt-dir)
+            (unless (file-exists? global-json)
+              (call-with-output-file global-json
+                (lambda (out)
+                  (display
+                   (string-append
+                    "{\"user.name\":\"" #$user-name "\","
+                    "\"user.email\":\"" #$user-email "\"}\n")
+                   out)))))))))
+
 (define home-gascity-service-type
   (service-type
    (name 'home-gascity)
@@ -255,11 +288,15 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
     (list (service-extension home-profile-service-type
                              home-gascity-packages)
           (service-extension home-shepherd-service-type
-                             home-gascity-shepherd-services)))
+                             home-gascity-shepherd-services)
+          (service-extension home-activation-service-type
+                             home-gascity-activation)))
    (default-value (home-gascity-configuration))
    (description
     "Singleton Gas City supervisor home service.  Runs 'gc supervisor run'
 as a shepherd-managed user service that reconciles every city declared via
-<gascity-city-configuration> records.  The supervisor itself does not start
-dolt; with the default beads provider 'bd' the user must provide a reachable
-dolt out-of-band.")))
+<gascity-city-configuration> records.  Activation seeds
+~/.dolt/config_global.json so dolt — invoked by beads during city startup —
+has a user identity.  The supervisor itself does not start dolt; with the
+default beads provider 'bd' the user must provide a reachable dolt
+out-of-band.")))
