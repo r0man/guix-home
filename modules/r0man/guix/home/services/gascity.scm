@@ -94,7 +94,7 @@ Created and 'gc init'ed if city.toml is missing."))
   (packages home-gascity-packages
             (default (list gascity-next dolt beads-next
                            coreutils guix
-                           tmux git jq procps sed util-linux lsof))
+                           tmux git grep jq procps sed util-linux lsof))
             (description "List of packages to add to the profile."))
   (gc-home  home-gascity-gc-home
             (default ".gc")
