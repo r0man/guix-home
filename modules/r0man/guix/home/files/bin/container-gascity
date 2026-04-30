@@ -10,21 +10,23 @@ CITIES_ROOT="$HOME/cities"
 CLAUDE_DIR="$HOME/.claude"
 
 # Ensure required directories exist
-mkdir -p "$GC_HOME_TEST" "$CITIES_ROOT" "$CLAUDE_DIR"
+mkdir -p "$GC_HOME_TEST" "$CITIES_ROOT"
 
 # Build container arguments
 ARGS=(
     --share="$GC_HOME_TEST"
     --share="$CITIES_ROOT"
-    --share="$CLAUDE_DIR"
 )
 
 # Bash history (writable)
 HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 [[ -f "$HISTFILE" ]] && ARGS+=(--share="$HISTFILE")
 
-# Share .claude.json if it exists
-[[ -f "$HOME/.claude.json" ]] && ARGS+=(--share="$HOME/.claude.json")
+# Claude Code credentials: expose host files read-only so the container
+# can authenticate without being able to mutate them.  Everything else
+# under ~/.claude (transcripts, history, projects) stays on the host.
+[[ -f "$HOME/.claude.json" ]] && ARGS+=(--expose="$HOME/.claude.json")
+[[ -f "$CLAUDE_DIR/.credentials.json" ]] && ARGS+=(--expose="$CLAUDE_DIR/.credentials.json")
 
 # SSH agent socket (for git operations)
 if [[ -n "${SSH_AUTH_SOCK:-}" && -S "$SSH_AUTH_SOCK" ]]; then
