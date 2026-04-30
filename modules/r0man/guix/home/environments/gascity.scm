@@ -18,7 +18,6 @@
   #:use-module (r0man guix home services emacs)
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services gascity)
-  #:use-module (r0man guix home services git)
   #:use-module (r0man guix home tmux)
   #:use-module (r0man guix packages claude))
 
@@ -45,7 +44,14 @@
                            home-channels-default-list)
                   (service home-emacs-service-type)
                   (service home-environment-service-type)
-                  (service home-git-service-type)
+                  ;; Intentionally NOT enabling home-git-service-type:
+                  ;; that service deploys ~/.gitconfig as a read-only
+                  ;; symlink into the Guix store, which blocks beads'
+                  ;; 'git config --global beads.role maintainer' during
+                  ;; city init (guix-home-i1e).  Letting ~/.gitconfig
+                  ;; be absent lets beads create it on first write, and
+                  ;; home-gascity-activation seeds ~/.dolt/config_global.json
+                  ;; precisely because ~/.gitconfig is missing.
                   (simple-service 'fix-container-ptmx
                                   home-activation-service-type
                                   #~(when (file-exists? "/dev/pts/ptmx")
