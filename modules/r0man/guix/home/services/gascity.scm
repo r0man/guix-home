@@ -39,18 +39,26 @@
 ;;; every city listed in <GC_HOME>/cities.toml — never one shepherd service
 ;;; per city.
 ;;;
-;;; The service splits its work across two shepherd services so that
-;;; 'herd status' stays responsive even on a clean first run:
+;;; The service splits its work across two shepherd services.  The
+;;; supervisor runs first; init runs after and uses the running
+;;; supervisor — otherwise 'gc rig add' would auto-spawn its own
+;;; supervisor and race the shepherd-managed one (the same footgun
+;;; documented for 'gc register' in the gc-init-alone-does-not-register
+;;; memory):
 ;;;
-;;;   * gascity-init (one-shot): mkdir GC_HOME, 'gc init <path>' iff
-;;;     city.toml is missing, 'git clone <url> <path>' iff the rig
-;;;     path does not yet exist (gascity has no --git-url flag),
-;;;     'gc rig add <path>', and finally write GC_HOME/cities.toml
-;;;     listing every declared city.
+;;;   * gascity-supervisor (long-running, no requirement): mkdir
+;;;     GC_HOME, ensure GC_HOME/cities.toml exists (empty is fine —
+;;;     the supervisor reloads on change), and fork 'gc supervisor
+;;;     run'.  Starts before any city work happens, so its flock on
+;;;     supervisor.lock is the first one taken.
 ;;;
-;;;   * gascity-supervisor (long-running, requires gascity-init):
-;;;     forks 'gc supervisor run'.  The supervisor reads cities.toml
-;;;     on startup and reconciles each entry.
+;;;   * gascity-init (one-shot, requires gascity-supervisor): polls
+;;;     for GC_HOME/supervisor.sock to appear (up to ~30s), then
+;;;     'gc init <path>' iff city.toml is missing, 'git clone <url>
+;;;     <path>' iff the rig path does not yet exist (gascity has no
+;;;     --git-url flag), 'gc rig add <path>' (which now sees the
+;;;     existing supervisor and does NOT auto-spawn), and finally
+;;;     overwrite GC_HOME/cities.toml with every declared city.
 ;;;
 ;;; cities.toml is written directly rather than through 'gc register'
 ;;; because gc register blocks for minutes per city waiting for the
@@ -153,12 +161,10 @@ thunks differ only in what BODY does once the names are in scope."
 
 (define (home-gascity-shepherd-services config)
   "Return two shepherd services that together stand up the Gas City
-supervisor: gascity-init (one-shot, lays out cities + rigs on disk and
-writes GC_HOME/cities.toml directly) and gascity-supervisor (the
-long-running daemon, which reads cities.toml on startup and reconciles
-each entry).  Writing cities.toml directly avoids 'gc register', which
-otherwise blocks for minutes per city waiting for the city to become
-'ready'."
+supervisor.  The supervisor runs FIRST so it owns the flock on
+GC_HOME/supervisor.lock; gascity-init then runs 'gc init' / 'gc rig
+add' against the live supervisor, instead of having 'gc rig add'
+auto-spawn its own and race shepherd."
   (let* ((gc-home    (home-gascity-gc-home config))
          (cities     (home-gascity-cities config))
          (city-specs (map city-spec cities))
@@ -166,17 +172,52 @@ otherwise blocks for minutes per city waiting for the city to become
          (git-bin    (file-append git "/bin/git")))
     (list
      (shepherd-service
+      (documentation "Run 'gc supervisor run' as the singleton Gas City supervisor.")
+      (provision '(gascity-supervisor))
+      (modules '((shepherd support)
+                 (guix build utils)))
+      (respawn? #t)
+      (respawn-limit #~(cons 3 30))
+      (start
+       (with-env gc-home
+         #~(begin
+             (mkdir-p gc-home-abs)
+             ;; Ensure cities.toml exists before the supervisor starts;
+             ;; gascity-init will rewrite it once cities are laid out.
+             ;; Empty is fine — the supervisor reloads on change.
+             (let ((cities-toml (string-append gc-home-abs "/cities.toml")))
+               (unless (file-exists? cities-toml)
+                 (call-with-output-file cities-toml
+                   (lambda (port) (display "" port)))))
+             (fork+exec-command
+              (list #$gc-bin "supervisor" "run")
+              #:directory home
+              #:log-file log-file
+              #:environment-variables env))))
+      (stop #~(make-kill-destructor)))
+     (shepherd-service
       (documentation "Lay out each declared Gas City on disk and \
-populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
+populate GC_HOME/cities.toml.  Runs after gascity-supervisor so 'gc \
+rig add' uses the running supervisor instead of auto-spawning a second one.")
       (provision '(gascity-init))
       (one-shot? #t)
+      (requirement '(gascity-supervisor))
       (modules '((shepherd support)
                  (ice-9 textual-ports)
                  (guix build utils)))
       (start
        (with-env gc-home
          #~(begin
-             (mkdir-p gc-home-abs)
+             ;; Wait up to 30s for the supervisor's UNIX socket so 'gc
+             ;; rig add' attaches to the running supervisor instead of
+             ;; auto-spawning its own.
+             (let loop ((tries 60))
+               (cond ((file-exists? sock-file) #t)
+                     ((zero? tries)
+                      (format (current-error-port)
+                              "gascity-init: supervisor.sock did not \
+appear within 30s; proceeding anyway~%"))
+                     (else (usleep 500000) (loop (- tries 1)))))
              (for-each
               (lambda (city-spec)
                 (let* ((city-path (car city-spec))
@@ -220,11 +261,11 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
                              #:environment-variables env))))))
                    rigs)))
               '#$city-specs)
-             ;; Write GC_HOME/cities.toml directly: 'gc register' would
-             ;; otherwise block for minutes per city waiting for it to
-             ;; become "ready" (which fails when dolt/beads isn't
-             ;; configured).  The supervisor reads cities.toml on
-             ;; startup and reconciles each entry.
+             ;; Overwrite GC_HOME/cities.toml with the full list; the
+             ;; running supervisor reloads it and reconciles new
+             ;; entries.  Bypasses 'gc register', which would otherwise
+             ;; block for minutes per city waiting for it to become
+             ;; "ready".
              (call-with-output-file (string-append gc-home-abs "/cities.toml")
                (lambda (port)
                  (for-each
@@ -238,25 +279,7 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
                                  port))
                       (display "\n" port)))
                   '#$city-specs)))
-             #t))))
-     (shepherd-service
-      (documentation "Run 'gc supervisor run' as the singleton Gas City supervisor.")
-      (provision '(gascity-supervisor))
-      (requirement '(gascity-init))
-      (modules '((shepherd support)
-                 (guix build utils)))
-      (respawn? #t)
-      (respawn-limit #~(cons 3 30))
-      (start
-       (with-env gc-home
-         #~(begin
-             (mkdir-p gc-home-abs)
-             (fork+exec-command
-              (list #$gc-bin "supervisor" "run")
-              #:directory home
-              #:log-file log-file
-              #:environment-variables env))))
-      (stop #~(make-kill-destructor))))))
+             #t)))))))
 
 (define (home-gascity-environment-variables config)
   "Export GC_HOME=$HOME/<gc-home> into the user's shell so interactive
