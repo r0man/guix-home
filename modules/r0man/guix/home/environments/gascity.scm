@@ -63,7 +63,11 @@
                                                  "/cities/test"))
                             (rigs (list (gascity-rig-configuration
                                          (path "rigs/beads.el")
-                                         (git-url "https://github.com/r0man/beads.el"))))))))))
+                                         (git-url "https://github.com/r0man/beads.el")))))
+                           (gascity-city-configuration
+                            (path (string-append (getenv "HOME")
+                                                 "/cities/test2"))
+                            (name "test2")))))))
             home-tmux-services))))
 
 gascity-home-environment

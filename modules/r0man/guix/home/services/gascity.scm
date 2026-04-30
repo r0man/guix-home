@@ -135,8 +135,10 @@ Created and 'gc init'ed if city.toml is missing."))
                         (string-append "GIT_SSL_CAINFO=" profile
                                        "/etc/ssl/certs/ca-certificates.crt")
                         (user-environment-variables)))
-                  (log-file (string-append gc-home-abs "/supervisor.log")))
+                  (log-file (string-append gc-home-abs "/supervisor.log"))
+                  (sock-file (string-append gc-home-abs "/supervisor.sock")))
              (mkdir-p gc-home-abs)
+             ;; Pre-supervisor: gc init each city, clone rigs, gc rig add.
              (for-each
               (lambda (city-spec)
                 (let* ((city-path (car city-spec))
@@ -180,11 +182,37 @@ Created and 'gc init'ed if city.toml is missing."))
                              #:environment-variables env))))))
                    rigs)))
               '#$city-specs)
-             (fork+exec-command
-              (list #$gc-bin "supervisor" "run")
-              #:directory home
-              #:log-file log-file
-              #:environment-variables env))))
+             ;; Start the supervisor and remember its PID for shepherd.
+             (let ((pid (fork+exec-command
+                         (list #$gc-bin "supervisor" "run")
+                         #:directory home
+                         #:log-file log-file
+                         #:environment-variables env)))
+               ;; Wait up to 30s for the supervisor API socket.
+               (let loop ((tries 30))
+                 (cond
+                  ((file-exists? sock-file) #t)
+                  ((<= tries 0) #f)
+                  (else (sleep 1) (loop (- tries 1)))))
+               ;; Register each declared city with the supervisor.  gc register
+               ;; is idempotent and updates GC_HOME/cities.toml; without it
+               ;; the supervisor never reconciles cities created by gc init.
+               (for-each
+                (lambda (city-spec)
+                  (let* ((city-path (car city-spec))
+                         (name      (cadr city-spec))
+                         (args      (if (string-null? name)
+                                        (list #$gc-bin "register" city-path)
+                                        (list #$gc-bin "register"
+                                              "--name" name city-path))))
+                    (waitpid
+                     (fork+exec-command
+                      args
+                      #:directory home
+                      #:log-file log-file
+                      #:environment-variables env))))
+                '#$city-specs)
+               pid))))
       (stop #~(make-kill-destructor))))))
 
 (define home-gascity-service-type
