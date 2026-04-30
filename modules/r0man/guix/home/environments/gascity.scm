@@ -18,6 +18,7 @@
   #:use-module (r0man guix home services emacs)
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services gascity)
+  #:use-module (r0man guix home services git)
   #:use-module (r0man guix home tmux)
   #:use-module (r0man guix packages claude))
 
@@ -35,8 +36,8 @@
 
 (define-public gascity-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal git inetutils kitty ncurses
-                   claude-code nss-certs procps waypipe))
+   (packages (list coreutils coreutils-minimal findutils git inetutils kitty
+                   ncurses claude-code nss-certs procps waypipe))
    (services
     (append (list (service home-bash-service-type
                            home-bash-default-configuration)
@@ -44,6 +45,7 @@
                            home-channels-default-list)
                   (service home-emacs-service-type)
                   (service home-environment-service-type)
+                  (service home-git-service-type)
                   (simple-service 'fix-container-ptmx
                                   home-activation-service-type
                                   #~(when (file-exists? "/dev/pts/ptmx")
@@ -64,6 +66,8 @@
                   (service home-gascity-service-type
                    (home-gascity-configuration
                     (gc-home ".gc-test")
+                    (dolt-user-name "Roman Scherer")
+                    (dolt-user-email "roman@burningswell.com")
                     (cities
                      (list (gascity-city-configuration
                             (path (string-append (getenv "HOME")
