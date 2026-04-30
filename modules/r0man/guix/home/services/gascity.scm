@@ -5,8 +5,10 @@
   #:use-module (gnu services shepherd)
   #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages lsof)
+  #:use-module (gnu packages package-management)
   #:use-module (gnu packages tmux)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web)
@@ -83,6 +85,7 @@ Created and 'gc init'ed if city.toml is missing."))
   home-gascity-configuration?
   (packages home-gascity-packages
             (default (list gascity-next dolt beads-next
+                           coreutils guix
                            tmux git jq procps util-linux lsof))
             (description "List of packages to add to the profile."))
   (gc-home  home-gascity-gc-home
