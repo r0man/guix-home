@@ -66,8 +66,6 @@
                   (service home-gascity-service-type
                    (home-gascity-configuration
                     (gc-home ".gc-test")
-                    (dolt-user-name "Roman Scherer")
-                    (dolt-user-email "roman@burningswell.com")
                     (cities
                      (list (gascity-city-configuration
                             (path (string-append (getenv "HOME")

@@ -262,7 +262,9 @@ populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
   "Seed ~/.dolt/config_global.json with a user identity so dolt — which
 beads invokes during 'gc init' and city startup — does not refuse to run
 with 'dolt identity not configured and git user.name not available'.
-Existing config_global.json files are left untouched."
+Skipped when either ~/.dolt/config_global.json or ~/.gitconfig already
+exists: dolt falls back to the git config when its own is missing, so
+home-git-service-type satisfies the requirement on its own."
   (let ((user-name  (home-gascity-dolt-user-name config))
         (user-email (home-gascity-dolt-user-email config)))
     (with-imported-modules '((guix build utils))
@@ -270,9 +272,11 @@ Existing config_global.json files are left untouched."
           (use-modules (guix build utils))
           (let* ((home (getenv "HOME"))
                  (dolt-dir (string-append home "/.dolt"))
-                 (global-json (string-append dolt-dir "/config_global.json")))
-            (mkdir-p dolt-dir)
-            (unless (file-exists? global-json)
+                 (global-json (string-append dolt-dir "/config_global.json"))
+                 (gitconfig (string-append home "/.gitconfig")))
+            (unless (or (file-exists? global-json)
+                        (file-exists? gitconfig))
+              (mkdir-p dolt-dir)
               (call-with-output-file global-json
                 (lambda (out)
                   (display
