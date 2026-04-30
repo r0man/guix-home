@@ -48,6 +48,13 @@
                                   home-activation-service-type
                                   #~(when (file-exists? "/dev/pts/ptmx")
                                       (chmod "/dev/pts/ptmx" #o666)))
+                  ;; 'guix home container' has no /bin/sh, but inherits
+                  ;; SHELL=/bin/sh.  Point SHELL at the bash shipped in the
+                  ;; profile so 'guix shell' (and anything else that exec's
+                  ;; $SHELL) works inside the container.
+                  (simple-service 'gascity-shell-env
+                                  home-environment-variables-service-type
+                                  `(("SHELL" . "$HOME/.guix-home/profile/bin/bash")))
                   (simple-service 'install-container-gascity
                                   home-files-service-type
                                   `(("bin/container-gascity"
