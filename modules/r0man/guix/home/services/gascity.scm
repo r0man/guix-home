@@ -39,15 +39,23 @@
 ;;; every city listed in <GC_HOME>/cities.toml — never one shepherd service
 ;;; per city.
 ;;;
-;;; The start thunk performs idempotent setup before exec'ing the supervisor:
+;;; The service splits its work across two shepherd services so that
+;;; 'herd status' stays responsive even on a clean first run:
 ;;;
-;;;   * mkdir GC_HOME (default ~/.gc).
-;;;   * For each declared city: 'gc init <path>' iff city.toml is missing.
-;;;   * For each declared rig: 'git clone <url> <path>' iff the path does
-;;;     not yet exist and git-url is set (gascity has no --git-url flag),
-;;;     then 'gc rig add <path>' (run from the city dir; gc resolves the
-;;;     containing city from cwd) iff the rig isn't already referenced in
-;;;     city.toml.
+;;;   * gascity-init (one-shot): mkdir GC_HOME, 'gc init <path>' iff
+;;;     city.toml is missing, 'git clone <url> <path>' iff the rig
+;;;     path does not yet exist (gascity has no --git-url flag),
+;;;     'gc rig add <path>', and finally write GC_HOME/cities.toml
+;;;     listing every declared city.
+;;;
+;;;   * gascity-supervisor (long-running, requires gascity-init):
+;;;     forks 'gc supervisor run'.  The supervisor reads cities.toml
+;;;     on startup and reconciles each entry.
+;;;
+;;; cities.toml is written directly rather than through 'gc register'
+;;; because gc register blocks for minutes per city waiting for the
+;;; city to become "ready" (which fails when dolt/beads isn't
+;;; configured) — see the gc-init-alone-does-not-register memory.
 ;;;
 ;;; 'gc supervisor run' itself does NOT start dolt.  With the default
 ;;; provider = "bd" the user must provide a reachable dolt out-of-band
@@ -96,16 +104,51 @@ Created and 'gc init'ed if city.toml is missing."))
             (description "List of <gascity-city-configuration> records.")))
 
 (define (city-spec city)
-  "Serialize CITY into a plain list usable inside gexps."
-  (list (gascity-city-path city)
-        (or (gascity-city-name city) "")
-        (map (lambda (rig)
-               (list (gascity-rig-path rig)
-                     (or (gascity-rig-git-url rig) "")))
-             (gascity-city-rigs city))))
+  "Serialize CITY into a plain list usable inside gexps.  When the
+configuration omits an explicit name, default to the path's basename
+(matching gc register's own default)."
+  (let ((path (gascity-city-path city)))
+    (list path
+          (or (gascity-city-name city) (basename path))
+          (map (lambda (rig)
+                 (list (gascity-rig-path rig)
+                       (or (gascity-rig-git-url rig) "")))
+               (gascity-city-rigs city)))))
+
+(define (with-env gc-home body)
+  "Wrap BODY in a start thunk that binds the gascity-wide names HOME,
+PROFILE, GC-HOME-ABS, ENV, LOG-FILE and SOCK-FILE.  Both gascity
+shepherd services share the same shell-style environment, so the start
+thunks differ only in what BODY does once the names are in scope."
+  #~(lambda _
+      (let* ((home (string-append user-homedir))
+             (profile (string-append home "/.guix-home/profile"))
+             (gc-home-abs (string-append home "/" #$gc-home))
+             (xdg-runtime (or (getenv "XDG_RUNTIME_DIR")
+                              (string-append "/run/user/"
+                                             (number->string (getuid)))))
+             (env (cons*
+                   (string-append "GC_HOME=" gc-home-abs)
+                   (string-append "PATH=" profile "/bin:" profile "/sbin")
+                   (string-append "XDG_RUNTIME_DIR=" xdg-runtime)
+                   (string-append "SSL_CERT_DIR=" profile "/etc/ssl/certs")
+                   (string-append "SSL_CERT_FILE=" profile
+                                  "/etc/ssl/certs/ca-certificates.crt")
+                   (string-append "GIT_SSL_CAINFO=" profile
+                                  "/etc/ssl/certs/ca-certificates.crt")
+                   (user-environment-variables)))
+             (log-file (string-append gc-home-abs "/supervisor.log"))
+             (sock-file (string-append gc-home-abs "/supervisor.sock")))
+        #$body)))
 
 (define (home-gascity-shepherd-services config)
-  "Return the singleton supervisor shepherd service for CONFIG."
+  "Return two shepherd services that together stand up the Gas City
+supervisor: gascity-init (one-shot, lays out cities + rigs on disk and
+writes GC_HOME/cities.toml directly) and gascity-supervisor (the
+long-running daemon, which reads cities.toml on startup and reconciles
+each entry).  Writing cities.toml directly avoids 'gc register', which
+otherwise blocks for minutes per city waiting for the city to become
+'ready'."
   (let* ((gc-home    (home-gascity-gc-home config))
          (cities     (home-gascity-cities config))
          (city-specs (map city-spec cities))
@@ -113,35 +156,17 @@ Created and 'gc init'ed if city.toml is missing."))
          (git-bin    (file-append git "/bin/git")))
     (list
      (shepherd-service
-      (documentation "Run 'gc supervisor run' as the singleton Gas City supervisor.")
-      (provision '(gascity-supervisor))
+      (documentation "Lay out each declared Gas City on disk and \
+populate GC_HOME/cities.toml so the supervisor reconciles them on startup.")
+      (provision '(gascity-init))
+      (one-shot? #t)
       (modules '((shepherd support)
-                  (ice-9 textual-ports)
-                  (guix build utils)))
-      (respawn? #t)
-      (respawn-limit #~(cons 3 30))
+                 (ice-9 textual-ports)
+                 (guix build utils)))
       (start
-       #~(lambda _
-           (let* ((home (string-append user-homedir))
-                  (profile (string-append home "/.guix-home/profile"))
-                  (gc-home-abs (string-append home "/" #$gc-home))
-                  (xdg-runtime (or (getenv "XDG_RUNTIME_DIR")
-                                   (string-append "/run/user/"
-                                                  (number->string (getuid)))))
-                  (env (cons*
-                        (string-append "GC_HOME=" gc-home-abs)
-                        (string-append "PATH=" profile "/bin:" profile "/sbin")
-                        (string-append "XDG_RUNTIME_DIR=" xdg-runtime)
-                        (string-append "SSL_CERT_DIR=" profile "/etc/ssl/certs")
-                        (string-append "SSL_CERT_FILE=" profile
-                                       "/etc/ssl/certs/ca-certificates.crt")
-                        (string-append "GIT_SSL_CAINFO=" profile
-                                       "/etc/ssl/certs/ca-certificates.crt")
-                        (user-environment-variables)))
-                  (log-file (string-append gc-home-abs "/supervisor.log"))
-                  (sock-file (string-append gc-home-abs "/supervisor.sock")))
+       (with-env gc-home
+         #~(begin
              (mkdir-p gc-home-abs)
-             ;; Pre-supervisor: gc init each city, clone rigs, gc rig add.
              (for-each
               (lambda (city-spec)
                 (let* ((city-path (car city-spec))
@@ -185,37 +210,42 @@ Created and 'gc init'ed if city.toml is missing."))
                              #:environment-variables env))))))
                    rigs)))
               '#$city-specs)
-             ;; Start the supervisor and remember its PID for shepherd.
-             (let ((pid (fork+exec-command
-                         (list #$gc-bin "supervisor" "run")
-                         #:directory home
-                         #:log-file log-file
-                         #:environment-variables env)))
-               ;; Wait up to 30s for the supervisor API socket.
-               (let loop ((tries 30))
-                 (cond
-                  ((file-exists? sock-file) #t)
-                  ((<= tries 0) #f)
-                  (else (sleep 1) (loop (- tries 1)))))
-               ;; Register each declared city with the supervisor.  gc register
-               ;; is idempotent and updates GC_HOME/cities.toml; without it
-               ;; the supervisor never reconciles cities created by gc init.
-               (for-each
-                (lambda (city-spec)
-                  (let* ((city-path (car city-spec))
-                         (name      (cadr city-spec))
-                         (args      (if (string-null? name)
-                                        (list #$gc-bin "register" city-path)
-                                        (list #$gc-bin "register"
-                                              "--name" name city-path))))
-                    (waitpid
-                     (fork+exec-command
-                      args
-                      #:directory home
-                      #:log-file log-file
-                      #:environment-variables env))))
-                '#$city-specs)
-               pid))))
+             ;; Write GC_HOME/cities.toml directly: 'gc register' would
+             ;; otherwise block for minutes per city waiting for it to
+             ;; become "ready" (which fails when dolt/beads isn't
+             ;; configured).  The supervisor reads cities.toml on
+             ;; startup and reconciles each entry.
+             (call-with-output-file (string-append gc-home-abs "/cities.toml")
+               (lambda (port)
+                 (for-each
+                  (lambda (city-spec)
+                    (let ((path (car city-spec))
+                          (name (cadr city-spec)))
+                      (display "[[cities]]\n" port)
+                      (display (string-append "  path = \"" path "\"\n") port)
+                      (unless (string-null? name)
+                        (display (string-append "  name = \"" name "\"\n")
+                                 port))
+                      (display "\n" port)))
+                  '#$city-specs)))
+             #t))))
+     (shepherd-service
+      (documentation "Run 'gc supervisor run' as the singleton Gas City supervisor.")
+      (provision '(gascity-supervisor))
+      (requirement '(gascity-init))
+      (modules '((shepherd support)
+                 (guix build utils)))
+      (respawn? #t)
+      (respawn-limit #~(cons 3 30))
+      (start
+       (with-env gc-home
+         #~(begin
+             (mkdir-p gc-home-abs)
+             (fork+exec-command
+              (list #$gc-bin "supervisor" "run")
+              #:directory home
+              #:log-file log-file
+              #:environment-variables env))))
       (stop #~(make-kill-destructor))))))
 
 (define home-gascity-service-type
