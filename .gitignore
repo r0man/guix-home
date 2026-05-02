@@ -7,3 +7,37 @@
 .claude/
 .logs/
 __pycache__/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+
+# Autotools / build artifacts
+.deps/
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+build-aux/compile
+build-aux/depcomp
+build-aux/install-sh
+build-aux/missing
+config.log
+config.status
+configure
+configure~
+pre-inst-env
+stamp-h1
+
+# Compiled Guile object files
+*.go
+
+# Test artifacts
+*.log
+*.trs
+test-suite.log
+
+# Distribution tarballs
+*.tar.gz
+*.tar.xz
