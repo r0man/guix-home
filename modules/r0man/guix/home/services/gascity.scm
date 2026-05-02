@@ -35,8 +35,11 @@
 ;;; Singleton Gas City supervisor home service.
 ;;;
 ;;; Runs 'gc supervisor run' under shepherd.  The supervisor is per-user
-;;; (it holds an exclusive flock on <GC_HOME>/supervisor.lock) and reconciles
-;;; every city listed in <GC_HOME>/cities.toml — never one shepherd service
+;;; — it holds an exclusive flock on supervisor.lock in gascity's
+;;; RuntimeDir (XDG_RUNTIME_DIR/gc for the default GC_HOME=~/.gc, or
+;;; GC_HOME itself when GC_HOME is isolated; see
+;;; internal/supervisor/config.go RuntimeDir) — and reconciles every
+;;; city listed in <GC_HOME>/cities.toml.  Never one shepherd service
 ;;; per city.
 ;;;
 ;;; The service splits its work across two shepherd services.  The
@@ -53,9 +56,11 @@
 ;;;     supervisor.lock is the first one taken.
 ;;;
 ;;;   * gascity-init (one-shot, requires gascity-supervisor): polls
-;;;     for GC_HOME/supervisor.sock to appear (up to ~30s), then
-;;;     'gc init <path>' iff city.toml is missing, 'git clone <url>
-;;;     <path>' iff the rig path does not yet exist (gascity has no
+;;;     'gc supervisor status' (which itself walks
+;;;     supervisorSocketPathCandidates and so works for both default
+;;;     and isolated GC_HOME) until it reports running, then 'gc init
+;;;     <path>' iff city.toml is missing, 'git clone <url> <path>'
+;;;     iff the rig path does not yet exist (gascity has no
 ;;;     --git-url flag), 'gc rig add <path>' (which now sees the
 ;;;     existing supervisor and does NOT auto-spawn), and finally
 ;;;     overwrite GC_HOME/cities.toml with every declared city.
@@ -135,9 +140,9 @@ configuration omits an explicit name, default to the path's basename
 
 (define (with-env gc-home body)
   "Wrap BODY in a start thunk that binds the gascity-wide names HOME,
-PROFILE, GC-HOME-ABS, ENV, LOG-FILE and SOCK-FILE.  Both gascity
-shepherd services share the same shell-style environment, so the start
-thunks differ only in what BODY does once the names are in scope."
+PROFILE, GC-HOME-ABS, ENV and LOG-FILE.  Both gascity shepherd services
+share the same shell-style environment, so the start thunks differ only
+in what BODY does once the names are in scope."
   #~(lambda _
       (let* ((home (string-append user-homedir))
              (profile (string-append home "/.guix-home/profile"))
@@ -155,8 +160,7 @@ thunks differ only in what BODY does once the names are in scope."
                    (string-append "GIT_SSL_CAINFO=" profile
                                   "/etc/ssl/certs/ca-certificates.crt")
                    (user-environment-variables)))
-             (log-file (string-append gc-home-abs "/supervisor.log"))
-             (sock-file (string-append gc-home-abs "/supervisor.sock")))
+             (log-file (string-append gc-home-abs "/supervisor.log")))
         #$body)))
 
 (define (home-gascity-shepherd-services config)
@@ -208,16 +212,28 @@ rig add' uses the running supervisor instead of auto-spawning a second one.")
       (start
        (with-env gc-home
          #~(begin
-             ;; Wait up to 30s for the supervisor's UNIX socket so 'gc
-             ;; rig add' attaches to the running supervisor instead of
-             ;; auto-spawning its own.
+             ;; Wait up to 30s for the supervisor to be reachable so
+             ;; 'gc rig add' attaches to the running supervisor instead
+             ;; of auto-spawning its own.  We use 'gc supervisor status'
+             ;; rather than probing a fixed socket path because the
+             ;; socket lives in XDG_RUNTIME_DIR/gc for the default
+             ;; GC_HOME=~/.gc and only moves under GC_HOME for isolated
+             ;; overrides — 'gc supervisor status' walks both
+             ;; candidates internally (supervisorSocketPathCandidates
+             ;; in cmd_supervisor.go).
              (let loop ((tries 60))
-               (cond ((file-exists? sock-file) #t)
-                     ((zero? tries)
-                      (format (current-error-port)
-                              "gascity-init: supervisor.sock did not \
-appear within 30s; proceeding anyway~%"))
-                     (else (usleep 500000) (loop (- tries 1)))))
+               (let* ((pid (fork+exec-command
+                            (list #$gc-bin "supervisor" "status")
+                            #:directory home
+                            #:log-file log-file
+                            #:environment-variables env))
+                      (status (cdr (waitpid pid))))
+                 (cond ((zero? (status:exit-val status)) #t)
+                       ((zero? tries)
+                        (format (current-error-port)
+                                "gascity-init: 'gc supervisor status' \
+did not report running within 30s; proceeding anyway~%"))
+                       (else (usleep 500000) (loop (- tries 1))))))
              (for-each
               (lambda (city-spec)
                 (let* ((city-path (car city-spec))
