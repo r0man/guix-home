@@ -48,10 +48,10 @@
                   ;; that service deploys ~/.gitconfig as a read-only
                   ;; symlink into the Guix store, which blocks beads'
                   ;; 'git config --global beads.role maintainer' during
-                  ;; city init (guix-home-i1e).  Letting ~/.gitconfig
-                  ;; be absent lets beads create it on first write, and
-                  ;; home-gascity-activation seeds ~/.dolt/config_global.json
-                  ;; precisely because ~/.gitconfig is missing.
+                  ;; city init.  Leaving ~/.gitconfig absent lets beads
+                  ;; create it on first write, and home-gascity-activation
+                  ;; seeds ~/.dolt/config_global.json precisely because
+                  ;; ~/.gitconfig is missing.
                   (simple-service 'fix-container-ptmx
                                   home-activation-service-type
                                   #~(when (file-exists? "/dev/pts/ptmx")

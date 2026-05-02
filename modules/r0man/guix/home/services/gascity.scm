@@ -27,6 +27,8 @@
             home-gascity-configuration?
             home-gascity-packages
             home-gascity-gc-home
+            home-gascity-dolt-user-name
+            home-gascity-dolt-user-email
             home-gascity-cities
             home-gascity-service-type))
 
@@ -138,13 +140,12 @@ configuration omits an explicit name, default to the path's basename
                        (or (gascity-rig-git-url rig) "")))
                (gascity-city-rigs city)))))
 
-(define (with-env gc-home body)
+(define (with-env gc-home log-name body)
   "Wrap BODY in a start thunk that binds the gascity-wide names HOME,
-PROFILE, GC-HOME-ABS, ENV and LOG-FILE.  Both gascity shepherd services
-share the same shell-style environment, so the start thunks differ only
-in what BODY does once the names are in scope."
+PROFILE, GC-HOME-ABS, ENV and LOG-FILE.  LOG-NAME is the basename of
+the per-service log file under GC_HOME (e.g. \"supervisor.log\")."
   #~(lambda _
-      (let* ((home (string-append user-homedir))
+      (let* ((home user-homedir)
              (profile (string-append home "/.guix-home/profile"))
              (gc-home-abs (string-append home "/" #$gc-home))
              (xdg-runtime (or (getenv "XDG_RUNTIME_DIR")
@@ -160,7 +161,7 @@ in what BODY does once the names are in scope."
                    (string-append "GIT_SSL_CAINFO=" profile
                                   "/etc/ssl/certs/ca-certificates.crt")
                    (user-environment-variables)))
-             (log-file (string-append gc-home-abs "/supervisor.log")))
+             (log-file (string-append gc-home-abs "/" #$log-name)))
         #$body)))
 
 (define (home-gascity-shepherd-services config)
@@ -183,7 +184,7 @@ auto-spawn its own and race shepherd."
       (respawn? #t)
       (respawn-limit #~(cons 3 30))
       (start
-       (with-env gc-home
+       (with-env gc-home "supervisor.log"
          #~(begin
              (mkdir-p gc-home-abs)
              ;; Ensure cities.toml exists before the supervisor starts;
@@ -210,8 +211,13 @@ rig add' uses the running supervisor instead of auto-spawning a second one.")
                  (ice-9 textual-ports)
                  (guix build utils)))
       (start
-       (with-env gc-home
-         #~(begin
+       (with-env gc-home "init.log"
+         #~(let ((run (lambda (dir argv)
+                        (waitpid (fork+exec-command
+                                  argv
+                                  #:directory dir
+                                  #:log-file log-file
+                                  #:environment-variables env)))))
              ;; Wait up to 30s for the supervisor to be reachable so
              ;; 'gc rig add' attaches to the running supervisor instead
              ;; of auto-spawning its own.  We use 'gc supervisor status'
@@ -222,12 +228,8 @@ rig add' uses the running supervisor instead of auto-spawning a second one.")
              ;; candidates internally (supervisorSocketPathCandidates
              ;; in cmd_supervisor.go).
              (let loop ((tries 60))
-               (let* ((pid (fork+exec-command
-                            (list #$gc-bin "supervisor" "status")
-                            #:directory home
-                            #:log-file log-file
-                            #:environment-variables env))
-                      (status (cdr (waitpid pid))))
+               (let ((status (cdr (run home (list #$gc-bin "supervisor"
+                                                  "status")))))
                  (cond ((zero? (status:exit-val status)) #t)
                        ((zero? tries)
                         (format (current-error-port)
@@ -241,41 +243,33 @@ did not report running within 30s; proceeding anyway~%"))
                        (city-toml (string-append city-path "/city.toml")))
                   (mkdir-p city-path)
                   (unless (file-exists? city-toml)
-                    (waitpid
-                     (fork+exec-command
-                      (list #$gc-bin "init" city-path)
-                      #:directory home
-                      #:log-file log-file
-                      #:environment-variables env)))
-                  (for-each
-                   (lambda (rig-spec)
-                     (let* ((rig-path (car rig-spec))
-                            (git-url  (cadr rig-spec))
-                            (abs-rig  (if (string-prefix? "/" rig-path)
-                                          rig-path
-                                          (string-append city-path "/"
-                                                         rig-path))))
-                       (when (and (not (file-exists? abs-rig))
-                                  (not (string-null? git-url)))
-                         (waitpid
-                          (fork+exec-command
-                           (list #$git-bin "clone" git-url abs-rig)
-                           #:directory home
-                           #:log-file log-file
-                           #:environment-variables env)))
-                       (let ((toml-text
-                              (if (file-exists? city-toml)
-                                  (call-with-input-file city-toml
-                                    (lambda (p) (get-string-all p)))
-                                  "")))
-                         (unless (string-contains toml-text abs-rig)
-                           (waitpid
-                            (fork+exec-command
-                             (list #$gc-bin "rig" "add" abs-rig)
-                             #:directory city-path
-                             #:log-file log-file
-                             #:environment-variables env))))))
-                   rigs)))
+                    (run home (list #$gc-bin "init" city-path)))
+                  ;; Read city.toml ONCE per city, then track newly added
+                  ;; rigs in-memory.  Quote the path so a rig with a
+                  ;; prefix-colliding sibling (/x/foo vs /x/foobar) is
+                  ;; matched only by its exact TOML entry.
+                  (let ((toml-text
+                         (if (file-exists? city-toml)
+                             (call-with-input-file city-toml
+                               (lambda (p) (get-string-all p)))
+                             "")))
+                    (for-each
+                     (lambda (rig-spec)
+                       (let* ((rig-path (car rig-spec))
+                              (git-url  (cadr rig-spec))
+                              (abs-rig  (if (string-prefix? "/" rig-path)
+                                            rig-path
+                                            (string-append city-path "/"
+                                                           rig-path)))
+                              (marker (string-append "\"" abs-rig "\"")))
+                         (when (and (not (file-exists? abs-rig))
+                                    (not (string-null? git-url)))
+                           (run home (list #$git-bin "clone" git-url abs-rig)))
+                         (unless (string-contains toml-text marker)
+                           (run city-path (list #$gc-bin "rig" "add" abs-rig))
+                           (set! toml-text
+                                 (string-append toml-text " " marker)))))
+                     rigs))))
               '#$city-specs)
              ;; Overwrite GC_HOME/cities.toml with the full list; the
              ;; running supervisor reloads it and reconciles new
@@ -298,11 +292,8 @@ did not report running within 30s; proceeding anyway~%"))
              #t)))))))
 
 (define (home-gascity-environment-variables config)
-  "Export GC_HOME=$HOME/<gc-home> into the user's shell so interactive
-'gc' invocations talk to the same supervisor that shepherd starts.
-Without this, 'gc supervisor status' would default to ~/.gc and report
-'Supervisor is not running' even though shepherd's gascity-supervisor
-is healthy at the configured gc-home."
+  "Export GC_HOME into the user's shell so interactive 'gc' invocations
+target the same supervisor that shepherd starts."
   `(("GC_HOME" . ,(string-append "$HOME/" (home-gascity-gc-home config)))))
 
 (define (home-gascity-activation config)
