@@ -54,3 +54,5 @@ issue-prefix: "guix-home"
 # - github.repo
 
 export.git-add: false
+
+export.auto: false
