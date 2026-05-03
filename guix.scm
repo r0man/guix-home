@@ -3,22 +3,20 @@
 ;;   guix shell -D -f guix.scm   # native dev shell
 ;;   guix shell -D -f guix.scm --pure --container
 ;;
-;; Mirrors guix-channel's guix.scm.  nonguix is packaged as
-;; `guile-nonguix` so `(use-modules (nongnu ...))` and
-;; `(use-modules (nonguix ...))` resolve inside `guix shell --pure
-;; --container`.
+;; Mirrors guix-channel's guix.scm.  Cross-channel dependencies are
+;; packaged as plain Guix packages so the matching `(use-modules ...)`
+;; forms resolve inside `guix shell --pure --container`:
 ;;
-;; Cross-channel dependency on asahi-guix (many home-environment
-;; modules import (asahi guix ...)): point the dev shell at a local
-;; checkout via R0MAN_EXTRA_LOAD_PATH, which `pre-inst-env` honours:
+;;   * `guile-nonguix`     -> (nonguix ...) and (nongnu ...)
+;;   * `guile-asahi-guix`  -> (asahi guix ...) plus the asahi extensions
+;;                            to (gnu ...) and (guix ...)
+;;   * `guile-r0man-channel` -> (r0man guix packages ...) and friends
+;;
+;; A local checkout can still be substituted at build time via
+;; R0MAN_EXTRA_LOAD_PATH, which `pre-inst-env` honours:
 ;;
 ;;   R0MAN_EXTRA_LOAD_PATH=/path/to/asahi-guix/channel/modules \
 ;;     ./pre-inst-env make -j$(nproc)
-;;
-;; Packaging the asahi-guix channel via guix.scm directly would
-;; require pinning a content-addressed hash to a specific commit on
-;; codeberg, which is brittle and not worth the complexity for a dev
-;; shell that already assumes a working checkout.
 
 (use-modules
  ((guix licenses) #:prefix license:)
@@ -65,6 +63,62 @@ input where the channel mechanism isn't available — for example inside
       (home-page "https://gitlab.com/nonguix/nonguix")
       (license license:gpl3+))))
 
+(define-public guile-asahi-guix
+  (let ((commit "17a5f112229e1eb0d9a3300a7a89e4beed4ce88f")
+        (revision "0"))
+    (package
+      (name "guile-asahi-guix")
+      (version (git-version "0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://codeberg.org/asahi-guix/channel")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "01a5kqm2823ij57ahxbdq459ha15ldym5iqcyf5vhv54i5r126zw"))))
+      (build-system copy-build-system)
+      (arguments
+       `(#:install-plan
+         '(("modules/asahi" "share/guile/site/3.0/asahi")
+           ("modules/gnu"   "share/guile/site/3.0/gnu")
+           ("modules/guix"  "share/guile/site/3.0/guix"))))
+      (synopsis "asahi-guix channel modules as a Guix package")
+      (description "Provides the @code{(asahi guix …)} Guile modules
+plus the channel's extensions to @code{(gnu …)} and @code{(guix …)},
+packaged for use as a dev-shell input where the channel mechanism
+isn't available — for example inside @code{guix shell --container
+--pure}.")
+      (home-page "https://codeberg.org/asahi-guix/channel")
+      (license license:gpl3+))))
+
+(define-public guile-r0man-channel
+  (let ((commit "2d8ccc0abfc5300cce94f570c912776a90bc157a")
+        (revision "0"))
+    (package
+      (name "guile-r0man-channel")
+      (version (git-version "0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/r0man/guix-channel")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1lgx8ngdgpqgbg7rb1mnci0ndxsn35gc7sjak1rfirr9zb0irblq"))))
+      (build-system copy-build-system)
+      (arguments
+       `(#:install-plan
+         '(("modules/r0man" "share/guile/site/3.0/r0man"))))
+      (synopsis "r0man Guix channel modules as a Guix package")
+      (description "Provides the @code{(r0man guix …)} Guile modules
+from r0man's personal Guix channel, packaged for use as a dev-shell
+input where the channel mechanism isn't available.")
+      (home-page "https://github.com/r0man/guix-channel")
+      (license license:gpl3+))))
+
 (define-public guile-r0man-home
   (package
     (name "guile-r0man-home")
@@ -82,8 +136,10 @@ input where the channel mechanism isn't available — for example inside
      (list autoconf
            automake
            gnu-gettext
+           guile-asahi-guix
            guile-next
            guile-nonguix
+           guile-r0man-channel
            guix
            pkg-config
            texinfo))
