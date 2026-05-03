@@ -36,11 +36,20 @@
 activation produced the canonical /home/USER/.bashrc symlink.  This is
 the cheapest signal that `guix-home-service-type' completed activation
 for USER, since home-environment derivations alone don't run
-activation — only booting an OS that hosts the guix-home service does."
-  (test-assert-wait-for-file
-   (string-append user " home-bash activated (.bashrc present)")
-   (string-append "/home/" user "/.bashrc")
-   marionette))
+activation — only booting an OS that hosts the guix-home service does.
+
+We can't use `wait-for-file' from `(gnu build marionette)' here: its
+default reader is Scheme `read', and a real .bashrc starts with `#'
+which the Scheme reader rejects.  Poll `file-exists?' instead."
+  (let ((path (string-append "/home/" user "/.bashrc")))
+    (test-assert
+        (string-append user " home-bash activated (.bashrc present)")
+      (marionette-eval
+       `(let loop ((i 60))
+          (cond ((file-exists? ,path) #t)
+                ((> i 0) (sleep 1) (loop (- i 1)))
+                (else #f)))
+       marionette))))
 
 (define (test-assert-home-activated user marionette)
   "Assert inside MARIONETTE that the home-environment for USER has been

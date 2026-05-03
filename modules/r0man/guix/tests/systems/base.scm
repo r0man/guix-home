@@ -50,7 +50,7 @@
                        (r0man guix build marionette))
 
           (define marionette
-            (make-marionette (list #$vm)))
+            (make-marionette (cons* #$vm '#$%r0man-marionette-qemu-args)))
 
           (test-runner-current (system-test-runner #$output))
           (test-begin "r0man-base-os")
