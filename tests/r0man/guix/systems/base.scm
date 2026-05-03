@@ -12,7 +12,7 @@
 (test-begin suite)
 
 ;; VM-based system tests boot a real QEMU VM and are slow; only run
-;; when R0MAN_RUN_SYSTEM_TESTS is set (e.g. via `make check-system`).
+;; when SYSTEM_TESTS is set (e.g. via `make check-system`).
 (unless (%run-system-tests?)
   (test-skip 1))
 

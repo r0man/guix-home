@@ -16,7 +16,7 @@
 ;;; Automake/SRFI-64 harness.  Mirrors `(asahi guix tests runner)`:
 ;;; `%run-system-tests?` is the parameter that test files consult to
 ;;; decide whether to skip; it's seeded from the
-;;; `R0MAN_RUN_SYSTEM_TESTS` environment variable, which the Makefile's
+;;; `SYSTEM_TESTS` environment variable, which the Makefile's
 ;;; `check-system` target sets.  `run-system-test` builds a system-test
 ;;; record's derivation in a fresh store connection and returns #t on
 ;;; success, #f on failure.
@@ -29,7 +29,7 @@
        (not (member (string-downcase value) '("0" "no" "false")))))
 
 (define %run-system-tests?
-  (make-parameter (env-truthy? (getenv "R0MAN_RUN_SYSTEM_TESTS"))))
+  (make-parameter (env-truthy? (getenv "SYSTEM_TESTS"))))
 
 (define (run-system-test test)
   "Build TEST, a system-test record, in a fresh store connection.

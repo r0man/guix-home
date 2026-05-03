@@ -215,7 +215,7 @@ UNIT_TESTS = \
   tests/r0man/guix/home/environments.scm
 
 # VM-based tests — run by `make check-system` with
-# R0MAN_RUN_SYSTEM_TESTS=1.  Each boots a QEMU VM under marionette,
+# SYSTEM_TESTS=1.  Each boots a QEMU VM under marionette,
 # which is slow and requires a working Guix daemon (and KVM for
 # acceptable speed).
 SYSTEM_TEST_FILES = \
@@ -255,7 +255,7 @@ EXTRA_DIST =					\
   $(SYSTEM_TEST_FILES)
 
 # Run VM-based system tests (requires QEMU and a Guix daemon).
-# Sets R0MAN_RUN_SYSTEM_TESTS=1 so the gated SRFI-64 tests under
+# Sets SYSTEM_TESTS=1 so the gated SRFI-64 tests under
 # tests/r0man/guix/{home,systems}/ actually execute, and overrides
 # TESTS so only those files run.
 # Usage: make check-system
@@ -264,7 +264,7 @@ check-system:
 	@if test -z "$(SYSTEM_TEST_FILES)"; then				\
 	  echo "make check-system: no system tests defined; skipping.";		\
 	else									\
-	  R0MAN_RUN_SYSTEM_TESTS=1 $(MAKE) check					\
+	  SYSTEM_TESTS=1 $(MAKE) check					\
 	    TESTS="$(if $(SYSTEM_TESTS_FILTER),$(SYSTEM_TESTS_FILTER),$(SYSTEM_TEST_FILES))"; \
 	fi
 .PHONY: check-system
