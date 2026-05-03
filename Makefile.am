@@ -209,6 +209,7 @@ SOURCES = \
   modules/r0man/guix/system/services/xorg.scm \
   modules/r0man/guix/tests.scm \
   modules/r0man/guix/tests/home/bash.scm \
+  modules/r0man/guix/tests/home/gascity.scm \
   modules/r0man/guix/tests/runner.scm \
   modules/r0man/guix/tests/systems/base.scm
 
@@ -223,6 +224,7 @@ UNIT_TESTS = \
 # acceptable speed).
 SYSTEM_TEST_FILES = \
   tests/r0man/guix/home/bash.scm \
+  tests/r0man/guix/home/gascity.scm \
   tests/r0man/guix/systems/base.scm
 
 TESTS = $(UNIT_TESTS)
