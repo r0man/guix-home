@@ -35,10 +35,10 @@
 ;;;     ~/.gitconfig short-circuit branch does not fire because no
 ;;;     home-git-service-type is in this home.
 ;;;   * setup-environment exports GC_HOME — guards commit a559c3e.
-;;;   * gascity-supervisor shepherd metadata materialises in
-;;;     ~/.guix-home — locks down both shepherd services exist + the
-;;;     gascity-init -> gascity-supervisor ordering from commit
-;;;     cbcbfcd.
+;;;   * Both gascity-supervisor and gascity-init are referenced by
+;;;     ~/.config/shepherd/init.scm — locks down that the
+;;;     home-shepherd-service-type extension wired both services in
+;;;     (commit cbcbfcd's gascity-init -> gascity-supervisor pair).
 ;;;
 ;;; Code:
 
@@ -106,11 +106,17 @@
            "GC_HOME="
            marionette)
 
-          (test-assert "gascity-supervisor materialised in alice's home-env"
-            (marionette-eval
-             '(zero? (system "grep -rsq gascity-supervisor \
-/home/alice/.guix-home"))
-             marionette))
+          (test-assert-file-contains
+           "alice's shepherd init.scm references gascity-supervisor"
+           "/home/alice/.guix-home/files/.config/shepherd/init.scm"
+           "gascity-supervisor"
+           marionette)
+
+          (test-assert-file-contains
+           "alice's shepherd init.scm references gascity-init"
+           "/home/alice/.guix-home/files/.config/shepherd/init.scm"
+           "gascity-init"
+           marionette)
 
           (test-end))))
   (gexp->derivation "r0man-home-gascity-test" test))
