@@ -63,7 +63,9 @@
   (mixed-text-file
    "gitconfig"
    (string-join
-    (list "[credential]"
+    (list "[beads]"
+	  "role = maintainer"
+          "[credential]"
           (format #f "  helper = \"~a\"" (home-git-credential-helper config))
           "[commit]"
           (format #f "  gpgsign = ~a"
