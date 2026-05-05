@@ -134,6 +134,7 @@
                           (service asahi-substitutes-service-type)
                           (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
+                          (service tor-service-type)
                           %asahi-kernel-module-config
                           %home-service
                           %qemu-service-aarch64
