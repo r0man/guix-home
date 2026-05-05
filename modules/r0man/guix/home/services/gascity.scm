@@ -1,5 +1,6 @@
 (define-module (r0man guix home services gascity)
   #:use-module (gnu home services)
+  #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu services)
   #:use-module (gnu services shepherd)
@@ -746,6 +747,53 @@ do not emit multiple GC_HOME values."
 
 
 ;;;
+;;; Shell completions.
+;;;
+;;; `gc completion <shell>' is a stock cobra command — no network, no
+;;; runtime config — so it runs cleanly inside the Guix build sandbox.
+;;; Generated at BUILD time, not activation, so failures are isolated to
+;;; `guix build' and the artifact is reproducible.  The resulting script
+;;; embeds the build-time absolute path of `gc' in the store, exactly
+;;; what a Guix-managed completion wants.
+;;;
+
+(define (gc-completion-file shell)
+  "Build a computed-file containing the cobra completion script for
+SHELL (a string: \"bash\", \"zsh\", or \"fish\").  Read via get-string-all
+from (ice-9 textual-ports) — `dump-port' is not stdlib in current Guile
+and would fail at build time."
+  (computed-file
+   (string-append "gc-" shell "-completion")
+   #~(begin
+       (use-modules (ice-9 popen) (ice-9 textual-ports))
+       (let ((p (open-pipe* OPEN_READ
+                            #$(file-append gascity-next "/bin/gc")
+                            "completion" #$shell)))
+         (call-with-output-file #$output
+           (lambda (out) (display (get-string-all p) out)))
+         (close-pipe p)))))
+
+(define gc-bash-completion (gc-completion-file "bash"))
+(define gc-zsh-completion  (gc-completion-file "zsh"))
+(define gc-fish-completion (gc-completion-file "fish"))
+
+(define (home-gascity-bash-extension config)
+  "Return a home-bash-extension that sources the gc bash completion
+script.  home-bash-extension renders entries in (bashrc …) as `source
+<path>' lines in ~/.bashrc — the script body itself does not appear
+inline in .bashrc."
+  (home-bash-extension
+   (bashrc (list gc-bash-completion))))
+
+(define (home-gascity-files config)
+  "Return zsh/fish completion scripts for users running shells other
+than bash.  ~/.config/gascity/completions/{gc.zsh,gc.fish} can be
+sourced from the user's own zshrc / config.fish."
+  `((".config/gascity/completions/gc.zsh"  ,gc-zsh-completion)
+    (".config/gascity/completions/gc.fish" ,gc-fish-completion)))
+
+
+;;;
 ;;; Shepherd services per instance.
 ;;;
 
@@ -953,7 +1001,11 @@ did not report running within 30s; proceeding anyway~%"))
           (service-extension home-environment-variables-service-type
                              home-gascity-environment-variables)
           (service-extension home-activation-service-type
-                             home-gascity-activation)))
+                             home-gascity-activation)
+          (service-extension home-bash-service-type
+                             home-gascity-bash-extension)
+          (service-extension home-files-service-type
+                             home-gascity-files)))
    (description
     "Multi-instance Gas City home service.  Each
 <gascity-instance-configuration> in (instances …) gets its own GC_HOME, a

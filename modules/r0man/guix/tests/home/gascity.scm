@@ -210,6 +210,26 @@
            "/home/alice/cities/test2"
            marionette)
 
+          ;; Bash completion: home-bash-extension inlines the
+          ;; computed-file content into ~/.bashrc (no `source' line),
+          ;; so we look for cobra's bash-completion marker directly.
+          (test-assert-file-contains
+           "alice ~/.bashrc contains gc bash completion body"
+           "/home/alice/.bashrc"
+           "__gc_get_completion_results"
+           marionette)
+
+          ;; Zsh / fish completions ship under ~/.config/gascity/.
+          (test-assert-file-exists
+           "alice ~/.config/gascity/completions/gc.zsh exists"
+           "/home/alice/.config/gascity/completions/gc.zsh"
+           marionette)
+
+          (test-assert-file-exists
+           "alice ~/.config/gascity/completions/gc.fish exists"
+           "/home/alice/.config/gascity/completions/gc.fish"
+           marionette)
+
           (test-end))))
   (gexp->derivation "r0man-home-gascity-test" test))
 
