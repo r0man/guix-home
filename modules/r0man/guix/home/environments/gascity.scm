@@ -23,10 +23,19 @@
 
 ;;; Commentary:
 ;;;
-;;; Minimal home environment for testing home-gascity-service-type.
-;;; Configures a single city at ~/cities/test with the beads.el rig,
-;;; runs the singleton supervisor under shepherd with GC_HOME=~/.gc-test,
-;;; and installs the container-gascity helper script at $HOME/bin/.
+;;; Two-instance test environment for home-gascity-service-type.
+;;;
+;;; Instance 'main' (default beads provider 'bd, gc-home .gc-test) holds
+;;; the original single-city test ('cities/test' with the beads.el rig)
+;;; and an additional managed-opt-out city ('cities/test-opt-out') that
+;;; exercises (managed? #f).
+;;;
+;;; Instance 'test2' (file-beads, gc-home .gc-test2, supervisor on
+;;; 9372, dashboard on 18080) carries a single managed city with a
+;;; pack and an inline agent — exercising the city.toml render path,
+;;; the file-beads bootstrap (<city>/.gc/file-beads-layout +
+;;; <city>/.gc/beads.json), the dashboard shepherd service, and
+;;; non-default supervisor port plumbing.
 ;;;
 ;;; Usage:
 ;;;   modules/r0man/guix/home/files/bin/container-gascity --network
@@ -71,18 +80,45 @@
 
                   (service home-gascity-service-type
                    (home-gascity-configuration
-                    (gc-home ".gc-test")
-                    (cities
-                     (list (gascity-city-configuration
-                            (path (string-append (getenv "HOME")
-                                                 "/cities/test"))
-                            (rigs (list (gascity-rig-configuration
-                                         (path "rigs/beads.el")
-                                         (git-url "https://github.com/r0man/beads.el")))))
-                           (gascity-city-configuration
-                            (path (string-append (getenv "HOME")
-                                                 "/cities/test2"))
-                            (name "test2")))))))
+                    (instances
+                     (list
+                      (gascity-instance-configuration
+                       (name 'main)
+                       (gc-home ".gc-test")
+                       (cities
+                        (list (gascity-city-configuration
+                               (path (string-append (getenv "HOME")
+                                                    "/cities/test"))
+                               (rigs
+                                (list (gascity-rig-configuration
+                                       (path "rigs/beads.el")
+                                       (git-url "https://github.com/r0man/beads.el")
+                                       (branch "main")
+                                       (depth 1)))))
+                              (gascity-city-configuration
+                               (path (string-append (getenv "HOME")
+                                                    "/cities/test-opt-out"))
+                               (managed? #f)))))
+                      (gascity-instance-configuration
+                       (name 'test2)
+                       (gc-home ".gc-test2")
+                       (beads-provider 'file)
+                       (supervisor-port 9372)
+                       (dashboard? #t)
+                       (dashboard-port 18080)
+                       (cities
+                        (list (gascity-city-configuration
+                               (path (string-append (getenv "HOME")
+                                                    "/cities/test2"))
+                               (packs
+                                (list (gascity-pack-configuration
+                                       (name "examples")
+                                       (source "https://github.com/gastownhall/gascity")
+                                       (path "examples/packs"))))
+                               (agents
+                                (list (gascity-agent-configuration
+                                       (name "watcher")
+                                       (provider "claude")))))))))))))
             home-tmux-services))))
 
 gascity-home-environment

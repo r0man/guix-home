@@ -160,6 +160,7 @@ SOURCES = \
   modules/r0man/guix/home/services/environment.scm \
   modules/r0man/guix/home/services/fzf.scm \
   modules/r0man/guix/home/services/gascity.scm \
+  modules/r0man/guix/home/services/gascity-toml.scm \
   modules/r0man/guix/home/services/gastown.scm \
   modules/r0man/guix/home/services/git.scm \
   modules/r0man/guix/home/services/guile.scm \
@@ -216,7 +217,8 @@ SOURCES = \
 # Regular, fast SRFI-64 tests — run by `make check`.
 UNIT_TESTS = \
   tests/r0man/guix/smoke.scm \
-  tests/r0man/guix/home/environments.scm
+  tests/r0man/guix/home/environments.scm \
+  tests/r0man/guix/home/gascity-toml.scm
 
 # VM-based tests — run by `make check-system` with
 # SYSTEM_TESTS=1.  Each boots a QEMU VM under marionette,
