@@ -59,7 +59,7 @@
   (service guix-home-service-type `(("roman" ,m1-home-environment))))
 
 (define %packages
-  (cons* asahi-alsa-utils
+  (cons* alsa-utils
          niri
          sway
          asahi-scripts
