@@ -12,8 +12,10 @@
   #:use-module (gnu tests)
   #:use-module (guix gexp)
   #:use-module (r0man guix home services gascity)
+  #:use-module (r0man guix home services git)
   #:use-module (r0man guix tests)
-  #:export (%test-home-gascity))
+  #:export (%test-home-gascity
+            %test-home-gascity-with-git))
 
 ;;; Commentary:
 ;;;
@@ -27,7 +29,10 @@
 ;;;   * `'main'  — file beads, gc-home `.gc-main', no cities (so the
 ;;;                profile drops dolt/beads-next, exercising the
 ;;;                package-filtering branch and the
-;;;                no-`bd' dolt-seed gate).
+;;;                no-`bd' dolt-seed gate).  Carries non-default
+;;;                `dolt-user-name'/`dolt-user-email' so the seed
+;;;                JSON proves the identity propagates from the FIRST
+;;;                instance (v2 follow-up #3).
 ;;;   * `'test2' — bd beads, gc-home `.gc-test2', dashboard on 18080,
 ;;;                supervisor on 9372, one managed city with one
 ;;;                pack-and-agent declaration.
@@ -40,7 +45,9 @@
 ;;;     `gascity-init-test2', and `gascity-dashboard-test2' all
 ;;;     referenced from `~/.config/shepherd/init.scm'.
 ;;;   * `~/.dolt/config_global.json' seeded (the bd instance triggered
-;;;     it).
+;;;     it) with the FIRST instance's non-default identity — keyed
+;;;     substrings (not bare names) so a future regression that emits
+;;;     structurally-different JSON cannot pass (v2 follow-up #4).
 ;;;   * `~/.gc-test2/supervisor.toml' contains `port = 9372'
 ;;;     (verifies the supervisor-port plumbing actually reaches disk).
 ;;;   * `~/.gc-test2/cities.toml' lists the test2 city.
@@ -50,6 +57,13 @@
 ;;;     declared agent (rendered city.toml).
 ;;;   * `setup-environment' exports GC_HOME (uses the FIRST instance's
 ;;;     gc-home, here `.gc-main').
+;;;
+;;; A second exported test, `%test-home-gascity-with-git', exercises
+;;; the negative branch of the dolt-seed short-circuit
+;;; (services/gascity.scm activation step (2)): when
+;;; `home-git-service-type' has already produced `~/.gitconfig', the
+;;; activation MUST NOT write `~/.dolt/config_global.json' — dolt
+;;; falls back to git's identity.  Covers v2 follow-up #2.
 ;;;
 ;;; Code:
 
@@ -63,7 +77,21 @@
                      (list (gascity-instance-configuration
                             (name 'main)
                             (gc-home ".gc-main")
-                            (beads-provider 'file))
+                            (beads-provider 'file)
+                            ;; Non-default identity proves the FIRST
+                            ;; instance's `dolt-user-name' /
+                            ;; `dolt-user-email' actually reach
+                            ;; ~/.dolt/config_global.json (covers v2
+                            ;; follow-up #3 — propagation).  Kept on
+                            ;; the file-beads instance so the per-
+                            ;; instance default check (the next
+                            ;; instance, 'test2, is the bd one that
+                            ;; triggers seeding) still uses the FIRST
+                            ;; instance's identity — that is the
+                            ;; documented seeding behaviour
+                            ;; (services/gascity.scm:611-613).
+                            (dolt-user-name "Ada Lovelace")
+                            (dolt-user-email "ada@example.com"))
                            (gascity-instance-configuration
                             (name 'test2)
                             (gc-home ".gc-test2")
@@ -123,10 +151,23 @@
            "/home/alice/.dolt/config_global.json"
            marionette)
 
+          ;; Strict keyed-substring assertions — not bare names — so a
+          ;; future regression that emits a structurally-different but
+          ;; textually-substring-matching JSON cannot pass (v2
+          ;; follow-up #4).  Combined with the non-default identity on
+          ;; the FIRST instance above, also verifies the
+          ;; dolt-user-{name,email} fields actually propagate from
+          ;; configuration to disk (v2 follow-up #3).
           (test-assert-file-contains
-           "alice dolt config has default user.name"
+           "alice dolt config has \"user.name\":\"Ada Lovelace\""
            "/home/alice/.dolt/config_global.json"
-           "Gas City"
+           "\"user.name\":\"Ada Lovelace\""
+           marionette)
+
+          (test-assert-file-contains
+           "alice dolt config has \"user.email\":\"ada@example.com\""
+           "/home/alice/.dolt/config_global.json"
+           "\"user.email\":\"ada@example.com\""
            marionette)
 
           ;; GC_HOME picks up the FIRST instance's gc-home (.gc-main).
@@ -241,7 +282,107 @@ home-bash-service-type and home-gascity-service-type for alice.  Two
 instances ('main' file-beads + 'test2' bd-with-dashboard) verify
 multi-instance shepherd provision suffixing, atomic supervisor.toml
 write with the user-declared port, sidecar marker file for managed
-cities, and rendered city.toml [beads]/[packs]/[[agent]] sections.")
+cities, rendered city.toml [beads]/[packs]/[[agent]] sections, and
+custom dolt-user-{name,email} propagation into
+~/.dolt/config_global.json with strict keyed-substring assertions.")
    (value (run-home-gascity-test))))
+
+
+;;;
+;;; %test-home-gascity-with-git: ~/.gitconfig short-circuit (negative
+;;; branch).
+;;;
+;;; The dolt-seed activation step in services/gascity.scm:648-662 only
+;;; writes ~/.dolt/config_global.json when (a) at least one instance
+;;; uses (beads-provider 'bd) AND (b) NEITHER ~/.dolt/config_global.json
+;;; NOR ~/.gitconfig already exists.  This second test asserts the
+;;; (b) negative branch: home-git-service-type populates ~/.gitconfig,
+;;; and the gascity activation MUST short-circuit so dolt's own
+;;; git-config fallback (verified in container by gascity-dolt-identity-
+;;; seed memory) is what supplies identity at runtime.
+;;;
+
+(define %home-gascity-with-git-environment
+  (home-environment
+   (services
+    (list (service home-bash-service-type)
+          (service home-git-service-type)
+          (service home-gascity-service-type
+                   (home-gascity-configuration
+                    (instances
+                     (list (gascity-instance-configuration
+                            (name 'main)
+                            (gc-home ".gc-main")
+                            ;; (beads-provider 'bd) — default — keeps
+                            ;; the (any-bd?) condition true so step
+                            ;; (a) of the seed gate passes; the test
+                            ;; isolates the (b) ~/.gitconfig branch.
+                            )))))))))
+
+(define %home-gascity-with-git-os
+  (r0man-simple-operating-system
+   (service guix-home-service-type
+            `(("alice" ,%home-gascity-with-git-environment)))))
+
+(define (run-home-gascity-with-git-test)
+  "Run the home-gascity-with-git marionette test in a VM."
+  (define os
+    (marionette-operating-system
+     %home-gascity-with-git-os
+     #:imported-modules '((gnu services herd))))
+
+  (define vm
+    (virtual-machine
+     (operating-system os)
+     (memory-size 2048)))
+
+  (define test
+    (with-imported-modules '((gnu build marionette)
+                             (asahi guix build marionette)
+                             (r0man guix build marionette))
+      #~(begin
+          (use-modules (srfi srfi-64)
+                       (gnu build marionette)
+                       (r0man guix build marionette))
+
+          (define marionette
+            (make-marionette (cons* #$vm '#$%r0man-marionette-qemu-args)))
+
+          (test-runner-current (system-test-runner #$output))
+          (test-begin "home-gascity-with-git")
+
+          ;; Activation completed (canary).
+          (test-assert-home-bashrc-exists "alice" marionette)
+
+          ;; home-git-service-type produced ~/.gitconfig — precondition
+          ;; for the short-circuit branch we are exercising.
+          (test-assert-file-exists
+           "alice ~/.gitconfig present (home-git activated)"
+           "/home/alice/.gitconfig"
+           marionette)
+
+          ;; gascity activation MUST NOT have written
+          ;; ~/.dolt/config_global.json: ~/.gitconfig presence
+          ;; short-circuits the seed (services/gascity.scm:648-662).
+          ;; Dolt falls back to git's user.name/user.email at runtime.
+          (test-assert-file-absent
+           "alice ~/.dolt/config_global.json absent (gitconfig short-circuit)"
+           "/home/alice/.dolt/config_global.json"
+           marionette)
+
+          (test-end))))
+  (gexp->derivation "r0man-home-gascity-with-git-test" test))
+
+(define %test-home-gascity-with-git
+  (system-test
+   (name "r0man-home-gascity-with-git")
+   (description "Boot a minimal OS with guix-home-service-type wrapping
+home-bash-service-type, home-git-service-type, and a single-instance
+home-gascity-service-type (default 'bd' beads provider).  Asserts the
+gascity dolt-seed step's negative ~/.gitconfig short-circuit branch:
+~/.dolt/config_global.json must be ABSENT after activation because
+home-git already produced ~/.gitconfig and dolt falls back to git's
+identity at runtime.")
+   (value (run-home-gascity-with-git-test))))
 
 ;;; gascity.scm ends here

@@ -14,9 +14,15 @@
 ;; VM-based system tests boot a real QEMU VM and are slow; only run
 ;; when SYSTEM_TESTS is set (e.g. via `make check-system`).
 (unless (%run-system-tests?)
-  (test-skip 1))
+  (test-skip 2))
 
 (test-assert "home-gascity boots and activates gascity service for alice"
   (run-system-test %test-home-gascity))
+
+;; Negative ~/.gitconfig short-circuit branch: when home-git already
+;; produced ~/.gitconfig, gascity activation MUST NOT seed
+;; ~/.dolt/config_global.json (dolt falls back to git's identity).
+(test-assert "home-gascity-with-git short-circuits the dolt-seed step"
+  (run-system-test %test-home-gascity-with-git))
 
 (test-end suite)
