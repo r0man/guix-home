@@ -171,10 +171,13 @@
            marionette)
 
           ;; GC_HOME picks up the FIRST instance's gc-home (.gc-main).
+          ;; home-environment-variables-service-type emits values via
+          ;; shell-double-quote, so the value is wrapped in double
+          ;; quotes; the dollar sign is preserved for shell expansion.
           (test-assert-file-contains
            "alice setup-environment exports GC_HOME"
            "/home/alice/.guix-home/setup-environment"
-           "GC_HOME=$HOME/.gc-main"
+           "GC_HOME=\"$HOME/.gc-main\""
            marionette)
 
           ;; Suffixed shepherd provision symbols for both instances.
