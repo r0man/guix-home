@@ -49,6 +49,10 @@
                   (r0man guix home services ghostty)
                   window-padding?)
 
+(test-load-module "home-services-ghostty/config->string"
+                  (r0man guix home services ghostty)
+                  home-ghostty-config->string)
+
 (test-load-module "home-services-git"
                   (r0man guix home services git)
                   home-git-service-type)

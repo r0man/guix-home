@@ -245,16 +245,28 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST =					\
   bootstrap					\
   pre-inst-env.in				\
+  build-aux/regen-ghostty-golden.scm		\
   build-aux/test-driver.scm			\
   m4/guile.m4					\
   .guix-channel					\
   .guix-authorizations				\
   .gitignore					\
   README.org					\
+  tests/data/ghostty/golden-minimal.config	\
+  tests/data/ghostty/golden-heavy.config	\
   $(SOURCES)					\
   $(NOCOMP_SOURCES)				\
   $(UNIT_TESTS)					\
   $(SYSTEM_TEST_FILES)
+
+# Regenerate ghostty golden fixtures from the schema.  Re-run after
+# changing the seed configurations in tests/r0man/guix/home/ghostty.scm
+# or build-aux/regen-ghostty-golden.scm.
+ghostty-golden:
+	$(top_builddir)/pre-inst-env $(GUILE) --no-auto-compile	\
+	    -L "$(top_builddir)/modules" -L "$(top_srcdir)/modules"	\
+	    -s "$(top_srcdir)/build-aux/regen-ghostty-golden.scm"
+.PHONY: ghostty-golden
 
 # Run VM-based system tests (requires QEMU and a Guix daemon).
 # Sets R0MAN_RUN_SYSTEM_TESTS=1 so the gated SRFI-64 tests under

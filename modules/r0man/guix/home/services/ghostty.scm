@@ -37,6 +37,8 @@
             home-ghostty-configuration?
             home-ghostty-configuration-fields
             home-ghostty-service-type
+            home-ghostty-config->string
+            home-ghostty-files
 
             ;; Custom scalar predicates
             color?
@@ -847,10 +849,15 @@ configuration-record sanitizer (see %extra-options-sanitizer)."
   (let* ((mod    (resolve-module '(r0man guix home services ghostty)))
          (var    (module-variable mod 'home-ghostty-configuration-fields))
          (fields (if var (variable-ref var) '()))
+         ;; `config-file' is intentionally lift-able from extra-options
+         ;; (the serializer hoists such entries to the front of the
+         ;; output, after the typed config-file lines).  Treat it like
+         ;; the escape-valve fields here so users can append additional
+         ;; includes without re-stating the typed list.
          (typed  (filter
                   (lambda (n)
                     (not (memq n '(extra-options extra-files
-                                   extra-content packages))))
+                                   extra-content packages config-file))))
                   (map configuration-field-name fields))))
     (for-each
      (lambda (p)
@@ -1292,8 +1299,11 @@ Pairs of (relative-path . string|file-like).  Absolute paths raise."
 (define %escape-valve-fields
   '(extra-options extra-files extra-content packages))
 
-(define (home-ghostty-serialize-config config)
-  "Return a `mixed-text-file' object for the user's ghostty config."
+(define (%home-ghostty-segments config)
+  "Return CONFIG's serialized body as a list of segments, where each
+segment is either a string or a gexp.  Used by both
+`home-ghostty-serialize-config' (lowered to `mixed-text-file') and
+`home-ghostty-config->string' (string-only consumers)."
   (let* ((fields home-ghostty-configuration-fields)
          (default-of (lambda (f) ((configuration-field-default-value-thunk f))))
          (current    (lambda (f) ((configuration-field-getter f) config)))
@@ -1339,9 +1349,25 @@ Pairs of (relative-path . string|file-like).  Absolute paths raise."
             '())
            (else
             (list (serialize-string-or-gexp 'extra-content extra-content-val))))))
-    (apply mixed-text-file
-           "ghostty-config"
-           (append group-1 group-2 group-3 group-4))))
+    (append group-1 group-2 group-3 group-4)))
+
+(define (home-ghostty-serialize-config config)
+  "Return a `mixed-text-file' object for the user's ghostty config."
+  (apply mixed-text-file "ghostty-config" (%home-ghostty-segments config)))
+
+(define (home-ghostty-config->string config)
+  "Return CONFIG's serialized body as a single string.  Raises if any
+segment is a gexp / file-like (which only happens when `command' or
+`extra-content' is set to a gexp/file-like value)."
+  (let ((segments (%home-ghostty-segments config)))
+    (for-each
+     (lambda (seg)
+       (unless (string? seg)
+         (error
+          (format #f "home-ghostty-config->string: non-string segment: ~s"
+                  seg))))
+     segments)
+    (string-concatenate segments)))
 
 
 ;;;
