@@ -60,6 +60,7 @@
   #:use-module (r0man guix packages container)
   #:use-module (r0man guix packages node)
   #:use-module (r0man guix packages task-management)
+  #:use-module (r0man guix packages terminals)
   #:export (packages-aarch64
             packages-base
             packages-desktop
@@ -167,6 +168,7 @@
         font-montserrat
         font-terminus
         fontconfig
+        ghostty-latest
         gtk+ ;; Provide org.gtk.Settings.FileChooser
         inkscape
         mplayer
