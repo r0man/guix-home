@@ -158,6 +158,7 @@ SOURCES = \
   modules/r0man/guix/home/services/environment.scm \
   modules/r0man/guix/home/services/fzf.scm \
   modules/r0man/guix/home/services/gastown.scm \
+  modules/r0man/guix/home/services/ghostty.scm \
   modules/r0man/guix/home/services/git.scm \
   modules/r0man/guix/home/services/guile.scm \
   modules/r0man/guix/home/services/hyprland.scm \
