@@ -937,11 +937,26 @@ did not report running within 30s; proceeding anyway~%"))
                                                    '())
                                                (list git-url abs-rig)))))
                                   (run home argv)))
-                              ;; `gc rig add' is idempotent; for managed
-                              ;; cities the rendered [[rigs]] entry sends
-                              ;; cmd_rig.go down its no-write fast-path.
-                              (run city-path
-                                   (list #$gc-bin "rig" "add" abs-rig))))
+                              ;; `gc rig add' is idempotent only via the
+                              ;; reAdd fast-path (cmd_rig.go:243-268),
+                              ;; which requires the rig name to already be
+                              ;; in city.toml.  When city.toml lacks the
+                              ;; entry but <rig>/.beads is populated
+                              ;; (unmanaged cities, partial first runs,
+                              ;; out-of-band `bd init'), the fresh-add
+                              ;; guard (cmd_rig.go:308-321) errors with
+                              ;; "use --adopt".  Pass --adopt whenever
+                              ;; .beads/metadata.json exists; --adopt
+                              ;; requires it (cmd_rig.go:206-216) and is
+                              ;; benign when reAdd also fires.
+                              (let* ((meta (string-append abs-rig
+                                                          "/.beads/metadata.json"))
+                                     (argv (if (file-exists? meta)
+                                               (list #$gc-bin "rig" "add"
+                                                     "--adopt" abs-rig)
+                                               (list #$gc-bin "rig" "add"
+                                                     abs-rig))))
+                                (run city-path argv))))
                           rigs)))
                      '#$city-specs)
                     ;; Trigger a reload so the supervisor re-reads
