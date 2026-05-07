@@ -27,6 +27,7 @@
   #:use-module (r0man guix home services emacs)
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services fzf)
+  #:use-module (r0man guix home services ghostty)
   #:use-module (r0man guix home services git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home services guile)
@@ -103,6 +104,7 @@
         (service home-emacs-service-type)
         (service home-environment-service-type)
         (service home-fzf-service-type)
+        (service home-ghostty-service-type)
         (service home-git-service-type)
         (service home-gpg-agent-service-type
                  home-gpg-gtk-configuration)
