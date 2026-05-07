@@ -92,6 +92,7 @@
         emacs-fsm
         emacs-geiser
         emacs-geiser-guile
+        emacs-ghostel
         emacs-gif-screencast
         emacs-git-email
         emacs-git-timemachine

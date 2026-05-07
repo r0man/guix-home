@@ -2154,6 +2154,7 @@ Configure mu with:
 
 #+begin_src emacs-lisp
   (use-package multi-vterm
+    :disabled
     :bind (("C-x M" . multi-vterm)
            ("C-x m" . multi-vterm-next)
            ;; :map projectile-mode-map
@@ -2949,6 +2950,18 @@ Fully-fledged terminal emulator inside Emacs.
     :commands (vterm)
     :custom
     (vterm-max-scrollback 100000))
+#+end_src
+** Ghostel
+
+Emacs terminal emulator powered by libghostty-vt with built-in
+multi-buffer support.
+
+#+begin_src emacs-lisp
+  (use-package ghostel
+    :bind (("C-x M" . ghostel)
+           ("C-x m" . ghostel-other))
+    :custom
+    (ghostel-max-scrollback 100000))
 #+end_src
 ** Clipetty
 
