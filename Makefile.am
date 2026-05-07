@@ -100,6 +100,7 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/emacs/early-init.el.org \
   modules/r0man/guix/home/files/emacs/init.el.org \
   modules/r0man/guix/home/files/fzf/shell/key-bindings.bash \
+  modules/r0man/guix/home/files/ghostty/config.ghostty \
   modules/r0man/guix/home/files/guile \
   modules/r0man/guix/home/files/librewolf/librewolf.overrides.cfg \
   modules/r0man/guix/home/files/niri/config-common.kdl \
@@ -158,6 +159,7 @@ SOURCES = \
   modules/r0man/guix/home/services/environment.scm \
   modules/r0man/guix/home/services/fzf.scm \
   modules/r0man/guix/home/services/gastown.scm \
+  modules/r0man/guix/home/services/ghostty.scm \
   modules/r0man/guix/home/services/git.scm \
   modules/r0man/guix/home/services/guile.scm \
   modules/r0man/guix/home/services/hyprland.scm \
