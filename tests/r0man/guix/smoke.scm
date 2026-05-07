@@ -37,6 +37,18 @@
                   (r0man guix home services emacs)
                   home-emacs-service-type)
 
+(test-load-module "home-services-ghostty"
+                  (r0man guix home services ghostty)
+                  home-ghostty-service-type)
+
+(test-load-module "home-services-ghostty/predicate"
+                  (r0man guix home services ghostty)
+                  color?)
+
+(test-load-module "home-services-ghostty/record"
+                  (r0man guix home services ghostty)
+                  window-padding?)
+
 (test-load-module "home-services-git"
                   (r0man guix home services git)
                   home-git-service-type)

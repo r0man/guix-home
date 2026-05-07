@@ -213,7 +213,8 @@ SOURCES = \
 # Regular, fast SRFI-64 tests — run by `make check`.
 UNIT_TESTS = \
   tests/r0man/guix/smoke.scm \
-  tests/r0man/guix/home/environments.scm
+  tests/r0man/guix/home/environments.scm \
+  tests/r0man/guix/home/ghostty.scm
 
 # VM-based tests — run by `make check-system` with
 # R0MAN_RUN_SYSTEM_TESTS=1.  Each boots a QEMU VM under marionette,

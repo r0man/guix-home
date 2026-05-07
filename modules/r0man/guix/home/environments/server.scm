@@ -8,6 +8,7 @@
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages bash)
   #:use-module (gnu services)
   #:use-module (r0man guix home bash)
   #:use-module (r0man guix home services btop)
@@ -46,7 +47,14 @@
                 (service home-emacs-service-type)
                 (service home-environment-service-type)
                 (service home-fzf-service-type)
-                (service home-ghostty-service-type)
+                (service home-ghostty-service-type
+                         (home-ghostty-configuration
+                          (font-family '("Hack"))
+                          (font-size 14.0)
+                          (background-opacity 0.7)
+                          (foreground "586e75")
+                          (command (command (program (file-append bash "/bin/bash"))
+                                            (args '("--login"))))))
                 (service home-git-service-type)
                 (service home-kitty-service-type)
                 (service home-gpg-agent-service-type
