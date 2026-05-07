@@ -211,6 +211,41 @@
            "gascity-dashboard-test2"
            marionette)
 
+          ;; gascity-init's `gc rig add' invocation passes --adopt
+          ;; conditionally on <rig>/.beads/metadata.json existing
+          ;; (services/gascity.scm:957-964; closes guix-home-7fo).
+          ;; The rendered shepherd-gascity-init-*.scm files live under
+          ;; /gnu/store with a hashed prefix; init.scm references them
+          ;; by absolute path.  Scan the store for any such file that
+          ;; serialises both substrings — the literal Scheme is
+          ;; preserved verbatim regardless of whether the instance
+          ;; actually has rigs at runtime.
+          (test-assert
+              "gascity-init service body passes --adopt for populated rigs"
+            (marionette-eval
+             '(begin
+                (use-modules (ice-9 ftw)
+                             (ice-9 textual-ports))
+                (let* ((dir "/gnu/store")
+                       (entries (or (scandir
+                                     dir
+                                     (lambda (f)
+                                       (and (string-contains
+                                             f "shepherd-gascity-init-")
+                                            (string-suffix? ".scm" f))))
+                                    '())))
+                  (let loop ((es entries))
+                    (cond ((null? es) #f)
+                          ((let ((c (call-with-input-file
+                                        (string-append dir "/" (car es))
+                                      get-string-all)))
+                             (and (string-contains c "--adopt")
+                                  (string-contains c
+                                                   "/.beads/metadata.json")))
+                           #t)
+                          (else (loop (cdr es)))))))
+             marionette))
+
           ;; supervisor.toml carries the user-declared port for test2.
           (test-assert-file-exists
            "alice ~/.gc-test2/supervisor.toml exists"
