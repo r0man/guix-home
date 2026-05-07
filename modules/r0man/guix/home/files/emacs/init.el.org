@@ -2958,8 +2958,13 @@ multi-buffer support.
 
 #+begin_src emacs-lisp
   (use-package ghostel
-    :bind (("C-x M" . ghostel)
+    :bind (("C-x M" . ghostel-new)
            ("C-x m" . ghostel-other))
+    :preface
+    (defun ghostel-new ()
+      "Always start a new Ghostel terminal buffer."
+      (interactive)
+      (ghostel '(4)))
     :custom
     (ghostel-max-scrollback 100000))
 #+end_src
