@@ -6,6 +6,7 @@
   #:use-module (gnu packages admin)
   #:use-module (gnu packages base)
   #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages gawk)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages nss)
@@ -44,8 +45,8 @@
 
 (define-public gascity-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal findutils git inetutils kitty
-                   ncurses claude-code nss-certs procps waypipe))
+   (packages (list coreutils coreutils-minimal findutils gawk git inetutils
+                   kitty ncurses claude-code nss-certs procps waypipe))
    (services
     (append (list (service home-bash-service-type
                            home-bash-default-configuration)
