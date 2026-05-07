@@ -253,14 +253,14 @@ member, +member, or -member.  Serializer joins with commas."
                         (string-append "serialize-"
                                        (symbol->string (syntax->datum #'name)))))))
          #'(begin
-             (define (member-or-modified? sym)
-               (and (symbol? sym)
-                    (let* ((s (symbol->string sym))
-                           (bare (cond ((string-prefix? "+" s) (substring s 1))
-                                       ((string-prefix? "-" s) (substring s 1))
-                                       (else s))))
-                      (memq (string->symbol bare) '(member ...)))))
              (define (pred? x)
+               (define (member-or-modified? sym)
+                 (and (symbol? sym)
+                      (let* ((s (symbol->string sym))
+                             (bare (cond ((string-prefix? "+" s) (substring s 1))
+                                         ((string-prefix? "-" s) (substring s 1))
+                                         (else s))))
+                        (memq (string->symbol bare) '(member ...)))))
                (and (list? x) (every member-or-modified? x)))
              (define (ser field-name val)
                (format #f "~a = ~a\n"
@@ -315,41 +315,60 @@ member, +member, or -member.  Serializer joins with commas."
 ;;; matches Ghostty's documented value verbatim.
 
 (define-enum adjust-cursor-style    (block bar underline block_hollow))
+(define-enum alpha-blending         (native linear linear-corrected))
+(define-enum async-backend          (auto epoll io-uring))
 (define-enum clipboard-paste-protection (true false off))
+(define-enum clipboard-rw-policy    (allow ask deny))
 (define-enum command-finder         (full-path basename none))
 (define-enum confirm-close-surface  (true false always))
 (define-enum cursor-click-to-move   (true false))
 (define-enum cursor-style           (block bar underline block_hollow))
 (define-enum fullscreen             (true false native non-native))
+(define-enum grapheme-width-method  (legacy unicode wcswidth))
+(define-enum gtk-quick-terminal-layer (overlay top bottom background))
 (define-enum gtk-tabs-location      (top bottom left right hidden))
+(define-enum gtk-titlebar-style     (native tabs))
 (define-enum gtk-toolbar-style      (raised flat both-borders))
 (define-enum gtk-wide-tabs          (true false))
 (define-enum keybind-action-policy  (allow deny prompt))
 (define-enum linux-cgroup           (never always single-instance))
+(define-enum macos-dock-drop-behavior (new-tab new-window no-action))
 (define-enum macos-icon             (official chalkboard custom-style))
+(define-enum macos-icon-frame       (aluminum beige plastic chrome))
+(define-enum macos-shortcuts        (allow deny ask))
 (define-bool-or-enum macos-non-native-fullscreen
                                      (visible-menu padded-notch))
 (define-enum macos-titlebar-proxy-icon (visible hidden))
 (define-enum macos-titlebar-style   (native transparent tabs hidden))
 (define-enum macos-window-buttons   (visible hidden))
 (define-enum mouse-shift-capture-mode (false true never always))
+(define-enum notify-on-command-finish-mode (never unfocused always))
 (define-enum osc-color-report-format (none 8-bit 16-bit))
 (define-enum quick-terminal-animation-duration-mode (auto manual))
+(define-enum quick-terminal-keyboard-interactivity (none on-demand exclusive))
 (define-enum quick-terminal-position (top bottom left right center))
 (define-enum quick-terminal-screen  (main mouse macos-menu-bar))
+(define-enum quick-terminal-space-behavior (move remain))
 (define-enum resize-overlay         (always never after-first))
 (define-enum resize-overlay-position (center top-left top-center top-right
                                               bottom-left bottom-center
                                               bottom-right))
+(define-enum right-click-action     (context-menu paste copy copy-or-paste
+                                     extend extend-by-paragraph
+                                     extend-or-context-menu select-word
+                                     select-paragraph none))
+(define-enum scrollbar              (system never always auto))
 (define-enum shell-integration-mode (detect bash elvish fish nu zsh none))
 (define-enum split-divider-color-policy (auto always-show always-hide))
 (define-enum tabs-on-bottom         (false true))
 (define-enum unfocused-split-fill   (color none))
 (define-enum window-colorspace      (srgb display-p3))
 (define-enum window-decoration-mode (auto client server none))
+(define-enum window-new-tab-position (current end))
 (define-enum window-position-x      (auto center))
 (define-enum window-position-y      (auto center))
 (define-enum window-save-state      (default never always))
+(define-enum window-show-tab-bar    (always auto never))
 (define-enum window-theme           (auto system light dark glass ghostty))
 
 
@@ -361,11 +380,15 @@ member, +member, or -member.  Serializer joins with commas."
 (define-bool-or-enum mouse-shift-capture (never always))
 (define-bool-or-enum copy-on-select (clipboard))
 (define-bool-or-enum confirm-close-surface-mode (always))
+(define-bool-or-enum gtk-single-instance (desktop))
+(define-bool-or-enum macos-option-as-alt (left right))
 (define-bool-or-enum quick-terminal-autohide (focused unfocused))
 (define-bool-or-enum focus-follows-mouse (true false))
 (define-bool-or-enum mouse-hide-while-typing (true false))
 (define-bool-or-enum auto-update (off check download))
 (define-bool-or-enum auto-update-channel (stable tip))
+(define-bool-or-enum title-report-mode (full))
+(define-bool-or-enum window-subtitle-mode (working-directory))
 (define-bool-or-enum window-vsync (true false))
 
 
@@ -379,6 +402,16 @@ member, +member, or -member.  Serializer joins with commas."
 (define-flagset link-previews              (text osc8 no-text no-osc8))
 (define-flagset clipboard-trim-trailing-spaces (true false))
 (define-flagset window-inherit-working-directory (always never inherit))
+(define-flagset font-synthetic-style       (bold italic bold-italic
+                                             no-bold no-italic no-bold-italic))
+(define-flagset font-shaping-break         (cgj hyphen no-cgj no-hyphen))
+(define-flagset freetype-load-flags        (hinting force-autohint monochrome
+                                             no-hinting no-force-autohint
+                                             no-monochrome no-bitmap))
+(define-flagset notify-on-command-finish-action (bell notify no-bell no-notify))
+(define-flagset scroll-to-bottom           (keypress paste output ringbell
+                                             no-keypress no-paste no-output
+                                             no-ringbell))
 
 
 ;;;
@@ -903,7 +936,8 @@ Repeatable for fallbacks."
   (background         (color "282c34")      "Background color (hex or X11 name).")
   (foreground         (color "ffffff")      "Foreground text color.")
   (background-opacity (number 1.0)          "Background opacity 0.0..1.0.")
-  (background-blur-radius (number 0)        "Background blur radius (0 = disabled).")
+  (background-blur    (background-blur (background-blur (enabled? #f)))
+                      "Background blur: false | radius (1..100).")
   (cursor-color       (maybe-string #f)     "Cursor color override.")
   (selection-foreground (maybe-string #f)   "Selection foreground.")
   (selection-background (maybe-string #f)   "Selection background.")
@@ -967,6 +1001,257 @@ Repeatable for fallbacks."
   ;; — Resize overlay —
   (resize-overlay          (resize-overlay 'after-first) "Show resize overlay.")
   (resize-overlay-position (resize-overlay-position 'center) "Overlay position.")
+  (resize-overlay-duration (duration-string "750ms")
+                           "Resize overlay visibility duration.")
+
+  ;; — Application / lifecycle —
+  (language               (maybe-string #f) "GUI language override.
+Value: locale string like \"de\".")
+  (input
+   (list-of-strings '())
+   "Bytes sent to the command on startup.
+Value: bytes-as-string (escapes via \\xHH).
+Repeatable."
+   (serializer (lambda (n vs)
+                 (apply string-append
+                        (map (lambda (v) (format #f "~a = ~a\n" n v)) vs)))))
+  (initial-command        (maybe-command-like #f)
+                          "Command for the first surface only.
+Value: shell command string, file-like, or <command> record."
+                          (serializer serialize-maybe-command-like))
+  (wait-after-command     (boolean #f) "Keep terminal open after the command exits.")
+  (abnormal-command-exit-runtime (number 250)
+                                 "Runtime threshold for abnormal-exit detection (ms).")
+  (config-default-files   (boolean #t) "Load the default XDG config files.")
+  (term                   (maybe-string #f) "TERM environment variable override.")
+  (enquiry-response       (maybe-string #f) "Reply sent in response to ENQ (0x05).")
+  (title                  (maybe-string #f) "Force the window title (overrides escape sequences).")
+  (title-report           (title-report-mode #f)
+                          "Allow programs to query the terminal title (CSI 21 t):
+false | true | full.")
+  (class                  (maybe-string #f)
+                          "WM_CLASS class / Wayland app ID / DBus bus name.")
+  (x11-instance-name      (maybe-string #f) "WM_CLASS instance name (X11 only).")
+  (maximize               (boolean #f) "Start new windows maximized.")
+  (fullscreen             (fullscreen 'false)
+                          "Start new windows fullscreen:
+false | true | native | non-native.")
+  (initial-window         (boolean #t) "Create an initial window when Ghostty starts.")
+  (quit-after-last-window-closed (boolean #f) "Quit after the last surface is closed.")
+  (quit-after-last-window-closed-delay (maybe-string #f)
+                                       "Linger duration after the last window closes (e.g. \"5s\").")
+  (undo-timeout           (duration-string "5s")
+                          "Time undo operations remain available.")
+  (window-subtitle        (window-subtitle-mode #f)
+                          "Window subtitle: false | working-directory.")
+
+  ;; — Font (rest) —
+  (font-style             (maybe-string #f) "Regular face style override (e.g. \"Heavy\" | \"auto\" | \"false\").")
+  (font-style-bold        (maybe-string #f) "Bold face style override.")
+  (font-style-italic      (maybe-string #f) "Italic face style override.")
+  (font-style-bold-italic (maybe-string #f) "Bold-italic face style override.")
+  (font-synthetic-style   (font-synthetic-style '(bold italic bold-italic))
+                          "Style synthesis policy: bold | italic | bold-italic with optional no- prefix.")
+  (font-shaping-break     (font-shaping-break '())
+                          "Locations to break shaping into multiple runs.")
+  (font-variation-bold    (list-of-font-variations '())
+                          "Bold variable-font axes.
+Repeatable."
+                          (serializer serialize-list-of-font-variations))
+  (font-variation-italic  (list-of-font-variations '())
+                          "Italic variable-font axes.
+Repeatable."
+                          (serializer serialize-list-of-font-variations))
+  (font-variation-bold-italic (list-of-font-variations '())
+                              "Bold-italic variable-font axes.
+Repeatable."
+                              (serializer serialize-list-of-font-variations))
+  (clipboard-codepoint-map (list-of-clipboard-codepoint-maps '())
+                           "Codepoint replacements applied on copy.
+Repeatable."
+                           (serializer serialize-list-of-clipboard-codepoint-maps))
+  (alpha-blending         (alpha-blending 'native) "Alpha blending color space.")
+  (freetype-load-flags    (freetype-load-flags '()) "FreeType load flag overrides.")
+  (grapheme-width-method  (grapheme-width-method 'unicode)
+                          "Grapheme cluster width method: legacy | unicode | wcswidth.")
+
+  ;; — Cell metric adjustments (extra) —
+  (adjust-font-baseline   (maybe-string #f) "Baseline offset: +Npx | NN% | float.")
+  (adjust-underline-position  (maybe-string #f) "Underline position: +Npx | NN% | float.")
+  (adjust-underline-thickness (maybe-string #f) "Underline thickness: +Npx | NN% | float.")
+  (adjust-strikethrough-position  (maybe-string #f) "Strikethrough position: +Npx | NN% | float.")
+  (adjust-strikethrough-thickness (maybe-string #f) "Strikethrough thickness: +Npx | NN% | float.")
+  (adjust-overline-position   (maybe-string #f) "Overline position: +Npx | NN% | float.")
+  (adjust-overline-thickness  (maybe-string #f) "Overline thickness: +Npx | NN% | float.")
+  (adjust-cursor-thickness    (maybe-string #f) "Cursor thickness: +Npx | NN% | float.")
+  (adjust-cursor-height       (maybe-string #f) "Cursor height: +Npx | NN% | float.")
+  (adjust-box-thickness       (maybe-string #f) "Box drawing thickness: +Npx | NN% | float.")
+  (adjust-icon-height         (maybe-string #f) "Nerd-font icon max height: +Npx | NN% | float.")
+
+  ;; — Cursor / mouse / selection (extra) —
+  (cursor-text            (maybe-string #f) "Color of text under the cursor.")
+  (cursor-opacity         (number 1.0) "Cursor opacity (0.0..1.0).")
+  (cursor-click-to-move   (cursor-click-to-move 'true)
+                          "Click prompts to move cursor: true | false.")
+  (mouse-reporting        (boolean #t) "Allow mouse event reporting.")
+  (selection-clear-on-typing (boolean #t) "Clear selection when typing.")
+  (selection-clear-on-copy   (boolean #f) "Clear selection after copy.")
+  (selection-word-chars   (maybe-string #f) "Characters that mark word boundaries.")
+
+  ;; — Window (extra) —
+  (window-inherit-working-directory (window-inherit-working-directory '(inherit))
+                                    "Inherit working directory: always | never | inherit.")
+  (window-inherit-font-size (boolean #t) "Inherit font size from previously focused window.")
+  (window-step-resize       (boolean #f) "Resize window in cell-size increments (macOS).")
+  (window-new-tab-position  (window-new-tab-position 'current)
+                            "Position for new tabs: current | end.")
+  (window-show-tab-bar      (window-show-tab-bar 'auto)
+                            "Show tab bar: always | auto | never.")
+  (window-title-font-family (maybe-string #f)
+                            "Font family for window/tab titles.")
+  (window-titlebar-background (maybe-string #f)
+                              "Window titlebar background (window-theme = ghostty).")
+  (window-titlebar-foreground (maybe-string #f)
+                              "Window titlebar foreground (window-theme = ghostty).")
+  (tab-inherit-working-directory (boolean #t) "Tabs inherit working directory.")
+  (split-inherit-working-directory (boolean #t) "Splits inherit working directory.")
+
+  ;; — Background image / blur —
+  (background-image          (maybe-string #f) "Background image file path.")
+  (background-image-opacity  (number 1.0) "Background image opacity (relative to background-opacity).")
+  (background-image-position (background-image-position
+                              (background-image-position
+                               (vertical 'center) (horizontal 'center)))
+                             "Background image position.")
+  (background-image-fit      (background-image-fit
+                              (background-image-fit (mode 'contain)))
+                             "Background image fit.")
+  (background-image-repeat   (boolean #f) "Repeat the background image.")
+  (background-opacity-cells  (boolean #f) "Apply background-opacity to cells with explicit colors.")
+
+  ;; — Splits / search / colors (extra) —
+  (split-divider-color    (maybe-string #f) "Split divider color.")
+  (split-preserve-zoom    (split-preserve-zoom (split-preserve-zoom (enabled? #f)))
+                          "Preserve zoom on focus/layout changes.")
+  (unfocused-split-fill   (maybe-string #f) "Fill color for unfocused splits.")
+  (unfocused-split-opacity (number 0.7) "Unfocused split opacity (0..1).")
+  (search-foreground      (maybe-string #f) "Search match foreground.")
+  (search-background      (maybe-string #f) "Search match background.")
+  (search-selected-foreground (maybe-string #f) "Selected search match foreground.")
+  (search-selected-background (maybe-string #f) "Selected search match background.")
+  (bold-color             (maybe-string #f) "Color for bold text (or \"false\").")
+  (faint-opacity          (number 0.5) "Opacity of faint text (0..1).")
+  (minimum-contrast       (number 1.0) "Minimum WCAG contrast ratio (1..21).")
+
+  ;; — Palette (extra) —
+  (palette-generate       (boolean #f) "Auto-generate the 16..255 palette from base 16.")
+  (palette-harmonious     (boolean #f) "Invert generated-palette ordering for light/dark parity.")
+
+  ;; — Bell (extra) —
+  (bell-audio-path        (maybe-string #f) "Path to bell audio file.")
+  (bell-audio-volume      (number 0.5) "Bell audio volume (0.0..1.0).")
+
+  ;; — Notifications / commands —
+  (notify-on-command-finish        (notify-on-command-finish-mode 'never)
+                                   "When to send command-finish notifications:
+never | unfocused | always.")
+  (notify-on-command-finish-action (notify-on-command-finish-action '(bell))
+                                   "How to notify on command finish: bell | notify with optional no- prefix.")
+  (notify-on-command-finish-after  (duration-string "5s")
+                                   "Minimum runtime before notifying on command finish.")
+  (desktop-notifications  (boolean #t) "Allow OSC 9 / OSC 777 desktop notifications.")
+  (progress-style         (boolean #t) "Show graphical progress bars (ConEmu OSC 9;4).")
+
+  ;; — Clipboard (extra) —
+  (clipboard-read         (clipboard-rw-policy 'ask) "Clipboard-read permission policy.")
+  (clipboard-write        (clipboard-rw-policy 'allow) "Clipboard-write permission policy.")
+  (clipboard-paste-bracketed-safe (boolean #t) "Treat bracketed pastes as safe.")
+  (clipboard-paste-protection (clipboard-paste-protection 'true)
+                              "Confirm before pasting unsafe text.")
+  (clipboard-trim-trailing-spaces (clipboard-trim-trailing-spaces '(true))
+                                  "Trim trailing whitespace on copied data.")
+
+  ;; — Scrollback / scrollbar —
+  (scrollback-limit       (number 10000000) "Scrollback buffer size in bytes.")
+  (scrollbar              (scrollbar 'system) "Scrollbar visibility policy.")
+  (scroll-to-bottom       (scroll-to-bottom '(keypress))
+                          "When to scroll to bottom (flagset).")
+
+  ;; — Image / shaders / misc —
+  (image-storage-limit    (number 320000000) "Image data limit per terminal (bytes).")
+  (custom-shader          (list-of-strings '())
+                          "GLSL custom shader file paths.
+Repeatable."
+                          (serializer (lambda (n vs)
+                                        (apply string-append
+                                               (map (lambda (v) (format #f "~a = ~a\n" n v)) vs)))))
+  (custom-shader-animation (boolean #t) "Run animation loop for custom shaders.")
+  (vt-kam-allowed         (boolean #f) "Allow KAM (ANSI mode 2) keyboard-input lock.")
+  (right-click-action     (right-click-action 'context-menu) "Right-click action.")
+  (click-repeat-interval  (number 0) "Click-repeat interval in ms (0 = platform default).")
+  (link-url               (boolean #t) "Enable URL hover-matching.")
+  (command-palette-entry  (list-of-strings '())
+                          "Custom command palette entries.
+Repeatable."
+                          (serializer (lambda (n vs)
+                                        (apply string-append
+                                               (map (lambda (v) (format #f "~a = ~a\n" n v)) vs)))))
+  (osc-color-report-format (osc-color-report-format '16-bit)
+                           "OSC color reporting format.")
+
+  ;; — Quick terminal (extra) —
+  (quick-terminal-size                   (quick-terminal-size
+                                          (quick-terminal-size))
+                                         "Quick-terminal size in cells or pixels.")
+  (quick-terminal-animation-duration     (number 0.2)
+                                         "Quick-terminal animation duration (seconds).")
+  (quick-terminal-keyboard-interactivity (quick-terminal-keyboard-interactivity 'on-demand)
+                                         "Quick-terminal keyboard interactivity (Wayland).")
+  (quick-terminal-space-behavior         (quick-terminal-space-behavior 'move)
+                                         "Quick-terminal macOS-spaces behavior.")
+
+  ;; — GTK (extra) —
+  (gtk-single-instance     (gtk-single-instance 'desktop)
+                           "Run GTK app in single-instance mode: true | false | desktop.")
+  (gtk-titlebar            (boolean #t) "Use GTK titlebar instead of WM titlebar.")
+  (gtk-titlebar-hide-when-maximized (boolean #f) "Hide titlebar when window is maximized.")
+  (gtk-titlebar-style      (gtk-titlebar-style 'native) "GTK titlebar style: native | tabs.")
+  (gtk-quick-terminal-layer (gtk-quick-terminal-layer 'top)
+                            "GTK quick-terminal layer (Wayland).")
+  (gtk-quick-terminal-namespace (maybe-string #f)
+                                "GTK quick-terminal Wayland namespace.")
+  (gtk-opengl-debug        (boolean #f) "GTK OpenGL debug logs.")
+  (gtk-custom-css          (list-of-strings '())
+                           "GTK custom CSS file paths.
+Repeatable."
+                           (serializer (lambda (n vs)
+                                         (apply string-append
+                                                (map (lambda (v) (format #f "~a = ~a\n" n v)) vs)))))
+
+  ;; — macOS (extra) —
+  (macos-option-as-alt           (macos-option-as-alt #f)
+                                 "macOS Option-as-Alt: true | false | left | right.")
+  (macos-window-shadow           (boolean #t) "Enable macOS window shadow.")
+  (macos-hidden                  (boolean #f) "Hide macOS dock and app-switcher icon.")
+  (macos-auto-secure-input       (boolean #t) "Auto-enable macOS Secure Input on password prompts.")
+  (macos-secure-input-indication (boolean #t) "Show indication when Secure Input is on.")
+  (macos-applescript             (boolean #t) "Expose AppleScript dictionary on macOS.")
+  (macos-custom-icon             (maybe-string #f) "Path to a custom macOS app icon (PNG/JPEG/ICNS).")
+  (macos-icon-frame              (macos-icon-frame 'aluminum) "Custom-style icon frame material.")
+  (macos-icon-ghost-color        (maybe-string #f) "Custom-style icon ghost color.")
+  (macos-icon-screen-color       (maybe-string #f)
+                                 "Custom-style icon screen color (or comma-separated gradient).")
+  (macos-shortcuts               (macos-shortcuts 'ask) "macOS Shortcuts permission policy.")
+  (macos-dock-drop-behavior      (macos-dock-drop-behavior 'new-tab)
+                                 "Dock drag-and-drop behavior.")
+
+  ;; — Linux cgroup (extra) —
+  (linux-cgroup-memory-limit     (maybe-string #f) "Per-process memory limit (bytes; MemoryHigh).")
+  (linux-cgroup-processes-limit  (maybe-string #f) "Per-process tasks limit (TasksMax).")
+  (linux-cgroup-hard-fail        (boolean #f) "Fail when transient scope cannot be created.")
+
+  ;; — Async / engine —
+  (async-backend          (async-backend 'auto) "Async I/O backend: auto | epoll | io-uring.")
 
   ;; — Escape valves (NOT in Ghostty's schema) —
   (extra-options

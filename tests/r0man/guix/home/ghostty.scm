@@ -153,8 +153,13 @@
            home-ghostty-configuration-fields)))
 
 (test-group "schema/has-fields"
-  (test-assert "schema has at least 50 fields (representative subset)"
-    (>= (length home-ghostty-configuration-fields) 50)))
+  ;; Phase 3b: full transcription of the Ghostty docs reference page.
+  ;; 202 typed fields (matching build-aux/scrape-ghostty-docs.scm) plus
+  ;; 4 escape-valve fields: extra-options, extra-files, extra-content,
+  ;; packages.
+  (test-equal "schema has the full 202 typed fields + 4 escape valves"
+    206
+    (length home-ghostty-configuration-fields)))
 
 (test-group "schema/extra-options-collision"
   ;; Constructing with extra-options that collides with a typed field
