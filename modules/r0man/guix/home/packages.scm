@@ -165,6 +165,7 @@
         font-google-roboto-mono
         font-hack
         font-inconsolata
+        font-jetbrains-mono
         font-montserrat
         font-terminus
         fontconfig
