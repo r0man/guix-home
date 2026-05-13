@@ -35,27 +35,27 @@ users who want something with a bit more flair than the modus-themes.
 
 ** Fonts
 #+begin_src emacs-lisp
-  (defun set-font-laptop ()
-    "Set the default font for use without external monitor."
-    (interactive)
-    (set-frame-font "Inconsolata-14" nil t))
-
-  (defun set-font-monitor ()
-    "Set the default font for use with external monitor."
-    (interactive)
-    (set-frame-font "Inconsolata-12" nil t))
+  (defconst default-font-family "JetBrains Mono"
+    "Default font family used by `current-font' to build the spec.")
 
   (defun current-font-size ()
-    "Get the font size for the current system."
-    (cond ((and (equal "m1" (system-name)))
-           (if (getenv "WAYLAND_DISPLAY")
-               16
-             14))
-          ((and (equal "precision" (system-name)))
-           14)
-          (t 14)))
+    "Get the font pixel size for the current system."
+    (cond ((equal "m1" (system-name))
+           (if (getenv "WAYLAND_DISPLAY") 19 17))
+          ((equal "precision" (system-name)) 19)
+          (t 19)))
 
-  (add-to-list 'default-frame-alist `(font . ,(format "Inconsolata-%s" (current-font-size))))
+  (defun current-font ()
+    "Return the font spec to use on this machine."
+    (format "%s:pixelsize=%d:weight=ultralight"
+            default-font-family (current-font-size)))
+
+  (defun set-default-font ()
+    "Set the default frame font to `current-font'."
+    (interactive)
+    (set-frame-font (current-font) nil t))
+
+  (add-to-list 'default-frame-alist `(font . ,(current-font)))
 #+end_src
 
 ** Emacs native compiler
