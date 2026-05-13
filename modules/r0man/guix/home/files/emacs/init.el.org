@@ -2959,12 +2959,22 @@ multi-buffer support.
 #+begin_src emacs-lisp
   (use-package ghostel
     :bind (("C-x M" . ghostel-new)
-           ("C-x m" . ghostel-other))
+           ("C-x m" . ghostel-other)
+           :map ghostel-mode-map
+           ("M-SPC" . ghostel-send-meta-space))
     :preface
     (defun ghostel-new ()
       "Always start a new Ghostel terminal buffer."
       (interactive)
       (ghostel '(4)))
+    (defun ghostel-send-meta-space ()
+      "Send raw ESC+SPC to the terminal so tmux's `M-Space' prefix fires.
+  ghostel's native key encoder silently drops Meta+Space (verified by
+  stracing the PTY master: `M-x' emits \"\\ex\" but `M-SPC' emits
+  nothing), so routing through `ghostel--send-event' would send no
+  bytes.  Write the legacy Alt encoding directly instead."
+      (interactive)
+      (ghostel-send-string "\e "))
     :custom
     (ghostel-max-scrollback 100000))
 #+end_src
