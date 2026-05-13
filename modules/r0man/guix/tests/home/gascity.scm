@@ -24,18 +24,21 @@
 ;;; pairs `home-bash-service-type' (activation canary) with
 ;;; `home-gascity-service-type'.
 ;;;
-;;; Two instances cover the new multi-instance schema:
+;;; Two supervisors cover the new multi-supervisor schema:
 ;;;
 ;;;   * `'main'  — file beads, gc-home `.gc-main', no cities (so the
 ;;;                profile drops dolt/beads-next, exercising the
 ;;;                package-filtering branch and the
-;;;                no-`bd' dolt-seed gate).  Carries non-default
-;;;                `dolt-user-name'/`dolt-user-email' so the seed
-;;;                JSON proves the identity propagates from the FIRST
-;;;                instance (v2 follow-up #3).
+;;;                no-`bd' dolt-seed gate).
 ;;;   * `'test2' — bd beads, gc-home `.gc-test2', dashboard on 18080,
 ;;;                supervisor on 9372, one managed city with one
 ;;;                pack-and-agent declaration.
+;;;
+;;; The home-gascity-configuration also carries a top-level (dolt …)
+;;; <gascity-dolt-configuration> with a non-default identity so the
+;;; seed JSON proves the values propagate from the top-level dolt
+;;; record into ~/.dolt/config_global.json (v2 follow-up #3, now
+;;; sourced from (home-gascity-dolt config)).
 ;;;
 ;;; Asserts:
 ;;;
@@ -44,8 +47,8 @@
 ;;;     `gascity-supervisor-test2', `gascity-init-main',
 ;;;     `gascity-init-test2', and `gascity-dashboard-test2' all
 ;;;     referenced from `~/.config/shepherd/init.scm'.
-;;;   * `~/.dolt/config_global.json' seeded (the bd instance triggered
-;;;     it) with the FIRST instance's non-default identity — keyed
+;;;   * `~/.dolt/config_global.json' seeded (the bd supervisor
+;;;     triggered it) with the top-level (dolt …) identity — keyed
 ;;;     substrings (not bare names) so a future regression that emits
 ;;;     structurally-different JSON cannot pass (v2 follow-up #4).
 ;;;   * `~/.gc-test2/supervisor.toml' contains `port = 9372'
@@ -55,8 +58,8 @@
 ;;;   * `~/cities/test2/city.toml' contains `[beads]\nprovider = "bd"',
 ;;;     a `[packs.examples]' entry, and an `[[agent]]' block for the
 ;;;     declared agent (rendered city.toml).
-;;;   * `setup-environment' exports GC_HOME (uses the FIRST instance's
-;;;     gc-home, here `.gc-main').
+;;;   * `setup-environment' exports GC_HOME (uses the primary
+;;;     supervisor's gc-home, here `.gc-main').
 ;;;
 ;;; A second exported test, `%test-home-gascity-with-git', exercises
 ;;; the negative branch of the dolt-seed short-circuit
@@ -73,26 +76,21 @@
     (list (service home-bash-service-type)
           (service home-gascity-service-type
                    (home-gascity-configuration
-                    (instances
-                     (list (gascity-instance-configuration
+                    ;; Non-default top-level dolt identity proves the
+                    ;; (home-gascity-dolt config) record actually
+                    ;; reaches ~/.dolt/config_global.json (covers v2
+                    ;; follow-up #3 — propagation, post-refactor now
+                    ;; via the top-level (dolt …) record rather than
+                    ;; the FIRST supervisor's removed fields).
+                    (dolt (gascity-dolt-configuration
+                           (user-name "Ada Lovelace")
+                           (user-email "ada@example.com")))
+                    (supervisors
+                     (list (gascity-supervisor-configuration
                             (name 'main)
                             (gc-home ".gc-main")
-                            (beads-provider 'file)
-                            ;; Non-default identity proves the FIRST
-                            ;; instance's `dolt-user-name' /
-                            ;; `dolt-user-email' actually reach
-                            ;; ~/.dolt/config_global.json (covers v2
-                            ;; follow-up #3 — propagation).  Kept on
-                            ;; the file-beads instance so the per-
-                            ;; instance default check (the next
-                            ;; instance, 'test2, is the bd one that
-                            ;; triggers seeding) still uses the FIRST
-                            ;; instance's identity — that is the
-                            ;; documented seeding behaviour
-                            ;; (services/gascity.scm:611-613).
-                            (dolt-user-name "Ada Lovelace")
-                            (dolt-user-email "ada@example.com"))
-                           (gascity-instance-configuration
+                            (beads-provider 'file))
+                           (gascity-supervisor-configuration
                             (name 'test2)
                             (gc-home ".gc-test2")
                             (supervisor-port 9372)
@@ -139,13 +137,41 @@
           (define marionette
             (make-marionette (cons* #$vm '#$%r0man-marionette-qemu-args)))
 
+          (define (store-shepherd-file-contains? prefix . needles)
+            "Return #t when some /gnu/store/*-shepherd-PREFIX-*.scm file
+contains every string in NEEDLES.  Used to assert facts about the
+literal Scheme rendered into shepherd service derivations, which live
+under /gnu/store with a hashed prefix."
+            (marionette-eval
+             `(begin
+                (use-modules (ice-9 ftw)
+                             (ice-9 textual-ports)
+                             (srfi srfi-1))
+                (let* ((dir "/gnu/store")
+                       (entries (or (scandir
+                                     dir
+                                     (lambda (f)
+                                       (and (string-contains f ,prefix)
+                                            (string-suffix? ".scm" f))))
+                                    '())))
+                  (let loop ((es entries))
+                    (cond ((null? es) #f)
+                          ((let ((c (call-with-input-file
+                                        (string-append dir "/" (car es))
+                                      get-string-all)))
+                             (every (lambda (n) (string-contains c n))
+                                    ',needles))
+                           #t)
+                          (else (loop (cdr es)))))))
+             marionette))
+
           (test-runner-current (system-test-runner #$output))
           (test-begin "home-gascity")
 
           (test-assert-home-bashrc-exists "alice" marionette)
 
-          ;; Dolt identity is seeded because the 'test2 instance uses
-          ;; the default 'bd' beads provider.
+          ;; Dolt identity is seeded because the 'test2 supervisor
+          ;; uses the default 'bd' beads provider.
           (test-assert-file-exists
            "alice ~/.dolt/config_global.json seeded"
            "/home/alice/.dolt/config_global.json"
@@ -154,10 +180,11 @@
           ;; Strict keyed-substring assertions — not bare names — so a
           ;; future regression that emits a structurally-different but
           ;; textually-substring-matching JSON cannot pass (v2
-          ;; follow-up #4).  Combined with the non-default identity on
-          ;; the FIRST instance above, also verifies the
-          ;; dolt-user-{name,email} fields actually propagate from
-          ;; configuration to disk (v2 follow-up #3).
+          ;; follow-up #4).  Combined with the non-default top-level
+          ;; (dolt …) identity above, also verifies the
+          ;; gascity-dolt-{user-name,user-email} fields actually
+          ;; propagate from (home-gascity-dolt config) to disk (v2
+          ;; follow-up #3).
           (test-assert-file-contains
            "alice dolt config has \"user.name\":\"Ada Lovelace\""
            "/home/alice/.dolt/config_global.json"
@@ -170,7 +197,7 @@
            "\"user.email\":\"ada@example.com\""
            marionette)
 
-          ;; GC_HOME picks up the FIRST instance's gc-home (.gc-main).
+          ;; GC_HOME picks up the primary supervisor's gc-home (.gc-main).
           ;; home-environment-variables-service-type emits values via
           ;; shell-double-quote, so the value is wrapped in double
           ;; quotes; the dollar sign is preserved for shell expansion.
@@ -180,7 +207,7 @@
            "GC_HOME=\"$HOME/.gc-main\""
            marionette)
 
-          ;; Suffixed shepherd provision symbols for both instances.
+          ;; Suffixed shepherd provision symbols for both supervisors.
           (test-assert-file-contains
            "alice's shepherd init.scm references gascity-supervisor-main"
            "/home/alice/.guix-home/files/.config/shepherd/init.scm"
@@ -211,40 +238,24 @@
            "gascity-dashboard-test2"
            marionette)
 
+          ;; The dashboard service must pass --api explicitly so it
+          ;; does not race the supervisor's HTTP bind on first start
+          ;; (auto-discovery sees the supervisor PID before the socket
+          ;; is up and exits with code 1).
+          (test-assert
+              "gascity-dashboard service body passes --api with supervisor port"
+            (store-shepherd-file-contains? "shepherd-gascity-dashboard-"
+                                           "--api"
+                                           "http://127.0.0.1:9372"))
+
           ;; gascity-init's `gc rig add' invocation passes --adopt
           ;; conditionally on <rig>/.beads/metadata.json existing
           ;; (services/gascity.scm:957-964; closes guix-home-7fo).
-          ;; The rendered shepherd-gascity-init-*.scm files live under
-          ;; /gnu/store with a hashed prefix; init.scm references them
-          ;; by absolute path.  Scan the store for any such file that
-          ;; serialises both substrings — the literal Scheme is
-          ;; preserved verbatim regardless of whether the instance
-          ;; actually has rigs at runtime.
           (test-assert
               "gascity-init service body passes --adopt for populated rigs"
-            (marionette-eval
-             '(begin
-                (use-modules (ice-9 ftw)
-                             (ice-9 textual-ports))
-                (let* ((dir "/gnu/store")
-                       (entries (or (scandir
-                                     dir
-                                     (lambda (f)
-                                       (and (string-contains
-                                             f "shepherd-gascity-init-")
-                                            (string-suffix? ".scm" f))))
-                                    '())))
-                  (let loop ((es entries))
-                    (cond ((null? es) #f)
-                          ((let ((c (call-with-input-file
-                                        (string-append dir "/" (car es))
-                                      get-string-all)))
-                             (and (string-contains c "--adopt")
-                                  (string-contains c
-                                                   "/.beads/metadata.json")))
-                           #t)
-                          (else (loop (cdr es)))))))
-             marionette))
+            (store-shepherd-file-contains? "shepherd-gascity-init-"
+                                           "--adopt"
+                                           "/.beads/metadata.json"))
 
           ;; supervisor.toml carries the user-declared port for test2.
           (test-assert-file-exists
@@ -317,12 +328,12 @@
    (name "r0man-home-gascity")
    (description "Boot a minimal OS with guix-home-service-type wrapping
 home-bash-service-type and home-gascity-service-type for alice.  Two
-instances ('main' file-beads + 'test2' bd-with-dashboard) verify
-multi-instance shepherd provision suffixing, atomic supervisor.toml
+supervisors ('main' file-beads + 'test2' bd-with-dashboard) verify
+multi-supervisor shepherd provision suffixing, atomic supervisor.toml
 write with the user-declared port, sidecar marker file for managed
 cities, rendered city.toml [beads]/[packs]/[[agent]] sections, and
-custom dolt-user-{name,email} propagation into
-~/.dolt/config_global.json with strict keyed-substring assertions.")
+top-level (dolt …) propagation into ~/.dolt/config_global.json with
+strict keyed-substring assertions.")
    (value (run-home-gascity-test))))
 
 
@@ -330,9 +341,9 @@ custom dolt-user-{name,email} propagation into
 ;;; %test-home-gascity-with-git: ~/.gitconfig short-circuit (negative
 ;;; branch).
 ;;;
-;;; The dolt-seed activation step in services/gascity.scm:648-662 only
-;;; writes ~/.dolt/config_global.json when (a) at least one instance
-;;; uses (beads-provider 'bd) AND (b) NEITHER ~/.dolt/config_global.json
+;;; The dolt-seed activation step in services/gascity.scm only writes
+;;; ~/.dolt/config_global.json when (a) at least one supervisor uses
+;;; (beads-provider 'bd) AND (b) NEITHER ~/.dolt/config_global.json
 ;;; NOR ~/.gitconfig already exists.  This second test asserts the
 ;;; (b) negative branch: home-git-service-type populates ~/.gitconfig,
 ;;; and the gascity activation MUST short-circuit so dolt's own
@@ -347,8 +358,8 @@ custom dolt-user-{name,email} propagation into
           (service home-git-service-type)
           (service home-gascity-service-type
                    (home-gascity-configuration
-                    (instances
-                     (list (gascity-instance-configuration
+                    (supervisors
+                     (list (gascity-supervisor-configuration
                             (name 'main)
                             (gc-home ".gc-main")
                             ;; (beads-provider 'bd) — default — keeps
@@ -415,7 +426,7 @@ custom dolt-user-{name,email} propagation into
   (system-test
    (name "r0man-home-gascity-with-git")
    (description "Boot a minimal OS with guix-home-service-type wrapping
-home-bash-service-type, home-git-service-type, and a single-instance
+home-bash-service-type, home-git-service-type, and a single-supervisor
 home-gascity-service-type (default 'bd' beads provider).  Asserts the
 gascity dolt-seed step's negative ~/.gitconfig short-circuit branch:
 ~/.dolt/config_global.json must be ABSENT after activation because

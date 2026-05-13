@@ -5,6 +5,7 @@
   #:use-module (gnu home)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages emacs)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages linux)
@@ -24,29 +25,47 @@
 
 ;;; Commentary:
 ;;;
-;;; Two-instance test environment for home-gascity-service-type.
+;;; Three-supervisor container environment for home-gascity-service-type.
+;;; One <gascity-supervisor-configuration> per city, so the shepherd
+;;; provision names surface the city names directly:
 ;;;
-;;; Instance 'main' (default beads provider 'bd, gc-home .gc-test) holds
-;;; the original single-city test ('cities/test' with the beads.el rig)
-;;; and an additional managed-opt-out city ('cities/test-opt-out') that
-;;; exercises (managed? #f).
+;;;   gascity-supervisor-downtown   (bd, has the beads.el rig)
+;;;   gascity-supervisor-outskirts  (bd, managed? #f — manual city)
+;;;   gascity-supervisor-harbor     (file-beads, pack + watcher agent)
+;;;   gascity-dashboard-harbor      (HTTP dashboard for harbor)
+;;;   gascity-init-{downtown,outskirts,harbor}  (one-shot bootstrap)
 ;;;
-;;; Instance 'test2' (file-beads, gc-home .gc-test2, supervisor on
-;;; 9372, dashboard on 18080) carries a single managed city with a
-;;; pack and an inline agent — exercising the city.toml render path,
-;;; the file-beads bootstrap (<city>/.gc/file-beads-layout +
-;;; <city>/.gc/beads.json), the dashboard shepherd service, and
-;;; non-default supervisor port plumbing.
+;;; 'downtown'  — managed, default 'bd' beads, gc-home .gc-downtown,
+;;;               supervisor on 28371.  Hosts the beads.el rig — the
+;;;               busy hub of bd-backed work.
+;;; 'outskirts' — managed? #f, gc-home .gc-outskirts, supervisor on
+;;;               28372.  Off-grid manual city; exercises the
+;;;               runtime-mutation persistence path (gc init runs once
+;;;               and city.toml is never overwritten).
+;;; 'harbor'    — file-beads, gc-home .gc-harbor, supervisor on 28373,
+;;;               dashboard on 28080.  Exercises the city.toml render
+;;;               path, file-beads bootstrap (<city>/.gc/file-beads-
+;;;               layout + <city>/.gc/beads.json), the dashboard
+;;;               shepherd service, and non-default supervisor port
+;;;               plumbing.  Carries a pack and an inline 'watcher'
+;;;               agent (target of `gc sling').
+;;;
+;;; Non-default ports: the container runs with --network and shares the
+;;; host's network namespace, so we shift well off the gascity defaults
+;;; (8372 supervisor, 8080 dashboard) to avoid colliding with a host-side
+;;; gc supervisor.
 ;;;
 ;;; Usage:
-;;;   modules/r0man/guix/home/files/bin/container-gascity --network
+;;;   modules/r0man/guix/home/files/bin/container-gascity
+;;;   modules/r0man/guix/home/files/bin/container-gascity -- emacs
 ;;;
 ;;; Code:
 
 (define-public gascity-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal findutils gawk git inetutils
-                   kitty ncurses claude-code nss-certs procps waypipe))
+   (packages (list coreutils coreutils-minimal emacs-pgtk findutils gawk
+                   git inetutils kitty ncurses claude-code nss-certs procps
+                   waypipe))
    (services
     (append (list (service home-bash-service-type
                            home-bash-default-configuration)
@@ -81,36 +100,45 @@
 
                   (service home-gascity-service-type
                    (home-gascity-configuration
-                    (instances
+                    (supervisors
                      (list
-                      (gascity-instance-configuration
-                       (name 'main)
-                       (gc-home ".gc-test")
+                      (gascity-supervisor-configuration
+                       (name 'downtown)
+                       (gc-home ".gc-downtown")
+                       ;; Non-default ports throughout: the container
+                       ;; runs with --network and the host typically
+                       ;; binds 8372/8080 for its own gascity supervisor.
+                       (supervisor-port 28371)
                        (cities
                         (list (gascity-city-configuration
                                (path (string-append (getenv "HOME")
-                                                    "/cities/test"))
+                                                    "/cities/downtown"))
                                (rigs
                                 (list (gascity-rig-configuration
                                        (path "rigs/beads.el")
                                        (git-url "https://github.com/r0man/beads.el")
                                        (branch "main")
-                                       (depth 1)))))
-                              (gascity-city-configuration
-                               (path (string-append (getenv "HOME")
-                                                    "/cities/test-opt-out"))
-                               (managed? #f)))))
-                      (gascity-instance-configuration
-                       (name 'test2)
-                       (gc-home ".gc-test2")
-                       (beads-provider 'file)
-                       (supervisor-port 9372)
-                       (dashboard? #t)
-                       (dashboard-port 18080)
+                                       (depth 1))))))))
+                      (gascity-supervisor-configuration
+                       (name 'outskirts)
+                       (gc-home ".gc-outskirts")
+                       (supervisor-port 28372)
                        (cities
                         (list (gascity-city-configuration
                                (path (string-append (getenv "HOME")
-                                                    "/cities/test2"))
+                                                    "/cities/outskirts"))
+                               (managed? #f)))))
+                      (gascity-supervisor-configuration
+                       (name 'harbor)
+                       (gc-home ".gc-harbor")
+                       (beads-provider 'file)
+                       (supervisor-port 28373)
+                       (dashboard? #t)
+                       (dashboard-port 28080)
+                       (cities
+                        (list (gascity-city-configuration
+                               (path (string-append (getenv "HOME")
+                                                    "/cities/harbor"))
                                (packs
                                 (list (gascity-pack-configuration
                                        (name "examples")

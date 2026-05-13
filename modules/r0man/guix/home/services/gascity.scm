@@ -55,41 +55,55 @@
             gascity-city-workspace-suspended?
             gascity-city-extra-toml
 
-            gascity-instance-configuration
-            gascity-instance-configuration?
-            gascity-instance-name
-            gascity-instance-gc-home
-            gascity-instance-beads-provider
-            gascity-instance-providers
-            gascity-instance-cities
-            gascity-instance-supervisor-port
-            gascity-instance-dashboard?
-            gascity-instance-dashboard-port
-            gascity-instance-dolt-user-name
-            gascity-instance-dolt-user-email
+            gascity-dolt-configuration
+            gascity-dolt-configuration?
+            gascity-dolt-user-name
+            gascity-dolt-user-email
+
+            gascity-supervisor-configuration
+            gascity-supervisor-configuration?
+            gascity-supervisor-name
+            gascity-supervisor-gc-home
+            gascity-supervisor-beads-provider
+            gascity-supervisor-providers
+            gascity-supervisor-cities
+            gascity-supervisor-supervisor-port
+            gascity-supervisor-dashboard?
+            gascity-supervisor-dashboard-port
 
             home-gascity-configuration
             home-gascity-configuration?
             home-gascity-packages
-            home-gascity-instances
+            home-gascity-dolt
+            home-gascity-supervisors
             home-gascity-service-type))
 
 ;;; Commentary:
 ;;;
-;;; Multi-instance Gas City supervisor home service.
+;;; Multi-supervisor Gas City home service.
 ;;;
 ;;; A single home-gascity-configuration value carries one or more
-;;; <gascity-instance-configuration> records.  Each instance owns its
-;;; own GC_HOME, its own (gc supervisor run) shepherd service, and its
-;;; own one-shot init service that lays out cities and rigs.  Multiple
-;;; instances share one host but bind disjoint API ports and live in
-;;; separate GC_HOME directories — useful for development isolation
-;;; (default 'main' instance + ad-hoc test instances).
+;;; <gascity-supervisor-configuration> records in (supervisors …).
+;;; Each supervisor owns its own GC_HOME, its own (gc supervisor run)
+;;; shepherd service, and its own one-shot init service that lays out
+;;; cities and rigs.  Multiple supervisors share one host but bind
+;;; disjoint API ports and live in separate GC_HOME directories —
+;;; useful for development isolation (default 'main' supervisor +
+;;; ad-hoc test supervisors).
 ;;;
-;;; Per-instance shepherd provisions are uniformly suffixed:
+;;; Per-supervisor shepherd provisions are uniformly suffixed:
 ;;; gascity-supervisor-<NAME>, gascity-init-<NAME>, optionally
 ;;; gascity-dashboard-<NAME>.  No special unsuffixed name; the default
-;;; instance (name 'default) provisions gascity-supervisor-default.
+;;; supervisor (name 'default) provisions gascity-supervisor-default.
+;;;
+;;; Dolt identity is host-level, stored on the configuration as a
+;;; top-level <gascity-dolt-configuration> record in (dolt …).  It is
+;;; NOT per-supervisor: ~/.dolt/config_global.json is a single file
+;;; per user, and a per-supervisor dolt identity would be a schema
+;;; lie.  The defaults ("Gas City" / "gascity@localhost") preserve
+;;; current behavior — overriding via (dolt (gascity-dolt-configuration
+;;; (user-name …) (user-email …))) is strongly recommended in any
+;;; real deployment that lacks home-git-service-type.
 ;;;
 ;;; Activation is a single home-activation-service-type gexp that:
 ;;;
@@ -100,13 +114,13 @@
 ;;;      so a missing user dbus on Guix System does not abort
 ;;;      reconfigure.  Skipped when GASCITY_NO_UNINSTALL=1.
 ;;;
-;;;   2. Seeds ~/.dolt/config_global.json with the FIRST instance's
-;;;      identity, but only when at least one instance uses
-;;;      (beads-provider 'bd) and neither ~/.dolt/config_global.json
-;;;      nor ~/.gitconfig already exists (dolt falls back to git
-;;;      config).
+;;;   2. Seeds ~/.dolt/config_global.json with the identity from
+;;;      (home-gascity-dolt config), but only when at least one
+;;;      supervisor uses (beads-provider 'bd) and neither
+;;;      ~/.dolt/config_global.json nor ~/.gitconfig already exists
+;;;      (dolt falls back to git config).
 ;;;
-;;;   3. Per instance: mkdir GC_HOME and city dirs; write
+;;;   3. Per-supervisor: mkdir GC_HOME and city dirs; write
 ;;;      <gc-home>/supervisor.toml, <gc-home>/cities.toml, and managed
 ;;;      <city>/city.toml atomically (via .tmp + rename) so the
 ;;;      supervisor's patrol-tick os.ReadFile cannot see half-written
@@ -131,11 +145,12 @@
 ;;; runs side effects (hooks/routes/templates) without rewriting
 ;;; city.toml.
 ;;;
-;;; GC_HOME exported into the user's shell points at the FIRST
-;;; instance's gc-home.  Multi-instance setups must
-;;; `GC_HOME=$HOME/.gc-other gc supervisor status' to reach
-;;; non-first instances.  Documented inline so future maintainers do
-;;; not try to "fix" by emitting multiple GC_HOME values.
+;;; GC_HOME exported into the user's shell points at the primary
+;;; supervisor's gc-home (the first entry in (supervisors …)).
+;;; Multi-supervisor setups must `GC_HOME=$HOME/.gc-other gc
+;;; supervisor status' to reach non-primary supervisors.  Documented
+;;; inline so future maintainers do not try to "fix" by emitting
+;;; multiple GC_HOME values.
 ;;;
 ;;; Code:
 
@@ -253,71 +268,95 @@ as [providers.<name>] tables."))
 the rendered city.toml.  Escape hatch for sections this service does not
 model (chat_sessions, dolt overrides, etc.).")))
 
-(define-record-type* <gascity-instance-configuration>
-  gascity-instance-configuration make-gascity-instance-configuration
-  gascity-instance-configuration?
-  (name             gascity-instance-name
+;; Host-level dolt identity.  Seeded into ~/.dolt/config_global.json
+;; once per host by the activation gexp (only when at least one
+;; supervisor uses (beads-provider 'bd) AND neither
+;; ~/.dolt/config_global.json nor ~/.gitconfig already exists).
+;;
+;; WARNING: the literal defaults ("Gas City" / "gascity@localhost")
+;; WILL end up in ~/.dolt/config_global.json for users without
+;; home-git-service-type.  Overriding is strongly recommended in any
+;; real deployment:
+;;
+;;   (dolt (gascity-dolt-configuration
+;;          (user-name "Ada Lovelace")
+;;          (user-email "ada@example.com")))
+(define-record-type* <gascity-dolt-configuration>
+  gascity-dolt-configuration make-gascity-dolt-configuration
+  gascity-dolt-configuration?
+  (user-name  gascity-dolt-user-name
+              (default "Gas City")
+              (description "Identity written to
+~/.dolt/config_global.json once per host (only when any supervisor uses
+'bd AND neither ~/.dolt/config_global.json nor ~/.gitconfig exists).
+The default leaks into the global dolt config for users without
+home-git-service-type — overriding is strongly recommended."))
+  (user-email gascity-dolt-user-email
+              (default "gascity@localhost")
+              (description "Companion email for the seeded dolt
+identity.  Overriding is strongly recommended; see user-name.")))
+
+(define-record-type* <gascity-supervisor-configuration>
+  gascity-supervisor-configuration make-gascity-supervisor-configuration
+  gascity-supervisor-configuration?
+  (name             gascity-supervisor-name
                     (default 'default)
                     (description "Symbol used in shepherd provision names —
 sanitised to [a-z0-9-]+ so the symbol gascity-supervisor-<NAME> is a
 valid scheme symbol."))
-  (gc-home          gascity-instance-gc-home
+  (gc-home          gascity-supervisor-gc-home
                     (default ".gc")
                     (description "Supervisor runtime directory relative to
-$HOME.  Two instances must not share a path — they would race on
+$HOME.  Two supervisors must not share a path — they would race on
 <gc-home>/supervisor.lock."))
-  (beads-provider   gascity-instance-beads-provider
+  (beads-provider   gascity-supervisor-beads-provider
                     (default 'bd)
                     (description "'bd or 'file.  When 'file, gascity-init
 drops <city>/.gc/file-beads-layout and <city>/.gc/beads.json mirroring
 upstream's bootstrapScopedFileProviderCityFS (cmd_init.go:934).  When no
-instance uses 'bd, dolt and beads-next are filtered from the profile and
+supervisor uses 'bd, dolt and beads-next are filtered from the profile and
 the dolt identity seed is skipped."))
-  (providers        gascity-instance-providers
+  (providers        gascity-supervisor-providers
                     (default '())
                     (description "List of provider opt-ins.  Each entry is
 either a bare symbol ('claude resolves to claude-code from (r0man guix
 packages claude); 'codex / 'gemini are reserved warn-only) or a
 (<sym> #:package <pkg>) two-element list for user-supplied packages."))
-  (cities           gascity-instance-cities
+  (cities           gascity-supervisor-cities
                     (default '())
                     (description "List of <gascity-city-configuration>
-records belonging to this instance."))
-  (supervisor-port  gascity-instance-supervisor-port
+records belonging to this supervisor."))
+  (supervisor-port  gascity-supervisor-supervisor-port
                     (default 8372)
                     (description "Port written into <gc-home>/supervisor.toml
 [supervisor].port — pre-empts gascity's seedIsolatedSupervisorConfig
 auto-seed (internal/supervisor/config.go:212-239)."))
-  (dashboard?       gascity-instance-dashboard?
+  (dashboard?       gascity-supervisor-dashboard?
                     (default #f)
                     (description "When true, an additional one-shot
 gascity-dashboard-<NAME> shepherd service runs `gc dashboard serve --port
 <DASHBOARD-PORT>'."))
-  (dashboard-port   gascity-instance-dashboard-port
+  (dashboard-port   gascity-supervisor-dashboard-port
                     (default 8080)
                     (description "HTTP port for the dashboard.  Validation
-rejects collisions across instances with (dashboard? #t)."))
-  (dolt-user-name   gascity-instance-dolt-user-name
-                    (default "Gas City")
-                    (description "Identity written to
-~/.dolt/config_global.json once per host (only when any instance uses 'bd
-AND neither ~/.dolt/config_global.json nor ~/.gitconfig exists)."))
-  (dolt-user-email  gascity-instance-dolt-user-email
-                    (default "gascity@localhost")
-                    (description "Companion email for the seeded dolt
-identity.")))
+rejects collisions across supervisors with (dashboard? #t).")))
 
 (define-record-type* <home-gascity-configuration>
   home-gascity-configuration make-home-gascity-configuration
   home-gascity-configuration?
-  (packages  home-gascity-packages
-             (default %home-gascity-default-packages)
-             (description "Profile-level packages.  When no instance uses
-(beads-provider 'bd) the dolt and beads-next packages are filtered out;
-provider opt-ins resolved from (providers …) are appended."))
-  (instances home-gascity-instances
-             (description "Required, non-empty list of
-<gascity-instance-configuration> records.  Empty raises a configuration
+  (packages    home-gascity-packages
+               (default %home-gascity-default-packages)
+               (description "Profile-level packages.  When no supervisor
+uses (beads-provider 'bd) the dolt and beads-next packages are filtered
+out; provider opt-ins resolved from (providers …) are appended."))
+  (dolt        home-gascity-dolt
+               (default (gascity-dolt-configuration))
+               (description "Host-level dolt identity record.  See
+<gascity-dolt-configuration> — defaults match the prior behaviour, but
+overriding is strongly recommended in any real deployment."))
+  (supervisors home-gascity-supervisors
+               (description "Required, non-empty list of
+<gascity-supervisor-configuration> records.  Empty raises a configuration
 error before any derivation work.")))
 
 
@@ -337,7 +376,7 @@ error before any derivation work.")))
 ;;; Validation.
 ;;;
 
-(define (gascity-sanitize-instance-name sym)
+(define (gascity-sanitize-supervisor-name sym)
   "Lowercase SYM (a symbol) and drop any character outside [a-z0-9-]."
   (let* ((s (symbol->string sym))
          (chars (string->list (string-downcase s)))
@@ -348,11 +387,11 @@ error before any derivation work.")))
                        chars)))
     (string->symbol (list->string kept))))
 
-(define (gascity-instance-provision-symbol prefix instance)
+(define (gascity-supervisor-provision-symbol prefix supervisor)
   "Build a shepherd provision symbol PREFIX-<sanitized-name>."
   (symbol-append prefix '-
-                 (gascity-sanitize-instance-name
-                  (gascity-instance-name instance))))
+                 (gascity-sanitize-supervisor-name
+                  (gascity-supervisor-name supervisor))))
 
 (define (gascity-rig-derived-name rig)
   "Return the canonical name for RIG: explicit (name …) when set;
@@ -360,33 +399,33 @@ otherwise (basename PATH)."
   (or (gascity-rig-name rig)
       (basename (gascity-rig-path rig))))
 
-(define (gascity-validate-instances! instances)
-  "Raise &error before any derivation work when INSTANCES violates one of
+(define (gascity-validate-supervisors! supervisors)
+  "Raise &error before any derivation work when SUPERVISORS violates one of
 the four uniqueness invariants:
-  (a) gc-home paths must be unique across instances.
+  (a) gc-home paths must be unique across supervisors.
   (b) supervisor-port values must be unique.
-  (c) dashboard-port values must be unique among (dashboard? #t) instances.
+  (c) dashboard-port values must be unique among (dashboard? #t) supervisors.
   (d) within each city, derived rig names (basename-of-path or explicit
       (name …)) must be unique.
-Also rejects duplicate sanitized instance names."
-  (when (null? instances)
+Also rejects duplicate sanitized supervisor names."
+  (when (null? supervisors)
     (error 'home-gascity-configuration
-           "instances must be a non-empty list of \
-<gascity-instance-configuration> records"))
+           "supervisors must be a non-empty list of \
+<gascity-supervisor-configuration> records"))
   ;; Sanitized name uniqueness.
-  (let* ((names (map (lambda (i)
-                       (gascity-sanitize-instance-name
-                        (gascity-instance-name i)))
-                     instances))
+  (let* ((names (map (lambda (s)
+                       (gascity-sanitize-supervisor-name
+                        (gascity-supervisor-name s)))
+                     supervisors))
          (dups  (filter (lambda (n)
                           (> (length (filter (lambda (m) (eq? m n)) names))
                              1))
                         names)))
     (unless (null? dups)
       (error 'home-gascity-configuration
-             "instances have colliding sanitized names" (delete-duplicates dups))))
+             "supervisors have colliding sanitized names" (delete-duplicates dups))))
   ;; (a) gc-home uniqueness.
-  (let* ((paths (map gascity-instance-gc-home instances))
+  (let* ((paths (map gascity-supervisor-gc-home supervisors))
          (dups  (filter (lambda (p)
                           (> (length (filter (lambda (q) (string=? p q))
                                              paths))
@@ -394,32 +433,32 @@ Also rejects duplicate sanitized instance names."
                         paths)))
     (unless (null? dups)
       (error 'home-gascity-configuration
-             "two instances share the same gc-home path"
+             "two supervisors share the same gc-home path"
              (delete-duplicates dups))))
   ;; (b) supervisor-port uniqueness.
-  (let* ((ports (map gascity-instance-supervisor-port instances))
+  (let* ((ports (map gascity-supervisor-supervisor-port supervisors))
          (dups  (filter (lambda (p)
                           (> (length (filter (lambda (q) (= p q)) ports))
                              1))
                         ports)))
     (unless (null? dups)
       (error 'home-gascity-configuration
-             "two instances share the same supervisor-port"
+             "two supervisors share the same supervisor-port"
              (delete-duplicates dups))))
-  ;; (c) dashboard-port uniqueness across enabled instances.
-  (let* ((dashboards (filter gascity-instance-dashboard? instances))
-         (ports (map gascity-instance-dashboard-port dashboards))
+  ;; (c) dashboard-port uniqueness across enabled supervisors.
+  (let* ((dashboards (filter gascity-supervisor-dashboard? supervisors))
+         (ports (map gascity-supervisor-dashboard-port dashboards))
          (dups  (filter (lambda (p)
                           (> (length (filter (lambda (q) (= p q)) ports))
                              1))
                         ports)))
     (unless (null? dups)
       (error 'home-gascity-configuration
-             "two dashboard-enabled instances share the same dashboard-port"
+             "two dashboard-enabled supervisors share the same dashboard-port"
              (delete-duplicates dups))))
   ;; (d) within each city, derived rig names must be unique.
   (for-each
-   (lambda (instance)
+   (lambda (supervisor)
      (for-each
       (lambda (city)
         (let* ((rigs (gascity-city-rigs city))
@@ -435,8 +474,8 @@ Also rejects duplicate sanitized instance names."
                    "within a city, two rigs share the same derived name"
                    (gascity-city-path city)
                    (delete-duplicates dups)))))
-      (gascity-instance-cities instance)))
-   instances))
+      (gascity-supervisor-cities supervisor)))
+   supervisors))
 
 
 ;;;
@@ -476,10 +515,10 @@ pass `(~a #:package <pkg>)' to override.~%"
              "gascity: ignoring unrecognised provider entry ~s~%" other)
      #f)))
 
-(define (gascity-instance-provider-packages instance)
-  "Resolve provider opt-ins for INSTANCE, dropping #f entries."
+(define (gascity-supervisor-provider-packages supervisor)
+  "Resolve provider opt-ins for SUPERVISOR, dropping #f entries."
   (filter-map gascity-resolve-provider
-              (gascity-instance-providers instance)))
+              (gascity-supervisor-providers supervisor)))
 
 
 ;;;
@@ -488,12 +527,12 @@ pass `(~a #:package <pkg>)' to override.~%"
 
 (define (home-gascity-profile-packages config)
   "Filter the configured package list: drop dolt and beads-next when no
-instance uses (beads-provider 'bd); append all provider-resolved packages."
-  (let* ((instances (home-gascity-instances config))
-         (any-bd?   (any (lambda (i) (eq? 'bd (gascity-instance-beads-provider i)))
-                         instances))
-         (provider-pkgs (append-map gascity-instance-provider-packages
-                                    instances))
+supervisor uses (beads-provider 'bd); append all provider-resolved packages."
+  (let* ((supervisors (home-gascity-supervisors config))
+         (any-bd?   (any (lambda (s) (eq? 'bd (gascity-supervisor-beads-provider s)))
+                         supervisors))
+         (provider-pkgs (append-map gascity-supervisor-provider-packages
+                                    supervisors))
          (base (if any-bd?
                    (home-gascity-packages config)
                    (filter (lambda (p)
@@ -503,7 +542,7 @@ instance uses (beads-provider 'bd); append all provider-resolved packages."
 
 
 ;;;
-;;; Per-instance TOML rendering at host time.
+;;; Per-supervisor TOML rendering at host time.
 ;;;
 ;;; We pre-render TOML strings as host-side Scheme values and embed
 ;;; them as literals into the activation gexp.  This keeps the gexp
@@ -530,8 +569,8 @@ instance uses (beads-provider 'bd); append all provider-resolved packages."
     (provider . ,(gascity-agent-provider agent))
     (command  . ,(gascity-agent-command agent))))
 
-(define (city-rendered-toml instance city)
-  "Render the managed city.toml for CITY belonging to INSTANCE.  When the
+(define (city-rendered-toml supervisor city)
+  "Render the managed city.toml for CITY belonging to SUPERVISOR.  When the
 city has (provider …) set, that string becomes [workspace] provider; the
 inherited (beads-provider …) becomes [beads] provider.  Returns a
 string."
@@ -539,7 +578,7 @@ string."
          (packs  (map city-pack-spec (gascity-city-packs  city)))
          (agents (map city-agent-spec (gascity-city-agents city)))
          (provider (gascity-city-provider city))
-         (beads (case (gascity-instance-beads-provider instance)
+         (beads (case (gascity-supervisor-beads-provider supervisor)
                   ((bd)   "bd")
                   ((file) "file")
                   (else   ""))))
@@ -558,45 +597,51 @@ string."
      #:providers (gascity-city-providers city)
      #:extra-toml (gascity-city-extra-toml city))))
 
-(define (instance-cities-toml instance)
-  "Render the GC_HOME/cities.toml content listing every city for INSTANCE."
+(define (supervisor-cities-toml supervisor)
+  "Render the GC_HOME/cities.toml content listing every city for SUPERVISOR."
   (render-cities-toml
    (map (lambda (city)
           `((path . ,(gascity-city-path city))
             (name . ,(or (gascity-city-name city)
                          (basename (gascity-city-path city))))))
-        (gascity-instance-cities instance))))
+        (gascity-supervisor-cities supervisor))))
 
-(define (instance-supervisor-toml instance)
-  "Render the <gc-home>/supervisor.toml for INSTANCE."
+(define (supervisor-config-toml supervisor)
+  "Render the <gc-home>/supervisor.toml for SUPERVISOR."
   (render-supervisor-toml
-   #:port (gascity-instance-supervisor-port instance)))
+   #:port (gascity-supervisor-supervisor-port supervisor)))
 
-(define (instance-city-spec instance city)
+(define (supervisor-api-url supervisor)
+  "Loopback URL where SUPERVISOR binds its HTTP API."
+  (string-append "http://127.0.0.1:"
+                 (number->string
+                  (gascity-supervisor-supervisor-port supervisor))))
+
+(define (supervisor-city-spec supervisor city)
   "Serialize CITY into a Scheme value usable from the activation gexp.
 The rendered managed-mode city.toml string is computed at host time and
 inlined."
   (let ((managed? (gascity-city-managed? city)))
     `(("path"      . ,(gascity-city-path city))
       ("managed?"  . ,managed?)
-      ("file?"     . ,(eq? 'file (gascity-instance-beads-provider instance)))
-      ("city-toml" . ,(if managed? (city-rendered-toml instance city) ""))
-      ("instance-name"
-       . ,(symbol->string (gascity-instance-name instance))))))
+      ("file?"     . ,(eq? 'file (gascity-supervisor-beads-provider supervisor)))
+      ("city-toml" . ,(if managed? (city-rendered-toml supervisor city) ""))
+      ("supervisor-name"
+       . ,(symbol->string (gascity-supervisor-name supervisor))))))
 
-(define (instance-spec instance)
-  "Serialize INSTANCE into a flat alist of strings/booleans for the
+(define (supervisor-spec supervisor)
+  "Serialize SUPERVISOR into a flat alist of strings/booleans for the
 activation gexp.  All values are quoted into the gexp directly."
-  (let ((cities (map (lambda (c) (instance-city-spec instance c))
-                     (gascity-instance-cities instance))))
-    `(("name"            . ,(symbol->string (gascity-instance-name instance)))
-      ("gc-home"         . ,(gascity-instance-gc-home instance))
+  (let ((cities (map (lambda (c) (supervisor-city-spec supervisor c))
+                     (gascity-supervisor-cities supervisor))))
+    `(("name"            . ,(symbol->string (gascity-supervisor-name supervisor)))
+      ("gc-home"         . ,(gascity-supervisor-gc-home supervisor))
       ("cities"          . ,cities)
-      ("supervisor-toml" . ,(instance-supervisor-toml instance))
-      ("cities-toml"     . ,(instance-cities-toml instance))
+      ("supervisor-toml" . ,(supervisor-config-toml supervisor))
+      ("cities-toml"     . ,(supervisor-cities-toml supervisor))
       ("any-managed?"    . ,(any gascity-city-managed?
-                                 (gascity-instance-cities instance)))
-      ("any-file?"       . ,(eq? 'file (gascity-instance-beads-provider instance))))))
+                                 (gascity-supervisor-cities supervisor)))
+      ("any-file?"       . ,(eq? 'file (gascity-supervisor-beads-provider supervisor))))))
 
 
 ;;;
@@ -604,15 +649,15 @@ activation gexp.  All values are quoted into the gexp directly."
 ;;;
 
 (define (home-gascity-activation config)
-  (let* ((instances     (home-gascity-instances config))
-         (any-bd?       (any (lambda (i)
-                               (eq? 'bd (gascity-instance-beads-provider i)))
-                             instances))
-         (first         (first instances))
-         (dolt-user-name  (gascity-instance-dolt-user-name first))
-         (dolt-user-email (gascity-instance-dolt-user-email first))
-         (gc-bin        (file-append gascity-next "/bin/gc"))
-         (specs         (map instance-spec instances)))
+  (let* ((supervisors        (home-gascity-supervisors config))
+         (any-bd?            (any (lambda (s)
+                                    (eq? 'bd (gascity-supervisor-beads-provider s)))
+                                  supervisors))
+         (dolt-cfg           (home-gascity-dolt config))
+         (dolt-user-name     (gascity-dolt-user-name  dolt-cfg))
+         (dolt-user-email    (gascity-dolt-user-email dolt-cfg))
+         (gc-bin             (file-append gascity-next "/bin/gc"))
+         (specs              (map supervisor-spec supervisors)))
     (with-imported-modules '((guix build utils))
       #~(begin
           (use-modules (guix build utils)
@@ -643,8 +688,8 @@ patrol-tick os.ReadFile cannot see half-written TOML."
                 (lambda _ #f)))
 
             ;; (2) Dolt identity seed, once per host.  Skipped when no
-            ;; instance uses 'bd or when ~/.dolt or ~/.gitconfig already
-            ;; exists.
+            ;; supervisor uses 'bd or when ~/.dolt or ~/.gitconfig already
+            ;; exists.  Identity comes from (home-gascity-dolt config).
             #$(if any-bd?
                   #~(let* ((dolt-dir    (string-append home "/.dolt"))
                            (global-json (string-append dolt-dir
@@ -662,7 +707,7 @@ patrol-tick os.ReadFile cannot see half-written TOML."
                              out)))))
                   #~#t)
 
-            ;; (3) Per-instance loop.
+            ;; (3) Per-supervisor loop.
             (for-each
              (lambda (spec)
                (let* ((name           (assoc-ref spec "name"))
@@ -704,7 +749,7 @@ remove the file or set (managed? #f)" path))
                         (write-atomic city-toml city-toml-content)
                         (call-with-output-file marker
                           (lambda (port)
-                            (display (assoc-ref city "instance-name") port)
+                            (display (assoc-ref city "supervisor-name") port)
                             (newline port))))
                        (else
                         ;; Unmanaged city: leave city.toml alone.
@@ -737,13 +782,13 @@ remove the file or set (managed? #f)" path))
 ;;;
 
 (define (home-gascity-environment-variables config)
-  "Export GC_HOME pointing at the FIRST instance's gc-home.
-Multi-instance setups must `GC_HOME=$HOME/.gc-other gc supervisor status'
-to reach non-first instances; see the module commentary above for why we
-do not emit multiple GC_HOME values."
-  (let ((first (first (home-gascity-instances config))))
+  "Export GC_HOME pointing at the primary supervisor's gc-home.
+Multi-supervisor setups must `GC_HOME=$HOME/.gc-other gc supervisor status'
+to reach non-primary supervisors; see the module commentary above for why
+we do not emit multiple GC_HOME values."
+  (let ((primary (first (home-gascity-supervisors config))))
     `(("GC_HOME" . ,(string-append "$HOME/"
-                                   (gascity-instance-gc-home first))))))
+                                   (gascity-supervisor-gc-home primary))))))
 
 
 ;;;
@@ -794,21 +839,21 @@ sourced from the user's own zshrc / config.fish."
 
 
 ;;;
-;;; Shepherd services per instance.
+;;; Shepherd services per supervisor.
 ;;;
 
-(define (instance-shepherd-services instance)
-  "Return shepherd services for INSTANCE: long-running
+(define (supervisor-shepherd-services supervisor)
+  "Return shepherd services for SUPERVISOR: long-running
 gascity-supervisor-<NAME>, one-shot gascity-init-<NAME>, and (when
 dashboard? is true) long-running gascity-dashboard-<NAME>."
-  (let* ((sup-name   (gascity-instance-provision-symbol
-                      'gascity-supervisor instance))
-         (init-name  (gascity-instance-provision-symbol
-                      'gascity-init instance))
-         (dash-name  (gascity-instance-provision-symbol
-                      'gascity-dashboard instance))
-         (gc-home    (gascity-instance-gc-home instance))
-         (cities     (gascity-instance-cities instance))
+  (let* ((sup-name   (gascity-supervisor-provision-symbol
+                      'gascity-supervisor supervisor))
+         (init-name  (gascity-supervisor-provision-symbol
+                      'gascity-init supervisor))
+         (dash-name  (gascity-supervisor-provision-symbol
+                      'gascity-dashboard supervisor))
+         (gc-home    (gascity-supervisor-gc-home supervisor))
+         (cities     (gascity-supervisor-cities supervisor))
          (city-specs (map (lambda (city)
                             (list (gascity-city-path city)
                                   (or (gascity-city-name city)
@@ -824,7 +869,7 @@ dashboard? is true) long-running gascity-dashboard-<NAME>."
          (gc-bin     (file-append gascity-next "/bin/gc"))
          (git-bin    (file-append git "/bin/git"))
          (timeout-bin(file-append coreutils "/bin/timeout"))
-         (dashboard-port (gascity-instance-dashboard-port instance)))
+         (dashboard-port (gascity-supervisor-dashboard-port supervisor)))
     (define (with-env log-name body)
       "Wrap BODY in a start thunk that binds names HOME, PROFILE,
 GC-HOME-ABS, ENV and LOG-FILE.  LOG-NAME is the basename of the
@@ -852,8 +897,8 @@ per-service log file under GC_HOME."
            (list
             (shepherd-service
              (documentation
-              (string-append "Run 'gc supervisor run' for instance "
-                             (symbol->string (gascity-instance-name instance))
+              (string-append "Run 'gc supervisor run' for supervisor "
+                             (symbol->string (gascity-supervisor-name supervisor))
                              "."))
              (provision (list sup-name))
              (modules '((shepherd support)
@@ -872,8 +917,8 @@ per-service log file under GC_HOME."
              (stop #~(make-kill-destructor)))
             (shepherd-service
              (documentation
-              (string-append "Lay out cities and rigs for instance "
-                             (symbol->string (gascity-instance-name instance))
+              (string-append "Lay out cities and rigs for supervisor "
+                             (symbol->string (gascity-supervisor-name supervisor))
                              "; reload the supervisor."))
              (provision (list init-name))
              (one-shot? #t)
@@ -969,12 +1014,12 @@ did not report running within 30s; proceeding anyway~%"))
                     (run home (list #$timeout-bin "30"
                                     #$gc-bin "supervisor" "reload"))
                     #t))))
-            (and (gascity-instance-dashboard? instance)
+            (and (gascity-supervisor-dashboard? supervisor)
                  (shepherd-service
                   (documentation
                    (string-append
-                    "Run 'gc dashboard serve' for instance "
-                    (symbol->string (gascity-instance-name instance))
+                    "Run 'gc dashboard serve' for supervisor "
+                    (symbol->string (gascity-supervisor-name supervisor))
                     "."))
                   (provision (list dash-name))
                   (requirement (list sup-name))
@@ -986,9 +1031,16 @@ did not report running within 30s; proceeding anyway~%"))
                    (with-env "dashboard.log"
                      #~(begin
                          (mkdir-p gc-home-abs)
+                         ;; Pass --api explicitly: shepherd's requirement
+                         ;; only waits for `gc supervisor run' to fork —
+                         ;; the HTTP port may not be bound yet, and
+                         ;; `gc dashboard serve' bails out (and is
+                         ;; respawned) when auto-discovery sees the
+                         ;; supervisor PID file but no live socket.
                          (fork+exec-command
                           (list #$gc-bin "dashboard" "serve"
-                                "--port" #$(number->string dashboard-port))
+                                "--port" #$(number->string dashboard-port)
+                                "--api" #$(supervisor-api-url supervisor))
                           #:directory home
                           #:log-file log-file
                           #:environment-variables env))))
@@ -996,9 +1048,9 @@ did not report running within 30s; proceeding anyway~%"))
       (filter shepherd-service? services))))
 
 (define (home-gascity-shepherd-services config)
-  (gascity-validate-instances! (home-gascity-instances config))
-  (append-map instance-shepherd-services
-              (home-gascity-instances config)))
+  (gascity-validate-supervisors! (home-gascity-supervisors config))
+  (append-map supervisor-shepherd-services
+              (home-gascity-supervisors config)))
 
 
 ;;;
@@ -1022,12 +1074,14 @@ did not report running within 30s; proceeding anyway~%"))
           (service-extension home-files-service-type
                              home-gascity-files)))
    (description
-    "Multi-instance Gas City home service.  Each
-<gascity-instance-configuration> in (instances …) gets its own GC_HOME, a
-gascity-supervisor-<NAME> shepherd service running 'gc supervisor run',
-and a gascity-init-<NAME> one-shot that lays out cities, clones rigs,
-and reloads the supervisor.  Activation seeds ~/.dolt/config_global.json
-once per host (only when at least one instance uses (beads-provider 'bd)
-and ~/.gitconfig is also missing).")))
+    "Multi-supervisor Gas City home service.  Each
+<gascity-supervisor-configuration> in (supervisors …) gets its own
+GC_HOME, a gascity-supervisor-<NAME> shepherd service running 'gc
+supervisor run', and a gascity-init-<NAME> one-shot that lays out cities,
+clones rigs, and reloads the supervisor.  Host-level dolt identity comes
+from the top-level (dolt …) <gascity-dolt-configuration> record;
+activation seeds ~/.dolt/config_global.json once per host (only when at
+least one supervisor uses (beads-provider 'bd) and ~/.gitconfig is also
+missing).")))
 
 ;;; gascity.scm ends here
