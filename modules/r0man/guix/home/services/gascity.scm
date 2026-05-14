@@ -107,20 +107,13 @@
 ;;;
 ;;; Activation is a single home-activation-service-type gexp that:
 ;;;
-;;;   1. Calls `gc supervisor uninstall' to remove any leftover launchd
-;;;      plist or systemd user unit from a previous manual `gc
-;;;      supervisor install' (upstream's platform-correct sequence at
-;;;      cmd_supervisor_lifecycle.go:927-1048).  Wrapped in (catch ...)
-;;;      so a missing user dbus on Guix System does not abort
-;;;      reconfigure.  Skipped when GASCITY_NO_UNINSTALL=1.
-;;;
-;;;   2. Seeds ~/.dolt/config_global.json with the identity from
+;;;   1. Seeds ~/.dolt/config_global.json with the identity from
 ;;;      (home-gascity-dolt config), but only when at least one
 ;;;      supervisor uses (beads-provider 'bd) and neither
 ;;;      ~/.dolt/config_global.json nor ~/.gitconfig already exists
 ;;;      (dolt falls back to git config).
 ;;;
-;;;   3. Per-supervisor: mkdir GC_HOME and city dirs; write
+;;;   2. Per-supervisor: mkdir GC_HOME and city dirs; write
 ;;;      <gc-home>/supervisor.toml, <gc-home>/cities.toml, and managed
 ;;;      <city>/city.toml atomically (via .tmp + rename) so the
 ;;;      supervisor's patrol-tick os.ReadFile cannot see half-written
@@ -128,6 +121,11 @@
 ;;;      file-beads cities, drop <city>/.gc/file-beads-layout and
 ;;;      <city>/.gc/beads.json mirroring upstream's
 ;;;      bootstrapScopedFileProviderCityFS.
+;;;
+;;; If you previously used `gc supervisor install' (manual launchd or
+;;; systemd-user setup on macOS or foreign-distro Linux), run `gc
+;;; supervisor uninstall' once by hand before switching to this
+;;; service.
 ;;;
 ;;; The activation marker for "this city is guix-home managed" is the
 ;;; sidecar file <city>/.guix-home-managed — NOT a comment in
@@ -236,7 +234,11 @@ records."))
 rendered from this record on every reconfigure and a sidecar
 <city>/.guix-home-managed marker is dropped.  When false, the city is
 'gc init'ed once and never overwritten — runtime mutations like `gc agent
-add' persist."))
+add' persist.  Out-of-band edits to 'city.toml' — including those made
+by 'gc rig add' (which writes directly via writeCityConfigForEditFS at
+cmd_rig.go:494, bypassing the supervisor API) — are lost on the next
+'guix home reconfigure' when 'managed?' is #t.  Add rigs to this record
+in Scheme instead."))
   (provider             gascity-city-provider
                         (default #f)
                         (description "Optional [workspace] provider value
@@ -664,8 +666,6 @@ activation gexp.  All values are quoted into the gexp directly."
                        (srfi srfi-1)
                        (ice-9 match))
           (let* ((home (getenv "HOME"))
-                 (no-uninst? (string=? (or (getenv "GASCITY_NO_UNINSTALL") "")
-                                       "1"))
                  (write-atomic
                   (lambda (path content)
                     "Write CONTENT into PATH atomically by writing to
@@ -677,17 +677,7 @@ patrol-tick os.ReadFile cannot see half-written TOML."
                         (lambda (port) (display content port)))
                       (rename-file tmp path))))
                  (specs '#$specs))
-            ;; (1) Conflict guard, once per host.  Removes any leftover
-            ;; launchd plist or systemd user unit from a prior manual
-            ;; `gc supervisor install'.  The shepherd-managed `gc
-            ;; supervisor run' has no platform unit and is untouched.
-            (unless no-uninst?
-              (catch #t
-                (lambda ()
-                  (system* #$gc-bin "supervisor" "uninstall"))
-                (lambda _ #f)))
-
-            ;; (2) Dolt identity seed, once per host.  Skipped when no
+            ;; (1) Dolt identity seed, once per host.  Skipped when no
             ;; supervisor uses 'bd or when ~/.dolt or ~/.gitconfig already
             ;; exists.  Identity comes from (home-gascity-dolt config).
             #$(if any-bd?
@@ -707,7 +697,7 @@ patrol-tick os.ReadFile cannot see half-written TOML."
                              out)))))
                   #~#t)
 
-            ;; (3) Per-supervisor loop.
+            ;; (2) Per-supervisor loop.
             (for-each
              (lambda (spec)
                (let* ((name           (assoc-ref spec "name"))
@@ -990,13 +980,24 @@ did not report running within 30s; proceeding anyway~%"))
                               ;; (unmanaged cities, partial first runs,
                               ;; out-of-band `bd init'), the fresh-add
                               ;; guard (cmd_rig.go:308-321) errors with
-                              ;; "use --adopt".  Pass --adopt whenever
-                              ;; .beads/metadata.json exists; --adopt
-                              ;; requires it (cmd_rig.go:206-216) and is
-                              ;; benign when reAdd also fires.
+                              ;; "use --adopt".  Pass --adopt only when
+                              ;; BOTH .beads/metadata.json AND
+                              ;; .beads/config.yaml exist — --adopt
+                              ;; requires both (cmd_rig.go:357-366 reads
+                              ;; metadata.json and calls readBeadsPrefix
+                              ;; on config.yaml; a missing or empty
+                              ;; issue_prefix errors out).  A partial bd
+                              ;; init leaving only metadata.json would
+                              ;; otherwise trip --adopt and fail.  The
+                              ;; residual case (config.yaml present but
+                              ;; malformed) falls through to upstream's
+                              ;; error message.
                               (let* ((meta (string-append abs-rig
                                                           "/.beads/metadata.json"))
-                                     (argv (if (file-exists? meta)
+                                     (config (string-append abs-rig
+                                                            "/.beads/config.yaml"))
+                                     (argv (if (and (file-exists? meta)
+                                                    (file-exists? config))
                                                (list #$gc-bin "rig" "add"
                                                      "--adopt" abs-rig)
                                                (list #$gc-bin "rig" "add"
@@ -1007,10 +1008,14 @@ did not report running within 30s; proceeding anyway~%"))
                     ;; Trigger a reload so the supervisor re-reads
                     ;; cities.toml without waiting for the patrol tick.
                     ;; `gc supervisor reload' itself blocks up to 5 min
-                    ;; (cmd_supervisor.go:188); cap with `timeout 30 ...
-                    ;; || true' so a slow reconcile cannot pin the
-                    ;; one-shot.  The supervisor's 10-s patrol tick is
-                    ;; the fallback on timeout.
+                    ;; (supervisorReloadWaitTimeout, cmd_supervisor.go:287;
+                    ;; reload-socket handler at :381-394); cap with
+                    ;; `timeout 30 …'.  run returns (pid . status) but
+                    ;; its value is discarded — the trailing #t at the
+                    ;; end of this start thunk is what shepherd sees, so
+                    ;; a timeout(1) exit (124) does not fail this
+                    ;; one-shot.  The supervisor's 10-s patrol tick
+                    ;; surfaces the new state regardless.
                     (run home (list #$timeout-bin "30"
                                     #$gc-bin "supervisor" "reload"))
                     #t))))

@@ -75,7 +75,7 @@ strings.FieldsFunc with the predicate (r == '-' || r == '_')."
 
 (define (derive-beads-prefix name)
   "Scheme port of gascity's DeriveBeadsPrefix
-(internal/config/config.go:728-754).  KEEP IN SYNC with upstream — if
+(internal/config/config.go:806-842).  KEEP IN SYNC with upstream — if
 the upstream algorithm changes, gc rig add's reAddNeedsConfigWrite
 fires on every shepherd start.  Algorithm:
   1. Strip -py / -go suffixes.

@@ -249,13 +249,16 @@ under /gnu/store with a hashed prefix."
                                            "http://127.0.0.1:9372"))
 
           ;; gascity-init's `gc rig add' invocation passes --adopt
-          ;; conditionally on <rig>/.beads/metadata.json existing
-          ;; (services/gascity.scm:957-964; closes guix-home-7fo).
+          ;; conditionally on BOTH <rig>/.beads/metadata.json AND
+          ;; <rig>/.beads/config.yaml existing
+          ;; (services/gascity.scm:997-1003; closes guix-home-7fo,
+          ;; guix-home-cfx).
           (test-assert
               "gascity-init service body passes --adopt for populated rigs"
             (store-shepherd-file-contains? "shepherd-gascity-init-"
                                            "--adopt"
-                                           "/.beads/metadata.json"))
+                                           "/.beads/metadata.json"
+                                           "/.beads/config.yaml"))
 
           ;; supervisor.toml carries the user-declared port for test2.
           (test-assert-file-exists
