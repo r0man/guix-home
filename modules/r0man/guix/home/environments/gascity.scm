@@ -25,15 +25,30 @@
 
 ;;; Commentary:
 ;;;
-;;; Single-supervisor container environment for home-gascity-service-type:
+;;; Single-supervisor container environment with two cities:
 ;;;
-;;;   gascity-supervisor-downtown   (bd, has the beads.el rig)
-;;;   gascity-init-downtown         (one-shot bootstrap)
+;;;   gascity-supervisor-home   (bd, gc-home .gc-home, port 28371)
+;;;   gascity-init-home         (one-shot bootstrap)
 ;;;
-;;; 'downtown' — managed, default 'bd' beads, gc-home .gc-downtown,
-;;;              supervisor on 28371 (non-default: the container runs
-;;;              with --network and the host typically binds 8372 for
-;;;              its own gascity supervisor).  Hosts the beads.el rig.
+;;; Cities (both under the shared 'home' supervisor):
+;;;
+;;;   ~/cities/minimal  — minimal template: just [workspace] + [beads].
+;;;                       Carries the beads.el rig (this is the "where
+;;;                       code work happens" city).
+;;;   ~/cities/gastown  — gastown template: provider = "claude" +
+;;;                       global_fragments + a [daemon] block (the
+;;;                       latter two go through (extra-toml …) because
+;;;                       the service does not model them as record
+;;;                       fields).  Pack assets (packs/gastown/,
+;;;                       packs/maintenance/, packs/dolt/) are NOT
+;;;                       provisioned — they live in the upstream
+;;;                       gastownhall/gascity repo's examples/gastown/
+;;;                       and have to be vendored separately if real
+;;;                       gastown agents are desired.
+;;;
+;;; Supervisor port 28371 is non-default: the container runs with
+;;; --network and the host typically binds 8372 for its own gascity
+;;; supervisor.
 ;;;
 ;;; Usage:
 ;;;   modules/r0man/guix/home/files/bin/container-gascity
@@ -83,19 +98,47 @@
                     (supervisors
                      (list
                       (gascity-supervisor-configuration
-                       (name 'downtown)
-                       (gc-home ".gc-downtown")
+                       (name 'home)
+                       (gc-home ".gc-home")
                        (supervisor-port 28371)
                        (cities
-                        (list (gascity-city-configuration
-                               (path (string-append (getenv "HOME")
-                                                    "/cities/downtown"))
-                               (rigs
-                                (list (gascity-rig-configuration
-                                       (path "rigs/beads.el")
-                                       (git-url "https://github.com/r0man/beads.el")
-                                       (branch "main")
-                                       (depth 1)))))))))))))
+                        (list
+                         ;; Minimal template: [workspace] + [beads]
+                         ;; only.  Hosts the beads.el rig — the working
+                         ;; city where actual code lives.
+                         (gascity-city-configuration
+                          (name "minimal")
+                          (path (string-append (getenv "HOME")
+                                               "/cities/minimal"))
+                          (rigs
+                           (list (gascity-rig-configuration
+                                  (path "rigs/beads.el")
+                                  (git-url "https://github.com/r0man/beads.el")
+                                  (branch "main")
+                                  (depth 1)))))
+                         ;; Gastown template: provider = "claude" plus
+                         ;; a [daemon] block via (extra-toml …) — the
+                         ;; only gastown-specific knob we can express
+                         ;; without extending the service record (the
+                         ;; example's `global_fragments' field belongs
+                         ;; inside [workspace] and the service does
+                         ;; not yet expose a hook for that — see
+                         ;; examples/gastown/city.toml in the
+                         ;; gastownhall/gascity repo for the full
+                         ;; template).
+                         (gascity-city-configuration
+                          (name "gastown")
+                          (path (string-append (getenv "HOME")
+                                               "/cities/gastown"))
+                          (provider "claude")
+                          (extra-toml "\
+[daemon]
+patrol_interval = \"30s\"
+max_restarts = 5
+restart_window = \"1h\"
+shutdown_timeout = \"5s\"
+formula_v2 = true
+"))))))))))
             home-tmux-services))))
 
 gascity-home-environment

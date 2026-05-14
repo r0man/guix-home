@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 # Run the gascity home environment inside a Guix container with shared
-# state for the primary supervisor and X11/Wayland display forwarding.
+# state for the home supervisor and X11/Wayland display forwarding.
 #
 # The container env (modules/r0man/guix/home/environments/gascity.scm)
-# defines three supervisors — downtown, outskirts, harbor — but only
-# downtown's gc-home is mounted from the host.  outskirts/harbor run
-# with container-overlay-only state and are reset each container exit
-# by design (they exist to exercise alternative gascity code paths:
-# managed? #f and file-beads + dashboard respectively, and their
-# state is short-lived demo data).  The shared $HOME/cities root means
-# every supervisor's CITIES are still persistent on the host even
-# though their .gc-* runtime state is not.
+# defines one supervisor named 'home' (gc-home .gc-home) that manages
+# two cities — 'minimal' and 'gastown'.  The supervisor's gc-home and
+# the shared $HOME/cities root are mounted from the host so both
+# cities (and the supervisor's cities.toml / supervisor.sock / dolt
+# database) persist across container invocations.
 #
 # Pass `-- COMMAND ARGS...' to launch a graphical (or any) program.
 # DISPLAY / WAYLAND_DISPLAY / XAUTHORITY are forwarded.  The container's
@@ -21,18 +18,17 @@
 set -euo pipefail
 
 GASCITY_MODULE="modules/r0man/guix/home/environments/gascity.scm"
-# Downtown is the only supervisor whose gc-home is host-backed (the
-# busy bd-driven hub with the beads.el rig — see the env's commentary).
-DOWNTOWN_GC_HOME="$HOME/.gc-downtown"
+# Matches (gc-home ".gc-home") on the sole supervisor in the env.
+HOME_GC_HOME="$HOME/.gc-home"
 CITIES_ROOT="$HOME/cities"
 CLAUDE_DIR="$HOME/.claude"
 
 # Ensure required directories exist
-mkdir -p "$DOWNTOWN_GC_HOME" "$CITIES_ROOT"
+mkdir -p "$HOME_GC_HOME" "$CITIES_ROOT"
 
 # Build container arguments
 ARGS=(
-    --share="$DOWNTOWN_GC_HOME"
+    --share="$HOME_GC_HOME"
     --share="$CITIES_ROOT"
 )
 
