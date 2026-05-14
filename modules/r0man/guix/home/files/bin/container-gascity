@@ -1,20 +1,38 @@
 #!/usr/bin/env bash
-# Run the gascity home environment inside a Guix container with display
-# forwarding and shared GC_HOME / cities root.
+# Run the gascity home environment inside a Guix container with shared
+# state for the primary supervisor and X11/Wayland display forwarding.
+#
+# The container env (modules/r0man/guix/home/environments/gascity.scm)
+# defines three supervisors — downtown, outskirts, harbor — but only
+# downtown's gc-home is mounted from the host.  outskirts/harbor run
+# with container-overlay-only state and are reset each container exit
+# by design (they exist to exercise alternative gascity code paths:
+# managed? #f and file-beads + dashboard respectively, and their
+# state is short-lived demo data).  The shared $HOME/cities root means
+# every supervisor's CITIES are still persistent on the host even
+# though their .gc-* runtime state is not.
+#
+# Pass `-- COMMAND ARGS...' to launch a graphical (or any) program.
+# DISPLAY / WAYLAND_DISPLAY / XAUTHORITY are forwarded.  The container's
+# XDG_RUNTIME_DIR is the canonical /run/user/1000 (guix's hardcoded
+# guest UID) backed by a private writable host dir, so the container's
+# user shepherd does not collide with the host's.
 
 set -euo pipefail
 
 GASCITY_MODULE="modules/r0man/guix/home/environments/gascity.scm"
-GC_HOME_TEST="$HOME/.gc-test"
+# Downtown is the only supervisor whose gc-home is host-backed (the
+# busy bd-driven hub with the beads.el rig — see the env's commentary).
+DOWNTOWN_GC_HOME="$HOME/.gc-downtown"
 CITIES_ROOT="$HOME/cities"
 CLAUDE_DIR="$HOME/.claude"
 
 # Ensure required directories exist
-mkdir -p "$GC_HOME_TEST" "$CITIES_ROOT"
+mkdir -p "$DOWNTOWN_GC_HOME" "$CITIES_ROOT"
 
 # Build container arguments
 ARGS=(
-    --share="$GC_HOME_TEST"
+    --share="$DOWNTOWN_GC_HOME"
     --share="$CITIES_ROOT"
 )
 
@@ -33,14 +51,43 @@ if [[ -n "${SSH_AUTH_SOCK:-}" && -S "$SSH_AUTH_SOCK" ]]; then
     ARGS+=(--expose="$SSH_AUTH_SOCK")
 fi
 
-# Wayland display socket
-XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-if [[ -n "${WAYLAND_DISPLAY:-}" && -d "$XDG_RUNTIME_DIR" ]]; then
-    ARGS+=(--share="$XDG_RUNTIME_DIR")
+# Container XDG_RUNTIME_DIR.  Two non-obvious constraints rule out the
+# straightforward approaches:
+#   - sharing the host's /run/user/$UID collides with the host user
+#     shepherd (it binds shepherd/socket inside it; `herd' in the
+#     container would talk to it instead of the gascity supervisor);
+#   - exposing only individual files into /run/user/$UID leaves the
+#     directory on the container's root tmpfs, which becomes read-only
+#     after pivot-root (gnu/build/linux-container.scm) — the container
+#     shepherd then can't mkdir shepherd/ inside it.
+# Solution: remap a fresh writable host dir AT the canonical container
+# path /run/user/1000.  Guix's spawn-home-container hardcodes the guest
+# UID to 1000 (guix/scripts/home.scm:276,374), so /run/user/1000 is the
+# in-container path on-first-login and apps fall back to via getuid().
+# Wipe stale state on each invocation so on-first-login re-fires and
+# stale shepherd sockets do not block startup.  Keep this dir under
+# XDG_CACHE_HOME — NOT inside a gascity gc-home — so it does not
+# entangle shepherd's IPC state with a supervisor's persistent state.
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/container-gascity"
+GASCITY_RUNTIME_DIR="$CACHE_DIR/runtime"
+CONTAINER_RUNTIME_DIR="/run/user/1000"
+mkdir -p "$CACHE_DIR"
+rm -rf "$GASCITY_RUNTIME_DIR"
+mkdir -p "$GASCITY_RUNTIME_DIR"
+ARGS+=(--share="$GASCITY_RUNTIME_DIR=$CONTAINER_RUNTIME_DIR")
+
+# Wayland display socket — layer the host's wayland socket on top of
+# the writable canonical runtime dir at the matching basename so
+# $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY resolves inside the container.
+if [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+    HOST_WAYLAND="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/$WAYLAND_DISPLAY"
+    [[ -S "$HOST_WAYLAND" ]] && \
+        ARGS+=(--share="$HOST_WAYLAND=$CONTAINER_RUNTIME_DIR/$WAYLAND_DISPLAY")
 fi
 
 # X11 display
 if [[ -n "${DISPLAY:-}" ]]; then
+    [[ -d /tmp/.X11-unix ]] && ARGS+=(--share=/tmp/.X11-unix)
     [[ -n "${XAUTHORITY:-}" && -f "$XAUTHORITY" ]] && ARGS+=(--expose="$XAUTHORITY")
 fi
 
@@ -48,10 +95,53 @@ fi
 GUIX_CURRENT="$HOME/.config/guix/current"
 [[ -e "$GUIX_CURRENT" ]] && ARGS+=(--expose="$GUIX_CURRENT")
 
+# When the user passed `-- COMMAND ARGS...', rewrite the post-`--' args
+# into a single bash-script argument that:
+#   1. `export's the forwarded display vars so they persist for both
+#      the activation chain (~/.bash_profile -> ~/.profile ->
+#      ~/.guix-home/on-first-login) AND the user's command.  A bare
+#      `VAR=val cmd' env-prefix would only apply to one simple command,
+#      leaving XDG_RUNTIME_DIR unset when on-first-login runs, which
+#      gates the user shepherd launch.
+#   2. invokes `~/.guix-home/on-first-login' explicitly so the gascity
+#      shepherd starts even if some custom bash_profile in the home env
+#      shadows the default's `source ~/.profile' line.
+#   3. exec's the user's command (preserving argv with %q quoting).
+# `guix home container' joins post-`--' args with a single space and
+# passes the result to `bash -c' (guix/scripts/home.scm —
+# spawn-home-container), so a single pre-built script string round-trips
+# through string-join unchanged.
+build_wrapper_script() {
+    local script=""
+    [[ -n "${DISPLAY:-}"         ]] && script+="export DISPLAY=$(printf '%q' "$DISPLAY"); "
+    [[ -n "${WAYLAND_DISPLAY:-}" ]] && script+="export WAYLAND_DISPLAY=$(printf '%q' "$WAYLAND_DISPLAY"); "
+    [[ -n "${XAUTHORITY:-}"      ]] && script+="export XAUTHORITY=$(printf '%q' "$XAUTHORITY"); "
+    script+="export XDG_RUNTIME_DIR=$CONTAINER_RUNTIME_DIR; "
+    script+='[ -x "$HOME/.guix-home/on-first-login" ] && "$HOME/.guix-home/on-first-login"; '
+    script+="exec"
+    local arg
+    for arg in "$@"; do
+        script+=" $(printf '%q' "$arg")"
+    done
+    printf '%s' "$script"
+}
+
+PASSTHROUGH=("$@")
+for i in "${!PASSTHROUGH[@]}"; do
+    if [[ "${PASSTHROUGH[$i]}" == "--" ]]; then
+        head=("${PASSTHROUGH[@]:0:i}")
+        tail=("${PASSTHROUGH[@]:$((i + 1))}")
+        if (( ${#tail[@]} > 0 )); then
+            PASSTHROUGH=("${head[@]}" -- "$(build_wrapper_script "${tail[@]}")")
+        fi
+        break
+    fi
+done
+
 exec guix home -L modules container \
      --expose=/gnu/store \
      --share=/var/guix/profiles \
      --expose=/var/guix/daemon-socket \
      --network \
      "${ARGS[@]}" \
-     "$GASCITY_MODULE" "$@"
+     "$GASCITY_MODULE" "${PASSTHROUGH[@]}"
