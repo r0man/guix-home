@@ -1,0 +1,26 @@
+{
+  "skill_name": "clog",
+  "evals": [
+    {
+      "id": 0,
+      "name": "live-counter-dashboard",
+      "prompt": "I want a small CLOG app: a single-page browser dashboard with a big numeric display that counts up from 0, incrementing every second. Add two buttons: 'Pause/Resume' and 'Reset'. State must be per browser tab — two tabs in the same browser should count independently. Give me the complete Common Lisp source as one file named live-counter.lisp that I can `(load)` and call `(my-counter:start)` on. Use port 8080. Use idiomatic CLOG (favour the declarative macro for building the UI where it helps readability).",
+      "expected_output": "A single Lisp file using CLOG. Uses connection-data-item (or equivalent) so per-tab state is isolated. Has a background thread or in-handler loop that increments a counter every second and is guarded with validp so it stops when the tab closes. Pause/Resume and Reset buttons work correctly via a flag in connection-data-item. Uses with-clog-create or bare create-* sensibly.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "clog-gui-admin",
+      "prompt": "Build a small CLOG-GUI admin tool as one Common Lisp file named admin.lisp. It should have a menu bar with File (with items New, Open, Quit) and Help (with item About). 'New' opens a floating gui window containing a form with three fields — name, email, and a multi-line message — plus a Submit button. 'About' opens a modal alert dialog. Submitting the form shows a green success toast that times out after 3 seconds and shows the submitted name. Use clog-gui. Provide `(admin:start)` to launch on port 8080. Build the form with the declarative `with-clog-create` macro.",
+      "expected_output": "Single Lisp file. Uses :clog-gui in the package's :use. Calls clog-gui-initialize on the body before any gui-* widgets. Menubar built with create-gui-menu-bar / create-gui-menu-drop-down / create-gui-menu-item. 'New' creates a clog-gui-window and puts the form inside (window-content win), built with with-clog-create. 'About' uses alert-dialog. Submit handler uses alert-toast with :color-class \"w3-green\" and :time-out 3.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "clog-web-landing-page",
+      "prompt": "Build a CLOG-Web responsive landing page for a fictional company 'Litmus' as one Common Lisp file named litmus.lisp. The page needs: (1) a sidebar drawer (hidden by default, animates in from the right) with a Close item and three nav links — Pricing, Docs, Sign in; (2) a hero compositor at the top with a placeholder image (https://placehold.co/1200x300), an overlaid title 'Litmus — Lisp meets the web' in white, and a hamburger button at the top-right that opens the sidebar; (3) below the hero, a 3-column grid with three cards (Speed / Reliability / Open Source) each containing a short blurb; (4) a yellow panel at the very bottom announcing a beta program. Use clog-web. Provide `(litmus:start)` on port 8080.",
+      "expected_output": "Single Lisp file. Uses :clog-web in the package's :use. Calls clog-web-initialize on the body before any web-* widgets. Sidebar created with create-web-sidebar with :hidden t and :class containing w3-animate-right. Compositor with create-web-compositor, with composite-top-right for the button and composite-middle for the title. 3-column grid via create-web-row + 3x create-web-container :column-size :third. Bottom panel via create-web-panel with :class containing w3-yellow.",
+      "files": []
+    }
+  ]
+}
