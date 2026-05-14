@@ -61,6 +61,20 @@
 ;;;   * `setup-environment' exports GC_HOME (uses the primary
 ;;;     supervisor's gc-home, here `.gc-main').
 ;;;
+;;; Runtime assertions (closes guix-home-2wm / cbcbfcd):
+;;;
+;;;   * Provision `/run/user/<alice-uid>' and spawn alice's user
+;;;     shepherd manually (the minimal test OS lacks elogind /
+;;;     PAM-systemd, so it is NOT auto-started at boot); IPC socket
+;;;     appears under `/run/user/<uid>/shepherd/socket'.
+;;;   * `herd start gascity-supervisor-test2' succeeds.
+;;;   * `gc supervisor run' bound `~/.gc-test2/supervisor.sock' —
+;;;     proves shepherd → fork+exec-command → gc → bind() actually
+;;;     reached the listening state.
+;;;   * `herd start gascity-init-test2' succeeds (one-shot returned #t,
+;;;     exercising the full `gc rig add' / `gc supervisor reload' code
+;;;     path against a live supervisor).
+;;;
 ;;; A second exported test, `%test-home-gascity-with-git', exercises
 ;;; the negative branch of the dolt-seed short-circuit
 ;;; (services/gascity.scm activation step (2)): when
@@ -323,6 +337,38 @@ under /gnu/store with a hashed prefix."
            "/home/alice/.config/gascity/completions/gc.fish"
            marionette)
 
+          ;; Runtime ordering: drive alice's user shepherd manually (the
+          ;; minimal test OS lacks elogind / PAM-systemd, so it is NOT
+          ;; auto-started at boot) and prove the gascity-supervisor-test2
+          ;; shepherd service brings `gc supervisor run' all the way to
+          ;; bind() — `~/.gc-test2/supervisor.sock' is the only signal
+          ;; that distinguishes "shepherd fork-execed gc" from "gc
+          ;; actually opened its IPC socket".  Closes guix-home-2wm /
+          ;; cbcbfcd's "runtime ordering" partial.
+          (test-assert-user-shepherd-up "alice" marionette)
+
+          (test-assert-user-shepherd-service-started
+           "alice" 'gascity-supervisor-test2 marionette)
+
+          ;; Load-bearing runtime assertion: the supervisor reached
+          ;; listening state.  Wait up to 120 s — `gc supervisor run'
+          ;; opens a dolt database and binds its UDS, which on a cold VM
+          ;; can take a few seconds.
+          (test-assert-wait-for-file-exists
+           "alice ~/.gc-test2/supervisor.sock bound by gascity-supervisor-test2"
+           "/home/alice/.gc-test2/supervisor.sock"
+           marionette
+           #:timeout 120)
+
+          ;; gascity-init-test2 is a one-shot whose thunk waits for the
+          ;; supervisor, runs `gc rig add' for each configured rig, and
+          ;; fires `gc supervisor reload' (timeout-protected at 30 s).
+          ;; A zero exit from `herd start' means the thunk returned #t,
+          ;; exercising the full init code path against a live
+          ;; supervisor.
+          (test-assert-user-shepherd-service-started
+           "alice" 'gascity-init-test2 marionette)
+
           (test-end))))
   (gexp->derivation "r0man-home-gascity-test" test))
 
@@ -336,7 +382,11 @@ multi-supervisor shepherd provision suffixing, atomic supervisor.toml
 write with the user-declared port, sidecar marker file for managed
 cities, rendered city.toml [beads]/[packs]/[[agent]] sections, and
 top-level (dolt …) propagation into ~/.dolt/config_global.json with
-strict keyed-substring assertions.")
+strict keyed-substring assertions.  Concludes with runtime assertions
+that manually drive alice's user shepherd (the minimal OS has no
+elogind / PAM-systemd, so it is NOT auto-started), `herd start' both
+gascity-supervisor-test2 and gascity-init-test2, and prove
+~/.gc-test2/supervisor.sock actually binds at runtime.")
    (value (run-home-gascity-test))))
 
 
