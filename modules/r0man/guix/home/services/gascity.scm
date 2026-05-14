@@ -143,12 +143,15 @@
 ;;; runs side effects (hooks/routes/templates) without rewriting
 ;;; city.toml.
 ;;;
-;;; GC_HOME exported into the user's shell points at the primary
-;;; supervisor's gc-home (the first entry in (supervisors …)).
-;;; Multi-supervisor setups must `GC_HOME=$HOME/.gc-other gc
-;;; supervisor status' to reach non-primary supervisors.  Documented
-;;; inline so future maintainers do not try to "fix" by emitting
-;;; multiple GC_HOME values.
+;;; GC_HOME exported into the user's shell points at the first
+;;; supervisor's gc-home by default.  Override with (default-gc-home
+;;; ".gc-other") at the home-gascity-configuration level when you have
+;;; multiple supervisors and want the shell to drive one that is not
+;;; the first; the value must match one of the supervisors' (gc-home
+;;; …) strings or reconfigure fails.  Multi-supervisor setups can also
+;;; `GC_HOME=$HOME/.gc-other gc supervisor status' for ad-hoc reach;
+;;; we intentionally do not emit multiple GC_HOME values (downstream
+;;; tools read a single env var).
 ;;;
 ;;; Code:
 
@@ -359,7 +362,15 @@ overriding is strongly recommended in any real deployment."))
   (supervisors home-gascity-supervisors
                (description "Required, non-empty list of
 <gascity-supervisor-configuration> records.  Empty raises a configuration
-error before any derivation work.")))
+error before any derivation work."))
+  (default-gc-home home-gascity-default-gc-home
+                   (default #f)
+                   (description "Optional gc-home string (relative to
+$HOME, e.g. \".gc-other\") to export as GC_HOME.  Must match one of the
+supervisors' (gc-home …) values — mismatches raise a configuration
+error at reconfigure time.  When #f (default), GC_HOME falls back to
+the first supervisor's gc-home; set this when you have multiple
+supervisors and want the shell to drive one that is not the first.")))
 
 
 ;;;
@@ -478,6 +489,26 @@ Also rejects duplicate sanitized supervisor names."
                    (delete-duplicates dups)))))
       (gascity-supervisor-cities supervisor)))
    supervisors))
+
+(define (home-gascity-validate-configuration! config)
+  "Run all configuration-level invariants before any derivation work:
+the supervisor uniqueness rules in 'gascity-validate-supervisors!', plus
+the (default-gc-home …) match against the supervisors' gc-home values."
+  (let ((supervisors (home-gascity-supervisors config))
+        (explicit    (home-gascity-default-gc-home config)))
+    (gascity-validate-supervisors! supervisors)
+    (when explicit
+      (unless (string? explicit)
+        (error 'home-gascity-configuration
+               "default-gc-home must be a string (gc-home relative to $HOME) or #f"
+               explicit))
+      (unless (find (lambda (s)
+                      (string=? (gascity-supervisor-gc-home s) explicit))
+                    supervisors)
+        (error 'home-gascity-configuration
+               "default-gc-home does not match any supervisor's gc-home"
+               explicit
+               (map gascity-supervisor-gc-home supervisors))))))
 
 
 ;;;
@@ -772,13 +803,16 @@ remove the file or set (managed? #f)" path))
 ;;;
 
 (define (home-gascity-environment-variables config)
-  "Export GC_HOME pointing at the primary supervisor's gc-home.
-Multi-supervisor setups must `GC_HOME=$HOME/.gc-other gc supervisor status'
-to reach non-primary supervisors; see the module commentary above for why
-we do not emit multiple GC_HOME values."
-  (let ((primary (first (home-gascity-supervisors config))))
-    `(("GC_HOME" . ,(string-append "$HOME/"
-                                   (gascity-supervisor-gc-home primary))))))
+  "Export GC_HOME pointing at (default-gc-home …) when set, otherwise
+at the first supervisor's gc-home.  Multi-supervisor setups can also
+`GC_HOME=$HOME/.gc-other gc supervisor status' for ad-hoc reach; see
+the module commentary above for why we do not emit multiple GC_HOME
+values."
+  (let* ((supervisors (home-gascity-supervisors config))
+         (explicit    (home-gascity-default-gc-home config))
+         (gc-home     (or explicit
+                          (gascity-supervisor-gc-home (first supervisors)))))
+    `(("GC_HOME" . ,(string-append "$HOME/" gc-home)))))
 
 
 ;;;
@@ -1053,7 +1087,7 @@ did not report running within 30s; proceeding anyway~%"))
       (filter shepherd-service? services))))
 
 (define (home-gascity-shepherd-services config)
-  (gascity-validate-supervisors! (home-gascity-supervisors config))
+  (home-gascity-validate-configuration! config)
   (append-map supervisor-shepherd-services
               (home-gascity-supervisors config)))
 
