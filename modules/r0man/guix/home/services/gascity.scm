@@ -49,6 +49,7 @@
             gascity-city-managed?
             gascity-city-provider
             gascity-city-bootstrap-profile
+            gascity-city-init-from
             gascity-city-packs
             gascity-city-agents
             gascity-city-providers
@@ -251,6 +252,16 @@ agent transport (claude/codex/gemini)."))
                         (default 'minimal)
                         (description "Reserved for future use; currently
 unused by the rendered city.toml."))
+  (init-from            gascity-city-init-from
+                        (default #f)
+                        (description "Optional template-city directory: a
+file-like (e.g. (file-append gascity-next \"/share/gascity/examples/
+gastown\")) or a string path.  When set and the city's city.toml does
+not yet exist, gascity-init bootstraps the city ONCE via `gc init
+--from <init-from> <path>', deep-copying the template's
+packs/agents/assets.  Requires (managed? #f): a managed city.toml
+render would clobber the copied template, so the two are mutually
+exclusive and validated at configuration time."))
   (packs                gascity-city-packs
                         (default '())
                         (description "List of <gascity-pack-configuration>
@@ -420,6 +431,8 @@ the four uniqueness invariants:
   (c) dashboard-port values must be unique among (dashboard? #t) supervisors.
   (d) within each city, derived rig names (basename-of-path or explicit
       (name …)) must be unique.
+  (e) a city with (init-from …) set must also have (managed? #f) — a
+      managed city.toml render would clobber the copied template.
 Also rejects duplicate sanitized supervisor names."
   (when (null? supervisors)
     (error 'home-gascity-configuration
@@ -486,7 +499,13 @@ Also rejects duplicate sanitized supervisor names."
             (error 'home-gascity-configuration
                    "within a city, two rigs share the same derived name"
                    (gascity-city-path city)
-                   (delete-duplicates dups)))))
+                   (delete-duplicates dups)))
+          ;; (e) init-from implies (managed? #f).
+          (when (and (gascity-city-init-from city)
+                     (gascity-city-managed? city))
+            (error 'home-gascity-configuration
+                   "a city with (init-from …) must also set (managed? #f)"
+                   (gascity-city-path city)))))
       (gascity-supervisor-cities supervisor)))
    supervisors))
 
@@ -890,6 +909,18 @@ dashboard? is true) long-running gascity-dashboard-<NAME>."
                                                (or (gascity-rig-depth rig) 1)))
                                        (gascity-city-rigs city))))
                           cities))
+         ;; (city-path . template-store-path) for cities with
+         ;; (init-from …) set.  Built as a gexp list — NOT folded into
+         ;; city-specs — so the file-like template sources are lowered
+         ;; via #$ rather than embedded as record literals by the
+         ;; '#$city-specs quoting.
+         (init-from-alist
+          #~(list #$@(filter-map
+                      (lambda (c)
+                        (and (gascity-city-init-from c)
+                             #~(cons #$(gascity-city-path c)
+                                     #$(gascity-city-init-from c))))
+                      cities)))
          (gc-bin     (file-append gascity-next "/bin/gc"))
          (git-bin    (file-append git "/bin/git"))
          (timeout-bin(file-append coreutils "/bin/timeout"))
@@ -976,10 +1007,23 @@ did not report running within 30s; proceeding anyway~%"))
                               (city-toml (string-append city-path
                                                         "/city.toml")))
                          (mkdir-p city-path)
-                         ;; Unmanaged cities get a one-time `gc init'.
-                         (when (and (not managed?)
-                                    (not (file-exists? city-toml)))
-                           (run home (list #$gc-bin "init" city-path)))
+                         ;; One-time bootstrap when city.toml is absent:
+                         ;;  - (init-from …) set → deep-copy the
+                         ;;    template via `gc init --from <src>'
+                         ;;    (validation guarantees managed? is #f);
+                         ;;  - else unmanaged → bare `gc init'.
+                         ;; Managed cities get their city.toml from the
+                         ;; activation render, so no `gc init' at all.
+                         (let ((src (assoc-ref #$init-from-alist
+                                                city-path)))
+                           (cond
+                            ((and src (not (file-exists? city-toml)))
+                             (run home (list #$gc-bin "init" "--from"
+                                             src city-path)))
+                            ((and (not managed?)
+                                  (not (file-exists? city-toml)))
+                             (run home (list #$gc-bin "init" city-path)))
+                            (else #t)))
                          (for-each
                           (lambda (rig-spec)
                             (let* ((rig-path (list-ref rig-spec 0))

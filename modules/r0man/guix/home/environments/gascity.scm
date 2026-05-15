@@ -21,7 +21,8 @@
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services gascity)
   #:use-module (r0man guix home tmux)
-  #:use-module (r0man guix packages claude))
+  #:use-module (r0man guix packages claude)
+  #:use-module (r0man guix packages task-management))
 
 ;;; Commentary:
 ;;;
@@ -34,17 +35,21 @@
 ;;;
 ;;;   ~/cities/minimal  — minimal template: just [workspace] + [beads].
 ;;;                       Carries the beads.el rig (this is the "where
-;;;                       code work happens" city).
-;;;   ~/cities/gastown  — gastown template: provider = "claude" +
-;;;                       global_fragments + a [daemon] block (the
-;;;                       latter two go through (extra-toml …) because
-;;;                       the service does not model them as record
-;;;                       fields).  Pack assets (packs/gastown/,
-;;;                       packs/maintenance/, packs/dolt/) are NOT
-;;;                       provisioned — they live in the upstream
-;;;                       gastownhall/gascity repo's examples/gastown/
-;;;                       and have to be vendored separately if real
-;;;                       gastown agents are desired.
+;;;                       code work happens" city).  Managed: city.toml
+;;;                       is rendered from this record every reconfigure.
+;;;   ~/cities/gastown  — full-fidelity gastown city, bootstrapped ONCE
+;;;                       from the upstream example vendored in the
+;;;                       gascity-next package at
+;;;                       <pkg>/share/gascity/examples/gastown via
+;;;                       (init-from …) → `gc init --from'.  The whole
+;;;                       packs/{gastown,maintenance} subtree, pack.toml,
+;;;                       agents and assets are deep-copied, so the real
+;;;                       gastown agents (mayor, deacon, boot, witness,
+;;;                       refinery, polecat, crew) and the upstream
+;;;                       city.toml (provider = "claude", [daemon],
+;;;                       global_fragments inside [workspace]) all come
+;;;                       across verbatim.  (managed? #f): the copied
+;;;                       city is runtime-mutable and never overwritten.
 ;;;
 ;;; Supervisor port 28371 is non-default: the container runs with
 ;;; --network and the host typically binds 8372 for its own gascity
@@ -116,29 +121,23 @@
                                   (git-url "https://github.com/r0man/beads.el")
                                   (branch "main")
                                   (depth 1)))))
-                         ;; Gastown template: provider = "claude" plus
-                         ;; a [daemon] block via (extra-toml …) — the
-                         ;; only gastown-specific knob we can express
-                         ;; without extending the service record (the
-                         ;; example's `global_fragments' field belongs
-                         ;; inside [workspace] and the service does
-                         ;; not yet expose a hook for that — see
-                         ;; examples/gastown/city.toml in the
-                         ;; gastownhall/gascity repo for the full
-                         ;; template).
+                         ;; Full-fidelity gastown city: bootstrapped
+                         ;; once from the upstream example vendored in
+                         ;; the gascity-next package.  gc init --from
+                         ;; deep-copies packs/{gastown,maintenance},
+                         ;; pack.toml, agents and assets, and brings the
+                         ;; upstream city.toml across verbatim
+                         ;; (provider = "claude", [daemon],
+                         ;; global_fragments).  (managed? #f) keeps the
+                         ;; copied city runtime-mutable.
                          (gascity-city-configuration
                           (name "gastown")
                           (path (string-append (getenv "HOME")
                                                "/cities/gastown"))
-                          (provider "claude")
-                          (extra-toml "\
-[daemon]
-patrol_interval = \"30s\"
-max_restarts = 5
-restart_window = \"1h\"
-shutdown_timeout = \"5s\"
-formula_v2 = true
-"))))))))))
+                          (managed? #f)
+                          (init-from
+                           (file-append gascity-next
+                            "/share/gascity/examples/gastown")))))))))))
             home-tmux-services))))
 
 gascity-home-environment
