@@ -259,9 +259,19 @@ file-like (e.g. (file-append gascity-next \"/share/gascity/examples/
 gastown\")) or a string path.  When set and the city's city.toml does
 not yet exist, gascity-init bootstraps the city ONCE via `gc init
 --from <init-from> <path>', deep-copying the template's
-packs/agents/assets.  Requires (managed? #f): a managed city.toml
-render would clobber the copied template, so the two are mutually
-exclusive and validated at configuration time."))
+packs/agents/assets, then restores owner-write on the copied surface
+(templates shipped from the read-only Guix store land 0444; the live
+.beads/.gc dolt runtime is left untouched).  Requires (managed? #f): a
+managed city.toml render would clobber the copied template, so the two
+are mutually exclusive and validated at configuration time.  Caveat:
+`gc init --from' re-stamps the workspace name into city.toml WHILE the
+just-copied file is still 0444, so that one rewrite logs a harmless
+\"permission denied\".  This is a no-op when the template's [workspace]
+name already equals (basename PATH) — the recommended setup, and the
+case for the bundled examples (examples/gastown → ~/cities/gastown).
+If you point (init-from …) at a template whose workspace name differs
+from the target directory's basename, the name will not be
+re-stamped."))
   (packs                gascity-city-packs
                         (default '())
                         (description "List of <gascity-pack-configuration>
@@ -924,6 +934,8 @@ dashboard? is true) long-running gascity-dashboard-<NAME>."
          (gc-bin     (file-append gascity-next "/bin/gc"))
          (git-bin    (file-append git "/bin/git"))
          (timeout-bin(file-append coreutils "/bin/timeout"))
+         (chmod-bin  (file-append coreutils "/bin/chmod"))
+         (find-bin   (file-append findutils "/bin/find"))
          (dashboard-port (gascity-supervisor-dashboard-port supervisor)))
     (define (with-env log-name body)
       "Wrap BODY in a start thunk that binds names HOME, PROFILE,
@@ -1018,8 +1030,31 @@ did not report running within 30s; proceeding anyway~%"))
                                                 city-path)))
                            (cond
                             ((and src (not (file-exists? city-toml)))
+                             ;; Deep-copy the template verbatim — `gc
+                             ;; init --from' must point straight at the
+                             ;; store path (a renamed staging copy makes
+                             ;; gc scaffold a minimal city instead).
                              (run home (list #$gc-bin "init" "--from"
-                                             src city-path)))
+                                             src city-path))
+                             ;; The template lives in the read-only
+                             ;; store (0444), so the copied
+                             ;; city.toml/pack.toml/packs/* land
+                             ;; read-only and a (managed? #f) city is
+                             ;; not runtime-mutable.  Add owner-write
+                             ;; back, but `-prune' gc's freshly created
+                             ;; .beads/.gc dolt runtime: a recursive
+                             ;; chmod over it races bd's schema
+                             ;; migration (duplicate-key on `wisps').
+                             ;; find never descends the pruned subtrees,
+                             ;; so the live dolt DB is never touched.
+                             (run home
+                                  (list #$find-bin city-path
+                                        "-name" ".beads" "-prune" "-o"
+                                        "-name" ".gc" "-prune" "-o"
+                                        "(" "-type" "f" "-o"
+                                            "-type" "d" ")"
+                                        "-exec" #$chmod-bin "u+w"
+                                        "{}" "+")))
                             ((and (not managed?)
                                   (not (file-exists? city-toml)))
                              (run home (list #$gc-bin "init" city-path)))
