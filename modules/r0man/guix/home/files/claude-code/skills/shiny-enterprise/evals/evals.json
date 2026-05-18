@@ -1,0 +1,33 @@
+{
+  "skill_name": "shiny-enterprise",
+  "evals": [
+    {
+      "id": 0,
+      "name": "critical-payment-retry-best-job",
+      "prompt": "We need an idempotent retry wrapper for our payment-capture call in payments/capture.py. This is the most important code path we have — a double-charge or a lost capture is a serious incident. Do the absolute best job you can on this, take the passes you need to get it right, I care about quality far more than speed.",
+      "expected_output": "Runs the full shiny-enterprise workflow: committed design doc first; implementation done as the Rule of Five (Draft, then Refine 1 Correctness, Refine 2 Clarity, Refine 3 Edge cases, Refine 4 Excellence) with commits between passes and each pass having a distinct focus; review (likely escalates to code-review given criticality); full test suite with meaningful idempotency/double-charge tests; clean submit. Does not collapse the five passes into one.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "explicit-rule-of-five",
+      "prompt": "Implement a small LRU cache with TTL in lib/cache.go (Get/Set/Delete, max size, per-entry expiry). Use the rule of five on it — I want the iterative refinement passes, not a one-shot.",
+      "expected_output": "Explicitly applies the Rule of Five to the implementation: ordered Draft → Correctness → Clarity → Edge cases → Excellence passes, each with its own focus and ideally its own commit. Still wraps it in the surrounding design/review/test/submit discipline. Edge-case pass covers things like zero-size, expiry-on-get, concurrent access.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "work-on-a-beads-issue",
+      "prompt": "Work on beads issue lock-9 using the shiny-enterprise skill. It asks for a distributed lock (acquire/release/refresh, TTL, fencing token) in lock/redis_lock.py — correctness is paramount.",
+      "expected_output": "Treats lock-9 as the work item: design recorded on the bead (no DESIGN.md), then the Implement phase is the Rule of Five with one short progress note per pass added to lock-9's notes (not five separate issues), then reviewed/tested/submitted with notes kept current, and the bead closed after the work is pushed. Surrounding design/review/test/submit discipline intact.",
+      "assertions": [
+        "Design recorded on lock-9 instead of a committed DESIGN.md file",
+        "Rule of Five applied as distinct passes; each pass adds a short note to lock-9 (NOT a separate issue per pass)",
+        "lock-9's notes kept current through the phases and the bead closed after the work is pushed",
+        "Surrounding design/review/test/submit phases intact",
+        "Distributed lock is functionally correct (TTL, fencing token, safe release)"
+      ],
+      "files": []
+    }
+  ]
+}

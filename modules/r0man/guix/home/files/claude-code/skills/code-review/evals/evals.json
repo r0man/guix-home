@@ -1,0 +1,39 @@
+{
+  "skill_name": "code-review",
+  "evals": [
+    {
+      "id": 0,
+      "name": "thorough-pr-review",
+      "prompt": "Can you do a thorough review of PR #142? It's a fairly big change — adds a background job queue with a worker pool and retries. I want to know if it's ready to merge.",
+      "expected_output": "Resolves the PR target (gh pr view/diff #142), recognizes the scope is substantial so picks the `full` preset, runs the lenses (adaptively — likely parallel subagents given size), and produces a single synthesized review with the prescribed structure: executive summary with an explicit merge recommendation, P0/P1/P2 issues with file:line refs, wiring/commit/test-quality sections, positives, recommendations. Deduplicates cross-lens findings.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "security-focused-small-diff",
+      "prompt": "I just changed how we validate and store API tokens in auth/tokens.py and auth/store.py — about 80 lines. Before I merge, give it a security review.",
+      "expected_output": "Picks the `security-focused` preset (security/resilience/correctness/wiring) because it's auth code. Small scope, so runs the lenses inline/sequentially rather than spawning subagents. Synthesized review focuses on injection, secret handling, validation gaps, with explicit merge recommendation and file:line references.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "refactor-review-branch",
+      "prompt": "I refactored the reporting module on branch refactor/reporting-cleanup — behavior should be unchanged, I just split the god-class up. Review it.",
+      "expected_output": "Diffs the branch against main, recognizes this is a behavior-preserving refactor and picks the `refactor` preset (elegance/smells/style/commit-discipline). Synthesized review judges whether the split actually improved the design, flags remaining smells, and comments on commit atomicity. Doesn't over-index on new-feature concerns like performance/security since behavior is unchanged.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "review-a-tracked-change",
+      "prompt": "Review the changes on branch feature/upload-handler (diff against main) for merge-readiness. This work is tracked as beads issue proj-7f.",
+      "expected_output": "Runs the multi-lens review and synthesis as usual, then records the outcome on proj-7f: the verdict (merge / not) and the blocking items go into proj-7f's notes so the result lives with the work. Does not build epics/dependency graphs or lecture about bd usage.",
+      "assertions": [
+        "A correct preset is chosen and a synthesized prioritized review is produced",
+        "The verdict and blocking items are recorded in proj-7f's notes",
+        "Does not invent a bd epic/dependency graph or re-teach bd usage",
+        "Blocking findings carry file:line references"
+      ],
+      "files": []
+    }
+  ]
+}

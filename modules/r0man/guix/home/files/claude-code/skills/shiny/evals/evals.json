@@ -1,0 +1,75 @@
+{
+  "skill_name": "shiny",
+  "evals": [
+    {
+      "id": 0,
+      "name": "rate-limiter-feature-properly",
+      "prompt": "I need to add a per-API-key rate limiter to our Express service in src/middleware/. It should be a sliding window, 100 req/min default, configurable per key, and return 429 with a Retry-After header. Please do this properly — last time someone rushed a middleware change and we shipped a bug that took down prod. There's an existing Redis client in src/lib/redis.ts you should reuse.",
+      "expected_output": "Walks the shiny phases: a committed design doc (approach, trade-offs, files to change, reuse of src/lib/redis.ts) BEFORE code; implementation following the design; a self-review pass; tests including the 429/Retry-After behavior with the full suite run; a clean submit with a clear commit message on a feature branch. Gates respected in order.",
+      "assertions": [
+        "A design doc was committed in a commit preceding the implementation commit",
+        "The rate limiter reuses the existing src/lib/redis.ts client, not a new one",
+        "Middleware returns HTTP 429 with a Retry-After header",
+        "A test file exercises the rate-limit / 429 behavior meaningfully",
+        "Git history shows phased commits, not one catch-all commit"
+      ],
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "auth-bugfix-careful",
+      "prompt": "There's a bug where expired JWTs are still being accepted on the /api/refresh endpoint. Fix it the right way, don't just patch over it — I want to be sure we understand the root cause and don't introduce a regression. Code is in auth/jwt_verify.py and auth/refresh.py.",
+      "expected_output": "Treats this as a non-trivial, security-sensitive fix: design/root-cause note committed first, root cause identified (not a surface patch), implementation, self-review with security attention (likely references the security-audit aspect since it's auth code), tests covering the expired-token case plus full suite, clean submit. Does not jump straight to editing code.",
+      "assertions": [
+        "Root cause (missing/inverted expiry check) is stated, not just 'patched'",
+        "Expired tokens are actually rejected on the refresh path after the fix",
+        "A regression test asserts expired-token rejection on /api/refresh",
+        "Full test suite was run with no regressions",
+        "Shows security awareness for auth code (security-audit aspect or explicit reasoning)",
+        "Root-cause/design note committed before the fix commit"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "small-test-critical-change",
+      "prompt": "Add a `parse_duration(s)` helper to utils/time.py that turns strings like '1h30m', '45s', '2d' into seconds. This gets used in billing so it has to be exactly right. Want it done carefully and well-tested.",
+      "expected_output": "Recognizes this is test-critical and billing-adjacent, so uses the TDD variant: commits failing tests for the parse cases BEFORE implementation, verifies red, implements to green, verifies full suite green, optional refactor. Surrounding design/review/submit discipline still applied. Tests are meaningful (cover edge cases like invalid input, combined units), not assertion-can't-fail.",
+      "assertions": [
+        "TDD variant used: test commit precedes the implementation commit",
+        "Tests cover combined units, single units, and invalid/edge input meaningfully",
+        "parse_duration is correct: '1h30m'->5400, '45s'->45, '2d'->172800",
+        "A short design note was committed before implementation (proportional to scope)",
+        "Full test suite run and green (red->green verified)"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "work-on-a-beads-issue",
+      "prompt": "Work on beads issue app-42 using the shiny skill. It asks for a `/healthz` endpoint returning 200 with JSON {status:'ok', uptime_seconds:N} in app/health.py.",
+      "expected_output": "Treats app-42 as the work item: keeps app-42's notes current with a short note at each phase gate (design done, implemented, reviewed, tested, submitted) and closes it after the work is pushed. The design is recorded on the bead, so no separate DESIGN.md is committed. The five shiny phases are still followed in order. Does not lecture about bd usage or invent epics/dependency graphs.",
+      "assertions": [
+        "app-42's notes are updated with progress at the phase gates (not left stale)",
+        "Design recorded on the bead instead of a committed DESIGN.md file",
+        "The bead is closed after the work is pushed",
+        "The five shiny phases are still followed in order",
+        "Endpoint is functionally correct (200, JSON status ok + uptime_seconds)"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "no-bead-in-play",
+      "prompt": "Add a retry with exponential backoff to the outbound webhook sender in notify/webhook.py. Do it properly.",
+      "expected_output": "No bead was referenced, so the skill just runs the shiny workflow normally and uses a committed design-doc file for the Phase 1 gate. It does not invent a beads issue or add beads ceremony where none was asked for.",
+      "assertions": [
+        "Does not fabricate/create a beads issue when none was referenced",
+        "Uses a committed design-doc file for the Phase 1 design gate",
+        "Full shiny workflow followed with gates in order",
+        "Retry/backoff implementation is correct and tested"
+      ],
+      "files": []
+    }
+  ]
+}

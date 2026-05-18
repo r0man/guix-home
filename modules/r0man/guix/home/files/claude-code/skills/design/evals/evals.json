@@ -1,0 +1,32 @@
+{
+  "skill_name": "design",
+  "evals": [
+    {
+      "id": 0,
+      "name": "design-notification-system",
+      "prompt": "Before I build anything, I want a proper design for adding a notification system to our app — users should get notified (in-app + email) about events like mentions, replies, and status changes, with per-user preferences. It's a medium-to-large feature touching the API, the DB, and the worker tier. Think it through and give me a design doc.",
+      "expected_output": "Frames problem/context/scope (medium-large), explores the six dimensions (adaptively — likely parallel subagents given scope), and synthesizes a single design doc with the prescribed structure: executive summary, problem statement, proposed design (overview/components/interface/data model), trade-offs and decisions, open questions highlighted, risks/mitigations, phased implementation plan. Surfaces cross-dimension conflicts rather than concatenating analyses.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "small-design-config-format",
+      "prompt": "I need to add a config file for our CLI tool (it currently only takes flags). It's small — one new module. What's the right approach? Think about format, where it lives, and precedence vs flags before I implement.",
+      "expected_output": "Recognizes small scope, so works the relevant dimensions inline (api, ux, data/format, integration) rather than spawning subagents, and notes any dimensions judged not applicable. Produces a focused design doc covering format choice, file location, flag-vs-file precedence, with options/trade-offs and a clear recommendation. Doesn't over-engineer for a one-module change.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "design-a-tracked-issue",
+      "prompt": "Design a multi-tenant API rate-limiting layer (per-tenant quotas, burst, 429s, admin overrides). This is tracked as beads issue proj-7f.",
+      "expected_output": "Runs the multi-dimension exploration + synthesis as usual, then records the resulting design and key decisions in proj-7f's notes so the design lives with the work. Does not build an epic/task breakdown or re-teach bd usage.",
+      "assertions": [
+        "Six dimensions explored and conflicts reconciled (not concatenated)",
+        "The resulting design and key decisions are recorded in proj-7f's notes",
+        "Does not invent a bd epic/task breakdown or re-teach bd usage",
+        "The design is concrete and actionable"
+      ],
+      "files": []
+    }
+  ]
+}
