@@ -42,7 +42,8 @@ users who want something with a bit more flair than the modus-themes.
     "Get the font pixel size for the current system."
     (cond ((equal "m1" (system-name))
            (if (getenv "WAYLAND_DISPLAY") 19 17))
-          ((equal "precision" (system-name)) 19)
+          ((equal "precision" (system-name))
+           (if (getenv "WAYLAND_DISPLAY") 17 25))
           (t 19)))
 
   (defun current-font ()
