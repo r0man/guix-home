@@ -2516,14 +2516,6 @@ The org-mode Pandoc exporter.
   (use-package pass
     :commands (pass pass-copy))
 #+end_src
-** Pepita
-#+begin_src emacs-lisp
-  (use-package pepita
-    :commands (pepita-new-search)
-    :config
-    (setq pepita-splunk-url "https://localhost:8089/services/"))
-#+end_src
-
 ** Pixel Scroll Precision Mode
 
 When enabled, this minor mode allows to scroll the display precisely,
