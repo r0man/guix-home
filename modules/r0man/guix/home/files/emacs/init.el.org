@@ -187,13 +187,6 @@ system.
      (agent-shell-anthropic-make-authentication
       :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))))
 #+end_src
-** Aide.el
-#+begin_src emacs-lisp
-  (use-package aide
-    :commands (aide-openai-completion-region-insert)
-    :load-path ("~/workspace/aide.el"))
-#+end_src
-
 ** Aio
 #+begin_src emacs-lisp
   (use-package aio
