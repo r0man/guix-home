@@ -2287,13 +2287,6 @@ Support for indenting code in SQL files.
     (uniquify-separator "|"))
 #+end_src
 
-** Open AI
-#+begin_src emacs-lisp
-  (use-package openai
-    :defer t
-    :config
-    (setq openai-key #'openai-key-auth-source))
-#+end_src
 ** Open With
 
 Open files with external programs.
