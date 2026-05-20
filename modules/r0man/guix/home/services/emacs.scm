@@ -49,7 +49,6 @@
         emacs-clojure-mode-extra-font-locking
         emacs-clojure-ts-mode
         emacs-closql
-        emacs-codegpt
         emacs-consult
         emacs-consult-gh
         emacs-corfu

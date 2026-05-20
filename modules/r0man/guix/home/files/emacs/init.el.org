@@ -997,17 +997,6 @@ A GNU Emacs major mode for editing BNF grammars.
     ;; Print a message when the AST has been built.
     (setq cljr--debug-mode t))
 #+end_src
-** Code GPT
-
-This Emacs Code extension allows you to use the official OpenAI API to
-generate code or natural language responses from OpenAI's GPT-3 to
-your questions, right within the editor.
-
-#+begin_src emacs-lisp
-  (use-package codegpt
-    :commands (codegpt))
-#+end_src
-
 ** Consult
 
 #+begin_src emacs-lisp
