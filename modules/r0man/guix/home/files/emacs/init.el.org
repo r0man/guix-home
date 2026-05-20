@@ -2960,7 +2960,7 @@ multi-buffer support.
 #+begin_src emacs-lisp
   (use-package ghostel
     :bind (("C-x M" . ghostel-new)
-           ("C-x m" . ghostel-other)
+           ("C-x m" . ghostel-next)
            :map ghostel-mode-map
            ("M-SPC" . ghostel-send-meta-space))
     :preface
