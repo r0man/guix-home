@@ -296,18 +296,6 @@ time-zone, which are both alphabetic strings.
         '(24-hours ":" minutes
                    (if time-zone " (") time-zone (if time-zone ")")))
 #+end_src
-** ChatGPT
-
-Use ChatGPT inside Emacs
-
-This Emacs Code extension allows you to use the official OpenAI
-API to generate code or natural language responses from OpenAI's
-ChatGPT to your questions, right within the editor.
-
-#+begin_src emacs-lisp
-  (use-package chatgpt
-    :commands (chatgpt chatgpt-new))
-#+end_src
 ** Custom functions
 
 Load a file only if it exists.

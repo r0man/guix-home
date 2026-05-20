@@ -40,7 +40,6 @@
         emacs-buttercup
         emacs-cape
         emacs-cask
-        emacs-chatgpt
         emacs-cider
         emacs-claude-code
         emacs-claude-code-ide
