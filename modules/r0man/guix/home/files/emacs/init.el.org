@@ -1824,13 +1824,6 @@ Start the Emacs server if it's not running.
     :commands (tree-inspector-inspect-expression
                tree-inspector-inspect-last-sexp))
 #+end_src
-** isa.el
-#+begin_src emacs-lisp
-  (use-package isa
-    :commands (isa)
-    :if (file-directory-p "~/workspace/nu/isa.el/")
-    :load-path "~/workspace/nu/isa.el/")
-#+end_src
 ** Jira
 #+begin_src emacs-lisp
   (use-package jira
