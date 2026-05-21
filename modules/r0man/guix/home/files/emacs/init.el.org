@@ -2778,7 +2778,13 @@ Show font features in an Emacs buffer.
 #+begin_src emacs-lisp
   (use-package sooper-whisper
     :commands
-    (sooper-whisper)
+    (sooper-whisper
+     sooper-whisper-record
+     sooper-whisper-stop
+     sooper-whisper-cancel
+     sooper-whisper-push-to-talk
+     sooper-whisper-menu
+     sooper-whisper-doctor)
     :load-path
     ("~/workspace/sooper-whisper.el/src"
      "~/workspace/sooper-whisper.el/tests")
