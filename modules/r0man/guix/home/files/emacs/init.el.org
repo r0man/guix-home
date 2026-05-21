@@ -19,6 +19,73 @@ Setup package archives for package.el.
           ("gnu" . "http://elpa.gnu.org/packages/")))
 #+end_src
 
+** LLM models and helpers
+
+Shared model lists, endpoints, and credential helpers used by the
+=ellama= and =gptel= sections below.
+
+#+begin_src emacs-lisp
+  (defvar r0man/openai-models
+    '(("OpenAI GPT-5.5"      . "gpt-5.5")
+      ("OpenAI GPT-5.4"      . "gpt-5.4")
+      ("OpenAI GPT-5.4 mini" . "gpt-5.4-mini"))
+    "OpenAI chat models as (DISPLAY-NAME . MODEL-ID); CAR is the default.")
+
+  (defvar r0man/claude-models
+    '(("Claude Opus 4.7"   . "claude-opus-4-7")
+      ("Claude Sonnet 4.6" . "claude-sonnet-4-6")
+      ("Claude Haiku 4.5"  . "claude-haiku-4-5-20251001"))
+    "Claude chat models as (DISPLAY-NAME . MODEL-ID); CAR is the default.")
+
+  (defvar r0man/gemini-models
+    '(("Gemini 2.5 Pro"   . "gemini-2.5-pro")
+      ("Gemini 2.5 Flash" . "gemini-2.5-flash"))
+    "Gemini chat models as (DISPLAY-NAME . MODEL-ID); CAR is the default.")
+
+  (defconst r0man/nubank-litellm-host
+    "ist-prod-litellm.nullmplatform.com"
+    "Nubank LiteLLM proxy host.")
+
+  (defconst r0man/nubank-litellm-url
+    (concat "https://" r0man/nubank-litellm-host "/")
+    "Nubank LiteLLM proxy URL.")
+
+  (defun r0man/nubank-precision-p ()
+    "Non-nil when running as user `roman' on host `precision'."
+    (and (string= (user-login-name) "roman")
+         (string= (system-name) "precision")))
+
+  (defun r0man/anthropic-key ()
+    "Return the personal Anthropic API key from auth-source."
+    (auth-source-pick-first-password
+     :host "api.anthropic.com" :user "personal"))
+
+  (defun r0man/openai-key ()
+    "Return the personal OpenAI API key from auth-source."
+    (auth-source-pick-first-password
+     :host "openai.com" :user "ellama"))
+
+  (defun r0man/nubank-litellm-key ()
+    "Return the Nubank LiteLLM proxy API key from auth-source."
+    (auth-source-pick-first-password
+     :host r0man/nubank-litellm-host :user "apikey"))
+
+  (defun r0man/nubank-llm-provider (prefix display-name model-id key
+                                           &optional embedding-model)
+    "Cons cell suitable for `ellama-providers'.
+PREFIX is the LiteLLM route prefix (e.g. \"anthropic\", \"openai\",
+\"gemini\"). DISPLAY-NAME is rendered as \"Nubank DISPLAY-NAME\".
+MODEL-ID is the upstream chat model. KEY is the LiteLLM API key.
+EMBEDDING-MODEL, if non-nil, sets the embedding model."
+    (cons (format "Nubank %s" display-name)
+          (apply #'make-llm-openai-compatible
+                 :url r0man/nubank-litellm-url
+                 :key key
+                 :chat-model (format "%s/%s" prefix model-id)
+                 (when embedding-model
+                   (list :embedding-model embedding-model)))))
+#+end_src
+
 ** Ef Themes
 
 The ef-themes are a collection of light and dark themes for GNU Emacs
@@ -745,60 +812,34 @@ A GNU Emacs major mode for editing BNF grammars.
     :config
     (require 'llm-claude)
     (require 'llm-openai)
-    (require 'llm-vertex)
-    (add-to-list 'ellama-providers
-                 (cons "Claude Sonnet"
-                       (make-llm-claude
-                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
-                        :chat-model "claude-sonnet-4-20250514")))
-    (add-to-list 'ellama-providers
-                 (cons "Claude Opus"
-                       (make-llm-claude
-                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
-                        :chat-model "claude-opus-4-20250514")))
-    (add-to-list 'ellama-providers
-                 (cons "Claude Haiku"
-                       (make-llm-claude
-                        :key (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")
-                        :chat-model "claude-haiku-4-5-20251001")))
-    (add-to-list 'ellama-providers
-                 (cons "Nu Gemini 1.0"
-                       (make-llm-vertex
-                        :chat-model "gemini-pro"
-                        :project "iteng-itsystems")))
-    (add-to-list 'ellama-providers
-                 (cons "Nu Gemini 1.5"
-                       (make-llm-vertex
-                        :chat-model "gemini-1.5-pro-preview-0215"
-                        :project "iteng-itsystems")))
-    (add-to-list 'ellama-providers
-                 (cons "Nu OpenAI Local Proxy"
-                       (make-llm-openai-compatible
-                        :url "http://127.0.0.1:8899/v1/"
-                        :chat-model "gpt-4.1")))
-    (add-to-list 'ellama-providers
-                 (cons "OpenAI GPT-4.1"
-                       (make-llm-openai
-                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
-                        :chat-model "gpt-4.1")))
-    (add-to-list 'ellama-providers
-                 (cons "OpenAI o4-mini"
-                       (make-llm-openai
-                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
-                        :chat-model "o4-mini")))
-    (add-to-list 'ellama-providers
-                 (cons "OpenAI o3"
-                       (make-llm-openai
-                        :key (auth-source-pick-first-password :host "openai.com" :user "ellama")
-                        :chat-model "o3")))
-    (add-to-list 'ellama-providers
-                 (cons "Nu LiteLLM OpenAI GPT-5"
-                       (make-llm-openai-compatible
-                        :url "https://ist-prod-litellm.nullmplatform.com/"
-                        :key (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey")
-                        :chat-model "gpt-5"
-                        :embedding-model "text-embedding-3-small")))
-    (setq ellama-provider (alist-get "Claude Opus" ellama-providers nil nil #'string=)))
+    (let ((anthropic-key (r0man/anthropic-key))
+          (openai-key    (r0man/openai-key))
+          (nullm-key     (r0man/nubank-litellm-key))
+          providers)
+      (dolist (model r0man/claude-models)
+        (let ((name (car model)) (id (cdr model)))
+          (push (cons name (make-llm-claude :key anthropic-key :chat-model id))
+                providers)
+          (push (r0man/nubank-llm-provider "anthropic" name id nullm-key)
+                providers)))
+      (dolist (model r0man/openai-models)
+        (let ((name (car model)) (id (cdr model)))
+          (push (cons name (make-llm-openai :key openai-key :chat-model id))
+                providers)
+          (push (r0man/nubank-llm-provider "openai" name id nullm-key
+                                           "text-embedding-3-small")
+                providers)))
+      (dolist (model r0man/gemini-models)
+        (let ((name (car model)) (id (cdr model)))
+          (push (r0man/nubank-llm-provider "gemini" name id nullm-key)
+                providers)))
+      (setq ellama-providers (append (nreverse providers) ellama-providers)))
+    (let* ((claude-name (caar r0man/claude-models))
+           (default-name (if (r0man/nubank-precision-p)
+                             (format "Nubank %s" claude-name)
+                           claude-name)))
+      (setq ellama-provider
+            (alist-get default-name ellama-providers nil nil #'string=))))
 
   (defun ellama-chat-whisper ()
     "Record audio in a temporary buffer with the `whisper-run`
@@ -1321,18 +1362,39 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
     :commands gptel
     :config
     (require 'gptel-integrations)
-    (gptel-make-anthropic "Claude"
-      :stream t
-      :key (lambda ()
-             (auth-source-pick-first-password :host "api.anthropic.com" :user "personal")))
-    (setq-default gptel-backend
-                  (gptel-make-openai
-                   "NuLLM Open AI"
-                   :stream t
-                   :models '(o1-mini o3-mini o4-mini o1 o3 gpt-4.1-nano gpt-4.1-mini gpt-4.1)
-                   :host "ist-prod-litellm.nullmplatform.com"
-                   :key (lambda ()
-                          (auth-source-pick-first-password :host "ist-prod-litellm.nullmplatform.com" :user "apikey"))))
+    (let* ((claude-models (mapcar (lambda (m) (intern (cdr m)))
+                                  r0man/claude-models))
+           (openai-models (mapcar (lambda (m) (intern (cdr m)))
+                                  r0man/openai-models))
+           (nubank-models
+            (append
+             (mapcar (lambda (m) (intern (format "openai/%s" (cdr m))))
+                     r0man/openai-models)
+             (mapcar (lambda (m) (intern (format "anthropic/%s" (cdr m))))
+                     r0man/claude-models)
+             (mapcar (lambda (m) (intern (format "gemini/%s" (cdr m))))
+                     r0man/gemini-models)))
+           (claude-backend
+            (gptel-make-anthropic "Claude"
+              :stream t
+              :models claude-models
+              :key #'r0man/anthropic-key))
+           (nubank-backend
+            (gptel-make-openai "Nubank"
+              :stream t
+              :models nubank-models
+              :host r0man/nubank-litellm-host
+              :key #'r0man/nubank-litellm-key)))
+      (gptel-make-openai "OpenAI"
+        :stream t
+        :models openai-models
+        :key #'r0man/openai-key)
+      (if (r0man/nubank-precision-p)
+          (setq-default gptel-backend nubank-backend
+                        gptel-model   (intern (format "anthropic/%s"
+                                                      (cdar r0man/claude-models))))
+        (setq-default gptel-backend claude-backend
+                      gptel-model   (intern (cdar r0man/claude-models)))))
     :custom
     (when (file-exists-p "~/.guix-profile/bin/curl")
       (gptel-use-curl "~/.guix-profile/bin/curl")))
