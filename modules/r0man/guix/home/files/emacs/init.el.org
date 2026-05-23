@@ -299,11 +299,21 @@ Reload files when they change on disk.
 ** Gastown
 #+begin_src emacs-lisp
   (use-package gastown
+    :disabled
     :bind (("C-x C-g g" . gastown))
     :commands (gastown)
     :load-path ("~/workspace/gastown.el/lisp"
                 "~/workspace/gastown.el/lisp/test")
     :bind ("C-c g" . gastown))
+#+end_src
+** Gascity
+#+begin_src emacs-lisp
+  (use-package gascity
+    :bind (("C-x C-g g" . gascity))
+    :commands (gascity)
+    :load-path ("~/workspace/gascity.el/lisp"
+                "~/workspace/gascity.el/lisp/test")
+    :bind ("C-c g" . gascity))
 #+end_src
 ** Bug Reference
 
