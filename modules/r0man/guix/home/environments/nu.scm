@@ -10,6 +10,7 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services)
   #:use-module (gnu home)
+  #:use-module (gnu packages textutils)
   #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services xorg)
@@ -183,7 +184,7 @@ EndSection"))
                   (append packages-base
                           packages-desktop
                           packages-x86-64
-                          (list vulkan-tools))))
+                          (list vulkan-tools yq))))
    (services services)))
 
 precision-home-environment
