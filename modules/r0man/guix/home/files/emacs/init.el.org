@@ -52,7 +52,7 @@ Shared model lists, endpoints, and credential helpers used by the
 
   (defun r0man/nubank-precision-p ()
     "Non-nil when running as user `roman' on host `precision'."
-    (and (string= (user-login-name) "roman")
+    (and (string= (user-login-name) "roman.scherer")
          (string= (system-name) "precision")))
 
   (defun r0man/anthropic-key ()
