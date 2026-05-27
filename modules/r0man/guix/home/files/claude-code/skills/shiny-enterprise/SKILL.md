@@ -1,6 +1,6 @@
 ---
 name: shiny-enterprise
-description: Enterprise-grade engineering — the shiny workflow (design→implement→review→test→submit) with the implementation expanded into the Rule of Five iterative-refinement passes. Use this skill proactively whenever correctness or quality clearly outweighs speed on a build or fix: phrasings like "do the absolute best job", "this is critical / load-bearing / a real incident if it's wrong", "iterate until it's bulletproof/perfect", "enterprise grade", "highest-quality, carefully reviewed", "polish it until you'd stake your name on it", "this migration can't be re-run", or work in financial / payments / auth / billing / data-migration code where a mistake is an incident — and on any explicit request for the "rule of five" or iterative refinement passes (e.g. "use the rule of five on the JWT refresh", "rewrite the money-rounding logic, take the passes you need", "harden the password-reset flow to enterprise grade, iterate over it"). Be eager to pick this over plain shiny when those high-stakes cues are present even if no workflow is named. Use plain shiny for ordinary careful work; code-review for review-only; design for design-only.
+description: Enterprise-grade engineering — the shiny workflow with the implementation expanded into the Rule of Five iterative-refinement passes. Use this skill for critical work where quality outweighs speed - financial, payments, auth, billing, or data-migration code where mistakes are serious.
 ---
 
 # Shiny Enterprise — Shiny + Rule of Five

@@ -1,6 +1,6 @@
 ---
 name: shiny
-description: Engineer-in-a-Box — a disciplined design→implement→review→test→submit workflow with gates for any non-trivial code change. Use this skill proactively whenever the user asks you to add, build, implement, wire up, refactor, or fix something that is more than a trivial one-liner — e.g. "add pagination to the orders endpoint", "implement CSV export for the reports page", "fix the timezone bug in scheduling.py properly", "refactor the export module and wire it through the UI", "build the webhook retry queue end to end", "add rate limiting, design it first then implement" — and especially when they say "do it properly / the right way / carefully / don't cut corners / design it first", say it touches several files, or have been burned by rushed work. Default to this for real feature or bug-fix work even when the user does not name a workflow and does not explicitly ask for process; reach for it rather than just starting to code. Prefer shiny-enterprise instead only when the work is high-stakes/critical and explicitly wants maximum-quality iterative refinement; use code-review for review-only requests and design for design-only requests.
+description: Engineer-in-a-Box — a disciplined design→implement→review→test→submit workflow with gates for any non-trivial code change. Use this skill proactively for feature work, bug fixes, and refactorings that touch multiple files. Follows five phases with gates - design before coding, review before shipping, test before submitting.
 ---
 
 # Shiny — Engineer in a Box
