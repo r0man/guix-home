@@ -9,7 +9,6 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages nss)
-  #:use-module (gnu packages terminals)
   #:use-module (gnu packages version-control)
   #:use-module (gnu services)
   #:use-module (guix gexp)
@@ -34,7 +33,7 @@
 
 (define-public gastown-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal git inetutils kitty ncurses
+   (packages (list coreutils coreutils-minimal git inetutils ncurses
                    claude-code nss-certs procps waypipe))
    (services
     (append (list (service home-bash-service-type

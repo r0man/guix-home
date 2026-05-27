@@ -312,8 +312,8 @@
 (when *initializing*
   (run-shell-command "emacs")
   (run-shell-command "librewolf")
-  (run-shell-command "kitty --name BTop -e btop")
-  (run-shell-command "kitty --name Logs -e journalctl --user -f"))
+  (run-shell-command "ghostty --x11-instance-name=BTop -e btop")
+  (run-shell-command "ghostty --x11-instance-name=Logs -e journalctl --user -f"))
 
 ;; Centered floating window
 
@@ -335,7 +335,7 @@
 (defcommand run-floating-htop () ()
   "Run floating htop"
   (with-open-window
-    "kitty --name floating-htop -e htop"
+    "ghostty --x11-instance-name=floating-htop -e htop"
     '(:instance "floating-htop")
     (lambda (window)
       (let* ((head (current-head))

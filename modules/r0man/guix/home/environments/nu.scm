@@ -28,12 +28,12 @@
   #:use-module (r0man guix home services emacs)
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services fzf)
+  #:use-module (r0man guix home services ghostty)
   #:use-module (r0man guix home services git)
   #:use-module (r0man guix home gpg)
   #:use-module (r0man guix home services guile)
   #:use-module (r0man guix home services hyprland)
   #:use-module (r0man guix home services i3status)
-  #:use-module (r0man guix home services kitty)
   #:use-module (r0man guix home services librewolf)
   #:use-module (r0man guix home services mbsync)
   #:use-module (r0man guix home msmtp)
@@ -104,6 +104,7 @@
                 (service home-emacs-service-type)
                 (service home-environment-service-type)
                 (service home-fzf-service-type)
+                (service home-ghostty-service-type)
                 (service home-git-service-type
                          (home-git-configuration
                           (github-user "roman-scherer-nu")
@@ -117,7 +118,6 @@
                 (service home-guile-service-type)
                 (service home-hyprland-service-type)
                 (service home-i3status-service-type)
-                (service home-kitty-service-type)
                 (service home-librewolf-service-type)
                 (service home-msmtp-service-type
                          home-msmtp-default-configuration)

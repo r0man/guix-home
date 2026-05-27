@@ -26,8 +26,8 @@ spawn-at-startup "swayidle"
 spawn-at-startup "emacs" "--daemon"
 spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
 spawn-at-startup "librewolf"
-spawn-at-startup "kitty" "--class" "logs" "-e" "journalctl" "--user" "-f"
-spawn-at-startup "kitty" "--class" "btop" "-e" "btop"
+spawn-at-startup "ghostty" "--class=com.ghostty.logs" "-e" "journalctl" "--user" "-f"
+spawn-at-startup "ghostty" "--class=com.ghostty.btop" "-e" "btop"
 
 // Window rules — direct windows to their workspace
 window-rule {
@@ -41,13 +41,13 @@ window-rule {
 }
 
 window-rule {
-    match app-id="logs"
+    match app-id="com.ghostty.logs"
     open-on-workspace "0:Logs"
     open-maximized true
 }
 
 window-rule {
-    match app-id="btop"
+    match app-id="com.ghostty.btop"
     open-on-workspace "9:Top"
     open-maximized true
 }
@@ -96,7 +96,7 @@ binds {
 
     // Applications
     Mod+A { spawn "emacsclient" "-c" "-e" "(claude-code-ide)"; }
-    Mod+T { spawn "kitty"; }
+    Mod+T { spawn "ghostty"; }
     Mod+Return { spawn "emacsclient" "-c" "-e" "(vterm)"; }
     Mod+E { spawn "container-emacs"; }
     Mod+B { spawn "librewolf"; }

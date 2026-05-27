@@ -104,8 +104,8 @@ fi
 
 ## TERMINAL COLOR SUPPORT
 
-# Enable 24-bit true color support for kitty terminal
-if [[ "$TERM" == "xterm-kitty" ]]; then
+# Enable 24-bit true color support for ghostty terminal
+if [[ "$TERM" == "xterm-ghostty" ]]; then
     export COLORTERM=truecolor
 fi
 

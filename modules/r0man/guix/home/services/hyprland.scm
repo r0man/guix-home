@@ -40,7 +40,7 @@
     # See https://wiki.hyprland.org/Configuring/Keywords/
 
     # Set programs that you use
-    $terminal = kitty
+    $terminal = ghostty
     $fileManager = dolphin
     $menu = wofi --show drun
 
@@ -62,8 +62,8 @@
     exec-once = gsettings set org.gnome.desktop.wm.preferences theme \"Nordic\" &
 
     exec-once = [workspace 2 silent] librewolf &
-    exec-once = [workspace 9 silent] kitty --class btop btop &
-    exec-once = [workspace 8 silent] kitty --class journalctl journalctl --all --follow &
+    exec-once = [workspace 9 silent] ghostty --class=com.ghostty.btop -e btop &
+    exec-once = [workspace 8 silent] ghostty --class=com.ghostty.journalctl -e journalctl --all --follow &
 
     #############################
     ### ENVIRONMENT VARIABLES ###
@@ -347,10 +347,10 @@
     windowrulev2 = workspace 9 silent, class:^(btop)$
 
     # Example windowrule v1
-    # windowrule = float, ^(kitty)$
+    # windowrule = float, ^(com.ghostty.ghostty)$
 
     # Example windowrule v2
-    # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
+    # windowrulev2 = float,class:^(com.ghostty.ghostty)$,title:^(com.ghostty.ghostty)$
 
     # Ignore maximize requests from apps. You'll probably like this.
     windowrulev2 = suppressevent maximize, class:.*
