@@ -56,3 +56,5 @@ issue-prefix: "guix-home"
 export.git-add: false
 
 export.auto: false
+
+sync.remote: "git+ssh://git@github.com/r0man/guix-home.git"
