@@ -23,7 +23,12 @@ palette = 13=#fa90ea
 palette = 14=#7fcfdf
 palette = 15=#eaedef
 
+# Each window is its own process: closing/quitting one never kills the
+# others, and per-window --class app_ids (used by niri window-rules) work.
+gtk-single-instance = false
+
 background-opacity = 0.9
-font-family = Hack
+font-family = JetBrains Mono
+font-style = Thin
 font-size = 14
 command = bash --login
