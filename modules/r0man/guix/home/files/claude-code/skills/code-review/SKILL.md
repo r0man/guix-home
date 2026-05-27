@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Comprehensive multi-lens code review with presets and a synthesized, prioritized verdict (correctness, performance, security, resilience, elegance, style, smells, wiring, commit discipline, test quality). Use this skill proactively whenever the user wants existing changes assessed — "review PR #142", "review the diff on branch feature/sso vs main", "go through my last 3 commits on the billing branch", "is this ready / mergeable?", "what's blocking the merge?", "do a thorough review of the changes in src/auth/*.ts before I open the PR", "security review of the file-upload handler change", "I think this refactor is behavior-preserving but I'm not sure — review it". Trigger even when the user just says "review this", "look this over", "any red flags?", or "is it safe to merge" without saying how, and whenever a PR, branch, diff, or set of changed files is the subject — strongly prefer this over a quick single-pass read. Do NOT use it to implement or fix code (use shiny), to critique a not-yet-built design or architecture proposal (use design), or to tidy/clean up code you just wrote (the simplify skill).
+description: Comprehensive multi-lens code review with presets and a synthesized, prioritized verdict. Use this skill whenever you want existing changes assessed - review PRs, branches, diffs, or sets of changed files with multiple independent lenses (correctness, performance, security, etc).
 ---
 
 # Code Review — multi-lens convoy
