@@ -130,7 +130,7 @@
   (modify-services (cons* (service iwd-service-type)
                           (service alsa-service-type)
                           (service asahi-firmware-service-type)
-                          (service kernel-module-loader-service-type '("asahi" "appledrm"))
+                          (service kernel-module-loader-service-type '("asahi" "appledrm" "xt_comment"))
                           (service asahi-substitutes-service-type)
                           (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
