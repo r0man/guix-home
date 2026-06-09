@@ -110,7 +110,7 @@ users who want something with a bit more flair than the modus-themes.
     (cond ((equal "m1" (system-name))
            (if (getenv "WAYLAND_DISPLAY") 19 17))
           ((equal "precision" (system-name))
-           (if (getenv "WAYLAND_DISPLAY") 17 25))
+           (if (getenv "WAYLAND_DISPLAY") 17 27))
           (t 19)))
 
   (defun current-font ()
