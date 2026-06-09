@@ -134,7 +134,7 @@
                 (service home-startx-command-service-type
                          (xorg-configuration
                           ;; NVIDIA driver version must match nonguix package
-                          ;; https://download.nvidia.com/XFree86/Linux-x86_64/580.159.03
+                          ;; https://download.nvidia.com/XFree86/Linux-x86_64/580.159.04
                           (drivers '("modesetting" "nvidia"))
                           (extra-config
                            (list %xorg-libinput-config
