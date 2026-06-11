@@ -1,46 +1,68 @@
 {
-  "completion": {
-    "model": "nubank/gpt-4.1"
-  },
-  "providers" : {
-    "nubank" : {
-      "api" : "openai-responses",
-      "url" : "https://ist-prod-litellm.nullmplatform.com",
-      "keyRc" : "apikey@ist-prod-litellm.nullmplatform.com",
-      "models" : {
-        "gpt-4.1" : { },
-        "gpt-5" : { },
-        "gpt-5-codex" : { },
-        "gpt-5-high": {
-          "modelName": "gpt-5",
-          "extraPayload": {"reasoning": {"effort": "high"}}
+  "providers": {
+    "nubank": {
+      "api": "openai-responses",
+      "url": "https://ist-prod-litellm.nullmplatform.com",
+      "key" : "${netrc:apikey@ist-prod-litellm.nullmplatform.com}",
+      "fetchModels": false,
+      "models": {
+        "gpt-5.3-codex": {},
+        "gpt-5.4": {}
+      }
+    },
+    "nubank-anthropic": {
+      "api": "anthropic",
+      "url": "https://ist-prod-litellm.nullmplatform.com",
+      "key" : "${netrc:apikey@ist-prod-litellm.nullmplatform.com}",
+      "fetchModels": false,
+      "retryRules": [
+        {
+          "status": 401,
+          "errorPattern": "Authentication Error",
+          "label": "Flaky auth error"
+        }
+      ],
+      "models": {
+        "sonnet-4.6": {
+          "modelName": "anthropic/claude-sonnet-4-6"
+        },
+        "opus-4.8": {
+          "modelName": "anthropic/claude-opus-4-8"
+        },
+        "fable-5": {
+          "modelName": "anthropic/claude-fable-5"
         }
       }
     },
-    "anthropic" : {
-      "api" : "anthropic",
-      "keyRc" : "personal@api.anthropic.com"
-    },
-    "openai" : {
-      "keyRc" : "apikey@api.openai.com",
-      "models" : {
-        "gpt-5" : { }
+    "nubank-inference": {
+      "api": "openai-chat",
+      "url": "https://ist-prod-litellm.nullmplatform.com",
+      "key" : "${netrc:apikey@ist-prod-litellm.nullmplatform.com}",
+      "fetchModels": false,
+      "models": {
+        "bdc": {
+          "modelName": "inference/nubank-custom-model-original"
+        }
       }
     }
   },
-  "defaultModel" : "nubank/gpt-5-codex",
-  "mcpServers" : {
-    "clojure-mcp" : {
-      "command" : "clojure-mcp"
+  "defaultModel": "nubank-anthropic/fable-5",
+  "rewrite": {"model": "nubank/gpt-5.3-codex"},
+  "completion": {"model": "nubank/gpt-5.3-codex"},
+  "mcpServers": {
+    "nu-mcp": {
+      "url": "https://mcp.ist.nubank.world/mcp"
+    },
+    "glean": {
+      "url": "https://nubank-prod-be.glean.com/mcp/default"
     }
   },
-  "otlp" : {
-    "otel.exporter.otlp.metrics.protocol" : "http/protobuf",
-    "otel.exporter.otlp.metrics.endpoint" : "https://prod-global-workstation-proxy.ist.nubank.world/api/telemetry/metrics"
+  "plugins": {
+    "ai-agents-plugins": {"source": "git@github.com:nubank/ai-agents-plugins.git"},
+    "ai-agents-plugins-tmp": {"source": "git@github.com:nubank/ai-agents-plugins-tmp.git"}
   },
-  "toolCall" : {
-    "approval" : {
-      "byDefault" : "allow"
-    }
+  "otlp": {
+    "otel.exporter.otlp.metrics.protocol": "http/protobuf",
+    "otel.exporter.otlp.metrics.endpoint": "https://prod-global-workstation-proxy.ist.nubank.world/api/telemetry/metrics"
   }
 }
