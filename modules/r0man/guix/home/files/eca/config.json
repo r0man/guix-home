@@ -58,11 +58,16 @@
     }
   },
   "plugins": {
-    "ai-agents-plugins": {"source": "git@github.com:nubank/ai-agents-plugins.git"},
-    "ai-agents-plugins-tmp": {"source": "git@github.com:nubank/ai-agents-plugins-tmp.git"}
+    "ai-agents-plugins-tmp": {"source": "/home/roman.scherer/workspace/nu/ai-agents-plugins-tmp"},
+    "install": ["apistemic"]
   },
   "otlp": {
     "otel.exporter.otlp.metrics.protocol": "http/protobuf",
     "otel.exporter.otlp.metrics.endpoint": "https://prod-global-workstation-proxy.ist.nubank.world/api/telemetry/metrics"
+  },
+  "toolCall" : {
+    "approval" : {
+      "byDefault" : "allow"
+    }
   }
 }
