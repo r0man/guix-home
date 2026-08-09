@@ -18,6 +18,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
   #:use-module (gnu services containers)
+  #:use-module (gnu services dbus)
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
@@ -134,6 +135,7 @@
                           (service asahi-substitutes-service-type)
                           (service sound:speakersafetyd-service-type)
                           (service iptables-service-type)
+                          (service rtkit-service-type)
                           (service tor-service-type)
                           %asahi-kernel-module-config
                           %home-service
