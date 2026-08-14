@@ -5,6 +5,3 @@
 
 (define-public home-pipewire-services-m1
   (list (service asahi:home-pipewire-service-type)))
-
-(define-public home-pipewire-services-precision
-  (list (service home-pipewire-service-type)))

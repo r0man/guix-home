@@ -26,10 +26,6 @@
                        (r0man guix home environments m1)
                        m1-home-environment)
 
-(test-load-environment "precision"
-                       (r0man guix home environments precision)
-                       precision-home-environment)
-
 (test-load-environment "server"
                        (r0man guix home environments server)
                        server-home-environment)

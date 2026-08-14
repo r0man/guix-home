@@ -48,8 +48,6 @@
   (files home-x11-files-list
          (default `((".Xresources" ,(local-file "../files/Xresources"))
                     (".Xresources.m1" ,(local-file "../files/Xresources.m1"))
-                    (".Xresources.precision"
-                     ,(local-file "../files/Xresources.precision"))
                     (".config/dunst/dunstrc" ,(local-file "../files/dunstrc"))
                     (".local/share/wallpapers/stop-customizing-start-working.jpg"
                      ,(local-file

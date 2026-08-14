@@ -23,11 +23,3 @@ Reconfigure the home environment.
 #+begin_src shell
   guix home -L modules reconfigure modules/r0man/guix/home/environments/m1.scm
 #+end_src
-
-*** Precision
-
-Reconfigure the home environment.
-
-#+begin_src shell
-  guix home -L modules reconfigure modules/r0man/guix/home/environments/precision.scm
-#+end_src

@@ -59,5 +59,3 @@ jobs:
                       "D226 A339 D8DF 4481 5DDE  0CA0 3DDA 5252 7D2A C199")))))
       - name: Guix home reconfigure m1
         run: guix home -L modules reconfigure modules/r0man/guix/home/environments/m1.scm
-      - name: Guix home reconfigure precision
-        run: guix home -L modules reconfigure modules/r0man/guix/home/environments/precision.scm

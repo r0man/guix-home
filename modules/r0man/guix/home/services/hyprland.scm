@@ -222,7 +222,7 @@
         sensitivity = -0.5
     }
 
-    # Dell Precision Keyboard
+    # PS/2 keyboard
     device {
         name = at-translated-set-2-keyboard
         kb_layout = us

@@ -10,7 +10,6 @@
 ;;;
 ;;; The configuration includes:
 ;;; - Automatic SSH key addition to agent
-;;; - Authorized keys for user roman@precision
 ;;; - SSH agent service (use home-ssh-agent-service-type separately)
 ;;;
 ;;; Usage in system configs:
@@ -23,15 +22,11 @@
 (define %ssh-public-key-roman-burningswell
   (local-file "files/ssh/roman@burningswell.com.pub" "ssh-public-key-roman-burningswell-com"))
 
-(define %ssh-public-key-roman-precision
-  (local-file "files/ssh/roman@precision.pub" "ssh-public-key-roman-precision"))
-
 (define home-openssh-default-configuration
   (home-openssh-configuration
     (add-keys-to-agent "yes")
     (authorized-keys
-     (list %ssh-public-key-roman-burningswell
-           %ssh-public-key-roman-precision))
+     (list %ssh-public-key-roman-burningswell))
     (hosts
      (list (openssh-host
              (name "*")
@@ -50,12 +45,6 @@
              (forward-x11? #t))
            (openssh-host
              (name "www.asahi-guix.org")
-             (compression? #t)
-             (forward-agent? #t)
-             (forward-x11-trusted? #t)
-             (forward-x11? #t))
-           (openssh-host
-             (name "precision")
              (compression? #t)
              (forward-agent? #t)
              (forward-x11-trusted? #t)

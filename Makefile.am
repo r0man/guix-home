@@ -43,7 +43,6 @@ SUFFIXES = .scm .go
 NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/Xresources \
   modules/r0man/guix/home/files/Xresources.m1 \
-  modules/r0man/guix/home/files/Xresources.precision \
   modules/r0man/guix/home/files/bash_logout \
   modules/r0man/guix/home/files/bash_profile \
   modules/r0man/guix/home/files/bashrc \
@@ -105,12 +104,10 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/librewolf/librewolf.overrides.cfg \
   modules/r0man/guix/home/files/niri/config-common.kdl \
   modules/r0man/guix/home/files/niri/config-m1.kdl \
-  modules/r0man/guix/home/files/niri/config-precision.kdl \
   modules/r0man/guix/home/files/rofi/config.rasi \
   modules/r0man/guix/home/files/rofi/nord.rasi \
   modules/r0man/guix/home/files/sbclrc \
   modules/r0man/guix/home/files/ssh/roman@burningswell.com.pub \
-  modules/r0man/guix/home/files/ssh/roman@precision.pub \
   modules/r0man/guix/home/files/stumpwm/commands.lisp \
   modules/r0man/guix/home/files/stumpwm/config \
   modules/r0man/guix/home/files/stumpwm/polybar.lisp \
@@ -126,8 +123,7 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/xprofile \
   modules/r0man/guix/home/files/xsession \
   modules/r0man/guix/system/keys/asahi-guix.pub \
-  modules/r0man/guix/system/keys/nonguix.pub \
-  modules/r0man/guix/system/keys/precision.pub
+  modules/r0man/guix/system/keys/nonguix.pub
 
 # All Guile modules in the channel.  Listed explicitly (no wildcards)
 # so `make dist` and `make install` are deterministic and adding a new
@@ -143,7 +139,6 @@ SOURCES = \
   modules/r0man/guix/home/environments/container.scm \
   modules/r0man/guix/home/environments/gastown.scm \
   modules/r0man/guix/home/environments/m1.scm \
-  modules/r0man/guix/home/environments/precision.scm \
   modules/r0man/guix/home/environments/server.scm \
   modules/r0man/guix/home/gpg.scm \
   modules/r0man/guix/home/msmtp.scm \

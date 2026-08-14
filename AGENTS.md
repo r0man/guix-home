@@ -8,7 +8,7 @@ with code in this repository.
 This repository contains GNU Guix Home configuration for managing user
 environments across multiple systems. It uses Guix's declarative
 configuration approach to manage packages, services, and dotfiles across
-different machines (M1 MacBook and Dell Precision laptop).
+different machines (M1 MacBook and servers).
 
 ## Architecture
 
@@ -21,13 +21,11 @@ The codebase follows Guix's module structure under `modules/r0man/guix/`:
     `home-emacs-services`)
   - Files include both service definitions and package lists
   - `packages.scm` defines architecture-specific packages
-    (`packages-aarch64`, `packages-x86-64`, `packages-base`,
-    `packages-desktop`)
+    (`packages-aarch64`, `packages-base`, `packages-desktop`)
   - `files/` subdirectory contains dotfiles and configuration files
 
 - **`home/environments/`** - System-specific configurations
   - `m1.scm` - M1 MacBook configuration (aarch64)
-  - `precision.scm` - Dell Precision laptop configuration (x86-64)
   - `server.scm` - Server configuration
   - Each system file imports relevant service modules and composes them
 
@@ -112,13 +110,11 @@ This repository depends on four Guix channels (defined in
 Test configuration without applying changes:
 ```bash
 guix home -L modules --dry-run reconfigure modules/r0man/guix/home/environments/m1.scm
-guix home -L modules --dry-run reconfigure modules/r0man/guix/home/environments/precision.scm
 ```
 
 Apply home environment configuration:
 ```bash
 guix home -L modules reconfigure modules/r0man/guix/home/environments/m1.scm
-guix home -L modules reconfigure modules/r0man/guix/home/environments/precision.scm
 ```
 
 ### Channel Management
@@ -155,7 +151,6 @@ guix repl
 The `packages.scm` module uses `target-aarch64?` and `target-x86-64?`
 predicates to conditionally include packages:
 - aarch64 (M1): Uses `emacs-pgtk` (pure GTK Emacs)
-- x86-64 (Precision): Includes `gimp`, `pandoc`, `python-yubikey-manager`
 
 ### Service Composition
 

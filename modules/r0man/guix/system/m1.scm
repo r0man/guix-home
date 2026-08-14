@@ -162,16 +162,6 @@
      config =>
      (guix-configuration
       (inherit config)
-      (authorized-keys
-       (cons* (local-file "./keys/precision.pub")
-              %default-authorized-guix-keys))
-      (build-machines
-       (list #~(build-machine
-                (name "precision.local")
-                (systems (list "x86_64-linux"))
-                (user "root")
-                (speed 0.5)
-                (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPgG2A1s40fYCkbqYW4K3Hs+Ap/iFDysLiw/8OXZLFRZ"))))
       (channels %channels)
       ;; TODO: Is this causing a pull on guix system commands?
       ;; (guix (guix-for-channels %channels))

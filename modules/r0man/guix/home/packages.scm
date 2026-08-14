@@ -63,19 +63,10 @@
   #:use-module (r0man guix packages terminals)
   #:export (packages-aarch64
             packages-base
-            packages-desktop
-            packages-x86-64))
+            packages-desktop))
 
 (define packages-aarch64
   (list))
-
-(define packages-x86-64
-  (list flameshot
-        gimp
-        libreoffice
-        nerd-dictation/xdotool
-        pandoc
-        python-yubikey-manager))
 
 (define packages-base
   (list `(,isc-bind "utils")

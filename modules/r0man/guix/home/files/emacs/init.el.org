@@ -50,11 +50,6 @@ Shared model lists, endpoints, and credential helpers used by the
     (concat "https://" r0man/nubank-litellm-host "/")
     "Nubank LiteLLM proxy URL.")
 
-  (defun r0man/nubank-precision-p ()
-    "Non-nil when running as user `roman' on host `precision'."
-    (and (string= (user-login-name) "roman.scherer")
-         (string= (system-name) "precision")))
-
   (defun r0man/anthropic-key ()
     "Return the personal Anthropic API key from auth-source."
     (auth-source-pick-first-password
@@ -109,8 +104,6 @@ users who want something with a bit more flair than the modus-themes.
     "Get the font pixel size for the current system."
     (cond ((equal "m1" (system-name))
            (if (getenv "WAYLAND_DISPLAY") 19 17))
-          ((equal "precision" (system-name))
-           (if (getenv "WAYLAND_DISPLAY") 17 27))
           (t 19)))
 
   (defun current-font ()
@@ -847,9 +840,7 @@ A GNU Emacs major mode for editing BNF grammars.
                 providers)))
       (setq ellama-providers (append (nreverse providers) ellama-providers)))
     (let* ((claude-name (caar r0man/claude-models))
-           (default-name (if (r0man/nubank-precision-p)
-                             (format "Nubank %s" claude-name)
-                           claude-name)))
+           (default-name claude-name))
       (setq ellama-provider
             (alist-get default-name ellama-providers nil nil #'string=))))
 
@@ -1225,7 +1216,7 @@ The Geiser implementation for Guile scheme.
         (pop-to-buffer (current-buffer))
         (erase-buffer)
         (let ((default-directory "~/workspace/guix-home"))
-          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/environments/precision.scm" (current-buffer)))))
+          (async-shell-command "~/.config/guix/current/bin/guix home reconfigure -L modules modules/r0man/guix/home/environments/m1.scm" (current-buffer)))))
 #+end_src
 #+begin_src emacs-lisp
   (defun guix-system-reconfigure ()
@@ -1390,23 +1381,18 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
             (gptel-make-anthropic "Claude"
               :stream t
               :models claude-models
-              :key #'r0man/anthropic-key))
-           (nubank-backend
-            (gptel-make-openai "Nubank"
-              :stream t
-              :models nubank-models
-              :host r0man/nubank-litellm-host
-              :key #'r0man/nubank-litellm-key)))
+              :key #'r0man/anthropic-key)))
+      (gptel-make-openai "Nubank"
+        :stream t
+        :models nubank-models
+        :host r0man/nubank-litellm-host
+        :key #'r0man/nubank-litellm-key)
       (gptel-make-openai "OpenAI"
         :stream t
         :models openai-models
         :key #'r0man/openai-key)
-      (if (r0man/nubank-precision-p)
-          (setq-default gptel-backend nubank-backend
-                        gptel-model   (intern (format "anthropic/%s"
-                                                      (cdar r0man/claude-models))))
-        (setq-default gptel-backend claude-backend
-                      gptel-model   (intern (cdar r0man/claude-models)))))
+      (setq-default gptel-backend claude-backend
+                    gptel-model   (intern (cdar r0man/claude-models))))
     :custom
     (when (file-exists-p "~/.guix-profile/bin/curl")
       (gptel-use-curl "~/.guix-profile/bin/curl")))
