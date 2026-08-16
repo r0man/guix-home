@@ -35,6 +35,12 @@
                '("ControlMaster auto"
                  "ControlPath ~/.ssh/control-%h-%p-%r"
                  "ControlPersist 10m"
+                 ;; Keepalives so a master whose TCP died silently
+                 ;; (suspend/resume, Wi-Fi change) self-destructs and
+                 ;; frees its control socket instead of wedging every
+                 ;; later ssh at mux_client_request_session.
+                 "ServerAliveInterval 15"
+                 "ServerAliveCountMax 3"
                  "SendEnv COLORTERM")
                "\n")))
            (openssh-host
