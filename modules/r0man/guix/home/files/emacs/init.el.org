@@ -2320,8 +2320,17 @@ Support for indenting code in SQL files.
     ;; Use direct SCP for remote copying (faster than default method)
     (setq tramp-use-scp-direct-remote-copying t)
 
-    ;; Enable SSH connection sharing
-    (setq tramp-use-connection-share t)
+    (setq tramp-use-connection-share nil)
+
+    (connection-local-set-profile-variables
+     'remote-direct-async-process
+     '((tramp-direct-async-process . t)))
+    (connection-local-set-profiles
+     '(:application tramp :protocol "scp")
+     'remote-direct-async-process)
+    (connection-local-set-profiles
+     '(:application tramp :protocol "ssh")
+     'remote-direct-async-process)
 
     (tramp-set-completion-function
      "ssh"

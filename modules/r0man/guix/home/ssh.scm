@@ -34,7 +34,7 @@
               (string-join
                '("ControlMaster auto"
                  "ControlPath ~/.ssh/control-%h-%p-%r"
-                 "ControlPersist 10m"
+                 "ControlPersist 4h"
                  ;; Keepalives so a master whose TCP died silently
                  ;; (suspend/resume, Wi-Fi change) self-destructs and
                  ;; frees its control socket instead of wedging every
