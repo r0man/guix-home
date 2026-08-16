@@ -7,6 +7,10 @@
   (position . 176))
  ("Asahi Guix - Roman Home (Dired)"
   (filename . "/ssh:roman@www.asahi-guix.org:~/"))
+ ("Burning Swell - Gascity Home (Dired)"
+  (filename . "/ssh:gascity@burningswell.com:~/"))
+ ("Burning Swell - Root Home (Dired)"
+  (filename . "/ssh:root@burningswell.com:~/"))
  ("Bombaclaat - Root Home"
   (filename . "/ssh:root@bombaclaat:/"))
  ("Emacs Configuration"
