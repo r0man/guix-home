@@ -2684,17 +2684,30 @@ Project Interaction Library for Emacs.
     (("C-c p" . projectile-command-map))
     :custom
     (projectile-completion-system 'default)
-    ;; `alien' indexing shells out to git ls-files, which is a whole
-    ;; process spawn over TRAMP -- and C-x C-f is projectile-find-file,
-    ;; so a remote project pays it on every invocation.  Caching makes it
-    ;; a one-off.  Watches keep local projects fresh; remote projects are
-    ;; deliberately never watched (one watch per directory means one
-    ;; round-trip each), so refresh those with C-c p i.
-    (projectile-enable-caching t)
-    (projectile-auto-update-cache-with-watches t)
     :config
     (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
     (add-to-list 'projectile-project-root-files-bottom-up "BUILD")
+    ;; Projectile hooks into dired-before-readin-hook, find-file-hook and
+    ;; window-configuration-change-hook, and each one probes for a project
+    ;; root: 61 marker files in `projectile-project-root-files' alone,
+    ;; stat'd at every level while walking up to /.  Locally that is free.
+    ;; Over TRAMP it is ~137 serialised round-trips -- measured at 79s to
+    ;; open one 19-entry dired on gascity@burningswell.com, and it repeats
+    ;; for every directory entered because nothing up that tree is a
+    ;; project, so there is not even a hit to cache.  Skip the three hooks
+    ;; on remote directories; local projects keep every feature.
+    (defun projectile-skip-when-remote (fn &rest args)
+      "Apply FN to ARGS only when `default-directory' is local."
+      (unless (file-remote-p default-directory)
+        (apply fn args)))
+
+    (advice-add 'projectile-track-known-projects-find-file-hook
+                :around #'projectile-skip-when-remote)
+    (advice-add 'projectile-update-mode-line-on-window-change
+                :around #'projectile-skip-when-remote)
+    (advice-add 'projectile-find-file-hook-function
+                :around #'projectile-skip-when-remote)
+
     (projectile-register-project-type 'guix '("guix.scm")
                                       :project-file "guix.scm"
                                       :compile "make"
