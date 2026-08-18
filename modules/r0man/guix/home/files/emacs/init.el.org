@@ -2317,9 +2317,23 @@ Support for indenting code in SQL files.
     ;; Disable auto-save for remote files (prevents extra writes)
     (setq remote-file-name-inhibit-auto-save-visited t)
 
-    ;; Use direct SCP for remote copying (faster than default method)
+    ;; The default of 10 seconds throws cached file attributes away
+    ;; constantly, so dired re-stats the whole listing seconds after
+    ;; drawing it.  At ~140ms round-trip to burningswell.com that
+    ;; dominates everything else.  Ten minutes is safe as long as nothing
+    ;; writes the tree behind our back; `g' in dired still forces a
+    ;; refresh when it does.
+    (setq remote-file-name-inhibit-cache 600)
+
+    ;; Only governs copies between two *remote* hosts.  It does nothing
+    ;; for the usual remote->local direction.
     (setq tramp-use-scp-direct-remote-copying t)
 
+    ;; Keep TRAMP from appending its own ControlMaster options: it uses
+    ;; ControlPersist=no, so its master dies immediately and every ssh it
+    ;; spawns pays the full handshake (~2s to a high-latency host).  nil
+    ;; makes TRAMP inherit the persistent master from ~/.ssh/config, see
+    ;; modules/r0man/guix/home/ssh.scm.
     (setq tramp-use-connection-share nil)
 
     (connection-local-set-profile-variables
@@ -2670,6 +2684,14 @@ Project Interaction Library for Emacs.
     (("C-c p" . projectile-command-map))
     :custom
     (projectile-completion-system 'default)
+    ;; `alien' indexing shells out to git ls-files, which is a whole
+    ;; process spawn over TRAMP -- and C-x C-f is projectile-find-file,
+    ;; so a remote project pays it on every invocation.  Caching makes it
+    ;; a one-off.  Watches keep local projects fresh; remote projects are
+    ;; deliberately never watched (one watch per directory means one
+    ;; round-trip each), so refresh those with C-c p i.
+    (projectile-enable-caching t)
+    (projectile-auto-update-cache-with-watches t)
     :config
     (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
     (add-to-list 'projectile-project-root-files-bottom-up "BUILD")

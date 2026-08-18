@@ -38,9 +38,16 @@
                  ;; Keepalives so a master whose TCP died silently
                  ;; (suspend/resume, Wi-Fi change) self-destructs and
                  ;; frees its control socket instead of wedging every
-                 ;; later ssh at mux_client_request_session.
-                 "ServerAliveInterval 15"
-                 "ServerAliveCountMax 3"
+                 ;; later ssh at mux_client_request_session.  10x2 = 20s
+                 ;; to notice, down from 45s: with ControlPersist at 4h
+                 ;; that stale window is hit far more often, and it is
+                 ;; still ~70x the worst round-trip actually observed to
+                 ;; burningswell.com (222ms).
+                 "ServerAliveInterval 10"
+                 "ServerAliveCountMax 2"
+                 ;; Fail fast on an unreachable host rather than sitting
+                 ;; in TCP connect while Emacs blocks.
+                 "ConnectTimeout 10"
                  "SendEnv COLORTERM")
                "\n")))
            (openssh-host
