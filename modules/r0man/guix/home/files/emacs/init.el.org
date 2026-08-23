@@ -2203,6 +2203,11 @@ Support for indenting code in SQL files.
     (connection-local-set-profiles
      '(:application tramp :protocol "scp")
      'remote-direct-async-process)
+
+    ;; Direct async processes give magit no pipe to talk over unless it
+    ;; requests a pty; without this magit hangs or garbles output on
+    ;; remote repositories.
+    (setq magit-tramp-pipe-stty-settings 'pty)
     (connection-local-set-profiles
      '(:application tramp :protocol "ssh")
      'remote-direct-async-process)
