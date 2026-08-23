@@ -151,7 +151,6 @@
         emacs-pgemacs
         emacs-plz
         emacs-posframe
-        emacs-projectile
         emacs-rainbow-mode
         emacs-redshank
         emacs-refactor
