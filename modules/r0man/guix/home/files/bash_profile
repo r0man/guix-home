@@ -141,30 +141,6 @@ if [ -d $KAFKA_HOME ]; then
     export PATH="$KAFKA_HOME/bin:$PATH"
 fi
 
-## NUBANK
-
-NU_HOME="$HOME/workspace/nu"
-if [ -d "$NU_HOME" ]; then
-    export NU_COUNTRY="br"
-    export NU_HOME
-
-    # NUCLI
-    NUCLI_HOME="$NU_HOME/nucli"
-    if [ -d "$NUCLI_HOME" ]; then
-        export NUCLI_HOME
-        export PATH="$PATH:$NUCLI_HOME"
-    fi
-
-    # NUCLI.PY
-    if [ -d "$NU_HOME/nucli.py/bin" ]; then
-        export PATH="$PATH:$NU_HOME/nucli.py/bin"
-    fi
-    if [ -d "$NU_HOME/mini-meta-repo/monocli/bin" ]; then
-        export PATH="$NU_HOME/mini-meta-repo/monocli/bin:$PATH"
-    fi
-    export NUCLI_PY_FORMATTER_STYLE="bw"
-fi
-
 # PATH
 [ -d "$HOME/.dotfiles/bin" ] && export PATH="$HOME/.dotfiles/bin:$PATH"
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"

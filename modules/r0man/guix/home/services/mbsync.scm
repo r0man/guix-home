@@ -48,37 +48,6 @@
    "CopyArrivalDate yes\n"
    "Sync All\n"
    "Create Both\n"
-   "SyncState *\n"
-   "\n"
-
-   "IMAPAccount nubank\n"
-   "Host imap.gmail.com\n"
-   "User roman.scherer@nubank.com.br\n"
-   "PassCmd \"" (file-append password-store "/bin/pass") " Gmail/Nubank\"\n"
-   "TLSType IMAPS\n"
-   "TLSVersions +1.3\n"
-   "CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
-   "\n"
-
-   "IMAPStore nubank-remote\n"
-   "Account nubank\n"
-   "\n"
-
-   "MaildirStore nubank-local\n"
-   "Path ~/Mail/nubank/\n"
-   "Inbox ~/Mail/nubank/inbox\n"
-   "Trash ~/Mail/nubank/trash\n"
-   "SubFolders Verbatim\n"
-   "\n"
-
-   "Channel nubank\n"
-   "Far :nubank-remote:\n"
-   "Near :nubank-local:\n"
-   "Patterns * ![Gmail]* \"[Gmail]/Sent Mail\" \"[Gmail]/Starred\" \"[Gmail]/All Mail\" \"[Gmail]/Trash\"\n"
-   "Expunge None\n"
-   "CopyArrivalDate yes\n"
-   "Sync All\n"
-   "Create Both\n"
    "SyncState *\n"))
 
 (define-record-type* <home-mbsync-configuration>

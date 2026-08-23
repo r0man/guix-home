@@ -108,8 +108,6 @@
         emacs-inspector
         emacs-jarchive
         emacs-jinx
-        emacs-jira
-        emacs-jiralib2
         emacs-js2-refactor
         emacs-json-process-client
         emacs-kele
@@ -138,8 +136,6 @@
         emacs-orderless
         emacs-org
         emacs-org-contrib
-        emacs-org-gcal
-        emacs-org-jira
         emacs-org-make-toc
         emacs-org-present
         emacs-org-reveal
@@ -147,7 +143,6 @@
         emacs-org-tree-slide
         emacs-osm
         emacs-ox-gfm
-        emacs-ox-jira
         emacs-ox-slack
         emacs-pandoc-mode
         emacs-paredit

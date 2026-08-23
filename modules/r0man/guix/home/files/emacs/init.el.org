@@ -37,19 +37,6 @@ Shared model lists, endpoints, and credential helpers used by the
       ("Claude Haiku 4.5"  . "claude-haiku-4-5-20251001"))
     "Claude chat models as (DISPLAY-NAME . MODEL-ID); CAR is the default.")
 
-  (defvar r0man/gemini-models
-    '(("Gemini 2.5 Pro"   . "gemini-2.5-pro")
-      ("Gemini 2.5 Flash" . "gemini-2.5-flash"))
-    "Gemini chat models as (DISPLAY-NAME . MODEL-ID); CAR is the default.")
-
-  (defconst r0man/nubank-litellm-host
-    "ist-prod-litellm.nullmplatform.com"
-    "Nubank LiteLLM proxy host.")
-
-  (defconst r0man/nubank-litellm-url
-    (concat "https://" r0man/nubank-litellm-host "/")
-    "Nubank LiteLLM proxy URL.")
-
   (defun r0man/anthropic-key ()
     "Return the personal Anthropic API key from auth-source."
     (auth-source-pick-first-password
@@ -59,26 +46,6 @@ Shared model lists, endpoints, and credential helpers used by the
     "Return the personal OpenAI API key from auth-source."
     (auth-source-pick-first-password
      :host "openai.com" :user "ellama"))
-
-  (defun r0man/nubank-litellm-key ()
-    "Return the Nubank LiteLLM proxy API key from auth-source."
-    (auth-source-pick-first-password
-     :host r0man/nubank-litellm-host :user "apikey"))
-
-  (defun r0man/nubank-llm-provider (prefix display-name model-id key
-                                           &optional embedding-model)
-    "Cons cell suitable for `ellama-providers'.
-PREFIX is the LiteLLM route prefix (e.g. \"anthropic\", \"openai\",
-\"gemini\"). DISPLAY-NAME is rendered as \"Nubank DISPLAY-NAME\".
-MODEL-ID is the upstream chat model. KEY is the LiteLLM API key.
-EMBEDDING-MODEL, if non-nil, sets the embedding model."
-    (cons (format "Nubank %s" display-name)
-          (apply #'make-llm-openai-compatible
-                 :url r0man/nubank-litellm-url
-                 :key key
-                 :chat-model (format "%s/%s" prefix model-id)
-                 (when embedding-model
-                   (list :embedding-model embedding-model)))))
 #+end_src
 
 ** Ef Themes
@@ -673,10 +640,6 @@ Make Emacs use the $PATH set up by the user's shell.
             "METALS_JAVA_OPTS"
             "METALS_JDK_PATH"
             "NPM_PACKAGES"
-            "NUCLI_HOME"
-            "NUCLI_PY_FULL"
-            "NU_COUNTRY"
-            "NU_HOME"
             "PATH"
             "SPARK_HOME"
             "XDG_CONFIG_DIRS"
@@ -819,24 +782,14 @@ A GNU Emacs major mode for editing BNF grammars.
     (require 'llm-openai)
     (let ((anthropic-key (r0man/anthropic-key))
           (openai-key    (r0man/openai-key))
-          (nullm-key     (r0man/nubank-litellm-key))
           providers)
       (dolist (model r0man/claude-models)
         (let ((name (car model)) (id (cdr model)))
           (push (cons name (make-llm-claude :key anthropic-key :chat-model id))
-                providers)
-          (push (r0man/nubank-llm-provider "anthropic" name id nullm-key)
                 providers)))
       (dolist (model r0man/openai-models)
         (let ((name (car model)) (id (cdr model)))
           (push (cons name (make-llm-openai :key openai-key :chat-model id))
-                providers)
-          (push (r0man/nubank-llm-provider "openai" name id nullm-key
-                                           "text-embedding-3-small")
-                providers)))
-      (dolist (model r0man/gemini-models)
-        (let ((name (car model)) (id (cdr model)))
-          (push (r0man/nubank-llm-provider "gemini" name id nullm-key)
                 providers)))
       (setq ellama-providers (append (nreverse providers) ellama-providers)))
     (let* ((claude-name (caar r0man/claude-models))
@@ -1369,24 +1322,11 @@ See: https://emacsnotes.wordpress.com/2022/08/16/who-stole-c-c-and-possibly-othe
                                   r0man/claude-models))
            (openai-models (mapcar (lambda (m) (intern (cdr m)))
                                   r0man/openai-models))
-           (nubank-models
-            (append
-             (mapcar (lambda (m) (intern (format "openai/%s" (cdr m))))
-                     r0man/openai-models)
-             (mapcar (lambda (m) (intern (format "anthropic/%s" (cdr m))))
-                     r0man/claude-models)
-             (mapcar (lambda (m) (intern (format "gemini/%s" (cdr m))))
-                     r0man/gemini-models)))
            (claude-backend
             (gptel-make-anthropic "Claude"
               :stream t
               :models claude-models
               :key #'r0man/anthropic-key)))
-      (gptel-make-openai "Nubank"
-        :stream t
-        :models nubank-models
-        :host r0man/nubank-litellm-host
-        :key #'r0man/nubank-litellm-key)
       (gptel-make-openai "OpenAI"
         :stream t
         :models openai-models
@@ -1884,24 +1824,6 @@ Start the Emacs server if it's not running.
     :commands (tree-inspector-inspect-expression
                tree-inspector-inspect-last-sexp))
 #+end_src
-** Jira
-#+begin_src emacs-lisp
-  (use-package jira
-    :defer t
-    :custom
-    (jira-api-version 3)
-    (jira-base-url "https://nubank.atlassian.net")
-    (jira-username "roman.scherer@nubank.com.br"))
-#+end_src
-** Jiralib2
-
-Lisp bindings to JIRA REST API.
-
-#+begin_src emacs-lisp
-  (use-package jiralib2
-    :after (ox-jira)
-    :defer t)
-#+end_src
 ** Kele
 #+begin_src emacs-lisp
   (use-package kele
@@ -1939,41 +1861,10 @@ Lisp bindings to JIRA REST API.
     (setq magit-revision-insert-related-refs nil)
     (setq magit-diff-refine-hunk t))
 #+end_src
-** MCP
-
-Client for interfacing with MCP servers.
-
-#+begin_src emacs-lisp
-  (use-package mcp
-    :commands (mcp-hub)
-    :config
-    (setq mcp-hub-servers
-          `(("apistemic" . (:command "/bin/sh"
-                                     :args ("-c"
-                                            ,(concat "cd ~/workspace/nu/apistemic && "
-                                                     "clojure -X:mcp :port 45525")))))))
-#+end_src
 ** MCP Tools
 #+begin_src emacs-lisp
   (use-package emacs-mcp
     :commands (emacs-mcp-run-stdio))
-#+end_src
-** Nubank
-#+begin_src emacs-lisp
-  (use-package nu
-    :commands (nu nu-datomic-query nu-session-switch)
-    :load-path ("~/workspace/nu/nudev/ides/emacs/"
-                "~/workspace/nu/nudev/ides/emacs/test/")
-    :config
-    (require 'nu)
-    (require 'nu-metapod)
-    (require 'nu-datomic-query))
-#+end_src
-** Nu Tools Build
-#+begin_src emacs-lisp
-  (use-package nu-tools-build
-    :commands (nu-tools-build)
-    :load-path ("~/workspace/nu/tools-build/"))
 #+end_src
 ** Java
 
@@ -2096,7 +1987,7 @@ supplied by the original command.
 
 Configure mu with:
 
-  mu init --maildir=~/Mail --my-address=roman@burningswell.com --my-address=roman.scherer@burningswell.com --my-address=roman.scherer@nubank.com.br
+  mu init --maildir=~/Mail --my-address=roman@burningswell.com --my-address=roman.scherer@burningswell.com
   mu index
 
 #+begin_src emacs-lisp
@@ -2124,9 +2015,6 @@ Configure mu with:
           '((:name "Burning Swell"
                    :query "maildir:/burningswell/* AND NOT flag:list"
                    :key ?b)
-            (:name "Nubank"
-                   :query "maildir:/nubank/* AND NOT flag:list"
-                   :key ?n)
             (:name "Guix Devel"
                    :query "list:guix-devel.gnu.org"
                    :key ?g)
@@ -2134,13 +2022,13 @@ Configure mu with:
                    :query "list:help-guix.gnu.org"
                    :key ?h)
             (:name "Unread messages"
-                   :query "flag:unread AND NOT flag:trashed AND NOT list:itaipu.nubank.github.com"
+                   :query "flag:unread AND NOT flag:trashed"
                    :key ?u)
             (:name "Today's messages"
-                   :query "date:today..now AND NOT list:itaipu.nubank.github.com"
+                   :query "date:today..now"
                    :key ?t)
             (:name "Last 7 days"
-                   :query "date:7d..now AND NOT list:itaipu.nubank.github.com"
+                   :query "date:7d..now"
                    ;; :hide-unread t
                    :key ?w)
             (:name "Messages with images"
@@ -2160,19 +2048,7 @@ Configure mu with:
                     (mu4e-sent-folder . "/burningswell/[Gmail]/Sent Mail")
                     (mu4e-trash-folder . "/burningswell/[Gmail]/Trash")
                     (user-full-name . "Roman Scherer")
-                    (user-mail-address . "roman.scherer@burningswell.com")))
-           (make-mu4e-context
-            :name "Nubank"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/nubank" (mu4e-message-field msg :maildir))))
-            :vars '((mu4e-drafts-folder . "/nubank/[Gmail]/Drafts")
-                    (mu4e-refile-folder . "/nubank/[Gmail]/All Mail")
-                    (mu4e-sent-folder . "/nubank/[Gmail]/Sent Mail")
-                    (mu4e-trash-folder . "/nubank/[Gmail]/Trash")
-                    (user-full-name . "Roman Scherer")
-                    (user-mail-address . "roman.scherer@nubank.com.br"))))))
+                    (user-mail-address . "roman.scherer@burningswell.com"))))))
 #+end_src
 ** Multi Libvterm
 
@@ -2186,14 +2062,6 @@ Configure mu with:
            ))
 #+end_src
 
-** Nucli
-#+begin_src emacs-lisp
-  (use-package nucli
-    :bind (("C-x N" . nucli))
-    :commands (nucli)
-    :load-path ("~/workspace/nu/nucli.el/src"
-                "~/workspace/nu/nucli.el/test"))
-#+end_src
 ** Mouse
 #+begin_src emacs-lisp
   (add-to-list 'default-frame-alist '(mouse-color . "white"))
@@ -2407,35 +2275,6 @@ Open files with external programs.
        ;; (variable (styles partial-completion))
        )))
 #+end_src
-** Org GCal
-#+begin_src emacs-lisp
-  (use-package org-gcal
-    :commands (org-gcal-fetch org-gcal-sync)
-    :config
-    (setq org-gcal-remove-api-cancelled-events t)
-    (setq org-gcal-client-id "307472772807-cb0c244ep89qoec5sdu672st8funmqtr.apps.googleusercontent.com")
-    (setq org-gcal-client-secret
-          (auth-source-pick-first-password
-           :host org-gcal-client-id
-           :user "roman.scherer@nubank.com.br"))
-    (setq org-gcal-fetch-file-alist '(("roman.scherer@nubank.com.br" .  "~/nubank-calendar.org")))
-    (add-to-list 'org-agenda-files "~/nubank-calendar.org"))
-#+end_src
-** Org Jira
-
-Use Jira in Emacs org-mode.
-
-#+begin_src emacs-lisp
-  (use-package org-jira
-    :load-path ("~/workspace/org-jira")
-    :commands (org-jira-get-issues)
-    :config
-    (make-directory org-jira-working-dir t)
-    :custom
-    (jiralib-url "https://nubank.atlassian.net")
-    (org-jira-users '(("Roman Scherer" . "5d56c909acb80e0d853a95ca"))))
-#+end_src
-
 ** Org mode
 
 #+begin_src emacs-lisp
@@ -2554,15 +2393,6 @@ Github Flavored Markdown exporter for Org Mode.
     :after (ox))
 #+end_src
 
-** Ox Jira
-
-JIRA Backend for Org Export Engine.
-
-#+begin_src emacs-lisp
-  (use-package ox-jira
-    :defer t
-    :after (ox))
-#+end_src
 ** Pandoc
 
 An Emacs mode for interacting with Pandoc.
