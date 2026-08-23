@@ -873,22 +873,6 @@ A GNU Emacs major mode for editing BNF grammars.
            ("\\.cljc\\'" . clojurec-mode))
     :config
     (add-hook 'clojure-mode-hook #'subword-mode)
-    (defun clojure-toggle-between-implementation-and-test ()
-      "Toggle between a Clojure implementation file and its test file.
-Assumes the conventional src/ and test/ layout with a _test suffix."
-      (interactive)
-      (let ((file (buffer-file-name)))
-        (unless file
-          (user-error "Buffer is not visiting a file"))
-        (find-file
-         (if (string-match-p "_test\\.clj[sc]?\\'" file)
-             (replace-regexp-in-string
-              "/test/" "/src/"
-              (replace-regexp-in-string "_test\\(\\.clj[sc]?\\)\\'" "\\1" file))
-           (replace-regexp-in-string
-            "/src/" "/test/"
-            (replace-regexp-in-string "\\(\\.clj[sc]?\\)\\'" "_test\\1" file))))))
-    (define-key clojure-mode-map (kbd "C-c t") #'clojure-toggle-between-implementation-and-test)
     (define-clojure-indent
      (assoc 1)
      (match? 0)
@@ -2515,26 +2499,8 @@ does not hook into find-file, dired or window-configuration hooks, so
 it never probes for project roots over TRAMP (or anywhere else) unless
 a project command is explicitly invoked.
 
-The =C-c p= prefix is kept from the Projectile days, alongside the
-default =C-x p=.  The =s g= / =s r= consult bindings shadow
-`project-shell' on =s=, which vterm makes redundant anyway.
-
 #+begin_src emacs-lisp
   (use-package project
-    :init
-    (defun project-find-file-dwim ()
-      "Find a file in the current project, or fall back to `find-file'."
-      (interactive)
-      (if (project-current)
-          (project-find-file)
-        (call-interactively #'find-file)))
-    :bind
-    (("C-x C-f" . project-find-file-dwim)
-     :map project-prefix-map
-     ("s g" . consult-grep)
-     ("s r" . consult-ripgrep))
-    :bind-keymap
-    (("C-c p" . project-prefix-map))
     :custom
     ;; Treat these as project roots in addition to version control roots,
     ;; e.g. for Dart/Flutter, Bazel and Guix projects.
