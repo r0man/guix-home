@@ -2504,7 +2504,9 @@ a project command is explicitly invoked.
     :custom
     ;; Treat these as project roots in addition to version control roots,
     ;; e.g. for Dart/Flutter, Bazel and Guix projects.
-    (project-vc-extra-root-markers '("pubspec.yaml" "BUILD" "guix.scm")))
+    (project-vc-extra-root-markers '("pubspec.yaml" "BUILD" "guix.scm"))
+    ;; Use ripgrep for `project-find-regexp' and other xref searches.
+    (xref-search-program 'ripgrep))
 #+end_src
 ** Ruby mode
 
@@ -2857,6 +2859,16 @@ parts (CSS / JavaScript) and blocks (client / server side).
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-markup-indent-offset 2))
+#+end_src
+** Wgrep
+
+Edit grep and ripgrep result buffers (e.g. from `embark-export' or
+=M-x grep=) and apply the changes to the underlying files with =C-c
+C-c=.  Enter the editable mode with =C-c C-p=.
+
+#+begin_src emacs-lisp
+  (use-package wgrep
+    :defer t)
 #+end_src
 ** Which Key
 
