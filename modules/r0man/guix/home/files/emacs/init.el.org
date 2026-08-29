@@ -873,7 +873,6 @@ A GNU Emacs major mode for editing BNF grammars.
            ("\\.cljc\\'" . clojurec-mode))
     :config
     (add-hook 'clojure-mode-hook #'subword-mode)
-    (define-key clojure-mode-map (kbd "C-c t") #'projectile-toggle-between-implementation-and-test)
     (define-clojure-indent
      (assoc 1)
      (match? 0)
@@ -1085,16 +1084,13 @@ A GNU Emacs major mode for editing BNF grammars.
      consult--source-project-recent-file
      :preview-key "M-.")
 
-    ;; Optionally configure the narrowing key.
-    ;; Both < and C-+ work reasonably well.
-    (setq consult-narrow-key "<") ;; (kbd "C-+")
-
     ;; Optionally make narrowing help available in the minibuffer.
     ;; You may want to use `embark-prefix-help-command' or which-key instead.
     ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
 
-    (autoload 'projectile-project-root "projectile")
-    (setq consult-project-root-function #'projectile-project-root))
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<")) ;; (kbd "C-+")
 #+end_src
 
 ** Consult Github
@@ -2056,10 +2052,7 @@ Configure mu with:
   (use-package multi-vterm
     :disabled
     :bind (("C-x M" . multi-vterm)
-           ("C-x m" . multi-vterm-next)
-           ;; :map projectile-mode-map
-           ;; ("C-c p m" . multi-vterm-projectile)
-           ))
+           ("C-x m" . multi-vterm-next)))
 #+end_src
 
 ** Mouse
@@ -2504,54 +2497,21 @@ An HTTP library for Emacs.
                                 (macroexpand (pp-last-sexp))))))
 #+end_src
 
-** Projectile
+** Project
 
-Project Interaction Library for Emacs.
+Project management with the built-in project.el.  Unlike Projectile it
+does not hook into find-file, dired or window-configuration hooks, so
+it never probes for project roots over TRAMP (or anywhere else) unless
+a project command is explicitly invoked.
 
 #+begin_src emacs-lisp
-  (use-package projectile
-    :bind
-    (("C-x C-f" . projectile-find-file)
-     :map projectile-command-map
-     ("s g" . consult-grep)
-     ("s r" . consult-ripgrep))
-    :bind-keymap
-    (("C-c p" . projectile-command-map))
+  (use-package project
     :custom
-    (projectile-completion-system 'default)
-    :config
-    (add-to-list 'projectile-project-root-files-bottom-up "pubspec.yaml")
-    (add-to-list 'projectile-project-root-files-bottom-up "BUILD")
-    ;; Projectile hooks into dired-before-readin-hook, find-file-hook and
-    ;; window-configuration-change-hook, and each one probes for a project
-    ;; root: 61 marker files in `projectile-project-root-files' alone,
-    ;; stat'd at every level while walking up to /.  Locally that is free.
-    ;; Over TRAMP it is ~137 serialised round-trips -- measured at 79s to
-    ;; open one 19-entry dired on gascity@burningswell.com, and it repeats
-    ;; for every directory entered because nothing up that tree is a
-    ;; project, so there is not even a hit to cache.  Skip the three hooks
-    ;; on remote directories; local projects keep every feature.
-    (defun projectile-skip-when-remote (fn &rest args)
-      "Apply FN to ARGS only when `default-directory' is local."
-      (unless (file-remote-p default-directory)
-        (apply fn args)))
-
-    (advice-add 'projectile-track-known-projects-find-file-hook
-                :around #'projectile-skip-when-remote)
-    (advice-add 'projectile-update-mode-line-on-window-change
-                :around #'projectile-skip-when-remote)
-    (advice-add 'projectile-find-file-hook-function
-                :around #'projectile-skip-when-remote)
-
-    (projectile-register-project-type 'guix '("guix.scm")
-                                      :project-file "guix.scm"
-                                      :compile "make"
-                                      :src-dir "modules/"
-                                      :test "make test"
-                                      :test-dir "tests/"
-                                      :test-suffix "")
-    :hook
-    ((after-init . projectile-mode)))
+    ;; Treat these as project roots in addition to version control roots,
+    ;; e.g. for Dart/Flutter, Bazel and Guix projects.
+    (project-vc-extra-root-markers '("pubspec.yaml" "BUILD" "guix.scm"))
+    ;; Use ripgrep for `project-find-regexp' and other xref searches.
+    (xref-search-program 'ripgrep))
 #+end_src
 ** Ruby mode
 
@@ -2904,6 +2864,16 @@ parts (CSS / JavaScript) and blocks (client / server side).
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-markup-indent-offset 2))
+#+end_src
+** Wgrep
+
+Edit grep and ripgrep result buffers (e.g. from `embark-export' or
+=M-x grep=) and apply the changes to the underlying files with =C-c
+C-c=.  Enter the editable mode with =C-c C-p=.
+
+#+begin_src emacs-lisp
+  (use-package wgrep
+    :defer t)
 #+end_src
 ** Which Key
 

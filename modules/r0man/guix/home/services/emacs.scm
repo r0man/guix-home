@@ -151,7 +151,6 @@
         emacs-pgemacs
         emacs-plz
         emacs-posframe
-        emacs-projectile
         emacs-rainbow-mode
         emacs-redshank
         emacs-refactor
@@ -180,6 +179,7 @@
         emacs-virtualenvwrapper
         emacs-vterm
         emacs-web-mode
+        emacs-wgrep
         emacs-which-key
         emacs-whisper
         emacs-with-simulated-input
