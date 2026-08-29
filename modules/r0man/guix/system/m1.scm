@@ -14,7 +14,7 @@
   #:use-module (gnu packages display-managers)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages package-management)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
   #:use-module (gnu services containers)

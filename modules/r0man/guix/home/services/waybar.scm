@@ -3,7 +3,7 @@
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages pulseaudio)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix utils)

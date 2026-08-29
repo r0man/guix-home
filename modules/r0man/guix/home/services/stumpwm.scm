@@ -2,7 +2,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages lisp)
   #:use-module (gnu packages lisp-xyz)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)

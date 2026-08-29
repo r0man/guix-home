@@ -10,7 +10,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mpd)
   #:use-module (gnu packages pulseaudio)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages)

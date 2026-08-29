@@ -10,7 +10,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages terminals)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:export (home-sway-configuration
             home-sway-service-type))

@@ -7,7 +7,7 @@
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages networking)
   #:use-module (gnu packages suckless)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services avahi)

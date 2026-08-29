@@ -2,7 +2,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services)
