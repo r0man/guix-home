@@ -1848,7 +1848,9 @@ Start the Emacs server if it's not running.
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit
-    :bind (("C-x C-g s" . magit-status))
+    :bind (("C-x C-g s" . magit-status)
+           :map project-prefix-map
+           ("v" . magit-project-status))
     :config
     (setq magit-stage-all-confirm nil)
     (setq magit-unstage-all-confirm nil)
