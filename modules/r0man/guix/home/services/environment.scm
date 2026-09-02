@@ -16,7 +16,15 @@
   home-environment-configuration make-home-environment-configuration
   home-environment-configuration?
   (variables home-environment-variables
-             (default `(("EDITOR" . "emacsclient")
+             ;; NOTE: GNUPGHOME is re-declared here to override the one set
+             ;; by home-gpg-agent-service-type.  Upstream resolves it with
+             ;; (getenv "HOME") at evaluation time, so when the home
+             ;; environment is instantiated from the system configuration via
+             ;; guix-home-service-type, `guix system reconfigure' runs as root
+             ;; and bakes in "/root/.gnupg".  Using "$HOME" defers expansion to
+             ;; the shell sourcing setup-environment.
+             (default `(("GNUPGHOME" . "$HOME/.gnupg")
+                        ("EDITOR" . "emacsclient")
                         ("HISTCONTROL" . "ignoredups")
                         ("HISTFILESIZE" . "10000000")
                         ("HISTSIZE" . "100000")
