@@ -128,6 +128,7 @@
         emacs-markdown-preview-mode
         emacs-mcp
         emacs-mermaid-mode
+        emacs-modus-themes
         emacs-mu4e-alert
         emacs-multi-term
         emacs-multi-vterm
