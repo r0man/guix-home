@@ -59,6 +59,7 @@
         emacs-docker-compose-mode
         emacs-dockerfile-mode
         emacs-docopt
+        emacs-doric-themes
         emacs-eat
         emacs-edit-indirect
         emacs-efrit
