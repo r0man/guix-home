@@ -1573,6 +1573,14 @@ Whether Emacs should confirm killing processes on exit.
   (setq confirm-kill-processes nil)
 #+end_src
 
+** Modus Themes
+
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :commands (modus-themes-load-random
+               modus-themes-rotate))
+#+end_src
+
 ** Compilation mode
 
 Enable colors in compilation mode.
