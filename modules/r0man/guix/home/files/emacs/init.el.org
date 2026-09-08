@@ -2524,6 +2524,8 @@ a project command is explicitly invoked.
 
 #+begin_src emacs-lisp
   (use-package project
+    :bind (:map project-prefix-map
+           ("g" . consult-ripgrep))
     :custom
     (project-mode-line t)
     (project-vc-extra-root-markers
