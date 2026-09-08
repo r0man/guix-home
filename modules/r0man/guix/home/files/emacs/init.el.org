@@ -2526,7 +2526,8 @@ a project command is explicitly invoked.
   (use-package project
     :bind (:map project-prefix-map
            ("g" . consult-ripgrep)
-           ("B" . beads-dashboard))
+           ("B" . beads)
+           ("G" . gascity))
     :custom
     (project-mode-line t)
     (project-vc-extra-root-markers
