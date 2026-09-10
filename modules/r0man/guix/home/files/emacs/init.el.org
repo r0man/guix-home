@@ -2839,6 +2839,9 @@ multi-buffer support.
   (use-package ghostel
     :bind (("C-x M" . ghostel-new)
            ("C-x m" . ghostel-next)
+           :map project-prefix-map
+           ("m" . ghostel-project)
+           ("M" . ghostel-project-list-buffers)
            :map ghostel-mode-map
            ("M-SPC" . ghostel-send-meta-space))
     :preface
