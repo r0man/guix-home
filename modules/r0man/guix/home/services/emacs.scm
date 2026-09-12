@@ -311,12 +311,16 @@
   (home-emacs-packages config))
 
 (define (home-emacs-bash-extension config)
-  "Return bash extension for emacs-vterm integration."
+  "Return bash extension for emacs-vterm integration.
+A repo-owned copy of vterm's etc/emacs-vterm-bash.sh, patched to emit
+the OSC title and prompt integration only when running inside vterm.
+Upstream appends `vterm_prompt_end' to PS1 unconditionally, which makes
+TRAMP's shell-prompt detection hang on every /ssh:… connection (the
+trailing OSC 51;A after the prompt character can never match TRAMP's
+end-of-buffer-anchored prompt regexp)."
   (home-bash-extension
    (bashrc
-    (list (file-append emacs-vterm "/share/emacs/site-lisp/vterm-"
-                       (package-version emacs-vterm)
-                       "/etc/emacs-vterm-bash.sh")))))
+    (list (local-file "../files/bash/emacs-vterm-bash.sh")))))
 
 (define home-emacs-service-type
   (service-type
