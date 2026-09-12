@@ -28,16 +28,11 @@ and substitute URL to the guix-daemon configuration.")))
    (extensions
     (list (service-extension guix-service-type
                              (const (guix-extension
-                                     (authorized-keys
-                                      (list (plain-file
-                                             "guix-moe-old.pub"
-                                             "(public-key (ecc (curve Ed25519) (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))")
-                                            (plain-file
-                                             "guix-moe-new.pub"
-                                             "(public-key (ecc (curve Ed25519) (q #552F670D5005D7EB6ACF05284A1066E52156B51D75DE3EBD3030CD046675D543#)))")))
                                      (substitute-urls
                                       '("https://cache-cdn.guix.moe")))))))
    (default-value #f)
    (description
-    "Configure the guix.moe substitute server, adding the signing keys
-and substitute URL to the guix-daemon configuration.")))
+    "Add the guix.moe CDN mirror to the guix-daemon substitute URLs.  Since
+2026-09 the mirror serves substitutes from bordeaux.guix.gnu.org,
+ci.guix.gnu.org and substitutes.nonguix.org with their original signatures,
+so no additional signing keys are authorized.")))
