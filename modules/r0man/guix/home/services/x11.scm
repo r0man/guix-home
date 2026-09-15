@@ -73,6 +73,7 @@
                            pavucontrol
                            picom
                            setxkbmap
+                           xauth
                            xbacklight
                            xbindkeys
                            xclip
