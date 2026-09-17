@@ -2843,7 +2843,11 @@ multi-buffer support.
            ("m" . ghostel-project)
            ("M" . ghostel-project-list-buffers)
            :map ghostel-mode-map
-           ("M-SPC" . ghostel-send-meta-space))
+           ("M-SPC" . ghostel-send-meta-space)
+           :map ghostel-semi-char-mode-map
+           ("C-s"  . consult-line)
+           ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+           ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl"))))
     :preface
     (defun ghostel-new ()
       "Always start a new Ghostel terminal buffer."
@@ -2860,6 +2864,7 @@ multi-buffer support.
     :custom
     (ghostel-max-scrollback 100000))
 #+end_src
+
 ** Clipetty
 
 Enable clipboard support in terminal emulators.
