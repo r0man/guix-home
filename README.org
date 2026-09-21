@@ -24,6 +24,12 @@ Pull latest channel updates.
 #+end_src
 *** M1
 
+Reconfigure the system.
+
+#+begin_src shell
+  sudo ~/.config/guix/current/bin/guix system -L modules reconfigure modules/r0man/guix/system/m1.scm
+#+end_src
+
 Reconfigure the home environment.
 
 #+begin_src shell
