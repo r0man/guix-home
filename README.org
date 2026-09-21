@@ -16,6 +16,12 @@ Configure the Guix channels.
 #+end_src
 
 ** Usage
+
+Pull latest channel updates.
+
+#+begin_src shell
+  guix pull --unsafe-channel-evaluation
+#+end_src
 *** M1
 
 Reconfigure the home environment.
