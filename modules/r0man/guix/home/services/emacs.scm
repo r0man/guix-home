@@ -182,7 +182,6 @@
         emacs-vterm
         emacs-web-mode
         emacs-wgrep
-        emacs-which-key
         emacs-whisper
         emacs-with-simulated-input
         emacs-x509-mode
