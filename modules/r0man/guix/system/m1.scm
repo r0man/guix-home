@@ -19,12 +19,10 @@
   #:use-module (gnu services base)
   #:use-module (gnu services containers)
   #:use-module (gnu services dbus)
-  #:use-module (gnu services docker)
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
   #:use-module (gnu services sddm)
-  #:use-module (gnu services shepherd)
   #:use-module (gnu services xorg)
   #:use-module (gnu services)
   #:use-module (gnu system accounts)
@@ -40,8 +38,6 @@
   #:use-module (r0man guix channels)
   #:use-module (r0man guix home environments m1)
   #:use-module (r0man guix packages display-managers)
-  #:use-module (r0man guix services github-actions)
-  #:use-module (r0man guix services github-actions-vm)
   #:use-module (r0man guix system desktop)
   #:use-module (r0man guix system services keyboard)
   #:use-module (r0man guix system services qemu)
@@ -126,47 +122,6 @@
             (subuids
              (list (subid-range (name "roman")))))))
 
-;;; A plain (non-VM) GitHub Actions runner for the burningswell
-;;; project, running natively on this laptop.  A one-shot shepherd
-;;; service mints a registration token with a fine-grained PAT
-;;; (deployed out-of-band at /etc/github-runner-pat-bs, never in the
-;;; store) before the runner service starts; the runner start script
-;;; reads the token from an absolute path at start time.
-(define %mint-registration-token-service
-  (simple-service 'github-actions-runner-mint
-                  shepherd-root-service-type
-                  (list (shepherd-service
-                         (documentation
-                          "Mint a GitHub Actions runner registration token.")
-                         (provision '(mint-registration-token))
-                         (one-shot? #t)
-                         (start #~(lambda ()
-                                    (let ((rc (system*
-                                               #$(github-actions-runner-vm-mint-program)
-                                               "/etc/github-runner-pat-bs"
-                                               "https://github.com/burningswell/burningswell-cl"
-                                               "/var/lib/github-actions-runner/token")))
-                                      (if (zero? rc)
-                                          ;; The runner start script reads
-                                          ;; the token as the runner user.
-                                          (begin
-                                            (chmod
-                                             "/var/lib/github-actions-runner/token"
-                                             #o644)
-                                            #t)
-                                          #f))))
-                         (stop #~(const #f))))))
-
-(define %burningswell-runner-service
-  (service github-actions-runner-service-type
-           (github-actions-runner-configuration
-            (url "https://github.com/burningswell/burningswell-cl")
-            (token "/var/lib/github-actions-runner/token")
-            (name "m1-bs-runner")
-            (labels '("docker" "burningswell"))
-            (supplementary-groups '("docker"))
-            (requirements '(mint-registration-token dockerd)))))
-
 (define %asahi-kernel-module-config
   (simple-service 'asahi-config etc-service-type
                   (list `("modprobe.d/asahi.conf"
@@ -186,9 +141,6 @@
                           %home-service
                           %qemu-service-aarch64
                           %rootless-podman-service
-                          %burningswell-runner-service
-                          %mint-registration-token-service
-                          (service docker-service-type)
                           %sddm-service
                           %udev-backlight-service
                           %udev-kbd-backlight-service
