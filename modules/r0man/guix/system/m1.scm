@@ -37,6 +37,7 @@
   #:use-module (guix packages)
   #:use-module (r0man guix channels)
   #:use-module (r0man guix home environments m1)
+  #:use-module (r0man guix services github-actions)
   #:use-module (r0man guix packages display-managers)
   #:use-module (r0man guix system desktop)
   #:use-module (r0man guix system services keyboard)
@@ -127,8 +128,38 @@
                   (list `("modprobe.d/asahi.conf"
                           ,(plain-file "asahi.conf" "options asahi debug_flags=1")))))
 
+;; Two CI runners for the burningswell org (labels burningswell + ci, no
+;; deploy label).  The mint one-shot reads the fine-grained PAT from
+;; /etc/github-runner-pat-bs (root, 0600), which needs the org permission
+;; "Self-hosted runners: read and write".
+(define %github-actions-runner
+  (service github-actions-runner-service-type
+           (list
+            (github-actions-runner-configuration
+             (id "ci")
+             (instances 2)
+             (url "https://github.com/burningswell")
+             (token "/var/lib/github-actions-runner/registration-token")
+             (name "m1-ci")
+             (labels '("burningswell" "ci"))
+             (replace? #t)
+             (environment-variables
+              '("PATH=/run/current-system/profile/bin:/run/current-system/profile/sbin"))
+             (requirements '(github-actions-runner-token))))))
+
+(define %github-actions-runner-token-mint
+  (service github-actions-runner-token-mint-service-type
+           (github-actions-runner-token-configuration
+            (url "https://github.com/burningswell")
+            (pat-file "/etc/github-runner-pat-bs")
+            (runner-config-files
+             (github-actions-runner-config-files
+              (service-value %github-actions-runner))))))
+
 (define %services
   (modify-services (cons* (service iwd-service-type)
+                          %github-actions-runner-token-mint
+                          %github-actions-runner
                           (service alsa-service-type)
                           (service asahi-firmware-service-type)
                           (service kernel-module-loader-service-type '("asahi" "appledrm" "xt_comment"))
