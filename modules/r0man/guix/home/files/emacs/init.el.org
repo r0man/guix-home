@@ -2530,6 +2530,17 @@ a project command is explicitly invoked.
            ("G" . gascity))
     :custom
     (project-mode-line t)
+    (project-switch-commands
+     '((project-find-file "Find file" "f")
+       (consult-project-buffer "Buffer" "b")
+       (consult-ripgrep "Ripgrep" "g")
+       (project-dired "Dired" "d")
+       (magit-project-status "Magit" "v")
+       (ghostel-project "Terminal" "m")
+       (claude-code-ide "Claude" "c")
+       (beads "Beads" "B")
+       (gascity "Gas City" "G")
+       (project-any-command "Other" "o")))
     (project-vc-extra-root-markers
      '(".git"
        ".projectile"
