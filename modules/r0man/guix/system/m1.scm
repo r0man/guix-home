@@ -14,7 +14,6 @@
   #:use-module (gnu packages display-managers)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages package-management)
-  #:use-module (gnu packages version-control)
   #:use-module (gnu packages window-management)
   #:use-module (gnu packages xorg)
   #:use-module (gnu services base)
@@ -63,9 +62,6 @@
 
 (define %packages
   (cons* alsa-utils
-         ;; On the runners' PATH: without it actions/checkout downloads
-         ;; a tarball with no .git, which `make gate' refuses.
-         git-minimal
          niri
          sway
          asahi-scripts
