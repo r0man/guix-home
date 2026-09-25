@@ -1978,6 +1978,17 @@ Interactive macro-expander for Emacs.
     (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode)))
 #+end_src
 
+Use the tree-sitter based Markdown mode from Emacs 31 instead of
+=markdown-mode= and =gfm-mode=.
+
+#+begin_src emacs-lisp
+  (use-package markdown-ts-mode
+    :after treesit
+    :init
+    (add-to-list 'major-mode-remap-alist '(markdown-mode . markdown-ts-mode))
+    (add-to-list 'major-mode-remap-alist '(gfm-mode . markdown-ts-mode)))
+#+end_src
+
 ** Marginalia
 
 This package adds marginalia to the minibuffer completions. Marginalia
@@ -2243,6 +2254,20 @@ Support for indenting code in SQL files.
                     "/run/current-system/profile/sbin"))))
 #+end_src
 
+** Tree-sitter
+
+The Guix =tree-sitter-markdown= package installs the inline grammar
+as =libtree-sitter-markdown_inline.so=, but Emacs looks for
+=libtree-sitter-markdown-inline.so=.
+
+#+begin_src emacs-lisp
+  (use-package treesit
+    :config
+    (add-to-list 'treesit-load-name-override-list
+                 '(markdown-inline "libtree-sitter-markdown_inline"
+                                   "tree_sitter_markdown_inline")))
+#+end_src
+
 ** Uniquify
 #+begin_src emacs-lisp
   (use-package uniquify
@@ -2415,7 +2440,7 @@ An Emacs mode for interacting with Pandoc.
 
 #+begin_src emacs-lisp
   (use-package pandoc-mode
-    :hook markdown-mode)
+    :hook (markdown-mode markdown-ts-mode))
 #+end_src
 
 The org-mode Pandoc exporter.
