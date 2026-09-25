@@ -2524,6 +2524,17 @@ a project command is explicitly invoked.
 
 #+begin_src emacs-lisp
   (use-package project
+    :preface
+    (defun r0man/project-prefix-command ()
+      "Show `project-prefix-map' with which-key and run the chosen command.
+Behaves like typing C-x p in the current project, which
+makes it useful as an entry in `project-switch-commands'."
+      (interactive)
+      (require 'which-key)
+      (which-key-show-keymap 'project-prefix-map t)
+      (unwind-protect
+          (project-prefix-or-any-command)
+        (which-key--hide-popup)))
     :bind (:map project-prefix-map
            ("g" . consult-ripgrep)
            ("B" . beads)
@@ -2540,7 +2551,7 @@ a project command is explicitly invoked.
        (claude-code-ide "Claude" "c")
        (beads "Beads" "B")
        (gascity "Gas City" "G")
-       (project-any-command "Other" "p")))
+       (r0man/project-prefix-command "C-x p" "o")))
     (project-vc-extra-root-markers
      '(".git"
        ".projectile"
