@@ -2540,7 +2540,7 @@ a project command is explicitly invoked.
        (claude-code-ide "Claude" "c")
        (beads "Beads" "B")
        (gascity "Gas City" "G")
-       (project-any-command "Other" "o")))
+       (project-any-command "Other" "p")))
     (project-vc-extra-root-markers
      '(".git"
        ".projectile"
