@@ -29,13 +29,19 @@
      (list %ssh-public-key-roman-burningswell))
     (hosts
      (list (openssh-host
-             (name "*")
+             (name "* !localhost !127.0.0.1 !::1")
+             (compression? #t)
              (extra-content
               (string-join
                '("ControlMaster auto"
                  "ControlPath ~/.ssh/control-%h-%p-%r"
-                 "ControlPersist 4h"
-                 ;; Keepalives so a master whose TCP died silently
+                 "ControlPersist 4h")
+               "\n")))
+           (openssh-host
+             (name "*")
+             (extra-content
+              (string-join
+               '(;; Keepalives so a master whose TCP died silently
                  ;; (suspend/resume, Wi-Fi change) self-destructs and
                  ;; frees its control socket instead of wedging every
                  ;; later ssh at mux_client_request_session.  10x2 = 20s
@@ -52,13 +58,7 @@
                "\n")))
            (openssh-host
              (name "localhost")
-             (compression? #t)
-             (forward-agent? #t)
-             (forward-x11-trusted? #t)
-             (forward-x11? #t))
+             (forward-agent? #t))
            (openssh-host
              (name "www.asahi-guix.org")
-             (compression? #t)
-             (forward-agent? #t)
-             (forward-x11-trusted? #t)
-             (forward-x11? #t))))))
+             (forward-agent? #t))))))
