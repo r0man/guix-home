@@ -270,7 +270,7 @@ Reload files when they change on disk.
 #+begin_src emacs-lisp
   (use-package gascity
     :bind (("C-x C-g g" . gascity))
-    :commands (gascity)
+    :commands (gascity gascity-bookmark-jump)
     :load-path ("~/workspace/gascity.el/lisp"
                 "~/workspace/gascity.el/lisp/test")
     :bind ("C-c g" . gascity))

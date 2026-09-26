@@ -7,8 +7,30 @@
   (position . 176))
  ("Asahi Guix - Roman Home (Dired)"
   (filename . "/ssh:roman@www.asahi-guix.org:~/"))
- ("Burning Swell - Gascity Home (Dired)"
-  (filename . "/ssh:gascity@burningswell.com:~/burningswell"))
+ ("Burning Swell - Gascity Dashboard"
+  (filename . "/ssh:gascity@burningswell.com:/home/gascity/burningswell/")
+  (location . "/ssh:gascity@burningswell.com:/home/gascity/burningswell/")
+  (gascity-view . dashboard)
+  (gascity-city-root . t)
+  (gascity-args)
+  (gascity-filters)
+  (handler . gascity-bookmark-jump))
+ ("Emacs City - Gascity Dashboard"
+  (filename . "/home/roman/emacs-city/")
+  (location . "/home/roman/emacs-city/")
+  (gascity-view . dashboard)
+  (gascity-city-root . t)
+  (gascity-args)
+  (gascity-filters)
+  (handler . gascity-bookmark-jump))
+ ("Bright Lights - Gascity Dashboard"
+  (filename . "/home/roman/bright-lights/")
+  (location . "/home/roman/bright-lights/")
+  (gascity-view . dashboard)
+  (gascity-city-root . t)
+  (gascity-args)
+  (gascity-filters)
+  (handler . gascity-bookmark-jump))
  ("Burning Swell - Root Home (Dired)"
   (filename . "/ssh:root@burningswell.com:~/"))
  ("Bombaclaat - Root Home"
