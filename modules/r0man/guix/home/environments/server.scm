@@ -26,6 +26,7 @@
   #:use-module (r0man guix home services mbsync)
   #:use-module (r0man guix home msmtp)
   #:use-module (r0man guix home services nix)
+  #:use-module (r0man guix home services pi)
   #:use-module (r0man guix home packages)
   #:use-module (r0man guix home pm)
   #:use-module (r0man guix home ssh)
@@ -56,6 +57,7 @@
                 (service home-nix-service-type)
                 (service home-openssh-service-type
                          home-openssh-default-configuration)
+                (service home-pi-service-type)
                 (service home-ssh-agent-service-type))
           home-tmux-services))
 

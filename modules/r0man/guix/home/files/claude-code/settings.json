@@ -1,22 +1,14 @@
 {
   "env": {
     "DISABLE_AUTOUPDATER": "1",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_SCROLL_SPEED": "0.25"
   },
-  "enabledPlugins": {
-    "beads@beads-marketplace": true,
-    "skill-creator@claude-plugins-official": true
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   },
-  "extraKnownMarketplaces": {
-    "beads-marketplace": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/gastownhall/beads.git"
-      }
-    }
-  },
-  "includeCoAuthoredBy": false,
-  "model": "opus",
   "permissions": {
     "allow": [
       "Bash(guix:*)"
@@ -27,9 +19,30 @@
       "Read(~/.aws/**)",
       "Read(~/.password-store/**)",
       "Read(~/Mail/**)"
-    ]
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "enabledPlugins": {
+    "beads@beads-marketplace": false,
+    "skill-creator@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "beads-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/gastownhall/beads.git"
+      }
+    }
+  },
+  "tui": "default",
+  "voice": {
+    "enabled": false
   },
   "skipDangerousModePermissionPrompt": true,
   "teammateMode": "tmux",
-  "voiceEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": false
 }

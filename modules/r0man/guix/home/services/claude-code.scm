@@ -3,6 +3,7 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (r0man guix home services agent-tools)
   #:use-module (r0man guix packages claude)
   #:use-module (r0man guix packages node)
   #:export (home-claude-code-configuration
@@ -11,8 +12,12 @@
 ;;; Commentary:
 ;;;
 ;;; Home service for Claude Code AI assistant configuration.
-;;; Manages ~/.claude/agents, ~/.claude/commands, ~/.claude/skills,
-;;; and ~/.claude/settings.json.
+;;; Manages ~/.claude/agents and ~/.claude/skills (shared with other
+;;; agents, see agent-tools.scm).
+;;;
+;;; ~/.claude/settings.json stays a regular file, because Claude Code
+;;; writes to it (/config, plugin toggles).  files/claude-code/settings.json
+;;; is a reference copy of the remaining settings and is not deployed.
 ;;;
 ;;; Code:
 
@@ -22,11 +27,8 @@
   (agents home-claude-code-agents
           (default (local-file "../files/claude-code/agents" #:recursive? #t))
           (description "Path to agents directory."))
-  (commands home-claude-code-commands
-            (default (local-file "../files/claude-code/commands" #:recursive? #t))
-            (description "Path to commands directory."))
   (skills home-claude-code-skills
-          (default (local-file "../files/claude-code/skills" #:recursive? #t))
+          (default %agent-skills)
           (description "Path to skills directory."))
   (packages home-claude-code-packages
             (default (list claude-code
@@ -40,7 +42,6 @@
   "Return alist of Claude Code configuration files to deploy."
   `(("bin/container-claude" ,(local-file "../files/bin/container-claude" #:recursive? #t))
     (".claude/agents" ,(home-claude-code-agents config))
-    (".claude/commands" ,(home-claude-code-commands config))
     (".claude/skills" ,(home-claude-code-skills config))
     ;; (".claude/settings.json" ,(home-claude-code-settings config))
     ))

@@ -1,4 +1,11 @@
-You are a Guix package maintainer tasked with creating a high-quality package definition for the software located at the URL: $1
+---
+name: create-guix-package
+description: Create a new Guix package definition for software at a given URL, building it and making it pass guix lint. Use when asked to package something for Guix.
+---
+
+# Create a Guix package
+
+You are a Guix package maintainer tasked with creating a high-quality package definition for the software at the URL the user gave.
 
 Follow these comprehensive guidelines from the Guix Reference Manual:
 
