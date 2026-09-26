@@ -59,7 +59,6 @@
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
   #:use-module (r0man guix packages node)
-  #:use-module (r0man guix packages pi)
   #:use-module (r0man guix packages task-management)
   #:use-module (r0man guix packages terminals)
   #:export (packages-aarch64
@@ -104,7 +103,6 @@
         openssl
         password-store
         pgcli
-        pi-coding-agent
         pkg-config
         plocate
         podman

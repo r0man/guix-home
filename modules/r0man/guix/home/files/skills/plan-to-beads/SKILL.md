@@ -1,26 +1,25 @@
-# Convert Plan to Beads Tasks
-
-## description:
-Convert a Claude Code plan file into beads epic + tasks for cross-session tracking.
-
-## Arguments
-$ARGUMENTS (optional - path to plan file, defaults to most recent in ~/.claude/plans/)
-
+---
+name: plan-to-beads
+description: Convert a plan file into a beads epic plus sequential tasks for cross-session tracking. Use when asked to turn a plan into beads issues.
 ---
 
-Use the **Task tool** with `subagent_type='general-purpose'` to convert the plan.
+# Convert Plan to Beads Tasks
 
-## Agent Instructions
+Input: an optional path to a plan file given by the user. Without one,
+use the most recent plan (`ls -t ~/.claude/plans/*.md | head -1`).
 
-The agent should:
+If your agent supports subagents, delegate the conversion to one so the
+bd output stays out of the main context. Otherwise do it directly.
+
+## Steps
 
 1. **Find the plan file**
-   - If argument provided, use that path
+   - If a path was given, use it
    - Otherwise: `ls -t ~/.claude/plans/*.md | head -1`
 
 2. **Parse the plan structure**
    - Title: First `# Plan:` or `#` heading
-   - Description: Content under `## Summary`
+   - Description: Content under `## Summary` or `## Context`
    - Tasks: Each `### Phase N:` or `### N.` section
    - File list: Include in epic description
 

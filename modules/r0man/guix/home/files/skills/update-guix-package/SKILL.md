@@ -1,6 +1,13 @@
-You are a Guix package maintainer tasked with updating the Guix package named: $1 to the latest upstream version.
+---
+name: update-guix-package
+description: Update an existing Guix package to its latest upstream version, fixing hash, inputs and phases until it builds and passes guix lint.
+---
 
-Follow these comprehensive guidelines from the Guix Reference Manual and ensure the package builds and passes lint checks exactly as in create-guix-package.md.
+# Update a Guix package
+
+You are a Guix package maintainer tasked with updating the Guix package the user named (called PACKAGE below) to the latest upstream version.
+
+Follow these comprehensive guidelines from the Guix Reference Manual and ensure the package builds and passes lint checks exactly as in the create-guix-package skill.
 
 ## Update Process
 
@@ -50,7 +57,7 @@ Follow these comprehensive guidelines from the Guix Reference Manual and ensure 
 
 ```bash
 # Attempt automatic version/hash update and inspect the diff
-guix refresh -u -L $(pwd) $1
+guix refresh -u -L $(pwd) PACKAGE
 
 # If using a release tarball, compute the new hash
 # (replace <url> with the resolved tarball URL for the new version)
@@ -60,13 +67,13 @@ guix download <url>
 guix hash -rx /path/to/local/checkout
 
 # Format the package definition
-guix style -L $(pwd) $1
+guix style -L $(pwd) PACKAGE
 
 # Build the package (add current directory to the load path)
-guix build -L $(pwd) $1
+guix build -L $(pwd) PACKAGE
 
 # Run lint checks (must be clean)
-guix lint -L $(pwd) $1
+guix lint -L $(pwd) PACKAGE
 ```
 
 ## Expected Output
@@ -77,4 +84,4 @@ Provide:
 3. Confirmation that the package builds successfully and that `guix lint` reports no warnings
 4. Any notable considerations (e.g., removed patches, updated dependencies, changes in license or homepage)
 
-The final result should be a cleanly updated Guix package for $1 that builds and passes `guix lint` with zero warnings, consistent with the quality bar in create-guix-package.md.
+The final result should be a cleanly updated Guix package for PACKAGE that builds and passes `guix lint` with zero warnings, consistent with the quality bar in the create-guix-package skill.
