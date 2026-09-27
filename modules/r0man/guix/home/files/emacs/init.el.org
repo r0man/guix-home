@@ -1728,17 +1728,6 @@ as well, leaving point between the two.
     :hook (emacs-lisp-mode . prettify-symbols-mode))
 #+end_src
 
-** Elint
-
-A linter for Emacs Lisp.
-
-#+begin_src emacs-lisp
-  (use-package elint
-    :commands (elint-initialize elint-current-buffer)
-    :bind (:map emacs-lisp-mode-map
-                ("C-c e E" . elint-current-buffer)))
-#+end_src
-
 ** Elisp
 
 The major mode for editing Emacs Lisp code.
