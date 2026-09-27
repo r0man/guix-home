@@ -2925,19 +2925,18 @@ Log and display warnings.
     :custom
     (warning-minimum-level :emergency))
 #+end_src
-** Web mode
+** Web mode (mhtml-ts-mode)
 
-An Emacs mode for editing web templates. HTML documents can embed
-parts (CSS / JavaScript) and blocks (client / server side).
+Use Emacs 31.1's built-in `mhtml-ts-mode` (tree-sitter based) for
+HTML with embedded JavaScript/CSS instead of `web-mode`.
 
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :mode (("\\.jsx\\'" . web-mode)
-           ("\\.html\\'" . web-mode))
+  (use-package mhtml-ts-mode
+    :after treesit
+    :mode (("\\.jsx\\'" . mhtml-ts-mode)
+           ("\\.html\\'" . mhtml-ts-mode))
     :custom
-    (web-mode-code-indent-offset 2)
-    (web-mode-css-indent-offset 2)
-    (web-mode-markup-indent-offset 2))
+    (mhtml-ts-js-css-indent-offset 2))
 #+end_src
 ** Wgrep
 
