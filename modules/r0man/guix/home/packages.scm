@@ -58,6 +58,7 @@
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (r0man guix packages container)
+  #:use-module (r0man guix packages lisp)
   #:use-module (r0man guix packages node)
   #:use-module (r0man guix packages pi)
   #:use-module (r0man guix packages task-management)
@@ -102,6 +103,7 @@
         node-zed-industries-claude-agent-acp
         nss-certs
         openssl
+        parenmedic
         password-store
         pgcli
         pi-coding-agent
