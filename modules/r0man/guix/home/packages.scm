@@ -131,6 +131,8 @@
         tree-sitter-go
         tree-sitter-html
         tree-sitter-javascript
+        tree-sitter-css
+        tree-sitter-jsdoc
         tree-sitter-json
         tree-sitter-make
         tree-sitter-markdown
