@@ -2267,7 +2267,7 @@ as =libtree-sitter-markdown_inline.so=, but Emacs looks for
                  '(markdown-inline "libtree-sitter-markdown_inline"
                                    "tree_sitter_markdown_inline"))
     :custom
-    (treesit-auto-install-grammar never))
+    (treesit-auto-install-grammar 'never))
 #+end_src
 
 ** Uniquify
