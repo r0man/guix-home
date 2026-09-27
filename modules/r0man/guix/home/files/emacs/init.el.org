@@ -1214,8 +1214,11 @@ Enable global minor-mode for prettifying Guix store files.
 
 ** Delete trailing whitespace
 
+Use built-in `delete-trailing-whitespace-mode` (Emacs 31.1+) instead of
+manual hook.
+
 #+begin_src emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (delete-trailing-whitespace-mode 1)
 #+end_src
 
 ** Docker
