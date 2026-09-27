@@ -1025,7 +1025,7 @@ A GNU Emacs major mode for editing BNF grammars.
            ("<help> a" . consult-apropos)            ;; orig. apropos-command
            ;; M-g bindings (goto-map)
            ("M-g e" . consult-compile-error)
-           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g f" . consult-flymake)
            ("M-g g" . consult-goto-line)             ;; orig. goto-line
            ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
            ("M-g o" . consult-outline)
@@ -1796,16 +1796,14 @@ Start the Emacs server if it's not running.
     (setq emms-player-mpd-music-directory (expand-file-name "~/Music"))
     (load-if-exists "~/.emms.el"))
 #+end_src
-** Flycheck
+** Flymake
 
 #+begin_src emacs-lisp
-  (use-package flycheck
-    :hook ((after-init . global-flycheck-mode)))
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package flycheck-elsa
-    :hook ((emacs-lisp-mode . flycheck-elsa-setup)))
+  (use-package flymake
+    :hook ((prog-mode . flymake-mode)
+           (text-mode . flymake-mode))
+    :custom
+    (flymake-indicator-type 'auto))
 #+end_src
 
 ** Git Email
@@ -2725,7 +2723,7 @@ Emacs client for the Language Server Protocol.
     (lsp-keymap-prefix "C-c l")
     (lsp-log-io t)
     (lsp-modeline-code-actions-enable nil)
-    (lsp-prefer-flymake nil)
+    (lsp-prefer-flymake t)
     (lsp-restart 'ignore)
     (lsp-sqls-server "~/go/bin/sqls")
     (lsp-terraform-server "~/bin/terraform-lsp")
