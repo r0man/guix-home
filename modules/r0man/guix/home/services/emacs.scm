@@ -65,8 +65,8 @@
         emacs-efrit
         emacs-editor-code-assistant
         emacs-ef-themes
-        ;; emacs-eglot
-        ;; emacs-eglot-java
+        emacs-eglot
+        emacs-eglot-java
         emacs-el-mock
         emacs-eldev
         emacs-elfeed
@@ -113,9 +113,6 @@
         emacs-kotlin-mode
         emacs-kubel
         emacs-logview
-        emacs-lsp-dart
-        emacs-lsp-treemacs
-        emacs-lsp-ui
         emacs-macrostep
         emacs-madolt
         emacs-magit
