@@ -130,10 +130,18 @@
         tree-sitter-dockerfile
         tree-sitter-go
         tree-sitter-html
+        tree-sitter-javascript
         tree-sitter-json
+        tree-sitter-make
         tree-sitter-markdown
         tree-sitter-org
+        tree-sitter-python
         tree-sitter-scheme
+        tree-sitter-scss
+        tree-sitter-sql
+        tree-sitter-toml
+        tree-sitter-xml
+        tree-sitter-yaml
         unzip
         util-linux
         vivid
