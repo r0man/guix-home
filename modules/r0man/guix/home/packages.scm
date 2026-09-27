@@ -78,7 +78,6 @@
         bluez
         cmake
         coreutils
-        ffmpeg
         file
         forgejo-cli
         gascity-next
