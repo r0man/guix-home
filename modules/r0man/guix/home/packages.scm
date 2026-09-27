@@ -96,7 +96,6 @@
         jq
         libatasmart
         libvterm
-        mumi
         ncurses
         node-lts
         node-zed-industries-claude-agent-acp
