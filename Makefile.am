@@ -86,25 +86,13 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/skills/asahi-linux/references/x86-emulation.md \
   modules/r0man/guix/home/files/skills/autoresearch/SKILL.md \
   modules/r0man/guix/home/files/skills/autoresearch/evals/evals.json \
-  modules/r0man/guix/home/files/skills/code-review/SKILL.md \
-  modules/r0man/guix/home/files/skills/code-review/evals/evals.json \
-  modules/r0man/guix/home/files/skills/code-review/references/review-lenses.md \
   modules/r0man/guix/home/files/skills/create-guix-package/SKILL.md \
-  modules/r0man/guix/home/files/skills/design/SKILL.md \
-  modules/r0man/guix/home/files/skills/design/evals/evals.json \
-  modules/r0man/guix/home/files/skills/design/references/design-dimensions.md \
   modules/r0man/guix/home/files/skills/guix/SKILL.md \
   modules/r0man/guix/home/files/skills/haunt/SKILL.md \
   modules/r0man/guix/home/files/skills/haunt/references/api.md \
   modules/r0man/guix/home/files/skills/haunt/references/examples.md \
   modules/r0man/guix/home/files/skills/haunt/references/themes.md \
   modules/r0man/guix/home/files/skills/plan-to-beads/SKILL.md \
-  modules/r0man/guix/home/files/skills/shiny-enterprise/SKILL.md \
-  modules/r0man/guix/home/files/skills/shiny-enterprise/evals/evals.json \
-  modules/r0man/guix/home/files/skills/shiny/SKILL.md \
-  modules/r0man/guix/home/files/skills/shiny/evals/evals.json \
-  modules/r0man/guix/home/files/skills/shiny/references/security-audit.md \
-  modules/r0man/guix/home/files/skills/shiny/references/tdd-cycle.md \
   modules/r0man/guix/home/files/skills/tmux/SKILL.md \
   modules/r0man/guix/home/files/skills/tmux/references/direct-socket-control.md \
   modules/r0man/guix/home/files/skills/tmux/references/session-lifecycle.md \
