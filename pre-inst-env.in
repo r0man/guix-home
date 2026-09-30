@@ -12,6 +12,13 @@ GUILE_LOAD_COMPILED_PATH="$abs_top_builddir/modules${GUILE_LOAD_COMPILED_PATH:+:
 GUILE_LOAD_PATH="$abs_top_builddir/modules:$abs_top_srcdir/modules:$abs_top_srcdir${R0MAN_EXTRA_LOAD_PATH:+:}$R0MAN_EXTRA_LOAD_PATH${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
 export GUILE_LOAD_COMPILED_PATH GUILE_LOAD_PATH
 
+# Keep Guile's auto-compilation cache inside the build tree.  Otherwise
+# stale .go files in ~/.cache/guile/ccache, compiled against a different
+# Guix (e.g. by `guix repl -L modules'), shadow the sources and fail
+# with "unbound variable" errors from Guix macro internals.
+XDG_CACHE_HOME="$abs_top_builddir/.cache"
+export XDG_CACHE_HOME
+
 GUIX_PACKAGE_PATH="$abs_top_srcdir/modules${R0MAN_EXTRA_LOAD_PATH:+:}$R0MAN_EXTRA_LOAD_PATH${GUIX_PACKAGE_PATH:+:}$GUIX_PACKAGE_PATH"
 export GUIX_PACKAGE_PATH
 

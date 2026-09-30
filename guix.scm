@@ -35,7 +35,7 @@
  (srfi srfi-1))
 
 (define-public guile-nonguix
-  (let ((commit "c4541fdb0b472664dafe5d7b1ec2e51e4ef7b772")
+  (let ((commit "f9171dd0d0a58d63c0811d61e51493a3fa4ae4f3")
         (revision "0"))
     (package
       (name "guile-nonguix")
@@ -48,7 +48,7 @@
                (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "1v50pvwr65hn8h09sc0hg9lz2vwzywagmyvkjbxs6v68gwy1gi3f"))))
+          (base32 "1bhlabjifwjan4yimfd1m61izafqjkz4k7d7yma4cc6n6kyz3jiz"))))
       (build-system copy-build-system)
       (arguments
        `(#:install-plan
@@ -64,7 +64,7 @@ input where the channel mechanism isn't available — for example inside
       (license license:gpl3+))))
 
 (define-public guile-asahi-guix
-  (let ((commit "17a5f112229e1eb0d9a3300a7a89e4beed4ce88f")
+  (let ((commit "ee2e7465c0137224bcc0ad3b3d0d02109cb3a6c7")
         (revision "0"))
     (package
       (name "guile-asahi-guix")
@@ -77,7 +77,7 @@ input where the channel mechanism isn't available — for example inside
                (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "01a5kqm2823ij57ahxbdq459ha15ldym5iqcyf5vhv54i5r126zw"))))
+          (base32 "07m30nmy7s36w6phrf10zy8wn9dzynbk3ziqd4hxjx64ys63lgic"))))
       (build-system copy-build-system)
       (arguments
        `(#:install-plan
@@ -94,7 +94,7 @@ isn't available — for example inside @code{guix shell --container
       (license license:gpl3+))))
 
 (define-public guile-r0man-channel
-  (let ((commit "2d8ccc0abfc5300cce94f570c912776a90bc157a")
+  (let ((commit "86640e3a324b4b39619a5d833931e6980251b01b")
         (revision "0"))
     (package
       (name "guile-r0man-channel")
@@ -107,7 +107,7 @@ isn't available — for example inside @code{guix shell --container
                (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "1lgx8ngdgpqgbg7rb1mnci0ndxsn35gc7sjak1rfirr9zb0irblq"))))
+          (base32 "038aarg23jygkwwpl6cnsaqxvkhp4gya5hnnbixfsvissgr80vii"))))
       (build-system copy-build-system)
       (arguments
        `(#:install-plan

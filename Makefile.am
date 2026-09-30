@@ -55,39 +55,7 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/claude-code/agents/code-reviewer.md \
   modules/r0man/guix/home/files/claude-code/agents/documentation-writer.md \
   modules/r0man/guix/home/files/claude-code/agents/security-audit.md \
-  modules/r0man/guix/home/files/claude-code/commands/create-guix-package.md \
-  modules/r0man/guix/home/files/claude-code/commands/plan-to-beads.md \
-  modules/r0man/guix/home/files/claude-code/commands/update-guix-package.md \
   modules/r0man/guix/home/files/claude-code/settings.json \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/SKILL.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/evals/evals.json \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/boot-and-recovery.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/gpu-stack.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/hardware-audio.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/resources.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/upstream-dev.md \
-  modules/r0man/guix/home/files/claude-code/skills/asahi-linux/references/x86-emulation.md \
-  modules/r0man/guix/home/files/claude-code/skills/autoresearch/SKILL.md \
-  modules/r0man/guix/home/files/claude-code/skills/autoresearch/evals/evals.json \
-  modules/r0man/guix/home/files/claude-code/skills/guix/SKILL.md \
-  modules/r0man/guix/home/files/claude-code/skills/haunt/SKILL.md \
-  modules/r0man/guix/home/files/claude-code/skills/haunt/references/api.md \
-  modules/r0man/guix/home/files/claude-code/skills/haunt/references/examples.md \
-  modules/r0man/guix/home/files/claude-code/skills/haunt/references/themes.md \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/SKILL.md \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/references/direct-socket-control.md \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/references/session-lifecycle.md \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/references/session-registry.md \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/cleanup-sessions.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/create-session.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/find-sessions.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/kill-session.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/lib/registry.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/lib/time_utils.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/list-sessions.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/pane-health.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/safe-send.sh \
-  modules/r0man/guix/home/files/claude-code/skills/tmux/tools/wait-for-text.sh \
   modules/r0man/guix/home/files/clojure-lsp.edn \
   modules/r0man/guix/home/files/dunstrc \
   modules/r0man/guix/home/files/eca/AGENTS.md \
@@ -107,6 +75,50 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/rofi/config.rasi \
   modules/r0man/guix/home/files/rofi/nord.rasi \
   modules/r0man/guix/home/files/sbclrc \
+  modules/r0man/guix/home/files/skills/asahi-linux/SKILL.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/evals/evals.json \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/boot-and-recovery.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/gpu-stack.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/hardware-audio.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/resources.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/upstream-dev.md \
+  modules/r0man/guix/home/files/skills/asahi-linux/references/x86-emulation.md \
+  modules/r0man/guix/home/files/skills/autoresearch/SKILL.md \
+  modules/r0man/guix/home/files/skills/autoresearch/evals/evals.json \
+  modules/r0man/guix/home/files/skills/code-review/SKILL.md \
+  modules/r0man/guix/home/files/skills/code-review/evals/evals.json \
+  modules/r0man/guix/home/files/skills/code-review/references/review-lenses.md \
+  modules/r0man/guix/home/files/skills/create-guix-package/SKILL.md \
+  modules/r0man/guix/home/files/skills/design/SKILL.md \
+  modules/r0man/guix/home/files/skills/design/evals/evals.json \
+  modules/r0man/guix/home/files/skills/design/references/design-dimensions.md \
+  modules/r0man/guix/home/files/skills/guix/SKILL.md \
+  modules/r0man/guix/home/files/skills/haunt/SKILL.md \
+  modules/r0man/guix/home/files/skills/haunt/references/api.md \
+  modules/r0man/guix/home/files/skills/haunt/references/examples.md \
+  modules/r0man/guix/home/files/skills/haunt/references/themes.md \
+  modules/r0man/guix/home/files/skills/plan-to-beads/SKILL.md \
+  modules/r0man/guix/home/files/skills/shiny-enterprise/SKILL.md \
+  modules/r0man/guix/home/files/skills/shiny-enterprise/evals/evals.json \
+  modules/r0man/guix/home/files/skills/shiny/SKILL.md \
+  modules/r0man/guix/home/files/skills/shiny/evals/evals.json \
+  modules/r0man/guix/home/files/skills/shiny/references/security-audit.md \
+  modules/r0man/guix/home/files/skills/shiny/references/tdd-cycle.md \
+  modules/r0man/guix/home/files/skills/tmux/SKILL.md \
+  modules/r0man/guix/home/files/skills/tmux/references/direct-socket-control.md \
+  modules/r0man/guix/home/files/skills/tmux/references/session-lifecycle.md \
+  modules/r0man/guix/home/files/skills/tmux/references/session-registry.md \
+  modules/r0man/guix/home/files/skills/tmux/tools/cleanup-sessions.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/create-session.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/find-sessions.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/kill-session.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/lib/registry.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/lib/time_utils.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/list-sessions.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/pane-health.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/safe-send.sh \
+  modules/r0man/guix/home/files/skills/tmux/tools/wait-for-text.sh \
+  modules/r0man/guix/home/files/skills/update-guix-package/SKILL.md \
   modules/r0man/guix/home/files/ssh/roman@burningswell.com.pub \
   modules/r0man/guix/home/files/stumpwm/commands.lisp \
   modules/r0man/guix/home/files/stumpwm/config \
@@ -144,6 +156,7 @@ SOURCES = \
   modules/r0man/guix/home/msmtp.scm \
   modules/r0man/guix/home/packages.scm \
   modules/r0man/guix/home/pm.scm \
+  modules/r0man/guix/home/services/agent-tools.scm \
   modules/r0man/guix/home/services/btop.scm \
   modules/r0man/guix/home/services/claude-code.scm \
   modules/r0man/guix/home/services/clojure.scm \
@@ -164,6 +177,7 @@ SOURCES = \
   modules/r0man/guix/home/services/mbsync.scm \
   modules/r0man/guix/home/services/niri.scm \
   modules/r0man/guix/home/services/nix.scm \
+  modules/r0man/guix/home/services/pi.scm \
   modules/r0man/guix/home/services/rofi.scm \
   modules/r0man/guix/home/services/stumpwm.scm \
   modules/r0man/guix/home/services/sway.scm \
