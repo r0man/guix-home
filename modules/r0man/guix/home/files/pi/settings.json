@@ -5,7 +5,8 @@
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:@cad0p/pi-bash-timeout",
-    "npm:pi-ask-user"
+    "npm:pi-ask-user",
+    "npm:pi-subagents"
   ],
   "theme": "dark",
   "hideThinkingBlock": true
