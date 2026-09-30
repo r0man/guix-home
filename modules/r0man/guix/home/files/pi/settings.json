@@ -1,0 +1,12 @@
+{
+  "defaultProvider": "openrouter",
+  "defaultModel": "z-ai/glm-5.3-flash",
+  "defaultThinkingLevel": "medium",
+  "packages": [
+    "npm:pi-mcp-adapter",
+    "npm:@cad0p/pi-bash-timeout",
+    "npm:pi-ask-user"
+  ],
+  "theme": "dark",
+  "hideThinkingBlock": true
+}

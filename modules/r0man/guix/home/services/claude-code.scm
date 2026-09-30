@@ -16,8 +16,9 @@
 ;;; agents, see agent-tools.scm).
 ;;;
 ;;; ~/.claude/settings.json stays a regular file, because Claude Code
-;;; writes to it (/config, plugin toggles).  files/claude-code/settings.json
-;;; is a reference copy of the remaining settings and is not deployed.
+;;; writes to it (/config, /model, plugin toggles).  The activation
+;;; merges files/claude-code/settings.json into it: managed keys win,
+;;; everything else (e.g. hooks installed by other tools) is kept.
 ;;;
 ;;; Code:
 
@@ -35,16 +36,20 @@
                           node-zed-industries-claude-agent-acp))
             (description "List of Claude Code packages to install."))
   (settings home-claude-code-settings
-            (default (local-file "../files/claude-code/settings.json"))
-            (description "Path to settings.json file.")))
+            (default (local-file "../files/claude-code/settings.json"
+                                 "claude-code-settings.json"))
+            (description "Settings merged into ~/.claude/settings.json.")))
 
 (define (home-claude-code-files config)
   "Return alist of Claude Code configuration files to deploy."
   `(("bin/container-claude" ,(local-file "../files/bin/container-claude" #:recursive? #t))
     (".claude/agents" ,(home-claude-code-agents config))
-    (".claude/skills" ,(home-claude-code-skills config))
-    ;; (".claude/settings.json" ,(home-claude-code-settings config))
-    ))
+    (".claude/skills" ,(home-claude-code-skills config))))
+
+(define (home-claude-code-activation config)
+  "Merge the managed settings into ~/.claude/settings.json."
+  (json-settings-activation ".claude/settings.json"
+                            (home-claude-code-settings config)))
 
 (define (home-claude-code-profile-packages config)
   "Return list of Claude Code packages to install."
@@ -54,7 +59,9 @@
   (service-type
    (name 'home-claude-code)
    (extensions
-    (list (service-extension home-files-service-type
+    (list (service-extension home-activation-service-type
+                             home-claude-code-activation)
+          (service-extension home-files-service-type
                              home-claude-code-files)
           (service-extension home-profile-service-type
                              home-claude-code-profile-packages)))

@@ -72,6 +72,7 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/librewolf/librewolf.overrides.cfg \
   modules/r0man/guix/home/files/niri/config-common.kdl \
   modules/r0man/guix/home/files/niri/config-m1.kdl \
+  modules/r0man/guix/home/files/pi/settings.json \
   modules/r0man/guix/home/files/rofi/config.rasi \
   modules/r0man/guix/home/files/rofi/nord.rasi \
   modules/r0man/guix/home/files/sbclrc \
@@ -223,6 +224,7 @@ SOURCES = \
 # Regular, fast SRFI-64 tests — run by `make check`.
 UNIT_TESTS = \
   tests/r0man/guix/smoke.scm \
+  tests/r0man/guix/home/agent-settings.scm \
   tests/r0man/guix/home/environments.scm
 
 # VM-based tests — run by `make check-system` with
