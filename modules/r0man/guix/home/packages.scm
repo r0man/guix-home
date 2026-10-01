@@ -73,13 +73,13 @@
   (list `(,isc-bind "utils")
         autoconf
         automake
-        beads-next
+        beads
         bluez
         cmake
         coreutils
         file
         forgejo-cli
-        gascity-next
+        gascity
         gcc-toolchain
         glibc-locales
         `(,glib "bin")

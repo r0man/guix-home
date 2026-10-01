@@ -31,7 +31,7 @@
   home-gastown-configuration make-home-gastown-configuration
   home-gastown-configuration?
   (packages home-gastown-packages
-            (default (list beads-next dolt gastown-next))
+            (default (list beads dolt gastown-next))
             (description "List of packages to add to the profile."))
   (towns home-gastown-towns
          (default '())

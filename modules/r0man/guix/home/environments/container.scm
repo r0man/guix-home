@@ -72,7 +72,7 @@
                 (service home-ssh-agent-service-type))))
 
 (define base-packages
-  (list beads-next
+  (list beads
         clojure-tools-bin-latest
         coreutils
         curl
