@@ -1,6 +1,6 @@
 {
   "defaultProvider": "openrouter",
-  "defaultModel": "z-ai/glm-5.3-flash",
+  "defaultModel": "deepseek/deepseek-v4.1-flash",
   "defaultThinkingLevel": "medium",
   "packages": [
     "npm:pi-mcp-adapter",
