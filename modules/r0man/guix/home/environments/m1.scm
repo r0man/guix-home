@@ -95,7 +95,8 @@
         (service home-x11-custom-service-type)
         (service home-x11-service-type)
         (service home-xdg-mime-applications-service-type
-                 home-xdg-mime-applications-default-configuration))))
+                 home-xdg-mime-applications-default-configuration)
+        (service home-xdg-user-directories-service-type))))
 
 (define-public m1-home-environment
   (home-environment
