@@ -51,6 +51,7 @@
   #:use-module (gnu packages tls)
   #:use-module (gnu packages tor)
   #:use-module (gnu packages tree-sitter)
+  #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xdisorg)
@@ -83,6 +84,7 @@
         gcc-toolchain
         glibc-locales
         `(,glib "bin")
+        github-cli
         gnu-make
         gnupg
         gnutls
