@@ -12,6 +12,7 @@
   #:use-module (gnu  bootloader m1n1)
   #:use-module (gnu bootloader)
   #:use-module (gnu packages display-managers)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages window-management)
@@ -66,6 +67,7 @@
          niri
          sway
          asahi-scripts
+         power-profiles-daemon ;; for powerprofilesctl, talks to tuned-ppd
          network-manager
          (remove (lambda (package)
                    (equal? "network-manager" (package-name package)))
