@@ -19,6 +19,7 @@
   #:use-module (gnu services base)
   #:use-module (gnu services containers)
   #:use-module (gnu services dbus)
+  #:use-module (gnu services desktop)
   #:use-module (gnu services guix)
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
@@ -156,6 +157,22 @@
              (github-actions-runner-config-files
               (service-value %github-actions-runner))))))
 
+(define %tuned-service
+  (service tuned-service-type
+           (tuned-configuration
+            (power-profiles-daemon-support? #t))))
+
+;; Fedora Asahi Remix ships this via asahi-scripts: keep the SD card
+;; reader out of runtime autosuspend, which TuneD's powersave profile
+;; would otherwise enable.
+(define %udev-sdhci-autosuspend-service
+  (udev-hardware-service
+   'asahi-sdhci-autosuspend
+   (file->udev-hardware
+    "65-autosuspend-override-asahi-sdhci.hwdb"
+    (plain-file "65-autosuspend-override-asahi-sdhci.hwdb"
+                "pci:v000017A0d00009755*\n ID_AUTOSUSPEND=0\n"))))
+
 (define %services
   (modify-services (cons* (service iwd-service-type)
                           %github-actions-runner-token-mint
@@ -176,11 +193,21 @@
                           %udev-backlight-service
                           %udev-kbd-backlight-service
                           %udev-mtd-by-name-service
+                          %udev-sdhci-autosuspend-service
+                          %tuned-service
                           (operating-system-user-services desktop-operating-system))
     (delete sound:alsa-service-type)
     (delete sound:pulseaudio-service-type)
     (delete slim-service-type)
     (delete wpa-supplicant-service-type)
+    (elogind-service-type
+     config =>
+     (elogind-configuration
+      (inherit config)
+      (handle-lid-switch 'suspend)
+      (handle-lid-switch-docked 'ignore)
+      (handle-lid-switch-external-power 'suspend)
+      (suspend-state '("freeze"))))
     (network-manager-service-type
      config =>
      (network-manager-configuration
