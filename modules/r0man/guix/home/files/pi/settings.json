@@ -3,9 +3,10 @@
   "defaultModel": "deepseek/deepseek-v4.1-flash",
   "defaultThinkingLevel": "medium",
   "packages": [
-    "npm:pi-mcp-adapter",
     "npm:@cad0p/pi-bash-timeout",
     "npm:pi-ask-user",
+    "npm:pi-mcp-adapter",
+    "npm:pi-plan",
     "npm:pi-subagents"
   ],
   "theme": "dark",
