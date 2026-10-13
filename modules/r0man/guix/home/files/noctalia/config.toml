@@ -1,0 +1,123 @@
+# Noctalia shell configuration for the Niri session.
+#
+# Part of: (r0man guix home services niri)
+# Derived from Noctalia's example.toml (v5.0.0-beta.9).
+#
+# This file is declaratively managed by Guix Home and should not be edited
+# in place: Noctalia's Settings UI writes its runtime overrides to
+# ~/.local/state/noctalia/settings.toml instead, which is left unmanaged.
+
+# ── Shell ─────────────────────────────────────────────────────────────────────
+
+[shell]
+font_family            = "sans-serif"
+time_format            = "{:%H:%M}"
+date_format            = "%a, %d %b"
+telemetry_enabled      = false
+settings_show_advanced = true
+clipboard_enabled      = true
+
+# ── Wallpaper ─────────────────────────────────────────────────────────────────
+# Replaces swaybg from the previous Niri configuration.
+
+[wallpaper]
+enabled             = true
+fill_mode           = "crop"
+transition          = ["fade"]
+transition_duration = 800
+directory           = "~/.local/share/wallpapers"
+transition_on_startup = false
+
+[wallpaper.default]
+path = "~/.local/share/wallpapers/stop-customizing-start-working.jpg"
+
+# ── Theme ─────────────────────────────────────────────────────────────────────
+# Nord matches the Niri focus-ring / StumpWM palette.
+
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Nord"
+
+# ── Notifications ─────────────────────────────────────────────────────────────
+# Replaces dunst/notification daemons for the Wayland session.
+
+[notification]
+enable_daemon = true
+show_app_name = true
+show_actions  = true
+layer         = "top"
+
+# ── OSD ───────────────────────────────────────────────────────────────────────
+
+[osd]
+position = "top_right"
+
+# ── Lock screen ───────────────────────────────────────────────────────────────
+# Replaces swaylock.
+
+[lockscreen]
+enabled         = true
+blurred_desktop = false
+blur_intensity  = 0.5
+tint_intensity  = 0.3
+
+# ── Idle ──────────────────────────────────────────────────────────────────────
+# Replaces swayidle.  Set `enabled = false` to opt out of either behaviour.
+
+[idle.behavior.screen-off]
+timeout = 600
+action  = "screen_off"
+enabled = true
+
+[idle.behavior.lock]
+timeout = 900
+action  = "lock"
+enabled = true
+
+# ── Bar ───────────────────────────────────────────────────────────────────────
+
+[bar.main]
+position           = "top"
+thickness          = 34
+background_opacity = 1.0
+radius             = 12
+margin_ends        = 100
+margin_edge        = 0
+padding            = 14
+widget_spacing     = 6
+reserve_space      = true
+start              = ["launcher", "workspaces", "active_window"]
+center             = ["sao_paulo", "utc", "berlin", "date"]
+end                = ["cpu", "ram", "battery", "bluetooth", "volume", "network", "tray", "notifications", "control-center", "session"]
+
+# Clock widgets mirror the clocks previously shown by Waybar.
+
+[widget.sao_paulo]
+type     = "clock"
+format   = "S\u00e3o Paulo {:%H:%M}"
+timezone = "Brazil/East"
+
+[widget.utc]
+type     = "clock"
+format   = "UTC {:%H:%M}"
+timezone = "UTC"
+
+[widget.berlin]
+type     = "clock"
+format   = "Berlin {:%H:%M:%S}"
+timezone = "Europe/Berlin"
+
+[widget.date]
+type   = "clock"
+format = "{:%a, %d %b}"
+
+# System monitor widgets.
+
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+
+[widget.ram]
+type = "sysmon"
+stat = "ram_used"

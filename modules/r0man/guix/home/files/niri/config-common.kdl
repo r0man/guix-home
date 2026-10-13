@@ -7,6 +7,30 @@ xwayland-satellite { }
 // Prefer server-side decorations (no client title bars)
 prefer-no-csd
 
+// Noctalia shell integration.
+// https://docs.noctalia.dev/noctalia/compositor-settings/niri/
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+layer-rule {
+    match namespace="^noctalia-wallpaper"
+    place-within-backdrop true
+}
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+
 // Named workspaces
 workspace "1:Emacs"
 workspace "2:Web"
@@ -20,9 +44,8 @@ workspace "9:Top"
 workspace "0:Logs"
 
 // Spawn at startup
-spawn-at-startup "sh" "-c" "waybar -c $HOME/.config/niri/waybar-config.jsonc -s $HOME/.config/niri/waybar-style.css"
-spawn-at-startup "sh" "-c" "swaybg -i $HOME/.local/share/wallpapers/stop-customizing-start-working.jpg -m fill"
-spawn-at-startup "swayidle"
+// Noctalia provides the bar, wallpaper, notifications, OSD, lock and idle.
+spawn-at-startup "noctalia" "--daemon"
 spawn-at-startup "emacs" "--daemon"
 spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
 spawn-at-startup "librewolf"
@@ -98,7 +121,8 @@ binds {
     Mod+Return { spawn "emacsclient" "-c" "-e" "(vterm)"; }
     Mod+E { spawn "container-emacs"; }
     Mod+B { spawn "librewolf"; }
-    Mod+D { spawn "fuzzel"; }
+    Mod+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Alt+Tab repeat=false { spawn "noctalia" "msg" "window-switcher"; }
     Super+Alt+L { spawn "swaylock"; }
 
     // Overview
@@ -227,23 +251,33 @@ binds {
     // Close window
     Mod+Q { close-window; }
 
-    // Screenshots
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    // Screenshots (handled by Noctalia)
+    Print { spawn "noctalia" "msg" "screenshot-region"; }
+    Ctrl+Print { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Alt+Print { spawn "noctalia" "msg" "screenshot-fullscreen" "all"; }
 
     // Keyboard shortcuts inhibitor
     Mod+Escape { toggle-keyboard-shortcuts-inhibit; }
 
-    // Audio
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    // Audio (handled by Noctalia)
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
+    XF86AudioMute        allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "noctalia" "msg" "mic-mute"; }
+    XF86AudioPlay        allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
+    XF86AudioStop        allow-when-locked=true { spawn "noctalia" "msg" "media" "stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn "noctalia" "msg" "media" "previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
 
-    // Brightness
-    XF86MonBrightnessUp   { spawn "brightnessctl" "s" "10%+"; }
-    XF86MonBrightnessDown { spawn "brightnessctl" "s" "10%-"; }
+    // Brightness (handled by Noctalia)
+    XF86MonBrightnessUp   { spawn "noctalia" "msg" "brightness-up"; }
+    XF86MonBrightnessDown { spawn "noctalia" "msg" "brightness-down"; }
+
+    // Noctalia panels
+    Mod+Shift+C { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
+    Mod+Shift+S { spawn "noctalia" "msg" "settings-toggle"; }
+    Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
+    Ctrl+Alt+Delete { spawn "noctalia" "msg" "panel-toggle" "session"; }
 
     // Quit / power
     Mod+Shift+E { spawn "emacs"; }

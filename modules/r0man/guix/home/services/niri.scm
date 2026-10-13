@@ -1,6 +1,6 @@
 (define-module (r0man guix home services niri)
   #:use-module (gnu home services)
-  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
@@ -14,191 +14,27 @@
 ;;; Commentary:
 ;;;
 ;;; Home service for Niri scrollable-tiling Wayland compositor.
-;;; Manages Niri config, Niri-specific Waybar config/style, and
-;;; installs required packages.
+;;; Manages Niri config and Noctalia shell config, and installs required
+;;; packages.
 ;;;
-;;; Waybar config is deployed to ~/.config/niri/ (not ~/.config/waybar/)
-;;; to avoid conflicts with the existing Hyprland-specific waybar setup.
+;;; The bar, wallpaper, notifications, OSD, lock screen and idle handling
+;;; are provided by Noctalia (https://noctalia.dev), replacing the previous
+;;; Waybar + swaybg + swayidle + swaylock stack.  Noctalia is spawned by
+;;; Niri (see spawn-at-startup in config-common.kdl) rather than through
+;;; Shepherd, so the shell inherits NIRI_SOCKET and the graphical session
+;;; environment directly.
+;;;
+;;; Noctalia's config lives in ~/.config/noctalia/config.toml and is
+;;; managed here.  The Settings UI writes runtime overrides to
+;;; ~/.local/state/noctalia/settings.toml, which Guix Home leaves alone.
 ;;;
 ;;; Code:
 
-(define %niri-waybar-config
-  (mixed-text-file
-   "niri-waybar-config.jsonc"
-   "{
-      \"layer\": \"top\",
-      \"position\": \"top\",
-      \"spacing\": 0,
-      \"modules-left\": [
-        \"niri/workspaces\",
-        \"niri/window\"
-      ],
-      \"modules-right\": [
-        \"cpu\",
-        \"memory\",
-        \"battery\",
-        \"bluetooth\",
-        \"pulseaudio\",
-        \"network\",
-        \"clock#saopaulo\",
-        \"custom/separator\",
-        \"clock#utc\",
-        \"custom/separator\",
-        \"clock#berlin\",
-        \"custom/separator\",
-        \"clock#date\"
-      ],
-      \"niri/workspaces\": {
-        \"format\": \"{icon}\",
-        \"format-icons\": {
-            \"1:Emacs\": \" 1:Emacs\",
-            \"2:Web\": \" 2:Web\",
-            \"3\": \" 3\",
-            \"4\": \" 4\",
-            \"5\": \" 5\",
-            \"6\": \" 6\",
-            \"7\": \" 7\",
-            \"8:Slack\": \" 8:Slack\",
-            \"9:Top\": \" 9:Top\",
-            \"0:Logs\": \" 0:Logs\"
-        }
-      },
-      \"niri/window\": {
-        \"max-length\": 128
-      },
-      \"battery\": {
-          \"states\": {
-              \"warning\": 30,
-              \"critical\": 15
-          },
-          \"format\": \"{icon} {capacity}%\",
-          \"format-charging\": \"\\ud83d\\uddf2 {capacity}%\",
-          \"format-plugged\": \" {capacity}%\",
-          \"format-alt\": \"{icon} {time}\",
-          \"format-icons\": [\"\", \"\", \"\", \"\", \"\"]
-      },
-      \"custom/separator\": {
-        \"format\": \"|\"
-      },
-      \"cpu\": {
-          \"format\": \" {usage}%\",
-          \"tooltip\": false
-      },
-      \"memory\": {
-          \"format\": \" {}%\"
-      },
-      \"clock#saopaulo\": {
-        \"format\": \"S\\u00c3O PAULO {:%H:%M}\",
-        \"timezone\": \"Brazil/East\"
-      },
-      \"clock#utc\": {
-        \"format\": \"UTC {:%H:%M}\",
-        \"timezone\": \"UTC\",
-        \"tooltip\": false
-      },
-      \"clock#berlin\": {
-        \"format\": \"BERLIN {:%H:%M:%S}\",
-        \"interval\": 1,
-        \"timezone\": \"Europe/Berlin\",
-        \"tooltip\": false
-      },
-      \"clock#date\": {
-        \"format\": \"{:%a, %d %b}\",
-        \"timezone\": \"Europe/Berlin\",
-        \"tooltip\": false
-      },
-      \"network\": {
-          \"format-wifi\": \" {essid}\",
-          \"format-ethernet\": \"{ipaddr}/{cidr}\",
-          \"tooltip-format\": \"{ifname} via {gwaddr}\",
-          \"format-linked\": \"{ifname} (No IP)\",
-          \"format-disconnected\": \"Disconnected \\u26a0\",
-          \"format-alt\": \"{ifname}: {ipaddr}/{cidr}\"
-      },
-      \"pulseaudio\": {
-          \"format\": \"%{icon} {volume} {format_source}\",
-          \"format-bluetooth\": \"{icon} {volume}% {format_source}\",
-          \"format-bluetooth-muted\": \"{icon} {format_source}\",
-          \"format-muted\": \" {format_source}\",
-          \"format-source\": \" {volume}%\",
-          \"format-source-muted\": \"\",
-          \"format-icons\": {
-              \"headphone\": \"\",
-              \"hands-free\": \"\",
-              \"headset\": \"\",
-              \"phone\": \"\",
-              \"portable\": \"\",
-              \"car\": \"\",
-              \"default\": [\"\", \"\", \"\"]
-          },
-          \"on-click\": \"pavucontrol\"
-      }}"))
+(define %noctalia-config
+  (local-file "../files/noctalia/config.toml"))
 
-(define %niri-waybar-style
-  (mixed-text-file
-   "niri-waybar-style.css"
-   "
-@define-color background-darker rgba(30, 31, 41, 230);
-@define-color background #000000;
-@define-color selection #44475a;
-@define-color foreground #f8f8f2;
-@define-color comment #6272a4;
-@define-color cyan #8be9fd;
-@define-color grey #888888;
-@define-color green #50fa7b;
-@define-color orange #ffb86c;
-@define-color pink #ff79c6;
-@define-color purple #bd93f9;
-@define-color red #ff5555;
-@define-color yellow #f1fa8c;
-
-* {
-    border: none;
-    border-radius: 0;
-    font-family: Hack;
-    font-size: 13pt;
-    min-height: 0;
-}
-window#waybar {
-    opacity: 1;
-    background: @background;
-    color: @foreground;
-}
-#workspaces button {
-    padding: 0 0.8em;
-    color: @grey;
-}
-
-#workspaces button:hover {
-    box-shadow: inherit;
-    text-shadow: inherit;
-    background-image: linear-gradient(0deg, @selection, @background);
-}
-#workspaces button.active {
-    color: @white;
-}
-#workspaces button.urgent {
-    color: @red;
-}
-#workspaces button.empty {
-    color: @selection;
-}
-
-.module {
-    padding: 0 0em;
-    margin: 1 0.4em;
-    color: @foreground;
-}
-
-#clock.saopaulo, #clock.utc {
-  color: @grey;
-}
-
-#pulseaudio.bluetooth { color: @purple; }
-#bluetooth.connected { color: @cyan; }
-#battery.warning { color: @yellow; }
-#battery.critical { color: @red; }
-"))
+(define %noctalia-setup-marker
+  (plain-file "noctalia-setup-complete" ""))
 
 (define-record-type* <home-niri-configuration>
   home-niri-configuration make-home-niri-configuration
@@ -207,32 +43,28 @@ window#waybar {
                (default (local-file "../files/niri/config-common.kdl"))
                (description "Niri machine-specific configuration file."))
   (common-config-file home-niri-common-config-file
-                       (default (local-file "../files/niri/config-common.kdl"))
-                       (description "Niri common configuration file."))
-  (waybar-config home-niri-waybar-config
-                 (default %niri-waybar-config)
-                 (description "Waybar config for Niri."))
-  (waybar-style home-niri-waybar-style
-                (default %niri-waybar-style)
-                (description "Waybar style CSS for Niri."))
+                      (default (local-file "../files/niri/config-common.kdl"))
+                      (description "Niri common configuration file."))
+  (noctalia-config home-niri-noctalia-config
+                   (default %noctalia-config)
+                   (description "Noctalia shell configuration file."))
   (packages home-niri-packages
-            (default (list brightnessctl
-                           fuzzel
-                           niri
-                           swaybg
-                           swayidle
-                           swaylock
-                           waybar
+            (default (list niri
+                           noctalia-shell
                            wireplumber
+                           wl-clipboard
+                           xdg-utils
                            xwayland-satellite))
             (description "List of Niri-related packages to install.")))
 
 (define (home-niri-files config)
-  "Return alist of Niri configuration files to deploy."
+  "Return alist of Niri and Noctalia configuration files to deploy."
   `((".config/niri/config.kdl" ,(home-niri-config-file config))
     (".config/niri/config-common.kdl" ,(home-niri-common-config-file config))
-    (".config/niri/waybar-config.jsonc" ,(home-niri-waybar-config config))
-    (".config/niri/waybar-style.css" ,(home-niri-waybar-style config))))
+    (".config/noctalia/config.toml" ,(home-niri-noctalia-config config))
+    ;; Skip Noctalia's first-run setup wizard; config.toml already sets a
+    ;; wallpaper and theme.
+    (".local/state/noctalia/.setup-complete" ,%noctalia-setup-marker)))
 
 (define (home-niri-profile-packages config)
   "Return list of Niri packages to install."
@@ -248,4 +80,5 @@ window#waybar {
                              home-niri-profile-packages)))
    (default-value (home-niri-configuration))
    (description
-    "Install and configure Niri scrollable-tiling Wayland compositor.")))
+    "Install and configure the Niri scrollable-tiling Wayland compositor
+with the Noctalia shell.")))
