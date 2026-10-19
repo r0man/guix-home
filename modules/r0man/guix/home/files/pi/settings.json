@@ -1,6 +1,6 @@
 {
   "defaultProvider": "openrouter",
-  "defaultModel": "deepseek/deepseek-v4.1-flash",
+  "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
   "defaultThinkingLevel": "medium",
   "packages": [
     "npm:@cad0p/pi-bash-timeout",
