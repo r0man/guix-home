@@ -10,6 +10,7 @@
   #:use-module (gnu packages inkscape)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages terminals)
+  #:use-module (r0man guix packages terminals)
   #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:export (home-sway-configuration
@@ -52,7 +53,7 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term " kitty "/bin/kitty
+set $term " ghostty-latest "/bin/ghostty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -295,7 +296,7 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
   (packages home-sway-packages
             (default (list brightnessctl
                            i3status
-                           kitty
+                           ghostty-latest
                            sway
                            swaybg
                            swayidle

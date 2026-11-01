@@ -18,6 +18,7 @@
   #:use-module (r0man guix home services emacs)
   #:use-module (r0man guix home services environment)
   #:use-module (r0man guix home services gastown)
+  #:use-module (r0man guix home services ghostty)
   #:use-module (r0man guix home tmux)
   #:use-module (r0man guix packages claude)
   #:use-module (r0man guix services gastown))
@@ -34,7 +35,7 @@
 
 (define-public gastown-home-environment
   (home-environment
-   (packages (list coreutils coreutils-minimal git inetutils kitty ncurses
+   (packages (list coreutils coreutils-minimal git inetutils ncurses
                    claude-code nss-certs procps waypipe))
    (services
     (append (list (service home-bash-service-type
@@ -43,6 +44,7 @@
                            home-channels-default-list)
                   (service home-emacs-service-type)
                   (service home-environment-service-type)
+                  (service home-ghostty-terminfo-service-type)
                   (simple-service 'fix-container-ptmx
                                   home-activation-service-type
                                   #~(when (file-exists? "/dev/pts/ptmx")

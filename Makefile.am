@@ -161,7 +161,6 @@ SOURCES = \
   modules/r0man/guix/home/services/guile.scm \
   modules/r0man/guix/home/services/hyprland.scm \
   modules/r0man/guix/home/services/i3status.scm \
-  modules/r0man/guix/home/services/kitty.scm \
   modules/r0man/guix/home/services/librewolf.scm \
   modules/r0man/guix/home/services/mbsync.scm \
   modules/r0man/guix/home/services/niri.scm \

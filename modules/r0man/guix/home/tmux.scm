@@ -8,7 +8,7 @@
 ;;; Commentary:
 ;;;
 ;;; This module provides tmux configuration for Guix Home.
-;;; Configures tmux with 24-bit true color support for kitty terminal.
+;;; Configures tmux with 24-bit true color support for ghostty terminal.
 ;;;
 ;;; Usage in system configs:
 ;;;   home-tmux-services

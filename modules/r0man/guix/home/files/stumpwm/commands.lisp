@@ -45,11 +45,11 @@
 
 (defcommand btop () ()
   "Run btop."
-  (in-thread (run-or-raise "kitty --name BTop btop" '(:instance "BTop"))))
+  (in-thread (run-or-raise "ghostty --x11-instance-name=BTop -e btop" '(:instance "BTop"))))
 
 (defcommand htop () ()
   "Run htop."
-  (in-thread (run-or-raise "kitty --name HTop htop" '(:instance "HTop"))))
+  (in-thread (run-or-raise "ghostty --x11-instance-name=HTop -e htop" '(:instance "HTop"))))
 
 (defcommand keyboard-backlight (on-or-off)
     ((:y-or-n " Turn Keyboard Backlight on? "))
@@ -59,7 +59,7 @@
 (defcommand logs () ()
   "Show the logs."
   (in-thread
-    (run-or-raise "kitty --name Logs -e sudo journalctl -f -a -n 100"
+    (run-or-raise "ghostty --x11-instance-name=Logs -e sudo journalctl -f -a -n 100"
                   '(:instance "Logs"))))
 
 (defcommand polybar () ()
@@ -71,14 +71,14 @@
   (in-thread (run-or-raise "slack --startup" '(:instance "Slack"))))
 
 (defcommand terminal () ()
-  "Run the kitty terminal."
+  "Run the ghostty terminal."
   ;; (hsplit)
   ;; (fnext)
-  (in-thread (run-shell-command "kitty")))
+  (in-thread (run-shell-command "ghostty")))
 
 (defcommand terminal-raise () ()
-  "Run or raise the kitty terminal."
-  (in-thread (run-or-raise "kitty --name Terminal" '(:instance "Terminal"))))
+  "Run or raise the ghostty terminal."
+  (in-thread (run-or-raise "ghostty --x11-instance-name=Terminal" '(:instance "Terminal"))))
 
 ;; (defcommand (fprev tile-group) () ()
 ;;   "Cycle through the frame tree to the prev frame."
