@@ -26,8 +26,8 @@ spawn-at-startup "swayidle"
 spawn-at-startup "emacs" "--daemon"
 spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
 spawn-at-startup "librewolf"
-spawn-at-startup "ghostty" "--class=logs.user" "--title=User" "-e" "sh" "-c" "tail -n 100 -F $HOME/.local/state/shepherd/*.log"
 spawn-at-startup "ghostty" "--class=logs.system" "--title=System" "-e" "sudo" "/run/current-system/profile/bin/tail" "-n" "100" "-F" "/var/log/messages"
+spawn-at-startup "ghostty" "--class=logs.user" "--title=User" "-e" "sh" "-c" "tail -n 100 -F $HOME/.local/state/shepherd/*.log"
 spawn-at-startup "ghostty" "--class=top.btop" "--title=Top" "-e" "btop"
 
 // Window rules — direct windows to their workspace
