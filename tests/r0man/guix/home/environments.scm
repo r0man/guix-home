@@ -18,10 +18,6 @@
                        (r0man guix home environments container)
                        container-home-environment)
 
-(test-load-environment "gastown"
-                       (r0man guix home environments gastown)
-                       gastown-home-environment)
-
 (test-load-environment "m1"
                        (r0man guix home environments m1)
                        m1-home-environment)

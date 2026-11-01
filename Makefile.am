@@ -48,7 +48,6 @@ NOCOMP_SOURCES = \
   modules/r0man/guix/home/files/bashrc \
   modules/r0man/guix/home/files/bin/container-claude \
   modules/r0man/guix/home/files/bin/container-emacs \
-  modules/r0man/guix/home/files/bin/container-gastown \
   modules/r0man/guix/home/files/bin/container-run \
   modules/r0man/guix/home/files/bin/nerd-dictation-toggle \
   modules/r0man/guix/home/files/claude-code/agents/.gitkeep \
@@ -138,7 +137,6 @@ SOURCES = \
   modules/r0man/guix/home/channels.scm \
   modules/r0man/guix/home/desktop.scm \
   modules/r0man/guix/home/environments/container.scm \
-  modules/r0man/guix/home/environments/gastown.scm \
   modules/r0man/guix/home/environments/m1.scm \
   modules/r0man/guix/home/environments/server.scm \
   modules/r0man/guix/home/gpg.scm \
@@ -155,7 +153,6 @@ SOURCES = \
   modules/r0man/guix/home/services/emacs.scm \
   modules/r0man/guix/home/services/environment.scm \
   modules/r0man/guix/home/services/fzf.scm \
-  modules/r0man/guix/home/services/gastown.scm \
   modules/r0man/guix/home/services/ghostty.scm \
   modules/r0man/guix/home/services/git.scm \
   modules/r0man/guix/home/services/guile.scm \
@@ -176,7 +173,6 @@ SOURCES = \
   modules/r0man/guix/home/ssh.scm \
   modules/r0man/guix/home/tmux.scm \
   modules/r0man/guix/home/xdg.scm \
-  modules/r0man/guix/services/gastown.scm \
   modules/r0man/guix/system/base.scm \
   modules/r0man/guix/system/desktop.scm \
   modules/r0man/guix/system/m1-test.scm \
