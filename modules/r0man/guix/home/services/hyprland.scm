@@ -40,7 +40,7 @@
     # See https://wiki.hyprland.org/Configuring/Keywords/
 
     # Set programs that you use
-    $terminal = kitty
+    $terminal = ghostty
     $fileManager = dolphin
     $menu = wofi --show drun
 
@@ -62,7 +62,7 @@
     exec-once = gsettings set org.gnome.desktop.wm.preferences theme \"Nordic\" &
 
     exec-once = [workspace 2 silent] librewolf &
-    exec-once = [workspace 9 silent] kitty --class btop btop &
+    exec-once = [workspace 9 silent] ghostty --class=top.btop --title=Top -e btop &
     exec-once = [workspace 8 silent] ghostty --class=logs.user --title=\"User Logs\" -e sh -c \"tail -n 100 -F $HOME/.local/state/shepherd/*.log\" &
     exec-once = [workspace 8 silent] ghostty --class=logs.system --title=\"System Logs\" -e sudo /run/current-system/profile/bin/tail -n 100 -F /var/log/messages &
 
@@ -180,7 +180,6 @@
 
     # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
     dwindle {
-        pseudotile = true # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
         preserve_split = true # You probably want this
     }
 
@@ -255,7 +254,7 @@
     # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
     bind = $mainMod, B, exec, librewolf
     bind = $mainMod, E, exec, emacsclient --create-frame
-    bind = $mainMod, J, togglesplit, # dwindle
+    bind = $mainMod, J, layoutmsg, togglesplit # dwindle
     bind = $mainMod, K, killactive,
     bind = $mainMod, M, exit,
     bind = $mainMod, P, pseudo, # dwindle
@@ -343,21 +342,18 @@
 
     # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 
-    windowrulev2 = workspace 2 silent, class:^(LibreWolf)$
-    windowrulev2 = workspace 8 silent, class:^(logs\\.(user|system))$
-    windowrulev2 = workspace 9 silent, class:^(btop)$
+    windowrule = workspace 2 silent, match:class ^(LibreWolf)$
+    windowrule = workspace 8 silent, match:class ^(logs\\.(user|system))$
+    windowrule = workspace 9 silent, match:class ^(top\\.btop)$
 
-    # Example windowrule v1
-    # windowrule = float, ^(kitty)$
-
-    # Example windowrule v2
-    # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
+    # Example windowrule
+    # windowrule = float on, match:class ^(com\\.mitchellh\\.ghostty)$
 
     # Ignore maximize requests from apps. You'll probably like this.
-    windowrulev2 = suppressevent maximize, class:.*
+    windowrule = suppress_event maximize, match:class .*
 
     # Fix some dragging issues with XWayland
-    windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"))
+    windowrule = no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0, match:pin 0"))
 
 (define-record-type* <home-hyprland-configuration>
   home-hyprland-configuration make-home-hyprland-configuration
