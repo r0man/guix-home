@@ -30,6 +30,16 @@
    (supplementary-groups
     '("audio" "kvm" "libvirt" "lp" "netdev" "video" "wheel"))))
 
+;; Allow wheel users to follow the system log without a password, so a
+;; log terminal can be spawned at login.  Must come after the default
+;; %wheel rule, since the last matching sudoers entry wins.
+(define %sudoers
+  (plain-file "sudoers"
+              (string-append
+               (plain-file-content %sudoers-specification)
+               "%wheel ALL=(root) NOPASSWD: "
+               "/run/current-system/profile/bin/tail -n 100 -F /var/log/messages\n")))
+
 (define %services
   (modify-services (cons* (service dhcpcd-service-type)
                           (service guix-moe-substitutes-service-type)
@@ -66,6 +76,7 @@
                      (check? #f))
                    %base-file-systems))
     (users (append (list %roman) %base-user-accounts))
+    (sudoers-file %sudoers)
     (packages (append %packages %base-packages))
     (services %services)))
 

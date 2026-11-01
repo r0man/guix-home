@@ -63,7 +63,8 @@
 
     exec-once = [workspace 2 silent] librewolf &
     exec-once = [workspace 9 silent] kitty --class btop btop &
-    exec-once = [workspace 8 silent] kitty --class journalctl journalctl --all --follow &
+    exec-once = [workspace 8 silent] ghostty --class=logs.user --title=\"User Logs\" -e sh -c \"tail -n 100 -F $HOME/.local/state/shepherd/*.log\" &
+    exec-once = [workspace 8 silent] ghostty --class=logs.system --title=\"System Logs\" -e sudo /run/current-system/profile/bin/tail -n 100 -F /var/log/messages &
 
     #############################
     ### ENVIRONMENT VARIABLES ###
@@ -343,7 +344,7 @@
     # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 
     windowrulev2 = workspace 2 silent, class:^(LibreWolf)$
-    windowrulev2 = workspace 8 silent, class:^(journalctl)$
+    windowrulev2 = workspace 8 silent, class:^(logs\\.(user|system))$
     windowrulev2 = workspace 9 silent, class:^(btop)$
 
     # Example windowrule v1

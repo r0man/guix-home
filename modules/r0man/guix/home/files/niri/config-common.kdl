@@ -26,7 +26,8 @@ spawn-at-startup "swayidle"
 spawn-at-startup "emacs" "--daemon"
 spawn-at-startup "emacsclient" "-c" "-a" "" "-F" "((fullscreen . maximized))"
 spawn-at-startup "librewolf"
-spawn-at-startup "kitty" "--class" "logs" "-e" "journalctl" "--user" "-f"
+spawn-at-startup "ghostty" "--class=logs.user" "--title=User Logs" "-e" "sh" "-c" "tail -n 100 -F $HOME/.local/state/shepherd/*.log"
+spawn-at-startup "ghostty" "--class=logs.system" "--title=System Logs" "-e" "sudo" "/run/current-system/profile/bin/tail" "-n" "100" "-F" "/var/log/messages"
 spawn-at-startup "kitty" "--class" "btop" "-e" "btop"
 
 // Window rules — direct windows to their workspace
@@ -41,9 +42,9 @@ window-rule {
 }
 
 window-rule {
-    match app-id="logs"
+    match app-id="^logs\\.(user|system)$"
     open-on-workspace "0:Logs"
-    open-maximized true
+    default-column-width { proportion 0.5; }
 }
 
 window-rule {
@@ -70,6 +71,7 @@ input {
 layout {
     gaps 6
     center-focused-column "never"
+    default-column-width { proportion 1.0; }
 
     preset-column-widths {
         proportion 0.33333
