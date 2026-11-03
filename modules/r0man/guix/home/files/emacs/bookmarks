@@ -31,6 +31,14 @@
   (gascity-args)
   (gascity-filters)
   (handler . gascity-bookmark-jump))
+ ("Gstack Lights - Gascity Dashboard"
+  (filename . "/home/roman/gstack-lights/")
+  (location . "/home/roman/gstack-lights/")
+  (gascity-view . dashboard)
+  (gascity-city-root . t)
+  (gascity-args)
+  (gascity-filters)
+  (handler . gascity-bookmark-jump))
  ("Burning Swell - Root Home (Dired)"
   (filename . "/ssh:root@burningswell.com:~/"))
  ("Bombaclaat - Root Home"
