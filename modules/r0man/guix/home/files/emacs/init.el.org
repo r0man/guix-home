@@ -259,11 +259,14 @@ Reload files when they change on disk.
 ** Gascity
 #+begin_src emacs-lisp
   (use-package gascity
-    :bind (("C-x C-g g" . gascity))
+    :bind (("C-c g" . gascity)
+           ("C-x C-g g" . gascity))
     :commands (gascity gascity-bookmark-jump)
     :load-path ("~/workspace/gascity.el/lisp"
                 "~/workspace/gascity.el/lisp/test")
-    :bind ("C-c g" . gascity))
+    :custom
+    (gascity-debug-level 'verbose)
+    (gascity-enable-debug t))
 #+end_src
 ** Bug Reference
 
